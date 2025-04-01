@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block page_name %}{{ project.title }}{% endblock page_name %}
+
+{% block page_content %}
+<div class="container">
+    <div class="card">
+        {% if project.thumbnail %}
+            <img src="{{ project.thumbnail.url }}" class="card-img-top" alt="{{ project.title }}">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ project.title }}</h5>
+            <p class="card-text">{{ project.description }}</p>
+            <p>
+                {% for tag in project.tags.all %}
+                    <span class="badge bg-secondary">{{ tag.name }}</span>
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock page_content %}

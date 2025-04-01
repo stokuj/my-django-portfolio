@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block page_name %}Projects{% endblock page_name %}
+
+{% block page_content %}
+    <div class="container">
+        <!-- Search Form with Clear Filters Button -->
+        <form class="mb-4 d-flex align-items-center" method="get" style="margin-top: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <input type="text" name="q" value="{{ query }}" class="form-control me-2" placeholder="Search projects..." style="flex: 1; min-width: 300px;">
+            <button type="submit" class="btn btn-primary me-2">Search</button>
+            {% if query or request.GET.tag %}
+                <a href="?" class="btn btn-outline-secondary">Clear Filters</a>
+            {% endif %}
+        </form>
+
+        <div class="row justify-content-center mt-4">
+            <!-- Projekty -->
+            {% for project in projects %}
+                {% if forloop.last and projects|length|divisibleby:2 == False %}
+                    <div class="col-md-5 mb-4 d-flex justify-content-center">
+                {% else %}
+                    <div class="col-md-5 mb-4">
+                {% endif %}
+                    <div class="card">
+                        {% if project.thumbnail %}
+                            <img src="{{ project.thumbnail.url }}" class="card-img-top" alt="{{ project.title }}">
+                        {% else %}
+                            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Brak miniaturki">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{% url 'project_detail' project.id %}">{{ project.title }}</a>
+                            </h5>
+                            
+                            <p class="card-text">{{ project.description }}</p>
+                            <p>
+                                {% for tag in project.tags.all %}
+                                    <a href="?tag={{ tag.name }}" class="badge bg-secondary">{{ tag.name }}</a>
+                                {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock page_content %}
