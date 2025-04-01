@@ -3,8 +3,9 @@
 {% block page_name %}Projects{% endblock page_name %}
 
 {% block page_content %}
-    <div class="container">
-        <!-- Search Form with Clear Filters Button -->
+    <!-- Główny kontener z lekkim tłem off-white i dodatkowymi odstępami -->
+    <div class="container py-5" style="max-width: 1200px; background-color: #f8f9fa;">
+        <!-- Formularz wyszukiwania z przyciskiem 'Clear Filters' -->
         <form class="mb-4 d-flex align-items-center" method="get" style="margin-top: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
             <input type="text" name="q" value="{{ query }}" class="form-control me-2" placeholder="Search projects..." style="flex: 1; min-width: 300px;">
             <button type="submit" class="btn btn-primary me-2">Search</button>
@@ -13,34 +14,40 @@
             {% endif %}
         </form>
 
+        <!-- Pasek z tagami do filtrowania -->
+        <div class="mb-4 text-center">
+            {% for tag in tags %}
+                <a href="?tag={{ tag.name }}" class="btn btn-outline-info me-2">{{ tag.name|upper }}</a>
+            {% endfor %}
+        </div>
+
+        <!-- Rząd z projektami: dwa elementy w rzędzie, ostatni wyśrodkowany, gdy nieparzysta liczba -->
         <div class="row justify-content-center mt-4">
-            <!-- Projekty -->
             {% for project in projects %}
                 {% if forloop.last and projects|length|divisibleby:2 == False %}
                     <div class="col-md-5 mb-4 d-flex justify-content-center">
                 {% else %}
                     <div class="col-md-5 mb-4">
                 {% endif %}
-                    <div class="card">
-                        {% if project.thumbnail %}
-                            <img src="{{ project.thumbnail.url }}" class="card-img-top" alt="{{ project.title }}">
-                        {% else %}
-                            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Brak miniaturki">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <a href="{% url 'project_detail' project.id %}">{{ project.title }}</a>
-                            </h5>
-                            
-                            <p class="card-text">{{ project.description }}</p>
-                            <p>
-                                {% for tag in project.tags.all %}
-                                    <a href="?tag={{ tag.name }}" class="badge bg-secondary">{{ tag.name|upper }}</a>
-                                {% endfor %}
-                            </p>
+                        <div class="card shadow-sm">
+                            {% if project.thumbnail %}
+                                <img src="{{ project.thumbnail.url }}" class="card-img-top" alt="{{ project.title }}">
+                            {% else %}
+                                <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Brak miniaturki">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a href="{% url 'project_detail' project.id %}" class="text-decoration-none text-dark">{{ project.title }}</a>
+                                </h5>
+                                <p class="card-text">{{ project.description }}</p>
+                                <p>
+                                    {% for tag in project.tags.all %}
+                                        <a href="?tag={{ tag.name }}" class="badge bg-secondary text-uppercase">{{ tag.name }}</a>
+                                    {% endfor %}
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
             {% endfor %}
         </div>
     </div>

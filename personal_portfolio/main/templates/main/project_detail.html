@@ -3,20 +3,23 @@
 {% block page_name %}{{ project.title }}{% endblock page_name %}
 
 {% block page_content %}
-<div class="container">
-    <div class="card">
-        {% if project.thumbnail %}
-            <img src="{{ project.thumbnail.url }}" class="card-img-top" alt="{{ project.title }}">
-        {% endif %}
-        <div class="card-body">
-            <h5 class="card-title">{{ project.title }}</h5>
-            <p class="card-text">{{ project.description }}</p>
-            <p>
-                {% for tag in project.tags.all %}
-                    <span class="badge bg-secondary">{{ tag.name }}</span>
-                {% endfor %}
-            </p>
+    <!-- Kontener dla strony szczegółów z dodatkowym paddingiem i ograniczoną szerokością -->
+    <div class="container py-5" style="max-width: 800px; background-color: #f8f9fa;">
+        <div class="card shadow-sm">
+            {% if project.thumbnail %}
+                <img src="{{ project.thumbnail.url }}" class="card-img-top" alt="{{ project.title }}">
+            {% else %}
+                <img src="https://via.placeholder.com/800x400" class="card-img-top" alt="Brak miniaturki">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ project.title }}</h5>
+                <p class="card-text">{{ project.description }}</p>
+                <p>
+                    {% for tag in project.tags.all %}
+                        <span class="badge bg-secondary text-uppercase">{{ tag.name }}</span>
+                    {% endfor %}
+                </p>
+            </div>
         </div>
     </div>
-</div>
 {% endblock page_content %}
