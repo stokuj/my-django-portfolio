@@ -35,7 +35,7 @@
                             <p class="card-text">{{ project.description }}</p>
                             <p>
                                 {% for tag in project.tags.all %}
-                                    <a href="?tag={{ tag.name }}" class="badge bg-secondary">{{ tag.name }}</a>
+                                    <a href="?tag={{ tag.name }}" class="badge bg-secondary">{{ tag.name|upper }}</a>
                                 {% endfor %}
                             </p>
                         </div>
