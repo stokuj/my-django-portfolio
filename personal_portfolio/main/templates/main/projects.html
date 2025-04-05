@@ -22,33 +22,37 @@
         </div>
 
         <!-- Rząd z projektami: dwa elementy w rzędzie, ostatni wyśrodkowany, gdy nieparzysta liczba -->
-        <div class="row justify-content-center mt-4">
+        <div class="row justify-content-start mt-4 g-4">
             {% for project in projects %}
-                {% if forloop.last and projects|length|divisibleby:2 == False %}
-                    <div class="col-md-5 mb-4 d-flex justify-content-center">
-                {% else %}
-                    <div class="col-md-5 mb-4">
-                {% endif %}
-                        <div class="card shadow-sm">
-                            {% if project.thumbnail %}
-                                <img src="{{ project.thumbnail.url }}" class="card-img-top" alt="{{ project.title }}">
-                            {% else %}
-                                <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Brak miniaturki">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <a href="{% url 'project_detail' project.id %}" class="text-decoration-none text-dark">{{ project.title }}</a>
-                                </h5>
-                                <p class="card-text">{{ project.description }}</p>
-                                <p>
-                                    {% for tag in project.tags.all %}
-                                        <a href="?tag={{ tag.name }}" class="badge bg-secondary text-uppercase">{{ tag.name }}</a>
-                                    {% endfor %}
-                                </p>
-                            </div>
-                        </div>
+              <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm h-100">
+                  {% if project.thumbnail %}
+                    <img src="{{ project.thumbnail.url }}" 
+                         class="card-img-top" 
+                         alt="{{ project.title }}"
+                         style="height: 200px; object-fit: cover;">
+                  {% else %}
+                    <img src="https://via.placeholder.com/300x200" 
+                         class="card-img-top" 
+                         alt="Brak miniaturki"
+                         style="height: 200px; object-fit: cover;">
+                  {% endif %}
+                  <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                      <a href="{% url 'project_detail' project.id %}" 
+                         class="text-decoration-none text-dark">{{ project.title }}</a>
+                    </h5>
+                    <p class="card-text flex-grow-1">{{ project.short_description|safe }}</p>
+                    <div class="mt-auto">
+                      {% for tag in project.tags.all %}
+                        <a href="?tag={{ tag.name }}" 
+                           class="badge bg-secondary text-uppercase me-1 mb-1">{{ tag.name }}</a>
+                      {% endfor %}
                     </div>
+                  </div>
+                </div>
+              </div>
             {% endfor %}
-        </div>
+          </div>
     </div>
 {% endblock page_content %}

@@ -4,7 +4,7 @@
 
 {% block page_content %}
     <!-- Kontener dla strony szczegółów z dodatkowym paddingiem i ograniczoną szerokością -->
-    <div class="container py-5" style="max-width: 800px; background-color:rgb(146, 177, 116);">
+    <div class="container py-5" style="max-width: 1200px; background-color:rgb(146, 177, 116);">
         <div class="card shadow-sm">
             {% if project.thumbnail %}
                 <img src="{{ project.thumbnail.url }}" class="card-img-top" alt="{{ project.title }}">
@@ -13,7 +13,7 @@
             {% endif %}
             <div class="card-body">
                 <h5 class="card-title">{{ project.title }}</h5>
-                <p class="card-text">{{ project.description }}</p>
+                <p class="card-text">{{ project.description|safe  }}</p>
                 <p>
                     {% for tag in project.tags.all %}
                         <span class="badge bg-secondary text-uppercase">{{ tag.name }}</span>
