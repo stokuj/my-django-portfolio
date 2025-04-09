@@ -31,7 +31,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'tinymce',
+    #'tinymce',
+    #'django_summernote',
+    'ckeditor',
+    'ckeditor_uploader',
     "main.apps.MainConfig",
     'django.contrib.admin',
     'django.contrib.auth',
@@ -143,3 +146,19 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880 # 5 MB limit for file uploads
+CKEDITOR_UPLOAD_PATH = "uploads/"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'height': 500,  # Wysokość w pikselach
+        'width': '1000px',  # Szerokość (np. '100%' lub '800px')
+        'toolbar': 'Custom',  # Dostosuj pasek narzędzi
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink', 'Image'],
+            ['Source']
+        ],
+    },
+}
