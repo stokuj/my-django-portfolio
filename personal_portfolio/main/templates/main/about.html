@@ -1,25 +1,32 @@
 {% extends "base.html" %}
 
-{% block page_name %}Home{% endblock page_name %}
+{% block page_name %}About{% endblock page_name %}
 
-{% block page_content %}
-<div class="row">
-    <div class="col-md-4">
-        <!-- Przykładowe miejsce na zdjęcie -->
-        <img src="/media/thumbnails/default_image.png" class="img-fluid rounded" alt="Moje zdjęcie">
+{% block content %}
+<div class="flex flex-wrap gap-8 p-6 max-w-7xl mx-auto">
+    <!-- Image Section -->
+    <div class="w-full md:w-1/3">
+        <img src="/media/thumbnails/default_image.png" 
+            class="w-full h-auto rounded-lg shadow-lg"
+            alt="Moje zdjęcie">
     </div>
-    <div class="col-md-8">
-        <h1>O mnie</h1>
-        <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula cursus dui, eget tristique urna dapibus eget. 
-            Sed vitae volutpat quam. Quisque ut fermentum tortor. Integer ullamcorper metus in fermentum interdum.
-        </p>
-        <p>
-            444444444444
-            Curabitur auctor dui et sapien maximus, a condimentum justo eleifend. Maecenas scelerisque consectetur nisl, in 
-            condimentum nisl elementum a. Morbi porttitor, quam in lacinia interdum, odio nunc commodo nibh, vel faucibus nisi 
-            quam at justo.
-        </p>
+
+    <!-- Content Section -->
+    <div class="w-full md:w-2/3 space-y-6">
+        <h1 class="text-4xl font-bold text-gray-800">O mnie</h1>
+        
+        <div class="space-y-4 text-gray-600">
+            <p class="text-lg leading-relaxed">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula cursus dui, eget tristique urna dapibus eget. 
+                Sed vitae volutpat quam. Quisque ut fermentum tortor. Integer ullamcorper metus in fermentum interdum.
+            </p>
+
+            <p class="text-lg leading-relaxed">
+                Curabitur auctor dui et sapien maximus, a condimentum justo eleifend. Maecenas scelerisque consectetur nisl, in 
+                condimentum nisl elementum a. Morbi porttitor, quam in lacinia interdum, odio nunc commodo nibh, vel faucibus nisi 
+                quam at justo.
+            </p>
+        </div>
     </div>
 </div>
-{% endblock page_content %}
+{% endblock %}

@@ -1,3 +1,8 @@
+node_modules/
+personal_portfolio/main/static/css/style.css
+
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

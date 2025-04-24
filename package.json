@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "build:css": "tailwindcss -i ./personal_portfolio/main/static/src/css/input.css -o ./personal_portfolio/main/static/css/style.css",
+    "build:css:watch": "tailwindcss -i ./personal_portfolio/main/static/src/css/input.css -o ./personal_portfolio/main/static/css/style.css --watch",
+    "build": "npm run build:css"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17"
+  }
+}

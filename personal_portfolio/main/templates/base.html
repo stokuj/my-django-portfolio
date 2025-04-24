@@ -1,75 +1,33 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" 
-          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-
-    <title>{% block title %}My Personal Portfolio{% endblock %}</title>
-
-    {% load static %}
+    <title>{% block title %}My Portfolio{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-
-    <style>
-
-
-        .container {
-            flex: 1;
-        }
-
-        /* Ustalamy stałą wysokość miniatury */
-        .card-img-top {
-            width: 100%;
-            height: 200px;  /* Możesz dostosować wysokość */
-            object-fit: cover;
-        }
-
-    </style>
-
 </head>
-<body>
-
-    <!-- Pasek nawigacyjny -->
-    <nav class="navbar navbar-expand-lg custom-navbar">
-        <div class="container-fluid">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'home' %}">Main Page</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'projects' %}">Projects</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'about' %}">About</a>
-                </li>
-            </ul>
+<body class="bg-gray-100">
+    <!-- Navbar -->
+    <nav class="bg-gray-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="text-white text-xl font-bold">My Portfolio</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="/" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md">Home</a>
+                    <a href="/projects/" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md">Projects</a>
+                    <a href="/about/" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md">Contact</a>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <!-- Główna zawartość -->
-    <div class="container mt-4">
-        {% block page_content %}{% endblock %}
-    </div>
-
-    <!-- Stopka -->
-    <footer class="custom-footer mt-4">
-        <div class="container">
-            <p class="mb-0">&copy; 2025 My Portfolio | All rights reserved.</p>
-            <p class="mb-0">Designed by Me</p>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" 
-            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-
+    <!-- Content -->
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}
+        {% endblock %}
+    </main>
 </body>
 </html>

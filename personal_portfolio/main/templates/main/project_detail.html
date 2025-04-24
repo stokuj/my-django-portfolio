@@ -2,24 +2,35 @@
 
 {% block page_name %}{{ project.title }}{% endblock page_name %}
 
-{% block page_content %}
-    <!-- Kontener dla strony szczegółów z dodatkowym paddingiem i ograniczoną szerokością -->
-    <div class="container py-5" style="max-width: 1200px; background-color:rgb(146, 177, 116);">
-        <div class="card shadow-sm">
-            {% if project.thumbnail %}
-                <img src="{{ project.thumbnail.url }}" class="card-img-top" alt="{{ project.title }}">
-            {% else %}
-                <img src="https://via.placeholder.com/800x400" class="card-img-top" alt="Brak miniaturki">
-            {% endif %}
-            <div class="card-body">
-                <h5 class="card-title">{{ project.title }}</h5>
-                <p class="card-text">{{ project.description|safe  }}</p>
-                <p>
-                    {% for tag in project.tags.all %}
-                        <span class="badge bg-secondary text-uppercase">{{ tag.name }}</span>
-                    {% endfor %}
-                </p>
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-green-50 min-h-screen">
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        {% if project.thumbnail %}
+            <img src="{{ project.thumbnail.url }}" 
+                class="w-full max-h-96 object-contain bg-gray-50"
+                alt="{{ project.title }}">
+        {% else %}
+            <div class="w-full h-64 bg-gray-100 flex items-center justify-center">
+                <span class="text-gray-400">No thumbnail</span>
+            </div>
+        {% endif %}
+        
+        <div class="p-8 space-y-6">
+            <h1 class="text-3xl font-bold text-gray-800">{{ project.title }}</h1>
+            
+            <div class="prose max-w-none text-gray-600">
+                {{ project.description|safe }}
+            </div>
+            
+            <div class="flex flex-wrap gap-2">
+                {% for tag in project.tags.all %}
+                <a href="?tag={{ tag.name }}"
+                class="px-4 py-1 bg-green-100 text-green-800 rounded-full hover:bg-green-200 transition-colors">
+                    {{ tag.name|upper }}
+                </a>
+                {% endfor %}
             </div>
         </div>
     </div>
-{% endblock page_content %}
+</div>
+{% endblock content %}
