@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+test
+<span class="badge">Badge</span>
+test
 <div class="max-w-4xl mx-auto text-center py-16">
     <h1 class="text-4xl font-bold text-gray-800 mb-6">Welcome to My Portfolio</h1>
     <p class="text-xl text-gray-600 mb-8">I'm a developer passionate about creating awesome web experiences</p>
@@ -27,4 +30,83 @@ II. Projekty własne
 -creating a website with Django, with a blog and a portfolio,
 -Lubimyczytac.pl user data visualization using plotly,
 -rewrite blog using react/ other language,
+<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    Button
+</button>
+<button class="btn btn-primary">Button</button>
+<div class="card bg-base-100 w-96 shadow-sm">
+    <figure>
+    <img
+        src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
+        alt="Shoes" />
+    </figure>
+    <div class="card-body">
+    <h2 class="card-title">
+        Card Title
+        <div class="badge badge-secondary">NEW</div>
+    </h2>
+    <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
+    <div class="card-actions justify-end">
+        <div class="badge badge-outline">Fashion</div>
+        <div class="badge badge-outline">Products</div>
+    </div>
+    </div>
+</div>
+
+<div class="card bg-base-100 w-96 shadow-md">
+    <figure class="px-4 pt-4">
+      <img 
+        src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" 
+        alt="Shoes" 
+        class="rounded-xl" />
+    </figure>
+    <div class="card-body p-6">
+      <h2 class="card-title text-lg gap-2">
+        Card Title
+        <div class="badge badge-xl">NEW</div>
+      </h2>
+      <p class="text-base text-neutral-600 mt-2 mb-4">
+        A card component has a figure, a body part, and inside body there are title and actions parts
+      </p>
+      <div class="card-actions justify-end space-x-2">
+        <div class="badge badge-outline">Fashion</div>
+        <div class="badge badge-outline">Products</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card with Badge -->
+<div class="card card-compact w-96 bg-base-100 shadow-xl">
+    <!-- Figura (tło np. limonkowe, a wewnątrz obraz) -->
+    <div class="bg-lime-400">
+      <figure>
+        <img
+          src="https://via.placeholder.com/400x200/CCFF00/000000?text=Your+Image"
+          alt="Sneaker"
+          class="w-full"
+        />
+      </figure>
+    </div>
+  
+    <!-- Body karty -->
+    <div class="card-body">
+      <!-- Tytuł z badge -->
+      <div class="flex items-center space-x-2">
+        <h2 class="card-title">Card Title</h2>
+        <span class="badge badge-primary">NEW</span>
+      </div>
+  
+      <!-- Opis -->
+      <p>
+        A card component has a figure, a body part, and inside body there are title and actions parts
+      </p>
+  
+      <!-- Akcje / tagi -->
+      <div class="card-actions justify-end space-x-2">
+        <button class="btn btn-outline btn-sm">Fashion</button>
+        <button class="btn btn-outline btn-sm">Products</button>
+      </div>
+    </div>
+  </div>
+  
 {% endblock %}

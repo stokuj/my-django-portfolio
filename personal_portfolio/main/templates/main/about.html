@@ -3,30 +3,52 @@
 {% block page_name %}About{% endblock page_name %}
 
 {% block content %}
-<div class="flex flex-wrap gap-8 p-6 max-w-7xl mx-auto">
-    <!-- Image Section -->
-    <div class="w-full md:w-1/3">
-        <img src="/media/thumbnails/default_image.png" 
-            class="w-full h-auto rounded-lg shadow-lg"
-            alt="Moje zdjęcie">
-    </div>
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        <!-- Image Section -->
+        <div class="md:col-span-4">
+            <div class="card bg-base-100 shadow-xl">
+                <figure class="px-4 pt-4">
+                    <img src="/media/thumbnails/default_image.png" 
+                        class="rounded-xl shadow-md w-full h-auto"
+                        alt="Moje zdjęcie">
+                </figure>
+            </div>
+        </div>
 
-    <!-- Content Section -->
-    <div class="w-full md:w-2/3 space-y-6">
-        <h1 class="text-4xl font-bold text-gray-800">O mnie</h1>
-        
-        <div class="space-y-4 text-gray-600">
-            <p class="text-lg leading-relaxed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula cursus dui, eget tristique urna dapibus eget. 
-                Sed vitae volutpat quam. Quisque ut fermentum tortor. Integer ullamcorper metus in fermentum interdum.
-            </p>
+        <!-- Content Section -->
+        <div class="md:col-span-8 prose max-w-none">
+            <h1 class="text-3xl md:text-4xl font-bold text-base-content mb-6">O mnie</h1>
+            
+            <div class="space-y-4 text-base-content/90">
+                <p class="text-lg">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec vehicula cursus dui, eget tristique urna dapibus eget. 
+                    Sed vitae volutpat quam. Quisque ut fermentum tortor. Integer ullamcorper metus in fermentum interdum.
+                </p>
 
-            <p class="text-lg leading-relaxed">
-                Curabitur auctor dui et sapien maximus, a condimentum justo eleifend. Maecenas scelerisque consectetur nisl, in 
-                condimentum nisl elementum a. Morbi porttitor, quam in lacinia interdum, odio nunc commodo nibh, vel faucibus nisi 
-                quam at justo.
-            </p>
+                <p class="text-lg">
+                    Curabitur auctor dui et sapien maximus, a condimentum justo eleifend. Maecenas scelerisque consectetur nisl, in 
+                    condimentum nisl elementum a. Morbi porttitor, quam in lacinia interdum, odio nunc commodo nibh, vel faucibus nisi 
+                    quam at justo.
+                </p>
+            </div>
+
+            <!-- Dodatkowe elementy DaisyUI -->
+            <div class="mt-8 flex flex-wrap gap-4">
+                <button class="btn btn-primary">Moje CV</button>
+                <button class="btn btn-outline">Kontakt</button>
+                <span class="badge">Badge</span>
+                <button class="btn">Default</button>
+                <button class="btn btn-neutral">Neutral</button>
+                <button class="btn btn-primary">Primary</button>
+                <button class="btn btn-secondary">Secondary</button>
+                <button class="btn btn-accent">Accent</button>
+                <button class="btn btn-info">Info</button>
+                <button class="btn btn-success">Success</button>
+                <button class="btn btn-warning">Warning</button>
+                <button class="btn btn-error">Error</button>
+            </div>
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock content %}

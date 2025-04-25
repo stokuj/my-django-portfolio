@@ -3,8 +3,11 @@ module.exports = {
     "./personal_portfolio/main/templates/**/*.html",
     "./personal_portfolio/main/static/src/**/*.js"
   ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
+  plugins: [
+    require("daisyui"),
+    require("@tailwindcss/typography")
+  ],
+  daisyui: {
+    themes: ["light"],
+  }
 }

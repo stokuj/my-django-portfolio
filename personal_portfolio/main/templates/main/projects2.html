@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block page_name %}Projects{% endblock page_name %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-[#f2e9e4] min-h-screen">
+    <!-- Search and Filters -->
+    <div class="max-w-2xl mx-auto mb-12 space-y-8">
+        <form method="get" class="flex gap-4 items-center">
+            <input type="text" name="q" value="{{ query }}" 
+                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Search projects...">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                Search
+            </button>
+            {% if query or request.GET.tag %}
+                <a href="?" class="text-gray-600 hover:text-gray-800 underline">Clear filters</a>
+            {% endif %}
+        </form>
+
+        <div class="flex flex-wrap gap-2 justify-center">
+            {% for tag in tags %}
+                <a href="?tag={{ tag.name }}" 
+                    class="inline-flex items-center rounded-full px-4 py-1 border border-blue-500 text-blue-600 hover:bg-blue-50 transition-colors">
+                    {{ tag.name|upper }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for project in projects %}
+        <div class="group relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+            {% if project.thumbnail %}
+                <img src="{{ project.thumbnail.url }}" 
+                    class="w-full h-48 object-cover rounded-t-xl"
+                    alt="{{ project.title }}">
+            {% else %}
+                <div class="w-full h-48 bg-gray-100 rounded-t-xl flex items-center justify-center">
+                    <span class="text-gray-400">No thumbnail</span>
+                </div>
+            {% endif %}
+            
+            <div class="p-6 flex flex-col h-64">
+                <h3 class="text-xl font-semibold mb-2">
+                    <a href="{% url 'project_detail' project.id %}" 
+                        class="text-gray-800 hover:text-blue-600 transition-colors">
+                        {{ project.title }}
+                    </a>
+                </h3>
+                <div class="text-gray-600 mb-4 line-clamp-3">
+                    {{ project.short_description|safe }}
+                </div>
+                
+                <div class="mt-auto flex flex-wrap gap-2">
+                    {% for tag in project.tags.all %}
+                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                        {{ tag.name|upper }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}
