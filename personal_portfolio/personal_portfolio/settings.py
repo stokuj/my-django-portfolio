@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ywq1dynndoh94f%e(b#^&b9=*1491e-23ftk-d96hcd*&&l#y8'
+SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,8 +33,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    #'tinymce',
-    #'django_summernote',
     'ckeditor',
     'ckeditor_uploader',
     "main.apps.MainConfig",
@@ -78,14 +78,26 @@ WSGI_APPLICATION = 'personal_portfolio.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')  # Domyślnie ustawiamy na 'development'
 
-DATABASES = {
+if DJANGO_ENV == 'production':
+    # Ustawienia dla produkcji
+    print("Running in production mode")
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'your-domain.com').split(',')
+    DEBUG = False
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv('DATABASE_URL')
+        )
+    }
+else:
+    # Ustawienia lokalne (dla deweloperów)
+    print("Running in development mode")
+    SECRET_KEY = 'your-local-secret-key'  # Możesz ustawić na lokalny klucz dla deweloperów
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    DEBUG = True
+    DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'portfolioDB',
@@ -93,8 +105,11 @@ DATABASES = {
         'PASSWORD': 'NstftHLz',
         'HOST': 'localhost',  
         'PORT': '5432',       # domyślny port PostgreSQL
+        }
     }
-}
+
+
+
 
 
 

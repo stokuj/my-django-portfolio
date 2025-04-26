@@ -20,7 +20,7 @@
     
         // 2. Nasłuchiwanie zmiany checkboxa
         function themeControllerHandler(e) {
-            const theme = e.target.checked ? e.target.value : 'fantasy2';
+            const theme = e.target.checked ? e.target.value : 'fantasy';
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('theme', theme);
         }
