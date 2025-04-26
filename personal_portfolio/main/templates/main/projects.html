@@ -1,31 +1,81 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-12">
-    <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold mb-4">Moje Projekty</h2>
-        <p class="text-lg opacity-80">{{ projects.count }} dostępnych projektów</p>
+    <!-- Search Input -->
+    <!-- Pole wyszukiwania z ikoną czyszczenia -->
+    <div class="mb-8 relative">
+        <div class="relative">
+            <input 
+                type="text" 
+                placeholder="Search by name or description" 
+                class="input input-bordered w-full pr-12" 
+                id="searchInput"
+            />
+            <button 
+                class="absolute right-3 top-3 opacity-50 hover:opacity-100 transition-opacity hidden" 
+                id="clearButton"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
     </div>
-
+    <!-- Projekty w kartach -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {% for project in projects %}
-        <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
-        <figure class="px-4 pt-4">
-            <img src="{{ project.thumbnail.url }}" alt="{{ project.title }}" class="rounded-xl h-48 w-full object-cover">
-        </figure>
-        <div class="card-body">
-            <h3 class="card-title">{{ project.title }}</h3>
-            <p class="line-clamp-3">{{ project.short_description }}</p>
-            <div class="card-actions justify-end mt-4">
-                {% for tag in project.tags.all %}
-                <div class="badge badge-outline">{{ tag.name }}</div>
-                    {% endfor %}
+            <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow">
+                <figure class="px-4 pt-4">
+                    <img 
+                        src="{{ project.thumbnail.url }}" 
+                        alt="{{ project.title }}" 
+                        class="rounded-xl h-64 w-full object-cover"
+                    />
+                </figure>
+                <div class="card-body">
+                    <h2 class="card-title">
+                        {{ project.title }}
+                        <div class="badge badge-secondary">NEW</div>
+                    </h2>
+                    <p class="line-clamp-3">{{ project.short_description }}</p>
+                    <div class="card-actions justify-end mt-4">
+                        {% for tag in project.tags.all %}
+                            <div class="badge badge-outline">{{ tag.name }}</div>
+                        {% endfor %}
+                    </div>
+                    <a href="/projects/{{project.id}}" class="btn btn-primary btn-xl">
+                        View Projects
+                    </a>
                 </div>
             </div>
-        </div>
         {% endfor %}
-    </div>
-
-</div>
-
+        
+        <!-- JavaScript for client-side filtering -->
+        <script>
+            const searchInput = document.getElementById('searchInput')
+            const clearButton = document.getElementById('clearButton')
+    
+            // Funkcja do filtrowania
+            function filterProjects() {
+                const searchTerm = searchInput.value.toLowerCase()
+                clearButton.classList.toggle('hidden', !searchTerm)
+                
+                document.querySelectorAll('.card').forEach(card => {
+                    const title = card.querySelector('.card-title').textContent.toLowerCase()
+                    const description = card.querySelector('.card-body p').textContent.toLowerCase()
+                    card.style.display = (title.includes(searchTerm) || description.includes(searchTerm)) 
+                        ? 'block' 
+                        : 'none'
+                })
+            }
+    
+            // Nasłuchiwanie zdarzeń
+            searchInput.addEventListener('input', filterProjects)
+            
+            clearButton.addEventListener('click', () => {
+                searchInput.value = ''
+                filterProjects()
+                searchInput.focus()
+            })
+        </script>
 {% endblock %}

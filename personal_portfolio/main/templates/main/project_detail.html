@@ -3,31 +3,32 @@
 {% block page_name %}{{ project.title }}{% endblock page_name %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-green-50 min-h-screen">
-    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-        {% if project.thumbnail %}
-            <img src="{{ project.thumbnail.url }}" 
-                class="w-full max-h-96 object-contain bg-gray-50"
-                alt="{{ project.title }}">
-        {% else %}
-            <div class="w-full h-64 bg-gray-100 flex items-center justify-center">
-                <span class="text-gray-400">No thumbnail</span>
+<div class="container mx-auto p-6">
+    <div class="card w-full p-8 bg-base-200 shadow">
+        <div class="card-body">
+            <div class="flex justify-center"> 
+                <h1 class="text-xl font-bold">{{ project.title }}</h1>
             </div>
-        {% endif %}
-        
-        <div class="p-8 space-y-6">
-            <h1 class="text-3xl font-bold text-gray-800">{{ project.title }}</h1>
-            
-            <div class="prose max-w-none text-gray-600">
-                {{ project.description|safe }}
+            {% if project.thumbnail %}
+                <figure>
+                    <img src="{{ project.thumbnail.url }}" alt="{{ project.title }}" class="object-contain mt-8" />
+                </figure>
+            {% else %}
+                <div class="flex justify-center items-center h-64 bg-base-200">
+                    <span class="text-base-content">No thumbnail</span>
+                </div>
+            {% endif %}
+            <div class="text-base-content">
+                <article class="bg-base-300 p-6 rounded-box mt-4">
+                    {{ project.description|safe }}
+                </article>
             </div>
             
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2 mt-4">
                 {% for tag in project.tags.all %}
-                <a href="?tag={{ tag.name }}"
-                class="px-4 py-1 bg-green-100 text-green-800 rounded-full hover:bg-green-200 transition-colors">
+                <span class="badge badge-outline">
                     {{ tag.name|upper }}
-                </a>
+                </span>                
                 {% endfor %}
             </div>
         </div>

@@ -1,29 +1,18 @@
 <!DOCTYPE html>
-{% load static %}
-<html>
+<html lang="en" data-theme="light">
 <head>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <meta charset="UTF-8">
+    <title>My Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-    <button class="btn btn-primary">Test DaisyUI</button>
-    <div class="alert alert-success">Test alertu</div>
-    <div class="card bg-base-100 w-96 shadow-sm">
-        <figure>
-          <img
-            src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-            alt="Shoes" />
-        </figure>
-        <div class="card-body">
-          <h2 class="card-title">
-            Card Title
-            <div class="badge badge-secondary">NEW</div>
-          </h2>
-          <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
-          <div class="card-actions justify-end">
-            <div class="badge badge-outline">Fashion</div>
-            <div class="badge badge-outline">Products</div>
-          </div>
-        </div>
-      </div>
+  <label class="flex items-center gap-2">
+    <input type="checkbox" value="synthwave" class="toggle theme-controller" />
+    <span class="label-text">Synthwave Theme</span>
+  </label>
+TEST
+
+
 </body>
 </html>
