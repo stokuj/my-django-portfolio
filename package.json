@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build:css": "npx @tailwindcss/cli -i ./personal_portfolio/main/static/src/css/input.css -o ./personal_portfolio/main/static/css/style.css",
+    "build:css": "npx @tailwindcss/cli -i ./main/static/src/css/input.css -o ./main/static/css/style.css",
     "dev": "npm run build:css -- --watch"
   },
   "dependencies": {
