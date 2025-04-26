@@ -2,7 +2,6 @@
 
 {% block content %}
     <!-- Search Input -->
-    <!-- Pole wyszukiwania z ikoną czyszczenia -->
     <div class="mb-8 relative">
         <div class="relative">
             <input 
@@ -21,10 +20,35 @@
             </button>
         </div>
     </div>
+
+    <!-- Lista wszystkich badge/tags w karcie -->
+    <div class="card bg-base-200 p-6 mb-8">
+        <div class="flex flex-wrap justify-center gap-4" id="tagFilter">
+            <button 
+                class="btn btn-primary text-xl px-4 py-2 cursor-pointer active-tag" 
+                data-tag="all"
+            >
+                All Projects
+            </button>
+            {% for tag in all_tags %}
+                <button 
+                    class="btn btn-outline text-xl px-4 py-2 cursor-pointer" 
+                    data-tag="{{ tag.name|lower }}"
+                >
+                    {{ tag.name }}
+                </button>
+            {% endfor %}
+        </div>
+    </div>
+    
+
     <!-- Projekty w kartach -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {% for project in projects %}
-            <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow">
+            <div 
+                class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow project-card"
+                data-tags="{% for tag in project.tags.all %}{{ tag.name|lower }} {% endfor %}"
+            >
                 <figure class="px-4 pt-4">
                     <img 
                         src="{{ project.thumbnail.url }}" 
@@ -43,8 +67,9 @@
                             <div class="badge badge-outline">{{ tag.name }}</div>
                         {% endfor %}
                     </div>
-                    <a href="/projects/{{project.id}}" class="btn btn-primary btn-xl">
-                        View Projects
+                    <br>
+                    <a href="/projects/{{project.id}}" class="btn btn-primary btn-xl ">
+                        View Project
                     </a>
                 </div>
             </div>
@@ -54,13 +79,16 @@
         <script>
             const searchInput = document.getElementById('searchInput')
             const clearButton = document.getElementById('clearButton')
-    
-            // Funkcja do filtrowania
+
+            const tagBadges = document.querySelectorAll('#tagFilter button'); // Zmieniamy z .badge na button
+            const projectCards = document.querySelectorAll('.project-card'); // Tylko projekty
+
+            // Funkcja filtrowania po wyszukiwaniu
             function filterProjects() {
                 const searchTerm = searchInput.value.toLowerCase()
                 clearButton.classList.toggle('hidden', !searchTerm)
                 
-                document.querySelectorAll('.card').forEach(card => {
+                projectCards.forEach(card => {
                     const title = card.querySelector('.card-title').textContent.toLowerCase()
                     const description = card.querySelector('.card-body p').textContent.toLowerCase()
                     card.style.display = (title.includes(searchTerm) || description.includes(searchTerm)) 
@@ -68,14 +96,40 @@
                         : 'none'
                 })
             }
-    
+
             // Nasłuchiwanie zdarzeń
             searchInput.addEventListener('input', filterProjects)
-            
+
             clearButton.addEventListener('click', () => {
                 searchInput.value = ''
                 filterProjects()
                 searchInput.focus()
+            })
+
+            // Funkcja filtrowania przez kliknięcie w tag
+            tagBadges.forEach(button => {
+                button.addEventListener('click', () => {
+                    const selectedTag = button.dataset.tag
+
+                    // Czyszczenie pola wyszukiwania przy kliknięciu tagu
+                    searchInput.value = ''
+                    clearButton.classList.add('hidden')
+
+                    // Zmieniamy klasę aktywnego taga
+                    tagBadges.forEach(btn => btn.classList.remove('btn-primary'));
+                    button.classList.add('btn-primary');
+
+                    // Filtrowanie projektów
+                    projectCards.forEach(card => {
+                        const cardTags = card.dataset.tags.trim().split(' ');
+
+                        if (selectedTag === 'all') {
+                            card.style.display = 'block'
+                        } else {
+                            card.style.display = cardTags.includes(selectedTag) ? 'block' : 'none'
+                        }
+                    })
+                })
             })
         </script>
 {% endblock %}
