@@ -27,10 +27,11 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['my-django-portfolio.onrender.com', 'localhost']
+ALLOWED_HOSTS = ['my-django-portfolio.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
+
 
 INSTALLED_APPS = [
     'ckeditor',
@@ -84,7 +85,6 @@ if DJANGO_ENV == 'production':
     # Ustawienia dla produkcji
     print("Running in production mode <------------------------------------")
     SECRET_KEY = os.getenv('SECRET_KEY')
-    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'your-domain.com').split(',')
     DEBUG = False
     DATABASES = {
         'default': dj_database_url.config(
@@ -95,7 +95,6 @@ else:
     # Ustawienia lokalne (dla deweloperów)
     print("Running in development mode <------------------------------------")
     SECRET_KEY = 'your-local-secret-key'  # Możesz ustawić na lokalny klucz dla deweloperów
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
     DEBUG = True
     DATABASES = {
     'default': {
@@ -148,7 +147,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'personal_portfolio/main/static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'main', 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
