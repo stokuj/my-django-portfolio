@@ -82,18 +82,18 @@ DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')  # Domyślnie ustawiamy na '
 
 if DJANGO_ENV == 'production':
     # Ustawienia dla produkcji
-    print("Running in production mode")
+    print("Running in production mode <------------------------------------")
     SECRET_KEY = os.getenv('SECRET_KEY')
     ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'your-domain.com').split(',')
     DEBUG = False
     DATABASES = {
         'default': dj_database_url.config(
-            default=os.getenv('DATABASE_URL')
+            default=os.getenv('DATABASE_URL', 'postgresql://portfoliodb_9okm_user:kP39xpJ23Urmk8lZESdE006YJ5U0Qxj6@dpg-d06ft9ili9vc73eb8p3g-a.frankfurt-postgres.render.com/portfoliodb_9okm')
         )
     }
 else:
     # Ustawienia lokalne (dla deweloperów)
-    print("Running in development mode")
+    print("Running in development mode <------------------------------------")
     SECRET_KEY = 'your-local-secret-key'  # Możesz ustawić na lokalny klucz dla deweloperów
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
     DEBUG = True
