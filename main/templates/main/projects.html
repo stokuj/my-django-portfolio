@@ -1,80 +1,88 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <!-- Search Input -->
-    <div class="mb-8 relative">
-        <div class="relative">
-            <input 
-                type="text" 
-                placeholder="Search by name or description" 
-                class="input input-bordered w-full pr-12" 
-                id="searchInput"
-            />
-            <button 
-                class="absolute right-3 top-3 opacity-50 hover:opacity-100 transition-opacity hidden" 
-                id="clearButton"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
-    </div>
+{% load static %}
+<div class="hero bg-base-200 rounded-box" style="background-image: url('{% static 'images/hero-bg2.png' %}')">
+    <div class="hero-content flex-col w-full">
 
-    <!-- Lista wszystkich badge/tags w karcie -->
-    <div class="card bg-base-200 p-6 mb-8">
-        <div class="flex flex-wrap justify-center gap-4" id="tagFilter">
-            <button 
-                class="btn btn-primary text-xl px-4 py-2 cursor-pointer active-tag" 
-                data-tag="all"
-            >
-                All Projects
-            </button>
-            {% for tag in all_tags %}
+        <!-- Search Input -->
+        <div class="mb-2 mt-4 relative w-full max-w-4xl">
+            <div class="relative">
+                <input 
+                    type="text" 
+                    placeholder="Search by name or description" 
+                    class="input input-bordered w-full pr-12" 
+                    id="searchInput"
+                />
                 <button 
-                    class="btn btn-outline text-xl px-4 py-2 cursor-pointer" 
-                    data-tag="{{ tag.name|lower }}"
+                    class="absolute right-3 top-3 opacity-50 hover:opacity-100 transition-opacity hidden" 
+                    id="clearButton"
                 >
-                    {{ tag.name }}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
+            </div>
+        </div>
+
+        <!-- Lista wszystkich badge/tags w karcie -->
+        <div class="card bg-base-200 p-6 mb-8 w-full max-w-4xl">
+            <div class="flex flex-wrap justify-center gap-4" id="tagFilter">
+                <button 
+                    class="btn btn-primary text-xl px-4 py-2 cursor-pointer active-tag" 
+                    data-tag="all"
+                >
+                    All Projects
+                </button>
+                {% for tag in all_tags %}
+                    <button 
+                        class="btn btn-outline text-xl px-4 py-2 cursor-pointer" 
+                        data-tag="{{ tag.name|lower }}"
+                    >
+                        {{ tag.name }}
+                    </button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Projekty w kartach -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl">
+            {% for project in projects %}
+                <div 
+                    class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow project-card"
+                    data-tags="{% for tag in project.tags.all %}{{ tag.name|lower }} {% endfor %}"
+                >
+                    <figure class="px-4 pt-4">
+                        <img 
+                            src="{{ project.thumbnail.url }}" 
+                            alt="{{ project.title }}" 
+                            class="rounded-xl h-64 w-full object-cover"
+                        />
+                    </figure>
+                    <div class="card-body">
+                        <h2 class="card-title">
+                            {{ project.title }}
+                            <div class="badge badge-secondary">NEW</div>
+                        </h2>
+                        <p class="line-clamp-3">{{ project.short_description }}</p>
+                        <div class="card-actions justify-end mt-4">
+                            {% for tag in project.tags.all %}
+                                <div class="badge badge-outline">{{ tag.name }}</div>
+                            {% endfor %}
+                        </div>
+                        <br>
+                        <a href="/projects/{{project.id}}" class="btn btn-primary btn-xl ">
+                            View Project
+                        </a>
+                    </div>
+                </div>
             {% endfor %}
         </div>
-    </div>
-    
 
-    <!-- Projekty w kartach -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {% for project in projects %}
-            <div 
-                class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow project-card"
-                data-tags="{% for tag in project.tags.all %}{{ tag.name|lower }} {% endfor %}"
-            >
-                <figure class="px-4 pt-4">
-                    <img 
-                        src="{{ project.thumbnail.url }}" 
-                        alt="{{ project.title }}" 
-                        class="rounded-xl h-64 w-full object-cover"
-                    />
-                </figure>
-                <div class="card-body">
-                    <h2 class="card-title">
-                        {{ project.title }}
-                        <div class="badge badge-secondary">NEW</div>
-                    </h2>
-                    <p class="line-clamp-3">{{ project.short_description }}</p>
-                    <div class="card-actions justify-end mt-4">
-                        {% for tag in project.tags.all %}
-                            <div class="badge badge-outline">{{ tag.name }}</div>
-                        {% endfor %}
-                    </div>
-                    <br>
-                    <a href="/projects/{{project.id}}" class="btn btn-primary btn-xl ">
-                        View Project
-                    </a>
-                </div>
-            </div>
-        {% endfor %}
-        
+    </div>
+</div>
+
+
         <!-- JavaScript for client-side filtering -->
         <script>
             const searchInput = document.getElementById('searchInput')

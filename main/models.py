@@ -16,8 +16,11 @@ class Project(models.Model):
     title = models.CharField(max_length=200)
     thumbnail = models.ImageField(upload_to='thumbnails/', blank=True, null=True, default='thumbnails/default_image.png')
     short_description = models.CharField(max_length=100)
-    #description = HTMLField()  # pole rich text
     description = RichTextField()
+    role = RichTextField(blank=True, null=True)
+    challenges = RichTextField(blank=True, null=True)
+    features = RichTextField(blank=True, null=True)
+    technical_details = RichTextField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True)
 
     def __str__(self):

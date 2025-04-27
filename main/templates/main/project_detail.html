@@ -6,32 +6,96 @@
 <div class="container mx-auto p-6">
     <div class="card w-full p-8 bg-base-200 shadow">
         <div class="card-body">
-            <div class="flex justify-center"> 
-                <h1 class="text-xl font-bold">{{ project.title }}</h1>
-            </div>
-            {% if project.thumbnail %}
-                <figure>
-                    <img src="{{ project.thumbnail.url }}" alt="{{ project.title }}" class="object-contain mt-8" />
-                </figure>
-            {% else %}
-                <div class="flex justify-center items-center h-64 bg-base-200">
-                    <span class="text-base-content">No thumbnail</span>
+            <h1 class="text-xl font-bold text-center">{{ project.title }}</h1>
+
+            <section class="mt-10">
+                <h2 class="text-2xl font-bold text-green-400 mb-4">Title + desc:</h2>
+                <div class="bg-gray-800 p-6 rounded-xl">
+                    {{ project.description|linebreaks }}
                 </div>
+            </section>
+
+            {% if project.thumbnail %}
+            <figure class="my-6 flex justify-center">
+                <img src="{{ project.thumbnail.url }}" alt="{{ project.title }}" class="object-contain" />
+            </figure>
             {% endif %}
-            <div class="text-base-content">
-                <article class="bg-base-300 p-6 rounded-box mt-4">
-                    {{ project.description|safe }}
-                </article>
+
+            <div class="container mt-10">
+                <div class="card bg-base-200">
+                    <div class="card-body">
+                
+                        <div class="flex items-center gap-2 mb-4">
+                            <h2 class="text-primary">My Role & Contribution</h2>
+                        </div>
+                        <div class="p-6 border rounded-lg bg-base-100">
+                            <p class="text-secondary">
+                            I designed and built the entire system from scratch, focusing on creating a simple but powerful tool that would make sales tracking easier.
+                            I developed both the backend database structure and the frontend interface, with special attention to the reporting features.
+                            </p>
+                
+                    </div>
+                </div>
             </div>
-            
-            <div class="flex flex-wrap gap-2 mt-4">
-                {% for tag in project.tags.all %}
-                <span class="badge badge-outline">
-                    {{ tag.name|upper }}
-                </span>                
-                {% endfor %}
+
+            <div class="container mt-10">
+                <div class="card bg-base-200">
+                    <div class="card-body">
+                
+                        <div class="flex items-center gap-2 mb-4">
+                            <h2 class="text-primary">Technical Challenges & Solutions</h2>
+                        </div>
+                        <div class="p-6 border rounded-lg bg-base-100">
+                            <p class="text-secondary">
+                                {{ project.challenges|linebreaks }}
+                            </p>
+                
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-10">
+                <div class="card bg-base-200">
+                    <div class="card-body">
+                
+                        <div class="flex items-center gap-2 mb-4">
+                            <h2 class="text-primary">Key Features</h2>
+                        </div>
+                        <div class="p-6 border rounded-lg bg-base-100">
+                            <p class="text-secondary">
+                                {{ project.features|linebreaks }}
+                            </p>
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-10">
+                <div class="card bg-base-200">
+                    <div class="card-body">
+                
+                        <div class="flex items-center gap-2 mb-4">
+                            <h2 class="text-primary">Technical Details</h2>
+                        </div>
+                        <div class="p-6 border rounded-lg bg-base-100">
+                            <p class="text-secondary">
+                                Technology Stack
+                            </p>
+                            <div class="bg-gray-800 p-6 rounded-xl">
+                                {% for tag in project.tags.all %}
+                                <span class="badge badge-outline">
+                                    {{ tag.name|upper }}
+                                </span>                
+                                {% endfor %}
+                            </div>
+                            <p class="text-secondary">
+                                Key Results & Impact
+                            </p>
+                            <div class="bg-gray-800 p-6 rounded-xl">
+                                {{ project.technical_details|linebreaks }}
+                            </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock content %}
