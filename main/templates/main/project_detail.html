@@ -3,11 +3,6 @@
 {% block page_name %}{{ project.title }}{% endblock page_name %}
 
 {% block content %}
-<div class="card bg-base-200 w-full max-w-9/10 ...">max-w-9/10</div>
-<div class="card bg-base-200 w-full max-w-8/10 ...">max-w-8/10</div>
-<div class="card bg-base-200 w-full max-w-3/4 ...">max-w-3/4</div>
-<div class="card bg-base-200 w-full max-w-1/2 ...">max-w-1/2</div>
-<div class="card bg-base-200 w-full max-w-1/3 ...">max-w-1/3</div>
 
 <div class="container mx-auto p-6 max-w-8/10">
     <div class="card bg-base-200 w-full p-8 shadow">
@@ -67,7 +62,13 @@
                         </div>
                         <div class="p-6 border rounded-lg bg-base-100">
                             <p class="text-secondary">
-                                {{ project.features|linebreaks }}
+                                <ul class="space-y-4">
+                                    {% for feature in project.features %}
+                                        <li>{{ feature }}</li>
+                                    {% empty %}
+                                        <li>Brak cech do wyświetlenia</li>
+                                    {% endfor %}
+                                </ul>
                             </p>
                     </div>
                 </div>
@@ -83,7 +84,7 @@
                             <p class="text-secondary">
                                 Technology Stack
                             </p>
-                            <div class="bg-gray-800 p-6 rounded-xl">
+                            <div class="p-6 rounded-xl">
                                 {% for tag in project.tags.all %}
                                 <span class="badge badge-outline">
                                     {{ tag.name|upper }}
@@ -93,7 +94,7 @@
                             <p class="text-secondary">
                                 Key Results & Impact
                             </p>
-                            <div class="bg-gray-800 p-6 rounded-xl">
+                            <div class="p-6 rounded-xl">
                                 {{ project.technical_details|linebreaks }}
                             </div>
                     </div>
@@ -102,5 +103,11 @@
         </div>
     </div>
 </div>
+
+<div class="card bg-base-200 w-full max-w-9/10 ...">max-w-9/10</div>
+<div class="card bg-base-200 w-full max-w-8/10 ...">max-w-8/10</div>
+<div class="card bg-base-200 w-full max-w-3/4 ...">max-w-3/4</div>
+<div class="card bg-base-200 w-full max-w-1/2 ...">max-w-1/2</div>
+<div class="card bg-base-200 w-full max-w-1/3 ...">max-w-1/3</div>
 
 {% endblock content %}

@@ -2,6 +2,9 @@ from django.db import models
 from tinymce.models import HTMLField
 from django_summernote.fields import SummernoteTextField
 from ckeditor.fields import RichTextField
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import JSONField
+
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
@@ -19,7 +22,7 @@ class Project(models.Model):
     description = RichTextField()
     role = RichTextField(blank=True, null=True)
     challenges = RichTextField(blank=True, null=True)
-    features = RichTextField(blank=True, null=True)
+    features = JSONField(default=list)
     technical_details = RichTextField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True)
 
