@@ -71,6 +71,11 @@
                             {% endfor %}
                         </div>
                         <br>
+                        {% if project.blog %}
+                            <a href="/blog/{{project.blog_url}}" class="btn btn-primary btn-xl ">
+                                View Project
+                            </a>
+                        {% endif %}
                         <a href="/projects/{{project.id}}" class="btn btn-primary btn-xl ">
                             View Project
                         </a>

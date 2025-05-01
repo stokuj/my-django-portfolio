@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+
+{% block page_name %}Analiza rozkładu obciążeń podatkowych{% endblock page_name %}
+
+{% block content %}
+{% load static %}
+<h1 class="text-xl font-bold text-center">Analiza rozkładu obciążeń podatkowych</h1>
+
+<div class="container mx-auto p-6 max-w-7xl">
+    <figure class="">
+        <img 
+            src="{% static 'images/hero-bg2.png' %}" 
+            alt="test" 
+            class="rounded-xl h-64 w-full object-cover"
+        />
+    </figure>
+</div>
+<div class="container mx-auto p-6 max-w-7xl">
+    <div class="card bg-base-200 w-full p-8 shadow-xl">
+        <h1 class="text-3xl font-bold text-primary mb-6">Analiza podatkowa Fiskalii</h1>
+
+        <div class="prose">
+            <p class="text-lg mb-4 mt-2">
+                Projekt przygotowany na konkurs analityczny. Tematem analizy była dystrybucja obciążeń podatkowych w fikcyjnym państwie Fiskalia, w oparciu o dane mikropodatkowe. 
+                Celem było zbadanie, jak różne źródła dochodów i formy opodatkowania wpływają na system redystrybucji. Wykożystano Rstudio, stwożony odpowiedni plik w formacie .Rmd, który następnie został przetworzony do formatu .pdf.
+            </p>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Podatki dochodowe w Fiskalii</h2>
+            
+            <div class="grid md:grid-cols-3 gap-4 mt-6">
+                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
+                    <div class="card-body">
+                        <h3 class="card-title text-accent">PIT</h3>
+                        <p>Podatek dochodowy od pracy najemnej</p>
+                        <div class="flex flex-col gap-2 mt-3">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">Skala podatkowa:</span>
+                                <div class="flex gap-1">
+                                    <span class="badge badge-outline">15%</span>
+                                    <span class="badge badge-outline">40%</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">Kwota wolna:</span>
+                                <span class="text-primary">25 tys. zł</span>
+                            </div>
+                        </div>
+                        <div class="card-actions justify-end mt-3">
+                            <div class="badge badge-primary">Progresywny</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
+                    <div class="card-body">
+                        <h3 class="card-title text-accent">CIT</h3>
+                        <p>Podatek dochodowy od działalności gospodarczej</p>
+                        <div class="flex flex-col gap-2 mt-3">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">Podatek liniowy:</span>
+                                <span class="badge badge-outline badge-secondary">20%</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">Skala podatkowa:</span>
+                                <div class="flex gap-1">
+                                    <span class="badge badge-outline">15%</span>
+                                    <span class="badge badge-outline">40%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-actions justify-end mt-3">
+                            <div class="badge badge-secondary">Wybór formy</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
+                    <div class="card-body">
+                        <h3 class="card-title text-accent">Kapitałowy</h3>
+                        <p>Podatek od zysków kapitałowych</p>
+                        <div class="flex flex-col gap-2 mt-3">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">Stawka podatku:</span>
+                                <span class="badge badge-outline badge-accent">25%</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">Brak kwoty wolnej</span>
+                                <span class="text-error">0 zł</span>
+                            </div>
+                        </div>
+                        <div class="card-actions justify-end mt-3">
+                            <div class="badge badge-accent">Liniowy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="alert alert-info shadow-lg my-4">
+                <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                    <h3 class="font-bold">Zasady rozliczania podatków</h3>
+                    <div class="text-xs">
+                    <p class="mt-2">Przedsiębiorca może wybrać formę opodatkowania:</p>
+                    <ul class="list-disc pl-5 mt-1">
+                        <li>
+                        <span class="font-semibold">Skala podatkowa</span> - dochód z pracy najemnej i działalności gospodarczej są sumowane i opodatkowane progresywnie (15%/40%)
+                        </li>
+                        <li>
+                        <span class="font-semibold">Podatek liniowy</span> (20%) - dochody rozliczane są osobno (praca najemna na skali, działalność liniowo)
+                        </li>
+                    </ul>
+                    <p class="mt-2">Podatek od zysków kapitałowych (25%) jest zawsze rozliczany niezależnie od wybranej formy.</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+
+            <div class="bg-base-200 p-6 rounded-box mb-6">
+            <!-- Text Content -->
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-primary mb-4">Progresywność opodatkowania pracy w Fiskalii</h3>
+                <p class="text-base-content">
+                Progresywność opodatkowania pracy w Fiskalii jest wyraźnie widoczna, co potwierdza rosnąca stopa
+                opodatkowania wraz ze wzrostem dochodu. Najwyższe decyle dochodowe ponoszą proporcjonalnie
+                większe obciążenia podatkowe niż grupy o niższych dochodach, co jest charakterystyczne dla systemów
+                progresywnych.
+                </p>
+                <p class="text-base-content mt-4">
+                Efektywna stawka rośnie najszybciej do ok. 150 tys. PLN, a następnie wolniej, co widać w
+                skoku od kilku procent w najniższych decylach do ponad 15% w najwyższym.
+                </p>
+            </div>
+            
+                <!-- Wykres 1 -->
+                <div class="card bg-base-100 shadow w-full  mx-auto mb-8">
+                    <figure class="px-4 pt-4">
+                    <img src="{% static 'images/2.1.png' %}" alt="Klin podatkowy" class="rounded-xl w-full">
+                    </figure>
+                    <div class="card-body items-center text-center p-4">
+                    <h4 class="card-title">Rysunek 1: Klin podatkowy i empiryczna stopa opodatkowania według poziomu dochodu i grup decylowych (UoP)</h4>
+                    <p class="text-sm text-gray-500">Dochód brutto vs % obciążenia podatkowego</p>
+                    </div>
+                </div>
+            </div>
+            <!-- divider-->
+            <div class="divider"></div>
+
+            <div class="bg-base-200 p-6 rounded-box mb-6">
+                <!-- Text Content -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-primary mb-4">Opodatkowanie dochodów z działalności gospodarczej</h3>
+                    <p class="text-base-content">
+                        Progresywność opodatkowania działalności gospodarczej w Fiskalii wydaje się ograniczona. Na wykresie po lewej stronie widać, że klin podatkowy bardzo szybko rośnie do poziomu około 20% i następnie się wypłaszcza. To wskazuje na brak dalszej progresji po osiągnięciu pewnego poziomu dochodu.
+                    </p>
+                    <p class="text-base-content mt-4">
+                        Ponadto wykres po prawej stronie pokazuje, że od 5. decyla wzwyż stopa podatkowa przestaje rosnąć i stabilizuje się na poziomie około 20%, co sugeruje proporcjonalność lub wręcz regresję w najwyższych grupach dochodowych.
+                    </p>
+                </div>
+                
+                <!-- Wykres 1 -->
+                <div class="card bg-base-100 shadow w-full mx-auto mb-8">
+                    <figure class="px-4 pt-4">
+                        <img src="{% static 'images/2.2.png' %}" alt="Klin podatkowy dla działalności gospodarczej" class="rounded-xl w-full">
+                    </figure>
+                    <div class="card-body items-center text-center p-4">
+                        <h4 class="card-title">Rysunek 2</h4>
+                        <p class="text-sm text-gray-500">Dochód brutto vs % obciążenia</p>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- divider-->
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Proponowane reformy podatkowe</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6 mt-6">
+                <!-- Reforma A -->
+                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow border-2 border-primary">
+                    <div class="card-body">
+                        <h3 class="card-title text-primary">Scenariusz A</h3>
+                        <p class="text-lg font-medium mb-4">Obniżenie dolnej stawki + podwyższenie górnej</p>
+                        
+                        <div class="flex flex-col gap-3">
+                            <div class="flex justify-between items-center p-2 bg-base-200 rounded-box">
+                                <span class="font-medium">Obecna skala podatkowa:</span>
+                                <div class="flex gap-1">
+                                    <span class="badge badge-outline">15%</span>
+                                    <span class="badge badge-outline">40%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center p-2 bg-primary/10 rounded-box">
+                                <span class="font-medium">Nowa skala podatkowa:</span>
+                                <div class="flex gap-1">
+                                    <span class="badge badge-primary">10%</span>
+                                    <span class="badge badge-primary">45%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 p-3 bg-base-200 rounded-box">
+                                <h4 class="font-bold mb-2">Skutki reformy:</h4>
+                                <ul class="list-disc pl-5 text-sm">
+                                    <li>Zmniejszenie obciążeń dla niższych dochodów</li>
+                                    <li>Zwiększenie progresywności systemu</li>
+                                    <li>Spadek wpływów budżetowych o ~5.8%</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reforma B -->
+                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow border-2 border-secondary">
+                    <div class="card-body">
+                        <h3 class="card-title text-secondary">Scenariusz B</h3>
+                        <p class="text-lg font-medium mb-4">Odliczenie 2,5 tys. zł + podwyższenie górnej stawki</p>
+                        
+                        <div class="flex flex-col gap-3">
+                            <div class="flex justify-between items-center p-2 bg-base-200 rounded-box">
+                                <span class="font-medium">Obecna skala podatkowa:</span>
+                                <div class="flex gap-1">
+                                    <span class="badge badge-outline">15%</span>
+                                    <span class="badge badge-outline">40%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="p-2 bg-secondary/10 rounded-box">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium">Nowa stawka:</span>
+                                        <span class="badge badge-secondary">45%</span>
+                                    </div>
+                                </div>
+                                <div class="p-2 bg-secondary/10 rounded-box">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium">Odliczenie:</span>
+                                        <span class="text-secondary font-bold">2,500 zł</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 p-3 bg-base-200 rounded-box">
+                                <h4 class="font-bold mb-2">Skutki reformy:</h4>
+                                <ul class="list-disc pl-5 text-sm">
+                                    <li>Ulga dla wszystkich podatników</li>
+                                    <li>Większe korzyści dla średnich dochodów</li>
+                                    <li>Spadek wpływów budżetowych o ~4.9%</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+
+            <!-- divider-->
+            <div class="divider"></div>
+            <div class="bg-base-200 p-6 rounded-box mb-6">
+                <!-- Text Content -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-primary mb-4">Analiza reform podatkówych w Fiskalii</h3>
+                    <p class="text-base-content">
+                        Reforma podatkowa "A" zmniejszyłaby wpływy budżetu Fiskalii o 648 mln zł (spadek o 5,8%), natomiast scenariusz "B" – o 545 mln zł (4,9%). Pod względem redystrybucji, w scenariuszu A największe korzyści odnoszą podatnicy ze średnich grup dochodowych (decyle 5–8). Dzięki obniżeniu dolnej stawki podatkowej ich ulga rośnie wraz z dochodem. Najbogatsi (decyle 9–10), mimo stawki 45%, także zyskują w porównaniu z obecnym systemem. Reforma A wzmacnia progresywność i preferuje klasę średnią, ale kosztem większego ubytku w budżecie.
+                    </p>
+                    <p class="text-base-content mt-4">
+                        W scenariuszu "B" redystrybucja jest bardziej równomierna dzięki uldze 2 500 zł. Największe korzyści odnoszą podatnicy z dolnych i średnich decyli (2-6), dla których kwota ulgi stanowi znaczący procent ich obciążeń podatkowych. W efekcie ten wariant zapewnia szersze rozłożenie korzyści przy stosunkowo mniejszym wpływie na budżet (spadek wpływów o 4,9%). Warto przy tym zauważyć, że w wyższych decylach rośnie odsetek przedsiębiorców rozliczających się liniowo. Ponieważ reforma nie objęła podatku liniowego, a jedynie skalę podatkową, ci podatnicy - mimo że część dochodów (z pracy najemnej) rozliczają na skali - odczuwają mniejsze korzyści z reformy. W praktyce oznacza to, że efektywne obniżenie opodatkowania w ich przypadku jest mniejsze niż wśród osób rozliczających się wyłącznie na zasadach ogólnych.
+                    </p>
+                </div>
+
+                <!-- Tabela z wynikami -->
+                <div class="overflow-x-auto">
+                    <table class="table w-full">
+                        <thead>
+                            <tr class="bg-base-300">
+                                <th class="text-left">Scenariusz</th>
+                                <th class="text-right">Suma podatków (PLN)</th>
+                                <th class="text-right">Różnica (PLN)</th>
+                                <th class="text-right">Zmiana (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-base-100">
+                                <td class="font-medium">Obecny system</td>
+                                <td class="text-right">11 157 871 321</td>
+                                <td class="text-right">0</td>
+                                <td class="text-right">0%</td>
+                            </tr>
+                            <tr class=" bg-base-100">
+                                <td class="font-medium text-primary">Scenariusz A</td>
+                                <td class="text-right">10 509 847 295</td>
+                                <td class="text-right text-error">-648 024 026</td>
+                                <td class="text-right text-error">-5.8%</td>
+                            </tr>
+                            <tr class=" bg-base-100">
+                                <td class="font-medium text-secondary">Scenariusz B</td>
+                                <td class="text-right">10 612 548 155</td>
+                                <td class="text-right text-error">-545 323 166</td>
+                                <td class="text-right text-error">-4.9%</td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Legenda -->
+                <div class="mt-4 text-sm text-gray-500">
+                    <p>* Wartości ujemne oznaczają zmniejszenie wpływów budżetowych</p>
+                </div>
+
+                <!-- Wykres 1 -->
+                <div class="card bg-base-100 shadow w-full mx-auto mb-8 mt-6">
+                    <figure class="px-4 pt-4">
+                        <img src="{% static 'images/3.png' %}" alt="Klin podatkowy dla działalności gospodarczej" class="rounded-xl w-full">
+                    </figure>
+                    <div class="card-body items-center text-center p-4">
+                        <h4 class="card-title">Rysunek 3</h4>
+                        <p class="text-sm text-gray-500"></p>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- divider-->
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Realizacja zadania</h2>
+
+            <div class="collapse collapse-arrow bg-base-100 border-base-300 border mt-6">
+                <input type="checkbox" />
+                <div class="collapse-title font-semibold">Dokument w formacie dla Rstudio Rmarkdown.</div>
+                <div class="collapse-content text-sm">
+                    <div class="mockup-code w-full">
+                        <pre data-prefix="$"><code>
+                            TO DO
+                        </code></pre>
+                    </div>    
+                </div>
+            </div>
+
+            <!-- divider-->
+            <div class="divider"></div>
+
+            <!-- Wnioski i rekomendacje -->`
+            <h2 class="text-2xl font-semibold text-secondary">Kluczowe wnioski</h2>
+            
+            <div class="stats shadow my-6">
+                <div class="stat">
+                    <div class="stat-title">Suma wpływów</div>
+                    <div class="stat-value text-primary">11.15 mld zł</div>
+                    <div class="stat-desc">Roczne wpływy podatkowe</div>
+                </div>
+                
+                <div class="stat">
+                    <div class="stat-title">Progresywność</div>
+                    <div class="stat-value text-secondary">15-40%</div>
+                    <div class="stat-desc">Skala podatkowa PIT</div>
+                </div>
+                
+                <div class="stat">
+                    <div class="stat-title">Ulga podatkowa</div>
+                    <div class="stat-value">25 tys. zł</div>
+                    <div class="stat-desc">Kwota wolna od podatku</div>
+                </div>
+            </div>
+
+            <div class="alert alert-info shadow-lg mt-6">
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <span>System podatkowy Fiskalii wykazuje silne efekty redystrybucyjne, szczególnie w przypadku dochodów z pracy najemnej.</span>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

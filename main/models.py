@@ -19,10 +19,14 @@ class Project(models.Model):
     title = models.CharField(max_length=200)
     thumbnail = models.ImageField(upload_to='thumbnails/', blank=True, null=True, default='thumbnails/default_image.png')
     short_description = models.CharField(max_length=100)
-    description = RichTextField()
+    
+    blog = models.BooleanField(default=False)
+    blog_url = models.CharField(max_length=100, blank=True, null=True)
+    
+    description = RichTextField(blank=True, null=True)
     role = RichTextField(blank=True, null=True)
     challenges = RichTextField(blank=True, null=True)
-    features = JSONField(default=list)
+    features = JSONField(default=list, blank=True, null=True)
     technical_details = RichTextField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True)
 

@@ -9,5 +9,5 @@ urlpatterns = [
     path("projects/", views.projects, name="projects"),
     #path('projects/', project_list, name='projects'),
     path("projects/<int:project_id>/", views.project_detail, name="project_detail"),
-
+    path("blog/analiza_makro_konkurs/", views.analiza_makro_konkurs, name="analiza_makro_konkurs"),
 ]

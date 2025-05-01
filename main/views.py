@@ -25,3 +25,6 @@ def projects(request):
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     return render(request, "main/project_detail.html", {"project": project})
+
+def analiza_makro_konkurs(request):
+    return render(request, "main/blog/analiza_makro_konkurs.html")
