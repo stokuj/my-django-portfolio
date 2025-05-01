@@ -102,7 +102,7 @@ else:
         'NAME': 'portfolioDB',
         'USER': 'postgres',
         'PASSWORD': 'NstftHLz',
-        'HOST': 'localhost',  
+        'HOST': 'db',  
         'PORT': '5432',       # domyślny port PostgreSQL
         }
     }
