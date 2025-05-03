@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block page_name %}Analiza rozkładu obciążeń podatkowych{% endblock page_name %}
+
+{% block content %}
+
+<h1 class="text-xl font-bold text-center">Cryptocurrency Price Prediction using Neural Networks</h1>
+
+
+<div class="container mx-auto p-6 max-w-7xl">
+                <!-- Hero Section -->
+                <div class="hero bg-base-200 rounded-lg p-8 mb-8">
+                    <div class="hero-content text-center">
+                        <div class="max-w-2xl">
+                            <h1 class="text-5xl font-bold mb-4">📚 Cryptocurrency Price Prediction using Neural Networks</h1>
+                            <p class="text-xl">Advanced price prediction using LSTM, GRU, and hybrid models with interactive GUI</p>
+                        </div>
+                    </div>
+                </div>
+    <div class="card bg-base-200 w-full p-8 shadow-xl">
+
+        <div class="container mx-auto px-4">
+
+
+            <!-- Features Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="card bg-base-200 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">🚀 Features</h2>
+                        <ul class="list-disc pl-5">
+                            <li>Multiple Cryptocurrencies (BTC, ETH, DOGE, LTC)</li>
+                            <li>Flexible Data Sources</li>
+                            <li>Neural Network Models</li>
+                            <li>Interactive Tkinter GUI</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card bg-base-200 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">🛠️ Installation</h2>
+                        <pre class="bg-base-300 p-4 rounded-lg"><code>git clone https://github.com/yourusername/cryptocurrency-prediction.git
+cd cryptocurrency-prediction
+pip install -r requirements.txt</code></pre>
+                    </div>
+                </div>
+
+                <div class="card bg-base-200 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">▶️ Usage</h2>
+                        <pre class="bg-base-300 p-4 rounded-lg"><code>python app.py</code></pre>
+                        <p class="mt-2">Use the GUI to select parameters and visualize predictions</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Structure -->
+            <div class="card bg-base-200 mb-8">
+                <div class="card-body">
+                    <h2 class="card-title">📁 Project Structure</h2>
+                    <pre class="bg-base-300 p-4 rounded-lg"><code>/cryptocurrency-prediction/
+│
+├── app.py
+├── model.py
+├── view.py
+├── controller.py
+├── dane/
+└── requirements.txt</code></pre>
+                </div>
+            </div>
+
+            <!-- Key Findings -->
+            <div class="card bg-base-200 mb-8">
+                <div class="card-body">
+                    <h2 class="card-title">📊 Key Findings</h2>
+                    <div class="grid gap-4">
+                        <div class="alert alert-success">
+                            <span>GRU trains faster, LSTM has smoother predictions</span>
+                        </div>
+                        <div class="alert alert-info">
+                            <span>More data improves model performance</span>
+                        </div>
+                        <div class="alert alert-warning">
+                            <span>Increased future days reduces precision</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Architecture -->
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <div class="card bg-base-200">
+                    <div class="card-body">
+                        <h2 class="card-title">🧠 Model</h2>
+                        <ul class="list-disc pl-5">
+                            <li>Data preprocessing</li>
+                            <li>Neural network training</li>
+                            <li>LSTM/GRU implementation</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card bg-base-200">
+                    <div class="card-body">
+                        <h2 class="card-title">🎨 View</h2>
+                        <ul class="list-disc pl-5">
+                            <li>Tkinter GUI</li>
+                            <li>Parameter controls</li>
+                            <li>Visualization</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card bg-base-200">
+                    <div class="card-body">
+                        <h2 class="card-title">⚙️ Controller</h2>
+                        <ul class="list-disc pl-5">
+                            <li>Application logic</li>
+                            <li>State management</li>
+                            <li>Model-View connection</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
+                <div>
+                    <p>📄 MIT License - 💌 Contact via GitHub Issues</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+{% endblock content %}

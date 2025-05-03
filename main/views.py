@@ -28,3 +28,9 @@ def project_detail(request, project_id):
 
 def analiza_makro_konkurs(request):
     return render(request, "main/blog/analiza_makro_konkurs.html")
+
+def web_scrapper_lubimyczytac(request):
+    return render(request, "main/blog/web_scrapper_lubimyczytac.html")
+
+def CryptoCurrencyPP(request):
+    return render(request, "main/blog/CryptoCurrencyPP.html")
