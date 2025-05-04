@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'personal_portfolio.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')  # Domyślnie ustawiamy na 'development'
-RAILWAY_ENVIRONMENT_NAME = os.getenv('RAILWAY_PRIVATE_DOMAIN', 'development')  # Domyślnie ustawiamy na 'development'
+RAILWAY_ENVIRONMENT_NAME = os.getenv('RAILWAY_ENVIRONMENT_NAME', 'development')  # Domyślnie ustawiamy na 'development'
 
 
 if RAILWAY_ENVIRONMENT_NAME == 'production':
