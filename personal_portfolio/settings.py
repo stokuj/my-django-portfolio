@@ -83,21 +83,41 @@ DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')  # Domyślnie ustawiamy na '
 RAILWAY_ENVIRONMENT_NAME = os.getenv('RAILWAY_ENVIRONMENT_NAME', 'development')  # Domyślnie ustawiamy na 'development'
 
 
-
-# Ustawienia lokalne (dla deweloperów)
-print("Running in development mode <------------------------------------")
-SECRET_KEY = 'your-local-secret-key'  # Możesz ustawić na lokalny klucz dla deweloperów
-DEBUG = True
-DATABASES = {
+if RAILWAY_ENVIRONMENT_NAME == 'production':
+    # Ustawienia dla produkcji
+    print("Running in production mode RAILWAY <------------------------------------")
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    DEBUG = True
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv('DATABASE_URL', 'postgresql://postgres:QdpkIDzXnPElyOwDlgKddNLxQZcfRVlB@postgres.railway.internal:5432/railway')
+        )
+    }
+elif DJANGO_ENV == 'production':
+    # Ustawienia dla produkcji
+    print("Running in production mode <------------------------------------")
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    DEBUG = True
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv('DATABASE_URL', 'postgresql://portfoliodb_9okm_user:kP39xpJ23Urmk8lZESdE006YJ5U0Qxj6@dpg-d06ft9ili9vc73eb8p3g-a.frankfurt-postgres.render.com/portfoliodb_9okm')
+        )
+    }
+else:
+    # Ustawienia lokalne (dla deweloperów)
+    print("Running in development mode <------------------------------------")
+    SECRET_KEY = 'your-local-secret-key'  # Możesz ustawić na lokalny klucz dla deweloperów
+    DEBUG = True
+    DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'myprojectdb',
-        'USER': 'myprojectuser',
-        'PASSWORD': 'securepassword',
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': 'portfolioDB',
+        'USER': 'postgres',
+        'PASSWORD': 'NstftHLz',
+        'HOST': 'localhost',  
+        'PORT': '5432',       # domyślny port PostgreSQL
+        }
     }
-}
 
 
 
