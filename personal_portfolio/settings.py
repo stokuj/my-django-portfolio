@@ -82,16 +82,7 @@ WSGI_APPLICATION = 'personal_portfolio.wsgi.application'
 DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')  # Domyślnie ustawiamy na 'development'
 RAILWAY_ENVIRONMENT_NAME = os.getenv('RAILWAY_PRIVATE_DOMAIN', 'development')  # Domyślnie ustawiamy na 'development'
 
-# if DJANGO_ENV == 'production':
-#     # Ustawienia dla produkcji
-#     print("Running in production mode <------------------------------------")
-#     SECRET_KEY = os.getenv('SECRET_KEY')
-#     DEBUG = True
-#     DATABASES = {
-#         'default': dj_database_url.config(
-#             default=os.getenv('DATABASE_URL', 'postgresql://portfoliodb_9okm_user:kP39xpJ23Urmk8lZESdE006YJ5U0Qxj6@dpg-d06ft9ili9vc73eb8p3g-a.frankfurt-postgres.render.com/portfoliodb_9okm')
-#         )
-#     }
+
 if RAILWAY_ENVIRONMENT_NAME == 'production':
     # Ustawienia dla produkcji
     print("Running in production mode RAILWAY <------------------------------------")
@@ -104,14 +95,14 @@ if RAILWAY_ENVIRONMENT_NAME == 'production':
     }
 elif DJANGO_ENV == 'production':
     # Ustawienia dla produkcji
-    print("Running in production mode RENDER <------------------------------------")
+    print("Running in production mode <------------------------------------")
     SECRET_KEY = os.getenv('SECRET_KEY')
     DEBUG = True
     DATABASES = {
         'default': dj_database_url.config(
-            default=os.getenv('DATABASE_URL', 'portfoliodb_9okm_user:kP39xpJ23Urmk8lZESdE006YJ5U0Qxj6@dpg-d06ft9ili9vc73eb8p3g-a.frankfurt-postgres.render.com/portfoliodb_9okm')
+            default=os.getenv('DATABASE_URL', 'postgresql://portfoliodb_9okm_user:kP39xpJ23Urmk8lZESdE006YJ5U0Qxj6@dpg-d06ft9ili9vc73eb8p3g-a.frankfurt-postgres.render.com/portfoliodb_9okm')
         )
-    } 
+    }
 else:
     # Ustawienia lokalne (dla deweloperów)
     print("Running in development mode <------------------------------------")
