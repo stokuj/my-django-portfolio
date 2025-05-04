@@ -1809,59 +1809,6 @@
     min-height: 3.75rem;
     transition: background-color 0.2s ease-out;
   }
-  .mockup-browser {
-    position: relative;
-    overflow: hidden;
-    overflow-x: auto;
-    border-radius: var(--radius-box);
-    pre[data-prefix] {
-      &:before {
-        content: attr(data-prefix);
-        display: inline-block;
-        text-align: right;
-      }
-    }
-    .mockup-browser-toolbar {
-      margin-block: calc(0.25rem * 3);
-      display: inline-flex;
-      width: 100%;
-      align-items: center;
-      padding-right: 1.4em;
-      &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
-        flex-direction: row-reverse;
-      }
-      &:before {
-        content: "";
-        margin-right: 4.8rem;
-        display: inline-block;
-        aspect-ratio: 1 / 1;
-        height: calc(0.25rem * 3);
-        border-radius: calc(infinity * 1px);
-        opacity: 30%;
-        box-shadow: 1.4em 0, 2.8em 0, 4.2em 0;
-      }
-      .input {
-        margin-inline: auto;
-        display: flex;
-        height: 100%;
-        align-items: center;
-        gap: calc(0.25rem * 2);
-        overflow: hidden;
-        background-color: var(--color-base-200);
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-size: 0.75rem;
-        direction: ltr;
-        &:before {
-          content: "";
-          width: calc(0.25rem * 4);
-          height: calc(0.25rem * 4);
-          opacity: 30%;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='currentColor' class='size-4'%3E%3Cpath fill-rule='evenodd' d='M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z' clip-rule='evenodd' /%3E%3C/svg%3E%0A");
-        }
-      }
-    }
-  }
   .mockup-code {
     position: relative;
     overflow: hidden;
@@ -1896,6 +1843,37 @@
           text-align: right;
           opacity: 50%;
         }
+      }
+    }
+  }
+  .mockup-window {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    overflow-x: auto;
+    border-radius: var(--radius-box);
+    padding-top: calc(0.25rem * 5);
+    &:before {
+      content: "";
+      margin-bottom: calc(0.25rem * 4);
+      display: block;
+      aspect-ratio: 1 / 1;
+      height: calc(0.25rem * 3);
+      flex-shrink: 0;
+      align-self: flex-start;
+      border-radius: calc(infinity * 1px);
+      opacity: 30%;
+      box-shadow: 1.4em 0, 2.8em 0, 4.2em 0;
+    }
+    [dir="rtl"] &:before {
+      align-self: flex-end;
+    }
+    pre[data-prefix] {
+      &:before {
+        content: attr(data-prefix);
+        display: inline-block;
+        text-align: right;
       }
     }
   }
@@ -2898,8 +2876,14 @@
   .h-16 {
     height: calc(var(--spacing) * 16);
   }
+  .h-24 {
+    height: calc(var(--spacing) * 24);
+  }
   .h-64 {
     height: calc(var(--spacing) * 64);
+  }
+  .h-80 {
+    height: calc(var(--spacing) * 80);
   }
   .min-h-screen {
     min-height: 100vh;
@@ -2912,6 +2896,9 @@
   }
   .w-6 {
     width: calc(var(--spacing) * 6);
+  }
+  .w-24 {
+    width: calc(var(--spacing) * 24);
   }
   .w-full {
     width: 100%;
@@ -2994,6 +2981,9 @@
   }
   .flex-wrap {
     flex-wrap: wrap;
+  }
+  .place-content-center {
+    place-content: center;
   }
   .items-baseline {
     align-items: baseline;
@@ -3096,6 +3086,11 @@
     color: var(--color-info-content);
     --alert-color: var(--color-info);
   }
+  .alert-success {
+    border-color: var(--color-success);
+    color: var(--color-success-content);
+    --alert-color: var(--color-success);
+  }
   .border-base-100 {
     border-color: var(--color-base-100);
   }
@@ -3119,9 +3114,6 @@
   }
   .bg-base-300 {
     background-color: var(--color-base-300);
-  }
-  .bg-neutral {
-    background-color: var(--color-neutral);
   }
   .bg-primary\/10 {
     background-color: var(--color-primary);
@@ -3185,9 +3177,6 @@
   }
   .py-8 {
     padding-block: calc(var(--spacing) * 8);
-  }
-  .py-16 {
-    padding-block: calc(var(--spacing) * 16);
   }
   .py-24 {
     padding-block: calc(var(--spacing) * 24);
