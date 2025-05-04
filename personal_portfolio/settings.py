@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key')
 
 
-ALLOWED_HOSTS = ['devoted-renewal-production.up.railway.app/','my-django-portfolio.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['devoted-renewal-production.up.railway.app','my-django-portfolio.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
