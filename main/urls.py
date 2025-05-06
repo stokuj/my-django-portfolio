@@ -11,6 +11,7 @@ urlpatterns = [
     path("projects/<int:project_id>/", views.project_detail, name="project_detail"),
     path("blog/analiza_makro_konkurs/", views.analiza_makro_konkurs, name="analiza_makro_konkurs"),
     path("blog/web_scrapper_lubimyczytac/", views.web_scrapper_lubimyczytac, name="web_scrapper_lubimyczytac"),
-        path("blog/CryptoCurrencyPP/", views.CryptoCurrencyPP, name="CryptoCurrencyPP"),
+    path("blog/CryptoCurrencyPP/", views.CryptoCurrencyPP, name="CryptoCurrencyPP"),
+    path("blog/multidimensional_dashboard/", views.multidimensional_dashboard, name="multidimensional_dashboard"),
 ]
 

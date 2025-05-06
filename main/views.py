@@ -34,3 +34,6 @@ def web_scrapper_lubimyczytac(request):
 
 def CryptoCurrencyPP(request):
     return render(request, "main/blog/CryptoCurrencyPP.html")
+
+def multidimensional_dashboard(request):
+    return render(request, "main/blog/multidimensional_dashboard.html")

@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto p-6 max-w-7xl">
+    <div class="card bg-base-200 w-full p-8 shadow-xl">
+        <h1 class="text-3xl font-bold text-primary mb-6">📊 Multidimensional Data Visualization Dashboard</h1>
+
+        <div class="prose max-w-none">
+            <p class="text-lg mb-4 mt-2">
+                Interaktywny system do analizy i wizualizacji wielowymiarowych danych z wykorzystaniem wykresów równoległych.
+                Aplikacja umożliwia eksplorację danych poprzez dynamiczne filtrowanie i zaawansowane techniki wizualizacji.
+            </p>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Kluczowe funkcjonalności</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 mt-4">
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">📈 Wizualizacje</h2>
+                        <ul class="list-disc pl-5">
+                            <li>Parallel Coordinates</li>
+                            <li>Parallel Categories</li>
+                            <li>Tabela danych</li>
+                            <li>Interaktywne filtry</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">📁 Struktura projektu</h2>
+                        <pre class="bg-base-300 p-4 rounded-lg"><code>IMP/
+├── controller.py
+├── model.py
+├── view.py
+├── dashApp.py
+├── data.py
+├── main.py
+└── web/
+    └── main.html</code></pre>
+                    </div>
+                </div>
+
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">⚙️ Technologie</h2>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="badge badge-primary">Python</span>
+                            <span class="badge badge-secondary">Dash</span>
+                            <span class="badge badge-accent">Plotly</span>
+                            <span class="badge badge-primary">Pandas</span>
+                            <span class="badge badge-secondary">Eel</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Architektura MVC</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6 mb-8 mt-4">
+                <div class="card bg-base-100">
+                    <div class="card-body">
+                        <h2 class="card-title">🧠 Model</h2>
+                        <ul class="list-disc pl-5">
+                            <li>Przetwarzanie danych</li>
+                            <li>Walidacja plików</li>
+                            <li>Transformacje danych</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-100">
+                    <div class="card-body">
+                        <h2 class="card-title">🎨 Widok</h2>
+                        <ul class="list-disc pl-5">
+                            <li>Interfejs Dash</li>
+                            <li>Komponenty Plotly</li>
+                            <li>Responsywny layout</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-100">
+                    <div class="card-body">
+                        <h2 class="card-title">⚙️ Kontroler</h2>
+                        <ul class="list-disc pl-5">
+                            <li>Obsługa zdarzeń</li>
+                            <li>Komunikacja Model-Widok</li>
+                            <li>Logika aplikacji</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Konfiguracja</h2>
+            
+            <div class="alert alert-info shadow-lg my-4">
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div class="ml-2">
+                        <ul class="list-disc pl-5">
+                            <li>Wymagany Python 3.7+</li>
+                            <li>Obsługa formatów: CSV, XLS, TSV</li>
+                            <li>Automatyczne wykrywanie separatorów</li>
+                            <li>Minimalne zużycie pamięci</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapse collapse-arrow bg-base-100 border">
+                <input type="checkbox" /> 
+                <div class="collapse-title text-xl font-medium">
+                    🚀 Instalacja
+                </div>
+                <div class="collapse-content">
+                    <div class="mockup-code mt-4">
+                        <pre><code>pip install -r requirements.txt</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapse collapse-arrow bg-base-100 border mt-4">
+                <input type="checkbox" /> 
+                <div class="collapse-title text-xl font-medium">
+                    ▶️ Uruchomienie
+                </div>
+                <div class="collapse-content">
+                    <div class="mockup-code mt-4">
+                        <pre><code>python main.py</code></pre>
+                    </div>
+                    <p class="mt-2">Aplikacja będzie dostępna pod adresem <span class="text-primary">http://localhost:8050</span></p>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Podgląd działania</h2>
+            
+            <div class="mockup-window bg-base-100 border mt-4 mb-8">
+                <img src="{% static 'images/dashboard_preview.png' %}" 
+                     alt="Podgląd dashboardu" 
+                     class="w-full h-auto p-4" />
+            </div>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Obsługiwane formaty</h2>
+            
+            <div class="overflow-x-auto mt-4">
+                <table class="table w-full">
+                    <thead>
+                        <tr>
+                            <th>Format</th>
+                            <th>Obsługa</th>
+                            <th>Maks. rozmiar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CSV</td>
+                            <td><div class="badge badge-success">Pełna</div></td>
+                            <td>1GB</td>
+                        </tr>
+                        <tr>
+                            <td>Excel</td>
+                            <td><div class="badge badge-warning">Podstawowa</div></td>
+                            <td>100MB</td>
+                        </tr>
+                        <tr>
+                            <td>TSV</td>
+                            <td><div class="badge badge-success">Pełna</div></td>
+                            <td>1GB</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="divider"></div>
+
+            <footer class="footer footer-center p-4 bg-base-300 rounded-lg mt-8">
+                <div>
+                    <p>📄 MIT License - Dokumentacja techniczna dostępna w repozytorium</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+{% endblock content %}
