@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block page_name %}Aplikacja Pogodowa IMGW{% endblock page_name %}
+
+{% block content %}
+{% load static %}
+<h1 class="text-xl font-bold text-center mt-8 mb-8">System monitorowania danych meteorologicznych IMGW</h1>
+
+<div class="container mx-auto p-6 max-w-7xl">
+    <div class="card bg-base-200 w-full p-8 shadow-xl">
+        <h1 class="text-3xl font-bold text-primary mb-6">Monitorowanie warunków pogodowych w czasie rzeczywistym</h1>
+
+        <div class="prose">
+            <p class="text-lg mb-4 mt-2">
+                Aplikacja umożliwia automatyczne pobieranie, przechowywanie i wizualizację danych meteorologicznych 
+                z ponad 50 stacji pogodowych IMGW. System integruje się z bazą danych PostgreSQL i oferuje zaawansowane 
+                narzędzia analityczne z interaktywnymi wykresami.
+            </p>
+
+            <!--Divider-->
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Kluczowe funkcje</h2>
+            <p class="text-base mb-4 mt-2">
+                Automatyczna aktualizacja danych co 5 minut z wykorzystaniem API IMGW. 
+                Zaawansowane wykresy z możliwością filtrowania danych według różnych przedziałów czasowych. 
+                Eksport wyników do formatu CSV oraz obliczenia statystyczne w czasie rzeczywistym.
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-4 mt-6">
+                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
+                    <div class="card-body">
+                        <h3 class="card-title text-accent">🌦️ Monitorowane parametry</h3>
+                        <div class="flex flex-wrap items-center gap-2 mt-4">
+                            <span class="badge badge-primary">Temperatura</span>
+                            <span class="badge badge-secondary">Prędkość wiatru</span>
+                            <span class="badge badge-primary">Kierunek wiatru</span>
+                            <span class="badge badge-secondary">Wilgotność</span>
+                            <span class="badge badge-primary">Opady</span>
+                            <span class="badge badge-secondary">Ciśnienie</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow p-6">
+                    <h2 class="text-2xl font-semibold text-secondary mb-4">📁 Architektura systemu</h2>
+                    <div class="text-neutral-content p-4 rounded-lg font-mono text-sm">
+                        <div class="flex items-baseline">
+                            <span class="text-accent">/aplikacja_pogodowa/</span>
+                        </div>
+                        <div class="flex items-baseline ml-4">
+                            <span>├──</span> <span class="text-primary">app.py</span>
+                        </div>
+                        <div class="flex items-baseline ml-4">
+                            <span>├──</span> <span class="text-primary">functions.py</span>
+                        </div>
+                        <div class="flex items-baseline ml-4">
+                            <span>├──</span> <span class="text-accent">data/</span><span class="text-primary">weather_data.csv</span>
+                        </div>
+                        <div class="flex items-baseline ml-4">
+                            <span>└──</span> <span class="text-primary">requirements.txt</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow mt-4">
+                <div class="card-body">
+                    <h3 class="card-title text-accent">⚙️ Stos technologiczny</h3>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <div class="badge badge-outline">Python 3.10</div>
+                        <div class="badge badge-outline badge-primary">PostgreSQL</div>
+                        <div class="badge badge-outline badge-secondary">Plotly</div>
+                        <div class="badge badge-outline">Tkinter</div>
+                        <div class="badge badge-outline">Pandas</div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Divider-->
+            <div class="divider"></div>
+            <h2 class="text-2xl font-semibold text-secondary">Konfiguracja systemu</h2>
+
+            <div class="alert alert-info shadow-lg my-4">
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div class="ml-2">
+                        <ul class="list-disc pl-5 text-base">
+                            <li>Wymagana instalacja <span class="font-semibold">PostgreSQL 13+</span></li>
+                            <li>Konfiguracja połączenia z bazą danych w klasie <code>MyClass</code></li>
+                            <li>Automatyczne tworzenie potrzebnych tabel przy pierwszym uruchomieniu</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapse collapse-arrow bg-base-100 border">
+                <input type="checkbox" /> 
+                <div class="collapse-title text-xl font-medium">
+                    Konfiguracja bazy danych
+                </div>
+                <div class="collapse-content"> 
+                    <div class="mockup-code">
+                        <pre class="mb-8 mt-4"><code>
+# Plik functions.py
+class MyClass():
+    def do_conn():
+        return psycopg2.connect(
+            host="localhost",
+            database="html",
+            user="postgres",
+            password="twoje_hasło"
+        )
+                        </code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!--Divider-->
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Wizualizacja danych</h2>
+            
+            <div class="grid md:grid-cols-2 gap-4 mt-6">
+                <div class="card bg-base-100 shadow">
+                    <figure class="px-4 pt-4">
+                        <img src="{% static 'temp_chart.png' %}" alt="Wykres temperatury" class="rounded-xl" />
+                    </figure>
+                    <div class="card-body">
+                        <h3 class="card-title">📈 Przykładowy wykres temperatury</h3>
+                        <p>Interaktywny wykres z możliwością przybliżania i przesuwania osi czasu</p>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-100 shadow">
+                    <figure class="px-4 pt-4">
+                        <img src="{% static 'wind_chart.png' %}" alt="Róża wiatrów" class="rounded-xl" />
+                    </figure>
+                    <div class="card-body">
+                        <h3 class="card-title">🌪️ Analiza kierunków wiatru</h3>
+                        <p>Róża wiatrów z kolorowym oznaczeniem prędkości</p>
+                    </div>
+                </div>
+            </div>
+
+            <!--Divider-->
+            <div class="divider"></div>
+
+            <div class="stats shadow bg-base-100 mt-6">
+                <div class="stat">
+                    <div class="stat-title">Obsługiwane stacje</div>
+                    <div class="stat-value text-primary">56</div>
+                    <div class="stat-desc">Na terenie całej Polski</div>
+                </div>
+                
+                <div class="stat">
+                    <div class="stat-title">Aktualizacja danych</div>
+                    <div class="stat-value text-secondary">5 min</div>
+                    <div class="stat-desc">Cykl pobierania danych</div>
+                </div>
+            </div>
+
+            <!--Divider-->
+            <div class="divider"></div>
+
+            <div class="alert alert-success shadow-lg mt-6">
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div class="ml-2">
+                        <p class="text-base">
+                            Dane meteorologiczne pochodzą z oficjalnego API Instytutu Meteorologii i Gospodarki Wodnej.<br>
+                            Aktualna dokumentacja API: 
+                            <a href="https://danepubliczne.imgw.pl/apiinfo" class="link link-primary" target="_blank">danepubliczne.imgw.pl/apiinfo</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

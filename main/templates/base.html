@@ -40,6 +40,23 @@
             
                 <!-- Left side: Logo -->
                 <div class="flex items-center">
+                    <!-- Hamburger tylko na mobilkach -->
+                    <div class="dropdown lg:hidden">
+                        <label tabindex="0" class="btn btn-ghost btn-circle">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-6 h-6" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </label>
+                        <ul tabindex="0"
+                            class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-72 text-lg space-y-2">
+                            <li class="mb-2 mt-2"><a href="/">Home</a></li>
+                            <li class="mb-2 mt-2"><a href="/projects/">My Projects</a></li>
+                            <li class="mb-2 mt-2"><a href="/about/">About me</a></li>
+                        </ul>
+                    </div>
+
                     <a href="/" class="btn btn-ghost text-xl">{{ site_name|default:"My Portfolio" }}</a>
                 </div>
 

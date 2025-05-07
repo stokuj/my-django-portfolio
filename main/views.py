@@ -42,3 +42,7 @@ def crypto_currency_pp(request):
 
 def multidimensional_dashboard(request):
     return render(request, "main/blog/multidimensional_dashboard.html")
+
+def weather_web_scraping(request):
+    return render(request, "main/blog/weather_web_scraping.html")
+
