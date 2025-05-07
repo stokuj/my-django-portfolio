@@ -63,6 +63,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'main.context_processors.visitor_counter',
                 'main.context_processors.project_count',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',

@@ -33,3 +33,5 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+class PageView(models.Model):
+    count = models.IntegerField(default=0)

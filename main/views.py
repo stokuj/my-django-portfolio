@@ -1,11 +1,17 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Project, Tag
+from .models import PageView
 
 def home(request):
+    if not request.session.get('has_visited'):
+        view_counter, created = PageView.objects.get_or_create(id=1)
+        view_counter.count += 1
+        view_counter.save()
+        request.session['has_visited'] = True
+        
+    count = PageView.objects.get(id=1).count
     return render(request, "main/home.html", {})
 
-def test(request):
-    return render(request, "main/test.html", {})
 
 def about(request):
     return render(request, "main/about.html", {})
@@ -20,7 +26,6 @@ def projects(request):
         'projects': projects,
         'all_tags': all_tags,
     })
-
 
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
