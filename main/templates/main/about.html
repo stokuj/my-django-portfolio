@@ -3,49 +3,68 @@
 {% block page_name %}About{% endblock page_name %}
 
 {% block content %}
+
 <div class="container mx-auto p-6 max-w-7xl">
-    <div class="hero min-h-screen bg-base-200 rounded-box border border-primary">>
+    <div class="hero min-h-screen bg-base-200 rounded-box border border-primary"> 
         <div class="hero-content text-center">
-            <div class="max-w-md">
-                <div class="text-2xl font-bold">ABOUT ME</div>
+            <div class="max-w-4xl">
+                <div class="text-2xl font-bold text-primary">ABOUT ME</div>
                 <br>
                 <div class="py-6">
-                <div class="text-4xl font-semibold">Hi, I'm Krystian Stasica</div>
-                <br>
-                <div class="text-2xl text-primary">Junior Full-Stack & Data Science Enthusiast</div>
-                <br>
-                <div class="text-2xl font-semibold pt-4">Technologies of intrest</div>
-                <div class="flex flex-wrap justify-center gap-2 py-2">
-                        <div class="badge badge-secondary">Python</div>
-                        <div class="badge badge-secondary">Django</div>
-                        <div class="badge badge-secondary">PostgreSQL</div>
-                        <div class="badge badge-secondary">NumPy</div>
-                        <div class="badge badge-secondary">Pandas</div>
-                        <div class="badge badge-secondary">Web Scraping</div>
-                        <div class="badge badge-secondary">Automated Testing</div>
-                        <div class="badge badge-secondary">C</div>
-                        <div class="badge badge-secondary">C++</div>
-                        <div class="badge badge-secondary">Java</div>
-                    </div>
-                    <p class="py-4 text-base">
-                    I'm a young specialist passionate about creating robust web applications and data-driven solutions. 
-                    My journey spans back-end development with Python, Django and PostgreSQL, data analysis and automation using NumPy, Pandas, web scraping techniques, and automated testing frameworks.
+                    <div class="text-4xl font-bold">Hi, I'm Krystian Stasica</div>
+                    <br>
+                    <div class="text-2xl text-primary font-semibold">Junior Full-Stack & Data Science Enthusiast</div>
+                    <br>
+                    
+                    <p class="py-4 text-lg">
+                        I'm a young specialist passionate about creating robust web applications and data-driven solutions. 
+                        My journey spans back-end development with Python, Django and PostgreSQL, data analysis and automation using NumPy, Pandas, web scraping techniques, and automated testing frameworks.
                     </p>
-                    <div class="text-2xl font-semibold pt-4">5 Key Soft Skills</div>
-                    <div class="flex flex-wrap justify-center gap-2 py-2">
-                        <div class="badge badge-accent">Communication</div>
-                        <div class="badge badge-accent">Problem-Solving</div>
-                        <div class="badge badge-accent">Adaptability</div>
-                        <div class="badge badge-accent">Teamwork</div>
-                        <div class="badge badge-accent">Time Management</div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 py-4">
+                        <!-- Technologies Card -->
+                        <div class="card bg-base-100 shadow-xl">
+                            <div class="card-body">
+                                <h2 class="card-title justify-center text-2xl font-semibold text-primary">Technologies of interest</h2>
+                                <div class="flex flex-wrap justify-center gap-2 py-2">
+                                    <div class="badge badge-secondary p-4">Python</div>
+                                    <div class="badge badge-secondary p-4">Django</div>
+                                    <div class="badge badge-secondary p-4">PostgreSQL</div>
+                                    <div class="badge badge-secondary p-4">NumPy</div>
+                                    <div class="badge badge-secondary p-4">Pandas</div>
+                                    <div class="badge badge-secondary p-4">Web Scraping</div>
+                                    <div class="badge badge-secondary p-4">Automated Testing</div>
+                                    <div class="badge badge-secondary p-4">C</div>
+                                    <div class="badge badge-secondary p-4">C++</div>
+                                    <div class="badge badge-secondary p-4">Java</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Soft Skills Card -->
+                        <div class="card bg-base-100 shadow-xl">
+                            <div class="card-body">
+                                <h2 class="card-title justify-center text-2xl font-semibold text-primary">5 Key Soft Skills</h2>
+                                <div class="flex flex-wrap justify-center gap-2 py-2">
+                                    <div class="badge badge-accent p-4">Communication</div>
+                                    <div class="badge badge-accent p-4">Problem-Solving</div>
+                                    <div class="badge badge-accent p-4">Adaptability</div>
+                                    <div class="badge badge-accent p-4">Teamwork</div>
+                                    <div class="badge badge-accent p-4">Time Management</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="flex gap-4 justify-center">
-                    <a href="mailto:krystian.stasica@outlook.com" class="btn btn-primary">Contact Me →</a>
-                    <a href="/projects/" class="btn btn-outline">See My Work 😊</a>
+                
+                <div class="flex gap-4 justify-center pt-6">
+                    <a href="mailto:krystian.stasica@outlook.com" class="btn btn-primary btn-lg">Contact Me →</a>
+                    <a href="/projects/" class="btn btn-outline btn-lg">See My Work 😊</a>
+                    <a href="https://github.com/stokuj/" class="btn btn-primary btn-lg">My Github</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock content %}

@@ -1,37 +1,36 @@
 {% extends "base.html" %}
 
-{% block page_name %}Cryptocurrency Price Prediction{% endblock page_name %}
+{% block page_name %}Predykcja Cen Kryptowalut{% endblock page_name %}
 
 {% block content %}
 
-<h1 class="text-xl font-bold text-center">📚 Cryptocurrency Price Prediction using Neural Networks</h1>
-
+<h1 class="text-xl font-bold text-center mt-8 mb-8">📚 Predykcja cen kryptowalut przy użyciu sieci neuronowych</h1>
 
 <div class="container mx-auto p-6 max-w-7xl">
     <div class="card bg-base-200 w-full p-8 shadow-xl">
-        <h1 class="text-3xl font-bold text-primary mb-6">Advanced price prediction using LSTM, GRU, and hybrid models with interactive GUI</h1>
+        <h1 class="text-3xl font-bold text-primary mb-6">Zaawansowana predykcja cen z użyciem LSTM, GRU i modeli hybrydowych z interfejsem graficznym</h1>
 
         <div class="prose">
             <p class="text-lg mb-4 mt-2">
-                This project aims to predicts cryptocurrency prices using advanced neural network architectures — LSTM (Long Short-Term Memory), GRU (Gated Recurrent Unit), and a hybrid LSTM-GRU model.
-                It includes a graphical user interface (GUI) built with Tkinter, allowing users to easily select parameters, visualize results, and interact with the prediction system.
+                Celem projektu jest przewidywanie cen kryptowalut przy użyciu zaawansowanych architektur sieci neuronowych — LSTM (Long Short-Term Memory), GRU (Gated Recurrent Unit) oraz modelu hybrydowego LSTM-GRU.
+                Aplikacja zawiera graficzny interfejs użytkownika (GUI) zbudowany w Tkinterze, umożliwiający łatwy wybór parametrów, wizualizację wyników oraz interakcję z systemem predykcyjnym.
             </p>
 
             <!--Divider-->
             <div class="divider"></div>
 
-            <h2 class="text-2xl font-semibold text-secondary">General info:</h2>
+            <h2 class="text-2xl font-semibold text-secondary">Informacje ogólne:</h2>
 
             <!-- Features Grid -->
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 mt-4">
                 <div class="card bg-base-100 shadow-xl">
                     <div class="card-body">
-                        <h2 class="card-title">🚀 Features</h2>
+                        <h2 class="card-title">🚀 Funkcje</h2>
                         <ul class="list-disc text-base pl-5 p-4">
-                            <li>Multiple Cryptocurrencies<br>(BTC, ETH, DOGE, LTC)</li>
-                            <li>Flexible Data Sources</li>
-                            <li>Neural Network Models</li>
-                            <li>Interactive Tkinter GUI</li>
+                            <li>Wiele kryptowalut<br>(BTC, ETH, DOGE, LTC)</li>
+                            <li>Elastyczne źródła danych</li>
+                            <li>Modele sieci neuronowych</li>
+                            <li>Interaktywny GUI w Tkinterze</li>
                         </ul>
                     </div>
                 </div>
@@ -39,7 +38,7 @@
                 <!-- Project Structure -->
                 <div class="card bg-base-100 shadow-xl">
                     <div class="card-body">
-                        <h2 class="card-title">📁 Project Structure</h2>
+                        <h2 class="card-title">📁 Struktura projektu</h2>
                         <pre class="bg-base-300 p-4 rounded-lg"><code>/cryptocurrency-prediction/
 <!--                    -->├── app.py
 <!--                    -->├── model.py
@@ -53,10 +52,10 @@
                 <!-- Usage -->
                 <div class="card bg-base-100 shadow-xl">
                     <div class="card-body">
-                        <h2 class="card-title">▶️ Usage</h2>
+                        <h2 class="card-title">▶️ Użycie</h2>
 
                         <pre class="bg-base-300 p-4 rounded-lg mt-8"><code>python app.py</code></pre>
-                        <p class="text-base mt-2">Use the GUI to select parameters and visualize predictions</p>
+                        <p class="text-base mt-2">Użyj GUI, aby wybrać parametry i zobaczyć predykcje</p>
 
                     </div>
                 </div>
@@ -64,36 +63,36 @@
 
             <!--Divider-->
             <div class="divider"></div>
-            <h2 class="text-2xl font-semibold text-secondary">Project Architecture</h2>
+            <h2 class="text-2xl font-semibold text-secondary">Architektura projektu</h2>
             <!-- Architecture -->
             <div class="grid md:grid-cols-3 gap-6 mb-8 mt-4">
                 <div class="card bg-base-100">
                     <div class="card-body">
                         <h2 class="card-title">🧠 Model</h2>
                         <ul class="list-disc pl-5">
-                            <li>Data preprocessing</li>
-                            <li>Neural network training</li>
-                            <li>LSTM/GRU implementation</li>
+                            <li>Wstępne przetwarzanie danych</li>
+                            <li>Trenowanie sieci neuronowych</li>
+                            <li>Implementacja LSTM/GRU</li>
                         </ul>
                     </div>
                 </div>
                 <div class="card bg-base-100">
                     <div class="card-body">
-                        <h2 class="card-title">🎨 View</h2>
+                        <h2 class="card-title">🎨 Widok</h2>
                         <ul class="list-disc pl-5">
-                            <li>Tkinter GUI</li>
-                            <li>Parameter controls</li>
-                            <li>Visualization</li>
+                            <li>GUI w Tkinterze</li>
+                            <li>Kontrola parametrów</li>
+                            <li>Wizualizacja</li>
                         </ul>
                     </div>
                 </div>
                 <div class="card bg-base-100">
                     <div class="card-body">
-                        <h2 class="card-title">⚙️ Controller</h2>
+                        <h2 class="card-title">⚙️ Kontroler</h2>
                         <ul class="list-disc pl-5">
-                            <li>Application logic</li>
-                            <li>State management</li>
-                            <li>Model-View connection</li>
+                            <li>Logika aplikacji</li>
+                            <li>Zarządzanie stanem</li>
+                            <li>Połączenie model-widok</li>
                         </ul>
                     </div>
                 </div>
@@ -101,7 +100,7 @@
             <!--Divider-->
             <div class="divider"></div>
 
-            <h2 class="text-2xl font-semibold text-secondary">Project setup:</h2>
+            <h2 class="text-2xl font-semibold text-secondary">Konfiguracja projektu:</h2>
 
             <div class="alert alert-info shadow-lg my-4">
                 <div class="flex items-center">
@@ -110,11 +109,11 @@
                     </svg>
                     <div class="ml-2">
                         <ul class="list-disc pl-5 text-base">
-                            <li>Requires <span class="font-semibold">Python 3.x</span> installed on the computer</li>
-                            <li>The application has a UI</li>
-                            <li>Install dependencies before running</li>
-                            <li>The application can also predict the stock market</li>
-                            <li>The application requires an internet connection</li>
+                            <li>Wymaga <span class="font-semibold">Pythona 3.x</span> zainstalowanego na komputerze</li>
+                            <li>Aplikacja posiada interfejs graficzny</li>
+                            <li>Przed uruchomieniem zainstaluj zależności</li>
+                            <li>Możliwość predykcji także dla rynku akcji</li>
+                            <li>Wymagane połączenie z Internetem</li>
                         </ul>
                     </div>
                 </div>
@@ -123,16 +122,16 @@
             <div class="collapse collapse-arrow bg-base-100 border">
                 <input type="checkbox" /> 
                 <div class="collapse-title text-xl font-medium">
-                    Configuration
+                    Konfiguracja
                 </div>
                 <div class="collapse-content"> 
                     <p class="text-base mb-4 mt-2">
-                        to do
+                        do zrobienia
                     </p>
                     <div class="mockup-code">
                         <pre class=" mb-8 mt-4"><code> 
-<!--                 -->    to do
-<!--                 -->    to do</code></pre>
+<!--                 -->    do zrobienia
+<!--                 -->    do zrobienia</code></pre>
                     </div>
                 </div>
             </div>
@@ -141,11 +140,11 @@
             <div class="collapse collapse-arrow bg-base-100 border mt-4">
                 <input type="checkbox" /> 
                 <div class="collapse-title text-xl font-medium">
-                    🛠️ Installation
+                    🛠️ Instalacja
                 </div>
                 <div class="collapse-content">
                     <p class="text-base mb-4 mt-2">
-                        to do
+                        do zrobienia
                     </p>
                     <div class="mockup-code">
                         <pre class=" mb-8 mt-4"><code>  
@@ -159,30 +158,30 @@
             <!--Divider-->
             <div class="divider"></div>
 
-            <h2 class="text-2xl font-semibold text-secondary">Showcase</h2>
+            <h2 class="text-2xl font-semibold text-secondary">Prezentacja</h2>
 
             {% load static %}
             <div class="mockup-window bg-base-100 border  mt-4 mb-8 inline-block">
-                <img src="{% static 'images/GUI_DEMO.png' %}" alt="Loading" class="block w-auto h-auto p-4" />
+                <img src="{% static 'images/GUI_DEMO.png' %}" alt="Wczytywanie" class="block w-auto h-auto p-4" />
             </div>
 
             <!--Divider-->
             <div class="divider"></div>
 
-            <h2 class="text-2xl font-semibold text-secondary">Results</h2>
+            <h2 class="text-2xl font-semibold text-secondary">Wyniki</h2>
             <!-- Key Findings -->
             <div class="card bg-base-100 shadow-xl mb-8 mt-4">
                 <div class="card-body">
-                    <h2 class="card-title">📊 Key Findings</h2>
+                    <h2 class="card-title">📊 Kluczowe wnioski</h2>
                     <div class="grid gap-4 mt-4 mb-4">
                         <div class="alert alert-success">
-                            <span>GRU trains faster, LSTM has smoother predictions</span>
+                            <span>GRU trenuje szybciej, LSTM daje gładsze predykcje</span>
                         </div>
                         <div class="alert alert-success">
-                            <span>More data improves model performance</span>
+                            <span>Więcej danych poprawia jakość modelu</span>
                         </div>
                         <div class="alert alert-success">
-                            <span>Increased future days reduces precision</span>
+                            <span>Większa liczba dni predykcji zmniejsza precyzję</span>
                         </div>
                     </div>
                 </div>
@@ -190,11 +189,10 @@
             <!--Divider-->
             <div class="divider"></div>
 
-
             <!-- Footer -->
             <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
                 <div>
-                    <p>📄 MIT License - 💌 Contact via GitHub Issues</p>
+                    <p>📄 Licencja MIT - 💌 Kontakt przez GitHub Issues</p>
                 </div>
             </footer>
         </div>
