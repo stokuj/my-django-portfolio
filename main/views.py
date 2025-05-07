@@ -37,8 +37,8 @@ def analiza_makro_konkurs(request):
 def web_scrapper_lubimyczytac(request):
     return render(request, "main/blog/web_scrapper_lubimyczytac.html")
 
-def CryptoCurrencyPP(request):
-    return render(request, "main/blog/CryptoCurrencyPP.html")
+def crypto_currency_pp(request):
+    return render(request, "main/blog/crypto_currency_pp.html")
 
 def multidimensional_dashboard(request):
     return render(request, "main/blog/multidimensional_dashboard.html")
