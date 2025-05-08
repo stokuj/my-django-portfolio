@@ -7,7 +7,10 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-gray-300: oklch(87.2% 0.01 258.338);
     --color-gray-500: oklch(55.1% 0.027 264.364);
+    --color-gray-700: oklch(37.3% 0.034 259.733);
+    --color-gray-800: oklch(27.8% 0.033 256.848);
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
@@ -2482,9 +2485,6 @@
       }
     }
   }
-  .ms-2 {
-    margin-inline-start: calc(var(--spacing) * 2);
-  }
   .ms-4 {
     margin-inline-start: calc(var(--spacing) * 4);
   }
@@ -3342,6 +3342,9 @@
   .text-gray-500 {
     color: var(--color-gray-500);
   }
+  .text-gray-800 {
+    color: var(--color-gray-800);
+  }
   .text-neutral-content {
     color: var(--color-neutral-content);
   }
@@ -3575,11 +3578,6 @@
   .lg\:py-56 {
     @media (width >= 64rem) {
       padding-block: calc(var(--spacing) * 56);
-    }
-  }
-  .rtl\:rotate-180 {
-    &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
-      rotate: 180deg;
     }
   }
   .dark\:text-white {
@@ -4913,7 +4911,7 @@ h3 {
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value=fantasy2]:checked),[data-theme="fantasy2"] {
+  :where(:root),:root:has(input.theme-controller[value=fantasy2]:checked),[data-theme="fantasy2"] {
     color-scheme: light;
     --color-base-100: oklch(100% 0 0);
     --color-base-200: oklch(100% 0.04 256.788);
