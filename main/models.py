@@ -4,7 +4,7 @@ from django_summernote.fields import SummernoteTextField
 from ckeditor.fields import RichTextField
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import JSONField
-
+import datetime
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
@@ -19,16 +19,20 @@ class Project(models.Model):
     title = models.CharField(max_length=200)
     thumbnail = models.ImageField(upload_to='thumbnails/', blank=True, null=True, default='thumbnails/default_image.png')
     short_description = models.CharField(max_length=100)
-    
-    blog = models.BooleanField(default=False)
+    date = models.DateField(default=datetime.date(2022, 5, 1))     
+    blog = models.BooleanField(default=True)
     blog_url = models.CharField(max_length=100, blank=True, null=True)
-    
-    description = RichTextField(blank=True, null=True)
-    role = RichTextField(blank=True, null=True)
-    challenges = RichTextField(blank=True, null=True)
-    features = JSONField(default=list, blank=True, null=True)
-    technical_details = RichTextField(blank=True, null=True)
+
+
     tags = models.ManyToManyField(Tag, blank=True)
+
+    STATUS_CHOICES = [
+        ('planned', 'Planned'),
+        ('ongoing', 'Ongoing'),
+        ('finished', 'Finished'),
+    ]
+    
+    status = models.CharField(max_length=10,choices=STATUS_CHOICES,default='planned',)
 
     def __str__(self):
         return self.title

@@ -10,7 +10,8 @@ def home(request):
         request.session['has_visited'] = True
         
     count = PageView.objects.get(id=1).count
-    return render(request, "main/home.html", {})
+    projects = Project.objects.all().order_by('date')
+    return render(request, "main/home.html", {'projects': projects})
 
 
 def about(request):

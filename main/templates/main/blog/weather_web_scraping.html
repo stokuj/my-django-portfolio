@@ -183,4 +183,234 @@ class MyClass():
     </div>
 </div>
 
+
+<h1 class="text-xl font-bold text-center mt-8 mb-8">🌦️ Kompleksowy monitoring warunków pogodowych</h1>
+
+<div class="container mx-auto p-6 max-w-7xl">
+    <div class="card bg-base-200 w-full p-8 shadow-xl">
+        <h1 class="text-3xl font-bold text-primary mb-6">Zaawansowany system analizy danych pogodowych w czasie rzeczywistym</h1>
+
+        <!-- Sekcja głównych technologii -->
+        <div class="alert alert-success shadow-lg mt-4">
+            <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                    <h3 class="font-bold">Stos technologiczny:</h3>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <span class="badge badge-primary">Python 3.11</span>
+                        <span class="badge badge-secondary">PostgreSQL 15</span>
+                        <span class="badge badge-accent">Plotly</span>
+                        <span class="badge badge-primary">Pandas</span>
+                        <span class="badge badge-secondary">Tkinter</span>
+                        <span class="badge badge-accent">Docker</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rozbudowana sekcja źródeł danych -->
+        <div class="card bg-base-100 shadow-xl mt-6">
+            <div class="card-body">
+                <h2 class="card-title">📡 Źródła danych</h2>
+                <div class="grid md:grid-cols-2 gap-4 mt-4">
+                    <div class="bg-base-200 p-4 rounded-lg">
+                        <h3 class="font-bold text-accent">API</h3>
+                        <ul class="list-disc pl-5">
+                            <li>IMGW API (synop)</li>
+                            <li>OpenWeatherMap</li>
+                            <li>AccuWeather</li>
+                        </ul>
+                    </div>
+                    <div class="bg-base-200 p-4 rounded-lg">
+                        <h3 class="font-bold text-secondary">Sprzęt</h3>
+                        <ul class="list-disc pl-5">
+                            <li>Czujniki stacji meteorologicznych</li>
+                            <li>Satelity pogodowe</li>
+                            <li>Radary meteorologiczne</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rozbudowana sekcja wizualizacji -->
+        <div class="grid md:grid-cols-2 gap-6 mt-8">
+            <div class="card bg-base-100 shadow">
+                <figure class="px-4 pt-4">
+                    <img src="{% static 'weather_dashboard.png' %}" alt="Panel kontrolny" class="rounded-xl" />
+                </figure>
+                <div class="card-body">
+                    <h3 class="card-title">📊 Statystyki stacji</h3>
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra">
+                            <thead>
+                                <tr>
+                                    <th>Stacja</th>
+                                    <th>Temp. [°C]</th>
+                                    <th>Wiatr [m/s]</th>
+                                    <th>Opady [mm]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Warszawa</td>
+                                    <td>18.5</td>
+                                    <td>3.2</td>
+                                    <td>0.0</td>
+                                </tr>
+                                <tr>
+                                    <td>Kraków</td>
+                                    <td>20.1</td>
+                                    <td>2.8</td>
+                                    <td>1.2</td>
+                                </tr>
+                                <tr>
+                                    <td>Gdańsk</td>
+                                    <td>16.7</td>
+                                    <td>4.5</td>
+                                    <td>0.5</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-base-100 shadow">
+                <div class="card-body">
+                    <h3 class="card-title">🌪️ Parametry środowiskowe</h3>
+                    <div class="flex flex-col gap-4">
+                        <div class="radial-progress text-primary" style="--value:85;--size:8rem;">85%</div>
+                        <div class="flex flex-col gap-2">
+                            <div class="flex justify-between">
+                                <span>Wilgotność:</span>
+                                <span class="badge badge-info">65%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Ciśnienie:</span>
+                                <span class="badge badge-success">1013 hPa</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Jakość powietrza:</span>
+                                <span class="badge badge-warning">PM2.5: 23</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sekcja rozwoju projektu -->
+        <div class="card bg-base-100 shadow-xl mt-8">
+            <div class="card-body">
+                <h2 class="card-title">🚀 Planowany rozwój</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                    <div class="bg-base-200 p-4 rounded-lg">
+                        <h3 class="font-bold text-accent">Integracje</h3>
+                        <ul class="list-disc pl-5">
+                            <li>Aplikacja mobilna</li>
+                            <li>Powiadomienia SMS/email</li>
+                            <li>API dla developerów</li>
+                        </ul>
+                    </div>
+                    <div class="bg-base-200 p-4 rounded-lg">
+                        <h3 class="font-bold text-secondary">Analiza</h3>
+                        <ul class="list-disc pl-5">
+                            <li>Prognoza długoterminowa</li>
+                            <li>Modele ML</li>
+                            <li>Wykrywanie anomalii</li>
+                        </ul>
+                    </div>
+                    <div class="bg-base-200 p-4 rounded-lg">
+                        <h3 class="font-bold text-accent">Hardware</h3>
+                        <ul class="list-disc pl-5">
+                            <li>Czujniki IoT</li>
+                            <li>Stacje prywatne</li>
+                            <li>Drony pomiarowe</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rozbudowana sekcja wymagań systemowych -->
+        <div class="collapse collapse-arrow bg-base-100 border mt-8">
+            <input type="checkbox" checked /> 
+            <div class="collapse-title text-xl font-medium">
+                🖥️ Specyfikacja techniczna
+            </div>
+            <div class="collapse-content">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-base-200 p-4 rounded-lg">
+                        <h3 class="font-bold text-primary">Serwer</h3>
+                        <ul class="list-disc pl-5">
+                            <li>CPU: 4 rdzenie</li>
+                            <li>RAM: 8GB</li>
+                            <li>Dysk: 100GB SSD</li>
+                            <li>System: Ubuntu 22.04</li>
+                        </ul>
+                    </div>
+                    <div class="bg-base-200 p-4 rounded-lg">
+                        <h3 class="font-bold text-secondary">Klient</h3>
+                        <ul class="list-disc pl-5">
+                            <li>Przeglądarka: Chrome 100+</li>
+                            <li>RAM: 4GB</li>
+                            <li>Połączenie: 10Mb/s+</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historyczne dane pogodowe -->
+        <div class="card bg-base-100 shadow-xl mt-8">
+            <div class="card-body">
+                <h2 class="card-title">📅 Archiwum pogodowe</h2>
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Średnia temp.</th>
+                                <th>Maks. wiatr</th>
+                                <th>Suma opadów</th>
+                                <th>Ciśnienie</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for day in weather_history %}
+                            <tr>
+                                <td>{{ day.date }}</td>
+                                <td>{{ day.avg_temp }}°C</td>
+                                <td>{{ day.max_wind }} m/s</td>
+                                <td>{{ day.precipitation }} mm</td>
+                                <td>{{ day.pressure }} hPa</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rozbudowany footer -->
+        <footer class="footer footer-center p-10 bg-base-300 text-base-content rounded-lg mt-8">
+            <div class="grid grid-flow-col gap-4">
+                <a href="https://github.com/weather-monitoring-system" class="link link-hover" target="_blank">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="fill-current">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+                <a href="https://imgw.pl" class="link link-hover" target="_blank">Dostawca danych</a>
+                <a href="/api-docs" class="link link-hover">Dokumentacja API</a>
+            </div>
+            <div>
+                <p>System oparty na otwartych danych IMGW | Licencja MIT 2024</p>
+                <p class="mt-2">Aktualizacja: {% now "j F Y H:i" %}</p>
+            </div>
+        </footer>
+    </div>
+</div>
 {% endblock content %}
