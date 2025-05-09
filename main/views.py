@@ -27,6 +27,10 @@ def projects(request):
         'projects': projects,
         'all_tags': all_tags,
     })
+    
+def test(request):
+    return render(request, "main/blog/test.html")
+
 
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
@@ -50,4 +54,5 @@ def weather_web_scraping(request):
 def my_django_portfolio(request):
     return render(request, "main/blog/my_django_portfolio.html")
 
-
+def granular_data_grouping(request):
+    return render(request, "main/blog/granular_data_grouping.html")

@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block page_name %}Granularne grupowanie danych w jedną grupę{% endblock page_name %}
+
+{% block content %}
+{% load static %}
+
+<h1 class="text-3xl font-bold text-center mt-8 mb-8">Granularne grupowanie danych w jedną grupę</h1>
+
+<div class="container mx-auto p-6 max-w-6xl">
+    <div class="card bg-base-200 w-full p-8 shadow-xl">
+      <h1 class="text-3xl font-bold text-primary mb-6">Platforma do granularnego grupowania danych w jedną grupę</h1>
+  
+      <div class="prose">
+        <p class="text-lg mb-4 mt-2">
+          Celem projektu jest stworzenie narzędzia umożliwiającego eksplorację i ocenę algorytmów grupowania danych, szczególnie w kontekście wykrywania jednej spójnej grupy przy jednoczesnym odseparowaniu szumu. 
+          Platforma wspiera analizę metod klastrowania w zastosowaniach, gdzie priorytetem jest precyzyjne rozróżnienie istotnej struktury od przypadkowych danych, zgodnie z ideą <strong>uzasadnionej granulacji</strong>.
+        </p>
+  
+        <!-- Divider -->
+        <div class="divider"></div>
+  
+        <h2 class="text-2xl font-semibold text-secondary">Kluczowe informacje</h2>
+  
+        <p class="text-base mb-4 mt-4">
+          W badaniu porównano algorytmy DBSCAN oraz hierarchiczne (Single i Complete Linkage), skupiając się na ich zdolności do wyodrębnienia jednej grupy danych i identyfikacji szumu. 
+          Dla DBSCAN dobierano parametry umożliwiające jednoczesne wykrycie grupy i szumu, natomiast dla metod hierarchicznych analizowano moment przerwania oraz relacje między rozmiarami klastrów w celu identyfikacji szumu. 
+          Wszystkie eksperymenty uruchamiano automatycznie dla różnych zestawów parametrów, a ich wyniki zapisywano w formie plików CSV i PNG, wraz z pomiarem czasu działania algorytmów.
+        </p>
+
+
+<div class="grid md:grid-cols-2 gap-4 mt-4 mb-4">
+
+<!-- Lewa kolumna: Struktura projektu -->
+<div class="card bg-base-100 shadow hover:shadow-lg transition-shadow h-full">
+    <div class="card-body">
+    <h2 class="card-title">📁 Struktura projektu</h2>
+    <pre class="bg-base-300 p-4 rounded-lg overflow-x-auto"><code>/granular_clustering/
+├── main.py
+├── dbscan_module.py
+├── hierarchical.py
+├── knn_utils.py
+├── results.csv
+/data_analysis/
+├── clustering/
+│   ├── dbscan_optimizer.py
+│   ├── hierarchical.py
+│   └── metrics_calculator.py
+├── datasets/
+│   ├── generators/
+│   │   ├── circles.py
+│   │   └── custom_shapes.py
+│   └── noise_injector.py
+└── visualization/
+    ├── plotter.py
+    └── results_exporter.py</code></pre>
+    </div>
+</div>
+
+<!-- Prawa kolumna: zagnieżdżony grid -->
+<div class="grid grid-rows-2 gap-4 h-full">
+
+    <!-- Górna karta: Algorytmy klasteryzacji -->
+    <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
+    <div class="card-body">
+        <h3 class="card-title text-accent">🔍 Algorytmy klasteryzacji</h3>
+        <div class="flex flex-wrap gap-2 mt-4">
+        <span class="badge badge-primary">DBSCAN</span>
+        <span class="badge badge-secondary">Single Linkage</span>
+        <span class="badge badge-primary">Complete Linkage</span>
+        <span class="badge badge-secondary">KNN</span>
+        </div>
+        <p class="mt-3 text-sm">Automatyczny dobór parametrów ε i MinPts<br>Wykrywanie kształtów nieregularnych<br>Praca na dendrogramach</p>
+    </div>
+    </div>
+
+    <!-- Dolna karta: Metryki oceny -->
+    <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
+    <div class="card-body">
+        <h3 class="card-title text-accent">📊 Metryki oceny</h3>
+        <div class="flex flex-wrap gap-2 mt-4">
+        <span class="badge badge-primary">P1–P3</span>
+        <span class="badge badge-secondary">P1_k–P3_k</span>
+        <span class="badge badge-primary">Średnia odległość</span>
+        <span class="badge badge-secondary">Dokładność</span>
+        </div>
+        <p class="mt-3 text-sm">15 kryteriów granulacji<br>Walidacja na 7 typach zbiorów<br>Analiza odporności na szum</p>
+    </div>
+    </div>
+
+</div>
+</div>
+
+<!-- Divider -->
+<div class="divider"></div>
+
+
+    <h2 class="text-2xl font-semibold text-secondary">Stos technologiczny</h2>
+    <div class="flex flex-wrap gap-4 mt-6">
+        <div class="badge badge-outline">Python 3.10+</div>
+        <div class="badge badge-outline badge-primary">NumPy</div>
+        <div class="badge badge-outline badge-secondary">scikit-learn</div>
+        <div class="badge badge-outline">Matplotlib</div>
+        <div class="badge badge-outline">Pandas</div>
+        <div class="badge badge-outline">Jupyter</div>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+
+
+
+
+    <h2 class="text-2xl font-semibold text-secondary">Konfiguracja i uruchomienie</h2>
+    <div class="alert alert-info shadow-lg my-4">
+        <ul class="list-disc pl-5 text-base">
+        <li>Środowisko: Python >=3.8, wymagane biblioteki w <code>requirements.txt</code>.</li>
+        <li>Uruchomienie eksperymentów: <code>python main.py --config config.yaml</code></li>
+        <li>Wyniki zapisywane w plikach CSV i wizualizowane skryptem <code>visualize.py</code>.</li>
+        </ul>
+    </div>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Przykład konfiguracji</div>
+        <div class="collapse-content">
+        <div class="mockup-code">
+            <pre><code># config.yaml
+algorithms:
+dbscan:
+    eps: [2, 20, 0.2]
+    min_samples: [20, 150]
+hierarchical:
+method: [single, complete]
+dmax_steps: 100
+metrics: [P1, P2, P3, P1_k3, P2_k3]</code></pre>
+        </div>
+        </div>
+    </div>
+    <!-- Divider -->
+    <div class="divider"></div>
+    <h2 class="text-2xl font-semibold text-secondary">Algorytmy aglomeracyjne</h2>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Parametryzacja</div>
+        <div class="collapse-content">
+            <p class="mt-4 text-base">
+                W ramach analizy granularnego grupowania opracowano zestaw <strong>15 miar oceny jakości skupienia</strong>, które łączą ze sobą informacje o liczbie punktów w największym klastrze oraz miary odległości między tymi punktami. Podstawowe trzy miary (P1, P2, P3) opierają się na średniej odległości między wszystkimi punktami w klastrze (<em>d̄</em>):
+            </p>
+            <p class="text-xl font-mono text-blue-800">
+                f(x) = x² + 2x + 1
+            </p>
+            <ul class="list-disc list-inside">
+                <li class="text-xl font-mono text-blue-800"><strong>P1</strong> = liczba punktów x (1 / d̄)</li>
+                <li><strong>P2</strong> = liczba punktów x (1 / d̄)<sup>2</sup></li>
+                <li><strong>P3</strong> = √(liczba punktów) x (1 / d̄)<sup>2</sup></li>
+            </ul>
+            <p class="mt-4 text-base">
+                Kolejne 12 miar to rozszerzenia powyższych z wykorzystaniem odległości do k najbliższych sąsiadów (<em>d<sub>k</sub></em>) dla k = 3, 5, 7, 9. Dla każdego k obliczane są trzy warianty:
+            </p>
+            <ul class="list-disc list-inside">
+                <li><strong>P1<sub>k</sub></strong> = liczba punktów × (1 / d<sub>k</sub>)</li>
+                <li><strong>P2<sub>k</sub></strong> = liczba punktów × (1 / d<sub>k</sub>)<sup>2</sup></li>
+                <li><strong>P3<sub>k</sub></strong> = √(liczba punktów) × (1 / d<sub>k</sub>)<sup>2</sup></li>
+            </ul>
+            <p class="mt-4 text-base">
+                Miary te różnią się poziomem agresywności względem wartości odległości — metryki z kwadratem (P2, P3) są bardziej czułe na zmiany rozproszenia, co pozwala lepiej wykrywać spójność dużych i zwartych skupień. Dzięki ujęciu w formie odwrotności, wartości miar rosną w kierunku bardziej jednorodnych klastrów.
+            </p>
+        </div>
+    </div>
+
+
+    
+
+    <!-- Divider -->
+    <div class="divider"></div>
+    <h2 class="text-2xl font-semibold text-secondary">Wyniki eksperymentalne</h2>
+    <div class="grid md:grid-cols-2 gap-4 mt-6">
+        <div class="card bg-base-100 shadow">
+        <figure class="px-4 pt-4">
+            <img src="{% static 'clustering_comparison.png' %}" alt="Porównanie algorytmów" class="rounded-xl" />
+        </figure>
+        <div class="card-body">
+            <h3 class="card-title">📈 Dokładność grupowania</h3>
+            <p>DBSCAN vs metody hierarchiczne dla różnych poziomów szumu</p>    
+            <div class="overflow-x-auto mt-3">
+            <table class="table table-zebra">
+                <thead>
+                <tr>
+                    <th>Algorytm</th>
+                    <th>50% szumu</th>
+                    <th>70% szumu</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>DBSCAN</td>
+                    <td>88.9%</td>
+                    <td>36.0%</td>
+                </tr>
+                <tr>
+                    <td>Single Linkage</td>
+                    <td>84.2%</td>
+                    <td>31.5%</td>
+                </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+        </div>
+
+        <div class="card bg-base-100 shadow">
+        <figure class="px-4 pt-4">
+            <img src="{% static 'noise_impact.png' %}" alt="Wpływ szumu" class="rounded-xl" />
+        </figure>
+        <div class="card-body">
+            <h3 class="card-title">⚠️ Analiza odporności</h3>
+            <p>Zmiany dokładności w funkcji poziomu szumu</p>
+            <div class="radial-progress text-primary mt-4" style="--value:88;--size:8rem;">88%</div>
+            <p class="text-sm mt-2">Maksymalna dokładność osiągnięta dla 40% szumu</p>
+        </div>
+        </div>
+    </div>
+
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+    <h2 class="text-2xl font-semibold text-secondary">Testowane zbiory danych</h2>
+    <div class="alert alert-info shadow-lg mt-6">
+        <p class="text-base">
+        System przetestowany na 7 typach zbiorów danych:
+        <br><span class="font-semibold">Koła • Pierścienie • Rozkłady normalne • Rozkład von Misesa • Kształty niestandardowe</span>
+        </p>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+        <!-- Footer -->
+        <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
+            <div>
+                <p>📄 Licencja MIT - 💌 Kontakt przez GitHub Issues</p>
+            </div>
+        </footer>
+    </div>
+</div>
+</div>
+
+{% endblock content %}
