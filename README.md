@@ -62,7 +62,46 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
-
+## Struktura projektu
+    MY-DJANGO-PORTFOLIO/
+    │
+    ├── main/
+    │   ├── migrations/
+    │   ├── static/...{css i images}
+    │   ├── templates/
+    │   │   └── main/
+    │   │       ├── blog/{każdy projekt ma podstrone}
+    │   │       ├── about.html
+    │   │       ├── home.html
+    │   │       └── projects.html
+    │   │   └── base.html
+    │   ├── __init__.py
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── context_processors.py
+    │   ├── models.py
+    │   ├── tests.py
+    │   ├── urls.py
+    │   └── views.py
+    ├── media/
+    ├── node_modules/
+    ├── personal_portfolio/
+    │   ├── __pycache__/
+    │   ├── __init__.py
+    │   ├── asgi.py
+    │   ├── settings.py
+    │   ├── urls.py
+    │   └── wsgi.py
+    ├── staticfiles/
+    ├── LICENSE
+    ├── manage.py
+    ├── package-lock.json
+    ├── package.json
+    ├── Procfile
+    ├── README.md
+    ├── requirements.txt
+    └── tailwind.config.js
+    
 ## 👤 Autor
 
 - Imię i nazwisko: Krystian Stasica
