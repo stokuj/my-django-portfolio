@@ -33,7 +33,8 @@ cd my_django_portfolio
 
 ```bash
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scriptsctivate
+source venv/bin/activate  # Linux
+venv\Scripts\Activate.ps1 # Windows
 pip install -r requirements.txt
 ```
 
@@ -55,8 +56,9 @@ DATABASES = {
 ```
 
 ### Krok 4: Migracje i uruchomienie serwera
-
+Jeżeli uruchamiany server lokalnie (nie przez Gunicorn)
 ```bash
+python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
