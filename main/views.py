@@ -47,3 +47,7 @@ def multidimensional_dashboard(request):
 def weather_web_scraping(request):
     return render(request, "main/blog/weather_web_scraping.html")
 
+def my_django_portfolio(request):
+    return render(request, "main/blog/my_django_portfolio.html")
+
+

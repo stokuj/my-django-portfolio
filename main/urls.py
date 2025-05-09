@@ -13,5 +13,6 @@ urlpatterns = [
     path("blog/crypto_currency_pp/", views.crypto_currency_pp, name="crypto_currency_pp"),
     path("blog/multidimensional_dashboard/", views.multidimensional_dashboard, name="multidimensional_dashboard"),
     path("blog/weather_web_scraping/", views.weather_web_scraping, name="weather_web_scraping"),
+    path("blog/my_django_portfolio/", views.my_django_portfolio, name="my_django_portfolio"),
 ]
 

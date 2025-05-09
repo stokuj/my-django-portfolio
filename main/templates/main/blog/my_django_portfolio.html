@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_name %}Django Portfolio Blog{% endblock page_name %}
+
+{% block content %}
+<h1 class="text-xl font-bold text-center mt-8 mb-8">📝 Django Portfolio Blog</h1>
+
+<div class="container mx-auto p-6 max-w-7xl">
+    <div class="card bg-base-200 w-full p-8 shadow-xl">
+        <h1 class="text-3xl font-bold text-primary mb-6">Blog stworzony w Django prezentujący projekty</h1>
+
+        <div class="prose max-w-none">
+
+            <p class="text-lg mb-4 mt-2">
+                Aplikacja została zaprojektowana jako mojego portfolio. Głównym celem było zaprezentowanie umiejętności w zakresie backendu, pracy z bazą danych oraz integracji z frameworkiem Django i biblioteką Tailwind (z użyciem DaisyUI).
+                Umożliwia ona dynamiczne filtrowanie projektów, zarządzanie tagami i statusami oraz prezentację szczegółowych informacji o każdym projekcie.
+                <br>
+                <br>
+                Dodatkowo mogę prezentowac moje inne projekty, które są dostępne w repozytorium GitHub. Blog posida także stonę o mnie, gdzie można znaleźć moje dane kontaktowe oraz informacje o moim doświadczeniu zawodowym.
+                Na stronie głównej widoczny jest timeline projektów z podziłem na ich status: Planning, Ongoing, Completed.
+            </p>
+
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">🔧 Technologie i funkcjonalności</h2>
+            <div class="grid md:grid-cols-2 gap-6 mb-8 mt-4">
+                <!-- Technologie -->
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">⚙️ Technologie</h2>
+                        <ul class="list-disc text-base pl-5 p-4">
+                            <li>Python 3.x</li>
+                            <li>Django</li>
+                            <li>PostgreSQL</li>
+                            <li>Django Templates + TailwindCSS + DaisyUI</li>
+                            <li>Gunicorn</li>
+                            <li>Docker (częściowo używany)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Funkcjonalności -->
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">🚀 Funkcjonalności</h2>
+                        <ul class="list-disc text-base pl-5 p-4">
+                            <li>Dynamiczne filtrowanie projektów</li>
+                            <li>System statusów i tagów</li>
+                            <li>Oddzielne podstrony dla projektów</li>
+                            <li>Baza danych PostgreSQL jako magazyn danych</li>
+                            <li>Responsywny design</li>
+                            <li>Ciemny i jasny motyw</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">📁 Struktura projektu</h2>
+            <p class="text-base mb-4 mt-4">Struktura projektu jest zgodna z konwencjami Django z podziałem na aplikacje i foldery statyczne oraz szablonowe.</p>
+            <p class="text-base mb-4 mt-2">Frontend oparty na TailwindCSS i DaisyUI zapewnia responsywny i nowoczesny wygląd.</p>
+            <pre class="bg-base-300 p-4 rounded-lg text-sm overflow-x-auto mt-4 mb-4"><code>my_django_portfolio/
+├── main/
+│   ├── static/
+│   ├── templates/
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   └── ...
+├── personal_portfolio/
+│   ├── settings.py
+│   ├── urls.py
+│   └── ...
+├── templates/
+├── db.sqlite3
+├── requirements.txt
+└── tailwind.config.js</code></pre>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">🧱 Architektura projektu (Model - View - Template)</h2>
+
+            <p class="text-base mb-4 mt-4">Architektura projektu oparta na wzorcu MVC (Model - View - Template) zapewnia separację logiki aplikacji, widoku i szablonów.
+            MVT (Model - View - Template) to podejście stosowane w Django, które jest podobne do MVC, ale z pewnymi różnicami.
+            Model odpowiada za interakcję z bazą danych, widok obsługuje logikę aplikacji, a szablony generują HTML na podstawie danych.
+            Dzięki temu projekt jest łatwy do rozbudowy i utrzymania, a także umożliwia łatwe dodawanie nowych funkcjonalności.</p>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-8 mt-4">
+                <div class="card bg-base-100">
+                    <div class="card-body">
+                        <h2 class="card-title">🧠 Model</h2>
+                        <ul class="list-disc pl-5 text-base">
+                            <li>Reprezentacja projektów w bazie danych</li>
+                            <li>Obsługa tagów i statusów</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-100">
+                    <div class="card-body">
+                        <h2 class="card-title">🎨 Widok</h2>
+                        <ul class="list-disc pl-5 text-base">
+                            <li>Widoki listy projektów</li>
+                            <li>Szczegóły projektu</li>
+                            <li>Dynamiczne filtrowanie</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card bg-base-100">
+                    <div class="card-body">
+                        <h2 class="card-title">📄 Template</h2>
+                        <ul class="list-disc pl-5 text-base">
+                            <li>Django Templates</li>
+                            <li>Tailwind + DaisyUI</li>
+                            <li>Responsywny design</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">💻 Uruchomienie lokalne</h2>
+
+            <div class="collapse collapse-arrow bg-base-100 border mt-4">
+                <input type="checkbox" />
+                <div class="collapse-title text-lg font-medium">
+                    💾 Klonowanie repozytorium i instalacja zależności
+                </div>
+                <div class="collapse-content">
+                    <p class="text-base mb-4 mt-2">Aby uruchomić projekt lokalnie, sklonuj repozytorium i zainstaluj zależności:</p>
+                    <div class="mockup-code mt-2">
+                        <pre><code>
+    git clone https://github.com/stokuj/my_django_portfolio.git
+    cd my_django_portfolio
+    python -m venv venv
+    source venv/bin/activate  # lub venv\Scripts\Activate.ps1 na Windows
+    pip install -r requirements.txt</code></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapse collapse-arrow bg-base-100 border mt-4">
+                <input type="checkbox" />
+                <div class="collapse-title text-lg font-medium">
+                    ⚙️ Konfiguracja bazy danych w `settings.py`
+                </div>
+                <div class="collapse-content">
+                    <p class="text-base mb-4 mt-2">W pliku `settings.py` skonfiguruj połączenie z bazą danych PostgreSQL:</p>
+                    <div class="mockup-code mt-2">
+                        <pre><code>
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'twoja_baza',
+            'USER': 'twoj_uzytkownik',
+            'PASSWORD': 'twoje_haslo',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }</code></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="collapse collapse-arrow bg-base-100 border mt-4">
+                <input type="checkbox" />
+                <div class="collapse-title text-lg font-medium">
+                    ▶️ Migracje i uruchomienie serwera
+                </div>
+                <div class="collapse-content">
+                    <p class="text-base mb-4 mt-2">Wykonaj migracje i uruchom serwer lokalny:</p>
+                    <div class="mockup-code mt-2">
+                        <pre><code>
+    python manage.py makemigrations
+    python manage.py migrate
+    python manage.py runserver</code></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info shadow-lg my-4">
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div class="ml-2">
+                        <ul class="list-disc pl-5 text-base">
+                            <li>Wymagany Python 3.x</li>
+                            <li>PostgreSQL uruchomiony lokalnie</li>
+                            <li>Należy utwozyć bazę danych o nazwie `twoja_baza`</li>
+                            <li>Skonfiguruj plik `settings.py`</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <footer class="footer footer-center p-4 bg-base-300 rounded-lg mt-8">
+                <div>
+                    <p>📄 MIT License - Dokumentacja techniczna dostępna w repozytorium</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+{% endblock content %}
