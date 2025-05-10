@@ -9,90 +9,120 @@
 
 <div class="container mx-auto p-6 max-w-6xl">
     <div class="card bg-base-200 w-full p-8 shadow-xl">
-      <h1 class="text-3xl font-bold text-primary mb-6">Platforma do granularnego grupowania danych w jedną grupę</h1>
-  
-      <div class="prose">
+        <h1 class="text-3xl font-bold text-primary mb-6">Analiza tematu granularnego grupowania danych w jedną grupę</h1>
+
+        <div class="prose">
         <p class="text-lg mb-4 mt-2">
-          Celem projektu jest stworzenie narzędzia umożliwiającego eksplorację i ocenę algorytmów grupowania danych, szczególnie w kontekście wykrywania jednej spójnej grupy przy jednoczesnym odseparowaniu szumu. 
-          Platforma wspiera analizę metod klastrowania w zastosowaniach, gdzie priorytetem jest precyzyjne rozróżnienie istotnej struktury od przypadkowych danych, zgodnie z ideą <strong>uzasadnionej granulacji</strong>.
+            Celem projektu jest stworzenie narzędzia umożliwiającego eksplorację i ocenę algorytmów grupowania danych, szczególnie w kontekście wykrywania jednej spójnej grupy przy jednoczesnym odseparowaniu szumu. 
+            Platforma wspiera analizę metod klastrowania w zastosowaniach, gdzie priorytetem jest precyzyjne rozróżnienie istotnej struktury od przypadkowych danych, zgodnie z ideą <strong>uzasadnionej granulacji</strong>.
         </p>
-  
+
         <!-- Divider -->
         <div class="divider"></div>
-  
+
         <h2 class="text-2xl font-semibold text-secondary">Kluczowe informacje</h2>
-  
+
         <p class="text-base mb-4 mt-4">
-          W badaniu porównano algorytmy DBSCAN oraz hierarchiczne (Single i Complete Linkage), skupiając się na ich zdolności do wyodrębnienia jednej grupy danych i identyfikacji szumu. 
-          Dla DBSCAN dobierano parametry umożliwiające jednoczesne wykrycie grupy i szumu, natomiast dla metod hierarchicznych analizowano moment przerwania oraz relacje między rozmiarami klastrów w celu identyfikacji szumu. 
-          Wszystkie eksperymenty uruchamiano automatycznie dla różnych zestawów parametrów, a ich wyniki zapisywano w formie plików CSV i PNG, wraz z pomiarem czasu działania algorytmów.
+            W badaniu porównano algorytmy DBSCAN oraz hierarchiczne (Single i Complete Linkage), skupiając się na ich zdolności do wyodrębnienia jednej grupy danych i identyfikacji szumu. 
+            Dla DBSCAN dobierano parametry umożliwiające jednoczesne wykrycie grupy i szumu, natomiast dla metod hierarchicznych analizowano moment przerwania oraz relacje między rozmiarami klastrów w celu identyfikacji szumu. 
+            Wszystkie eksperymenty uruchamiano automatycznie dla różnych zestawów parametrów, a ich wyniki zapisywano w formie plików CSV i PNG, wraz z pomiarem czasu działania algorytmów.
         </p>
 
 
-<div class="grid md:grid-cols-2 gap-4 mt-4 mb-4">
+    <div class="grid md:grid-cols-2 gap-4 mt-4 mb-4">
 
-<!-- Lewa kolumna: Struktura projektu -->
-<div class="card bg-base-100 shadow hover:shadow-lg transition-shadow h-full">
-    <div class="card-body">
-    <h2 class="card-title">📁 Struktura projektu</h2>
-    <pre class="bg-base-300 p-4 rounded-lg overflow-x-auto"><code>/granular_clustering/
-├── main.py
-├── dbscan_module.py
-├── hierarchical.py
-├── knn_utils.py
-├── results.csv
-/data_analysis/
-├── clustering/
-│   ├── dbscan_optimizer.py
-│   ├── hierarchical.py
-│   └── metrics_calculator.py
-├── datasets/
-│   ├── generators/
-│   │   ├── circles.py
-│   │   └── custom_shapes.py
-│   └── noise_injector.py
-└── visualization/
-    ├── plotter.py
-    └── results_exporter.py</code></pre>
-    </div>
-</div>
+        <!-- Lewa kolumna: Struktura projektu -->
+        <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow h-full border border-primary">
+            <div class="card-body">
+                <h2 class="card-title">📁 Struktura projektu</h2>
+                <pre class="bg-base-300 p-4 rounded-lg overflow-x-auto"><code>/granular_clustering/
+    ├── main.py
+    ├── dbscan_module.py
+    ├── hierarchical.py
+    ├── knn_utils.py
+    ├── results.csv
+    /data_analysis/
+    ├── clustering/
+    │   ├── dbscan_optimizer.py
+    │   ├── hierarchical.py
+    │   └── metrics_calculator.py
+    ├── datasets/
+    │   ├── generators/
+    │   │   ├── circles.py
+    │   │   └── custom_shapes.py
+    │   └── noise_injector.py
+    └── visualization/
+        ├── plotter.py
+        └── results_exporter.py</code></pre>
+            </div>
+        </div>
 
 <!-- Prawa kolumna: zagnieżdżony grid -->
 <div class="grid grid-rows-2 gap-4 h-full">
 
     <!-- Górna karta: Algorytmy klasteryzacji -->
-    <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
-    <div class="card-body">
-        <h3 class="card-title text-accent">🔍 Algorytmy klasteryzacji</h3>
-        <div class="flex flex-wrap gap-2 mt-4">
-        <span class="badge badge-primary">DBSCAN</span>
-        <span class="badge badge-secondary">Single Linkage</span>
-        <span class="badge badge-primary">Complete Linkage</span>
-        <span class="badge badge-secondary">KNN</span>
+    <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary">
+        <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="text-2xl">🔍</div>
+                <h3 class="card-title text-accent text-lg font-semibold">Algorytmy klasteryzacji</h3>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <span class="badge badge-primary badge-lg px-3 py-2">DBSCAN</span>
+                <span class="badge badge-secondary badge-lg px-3 py-2">Single Linkage</span>
+                <span class="badge badge-accent badge-lg px-3 py-2">Complete Linkage</span>
+            </div>
+            <div class="mt-4 space-y-1.5 text-base-content/80">
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-success badge-xs"></span>
+                    Automatyczny dobór parametrów ε i MinPts
+                </p>
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-success badge-xs"></span>
+                    Wykrywanie kształtów nieregularnych
+                </p>
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-success badge-xs"></span>
+                    Praca na dendrogramach
+                </p>
+            </div>
         </div>
-        <p class="mt-3 text-sm">Automatyczny dobór parametrów ε i MinPts<br>Wykrywanie kształtów nieregularnych<br>Praca na dendrogramach</p>
-    </div>
     </div>
 
     <!-- Dolna karta: Metryki oceny -->
-    <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
-    <div class="card-body">
-        <h3 class="card-title text-accent">📊 Metryki oceny</h3>
-        <div class="flex flex-wrap gap-2 mt-4">
-        <span class="badge badge-primary">P1–P3</span>
-        <span class="badge badge-secondary">P1_k–P3_k</span>
-        <span class="badge badge-primary">Średnia odległość</span>
-        <span class="badge badge-secondary">Dokładność</span>
+    <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary">
+        <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="text-2xl">📊</div>
+                <h3 class="card-title text-accent text-lg font-semibold">Metryki oceny</h3>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <span class="badge badge-primary badge-lg px-3 py-2">P1–P3</span>
+                <span class="badge badge-secondary badge-lg px-3 py-2">KNN: 3, 5, 7, 9</span>
+                <span class="badge badge-accent badge-lg px-3 py-2">Średnia odległość</span>
+                <span class="badge badge-info badge-lg px-3 py-2">Dokładność</span>
+            </div>
+            <div class="mt-4 space-y-1.5 text-base-content/80">
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-warning badge-xs"></span>
+                    15 kryteriów granulacji
+                </p>
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-warning badge-xs"></span>
+                    Walidacja na 7 typach zbiorów
+                </p>
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-warning badge-xs"></span>
+                    Analiza odporności na szum
+                </p>
+            </div>
         </div>
-        <p class="mt-3 text-sm">15 kryteriów granulacji<br>Walidacja na 7 typach zbiorów<br>Analiza odporności na szum</p>
     </div>
-    </div>
-
 </div>
 </div>
 
-<!-- Divider -->
-<div class="divider"></div>
+    <!-- Divider -->
+    <div class="divider"></div>
 
 
     <h2 class="text-2xl font-semibold text-secondary">Stos technologiczny</h2>
@@ -108,145 +138,604 @@
     <!-- Divider -->
     <div class="divider"></div>
 
-
-
-
-
     <h2 class="text-2xl font-semibold text-secondary">Konfiguracja i uruchomienie</h2>
     <div class="alert alert-info shadow-lg my-4">
         <ul class="list-disc pl-5 text-base">
         <li>Środowisko: Python >=3.8, wymagane biblioteki w <code>requirements.txt</code>.</li>
-        <li>Uruchomienie eksperymentów: <code>python main.py --config config.yaml</code></li>
-        <li>Wyniki zapisywane w plikach CSV i wizualizowane skryptem <code>visualize.py</code>.</li>
+        <li>Uruchomienie eksperymentów: <code>python main.py</code></li>
+        <li>Wyniki zapisywane w plikach CSV</code>.</li>
         </ul>
     </div>
 
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Przykład konfiguracji</div>
-        <div class="collapse-content">
-        <div class="mockup-code">
-            <pre><code># config.yaml
-algorithms:
-dbscan:
-    eps: [2, 20, 0.2]
-    min_samples: [20, 150]
-hierarchical:
-method: [single, complete]
-dmax_steps: 100
-metrics: [P1, P2, P3, P1_k3, P2_k3]</code></pre>
-        </div>
+            <div class="collapse-content">
+                W pliku main.py można ustawić parametry eksperymentu, takie jak liczba iteracji, poziom szumu i inne.
+                <br>
+                Generator określa kształt danych, które będą używane do testowania algorytmów. Przykład generatora:
+
+            <div class="mockup-code mt-4 mb-4 p-4">
+<pre><code>generators = {
+        "circle_A"  : (pg.generate_points_circle,  None),
+        "circle_B"  : (pg.generate_points_mises,   None),
+        "circle_C"  : (pg.generate_points_normal,  None),
+        "ring"      : (pg.generate_points_ring,    None),
+        # "shape_A"   : (pg.generate_points_in_shape, "drawn_figure_A.txt"),
+        # "shape_B"   : (pg.generate_points_in_shape, "drawn_figure_B.txt"),
+        # "shape_C"   : (pg.generate_points_in_shape, "drawn_figure_C.txt"),}</code></pre>
+            </div>
         </div>
     </div>
+
     <!-- Divider -->
     <div class="divider"></div>
-    <h2 class="text-2xl font-semibold text-secondary">Algorytmy aglomeracyjne</h2>
+    <!-- Divider -->
+
+    <h2 class="text-2xl font-semibold text-secondary">Opis algorytmów</h2>
+    <p class="text-base mb-4 mt-4">
+    Poniżej przedstawiono zwięzłe opisy trzech głównych podejść do grupowania danych zastosowanych w badaniu: aglomeracyjne, gęstościowe (DBSCAN) oraz oparte na najbliższych sąsiadach (KNN).
+    </p>
 
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
-        <div class="collapse-title text-xl font-medium">Parametryzacja</div>
+        <div class="collapse-title text-xl font-medium">Aglomeracyjne</div>
+        <div class="collapse-content">
+            <p class="mt-4 text-base">
+                Klasyczne klastrowanie aglomeracyjne zaczyna od traktowania każdego punktu jako osobnego klastra i iteracyjne łączy najbliższe pary klastrów, aż do osiągnięcia żądanej liczby klastrów. W badaniu zastosowano dwa warianty: Single Linkage (minimalny dystans między klastrami) i Complete Linkage (maksymalny dystans między klastrami).
+            </p>
+            <pre class="text-sm bg-base-300 rounded mt-4 mb-4 p-4">
+    function AGGLOMERATIVE(data, target_k):
+        initialize clusters ← {x} for x in data 
+        compute D[i,j] ← distance between clusters i and j
+        while |clusters| > target_k:
+            (i, j) ← argmin_{p,q} linkage_distance(clusters[p], clusters[q])
+            merge clusters[i] and clusters[j]
+            update distances D for new cluster
+        return clusters
+            </pre>
+        </div>
+    </div>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Gęstościowe (DBSCAN)</div>
+        <div class="collapse-content">
+            <p class="mt-4 text-base">
+                DBSCAN identyfikuje obszary o wysokiej gęstości punktów. Dwa kluczowe parametry to ε – promień sąsiedztwa oraz MinPts – minimalna liczba punktów w otoczeniu. Algorytm oznacza punkty rdzeniowe, brzegowe i szum, tworząc klastry bez potrzeby określania ich liczby z góry.
+            </p>
+            <pre class="text-sm bg-base-300 rounded mt-4 mb-4 p-4">
+    function DBSCAN(D, eps, MinPts):
+        C ← 0
+        for each point p in D:
+            if p not visited:
+                mark p visited
+                N ← regionQuery(p, eps)
+                if |N| < MinPts:
+                    label p as noise
+                else:
+                    C ← C + 1
+                    expandCluster(p, N, C, eps, MinPts)
+        return cluster labels
+
+    function expandCluster(p, N, C, eps, MinPts):
+        add p to cluster C
+        for each point q in N:
+            if q not visited:
+                mark q visited
+                N' ← regionQuery(q, eps)
+                if |N'| ≥ MinPts:
+                    N ← N ∪ N'
+            if q not yet member of any cluster:
+                add q to cluster C
+
+    function regionQuery(p, eps):
+        return {q in D | distance(p, q) ≤ eps}
+            </pre>
+        </div>
+    </div>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">KNN</div>
+        <div class="collapse-content">
+            <p class="mt-4 text-base">
+                Algorytm k najbliższych sąsiadów (KNN) w kontekście tego badania służył do oceny średnich odległości między punktami w klastrze. Wyznaczone wartości dₖ stanowią jedną z miar jakości klasteryzacji.</p>
+                <pre class="text-sm bg-base-300 rounded mt-4 mb-4 p-4">
+    function KNN_distance(data, k):
+        distances_list ← []
+        for each point x in data:
+            D_x ← sort([distance(x, y) for y ≠ x])
+            d_x ← average(D_x[1..k])
+            distances_list.append(d_x)
+        return mean(distances_list)
+            </pre>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+    <!-- Divider -->
+
+    <h2 class="text-2xl font-semibold text-secondary">Parametryzacja algorytmów</h2>
+
+    <p class="text-base mb-4 mt-4">
+    W celu doboru optymalnych parametrów każdego z algorytmów zastosowano podejście iteracyjne wraz z miarami jakości klasteryzacji (P1–P3,k). Poniżej przedstawiono szczegóły parametrów i procedury wyboru.
+    </p>
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Aglomeracyjne</div>
+        <div class="collapse-content">
+            <p class="mt-4 text-base">
+                Dla klastrowania aglomeracyjnego decydującym parametrem była liczba klastrów (target_k = 2). Na podstawie dendrogramu określono próg cięcia tak, aby utworzyć dwa klastry, a następnie oceniono jakość za pomocą miar P1–P3,k, traktując mniejszy klaster jako szum.
+            </p>
+        </div>
+    </div>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Gęstościowe (DBSCAN)</div>
+        <div class="collapse-content">
+            <p class="mt-4 text-base">
+                Do dobrania ε oraz MinPts zaimplementowano funkcję <code>dbscanLoop</code>, która przeszukuje ε z zakresu [2, 20] co 0.2 oraz MinPts z zakresu [20, 150] co 1. Dla każdej pary parametrów obliczane są miary jakości klasteryzacji, a najlepszy zestaw wybierany jest na podstawie maksymalnej wartości kryteriów P1–P3,k.
+            </p>
+        </div>
+    </div>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Miary jakości skupienia</div>
         <div class="collapse-content">
             <p class="mt-4 text-base">
                 W ramach analizy granularnego grupowania opracowano zestaw <strong>15 miar oceny jakości skupienia</strong>, które łączą ze sobą informacje o liczbie punktów w największym klastrze oraz miary odległości między tymi punktami. Podstawowe trzy miary (P1, P2, P3) opierają się na średniej odległości między wszystkimi punktami w klastrze (<em>d̄</em>):
             </p>
-            <p class="text-xl font-mono text-blue-800">
-                f(x) = x² + 2x + 1
-            </p>
             <ul class="list-disc list-inside">
-                <li class="text-xl font-mono text-blue-800"><strong>P1</strong> = liczba punktów x (1 / d̄)</li>
-                <li><strong>P2</strong> = liczba punktów x (1 / d̄)<sup>2</sup></li>
-                <li><strong>P3</strong> = √(liczba punktów) x (1 / d̄)<sup>2</sup></li>
+                <li class="text-xl font-mono text-blue-800"><strong>P1</strong> = liczba punktów × (1 / d̄)</li>
+                <li class="text-xl font-mono text-blue-800"><strong>P2</strong> = liczba punktów × (1 / d̄)<sup>2</sup></li>
+                <li class="text-xl font-mono text-blue-800"><strong>P3</strong> = √(liczba punktów) × (1 / d̄)<sup>2</sup></li>
             </ul>
+            
             <p class="mt-4 text-base">
                 Kolejne 12 miar to rozszerzenia powyższych z wykorzystaniem odległości do k najbliższych sąsiadów (<em>d<sub>k</sub></em>) dla k = 3, 5, 7, 9. Dla każdego k obliczane są trzy warianty:
             </p>
+            
             <ul class="list-disc list-inside">
-                <li><strong>P1<sub>k</sub></strong> = liczba punktów × (1 / d<sub>k</sub>)</li>
-                <li><strong>P2<sub>k</sub></strong> = liczba punktów × (1 / d<sub>k</sub>)<sup>2</sup></li>
-                <li><strong>P3<sub>k</sub></strong> = √(liczba punktów) × (1 / d<sub>k</sub>)<sup>2</sup></li>
+                <li class="text-xl font-mono text-blue-800"><strong>P1<sub>k</sub></strong> = liczba punktów × (1 / d<sub>k</sub>)</li>
+                <li class="text-xl font-mono text-blue-800"><strong>P2<sub>k</sub></strong> = liczba punktów × (1 / d<sub>k</sub>)<sup>2</sup></li>
+                <li class="text-xl font-mono text-blue-800"><strong>P3<sub>k</sub></strong> = √(liczba punktów) × (1 / d<sub>k</sub>)<sup>2</sup></li>
             </ul>
+            
             <p class="mt-4 text-base">
                 Miary te różnią się poziomem agresywności względem wartości odległości — metryki z kwadratem (P2, P3) są bardziej czułe na zmiany rozproszenia, co pozwala lepiej wykrywać spójność dużych i zwartych skupień. Dzięki ujęciu w formie odwrotności, wartości miar rosną w kierunku bardziej jednorodnych klastrów.
             </p>
         </div>
     </div>
 
+    <!-- Divider -->
+    <div class="divider"></div>
+    <!-- Divider -->
+
+    <h1 class="text-3xl font-bold text-primary mt-4 mb-4">Wyniki badań</h1>
+
+    <h2 class="text-2xl font-semibold text-secondary">Zbiory danych</h2>
+    <p class="text-base mb-4 mt-4">
+        W badaniach wykorzystano 7 różnych zbiorów danych, które różnią się kształtem i rozkładem punktów. Zbiory te obejmują zarówno klasyczne kształty (np. okręgi, pierścienie), jak i bardziej złożone struktury (np. rozkład von Misesa, kształty niestandardowe). 
+        Każdy zbiór danych został poddany analizie w celu oceny skuteczności algorytmów klasteryzacji w wykrywaniu jednego klastra oraz identyfikacji szumu.
+    </p>
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Przykładowe kształty zbiorów</div>
+        <div class="collapse-content">
+            <p class="mt-4 text-base">
+                # TO DO: Obrazki kształtów zbiorów danych
+            </p>
+        </div>
+    </div>
+
 
     
-
     <!-- Divider -->
     <div class="divider"></div>
-    <h2 class="text-2xl font-semibold text-secondary">Wyniki eksperymentalne</h2>
-    <div class="grid md:grid-cols-2 gap-4 mt-6">
-        <div class="card bg-base-100 shadow">
-        <figure class="px-4 pt-4">
-            <img src="{% static 'clustering_comparison.png' %}" alt="Porównanie algorytmów" class="rounded-xl" />
-        </figure>
-        <div class="card-body">
-            <h3 class="card-title">📈 Dokładność grupowania</h3>
-            <p>DBSCAN vs metody hierarchiczne dla różnych poziomów szumu</p>    
-            <div class="overflow-x-auto mt-3">
-            <table class="table table-zebra">
-                <thead>
-                <tr>
-                    <th>Algorytm</th>
-                    <th>50% szumu</th>
-                    <th>70% szumu</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>DBSCAN</td>
-                    <td>88.9%</td>
-                    <td>36.0%</td>
-                </tr>
-                <tr>
-                    <td>Single Linkage</td>
-                    <td>84.2%</td>
-                    <td>31.5%</td>
-                </tr>
-                </tbody>
-            </table>
+    <!-- Divider -->
+
+    <h2 class="text-2xl font-semibold text-secondary">Wpływ kryteriów P₁–P₁₅</h2>
+
+    <p class="text-sm italic text-gray-500 mt-1">Wartości w progress barach i listach podane są w η [%] i oznaczają dokładność klasteryzacji.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
+
+        <!-- Karta 1: Complete Linkage -->
+        <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
+            <div class="card-body">
+            <h3 class="card-title text-xl text-primary flex items-center gap-2">
+                📏 Complete Linkage
+            </h3>
+            <p class="mt-2 text-sm text-gray-600">
+                Dla wszystkich kryteriów P₁…P₁₅ algorytm wybierał identyczne d (próg przerwania),  
+                co w praktyce dało stałą dokładność:
+            </p>
+            <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
+                <li>Pierścień: 56 η [%]</li>
+                <li>Półksiężyc: 48 η [%]</li>
+                <li>Litera “X”: 58.5 η [%]</li>
+                <li>Grzyb: 53–57.7 η [%]</li>
+            </ul>
+            <div class="mt-4">
+                <span class="text-xs">zmienność 0 η [%]</span>
+                <progress class="progress progress-error w-full" value="0" max="100"></progress>
+            </div>
             </div>
         </div>
-        </div>
 
-        <div class="card bg-base-100 shadow">
-        <figure class="px-4 pt-4">
-            <img src="{% static 'noise_impact.png' %}" alt="Wpływ szumu" class="rounded-xl" />
-        </figure>
-        <div class="card-body">
-            <h3 class="card-title">⚠️ Analiza odporności</h3>
-            <p>Zmiany dokładności w funkcji poziomu szumu</p>
-            <div class="radial-progress text-primary mt-4" style="--value:88;--size:8rem;">88%</div>
-            <p class="text-sm mt-2">Maksymalna dokładność osiągnięta dla 40% szumu</p>
-        </div>
-        </div>
-    </div>
-
-
-    <!-- Divider -->
-    <div class="divider"></div>
-
-    <h2 class="text-2xl font-semibold text-secondary">Testowane zbiory danych</h2>
-    <div class="alert alert-info shadow-lg mt-6">
-        <p class="text-base">
-        System przetestowany na 7 typach zbiorów danych:
-        <br><span class="font-semibold">Koła • Pierścienie • Rozkłady normalne • Rozkład von Misesa • Kształty niestandardowe</span>
-        </p>
-    </div>
-
-    <!-- Divider -->
-    <div class="divider"></div>
-
-        <!-- Footer -->
-        <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
-            <div>
-                <p>📄 Licencja MIT - 💌 Kontakt przez GitHub Issues</p>
+        <!-- Karta 2: Single Linkage -->
+        <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
+            <div class="card-body">
+            <h3 class="card-title text-xl text-primary flex items-center gap-2">
+                🔗 Single Linkage
+            </h3>
+            <p class="mt-2 text-sm text-gray-600">
+                Dokładność zależy od kryterium Pᵢ (i=1…15), ale dla każdego zbioru utrzymuje się w granicach:
+            </p>
+            <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
+                <li>Pierścień: 81 η [%] → 89.2 η [%]</li>
+                <li>Półksiężyc: 50 η [%] → 60.8 η [%]</li>
+                <li>Litera “X”: 53 η [%] → 84.5 η [%]</li>
+                <li>Grzyb: 68 η [%] → 87.9 η [%]</li>
+            </ul>
+            <div class="mt-4">
+                <span class="text-xs">zakres ~20–31 pp (η [%])</span>
+                <progress class="progress progress-warning w-full" value="25" max="100"></progress>
             </div>
-        </footer>
+            </div>
+        </div>
+
+        <!-- Karta 3: DBSCAN -->
+        <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
+            <div class="card-body">
+            <h3 class="card-title text-xl text-primary flex items-center gap-2">
+                🌀 DBSCAN
+            </h3>
+            <p class="mt-2 text-sm text-gray-600">
+                DBSCAN wykazuje umiarkowaną zmienność wg kryteriów Pᵢ oraz generalnie najwyższe dokładności:
+            </p>
+            <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
+                <li>Pierścień: 88 η [%] → 92 η [%]</li>
+                <li>Półksiężyc:  65.6 η [%] (P₂,k₅ najlepsze)</li>
+                <li>Litera “X”: 81.5 η [%] (P₅,P₆,P₈,P₉)</li>
+                <li>Grzyb: 88.8 η [%] (P₄–P₉)</li>
+            </ul>
+            <div class="mt-4">
+                <span class="text-xs">zakres ~26 pp (η [%])</span>
+                <progress class="progress progress-success w-full" value="26" max="100"></progress>
+            </div>
+            </div>
+        </div>
     </div>
-</div>
+
+    <p class="mt-4 text-base">
+        Analiza wyników dla różnych kształtów i algorytmów pokazuje, że wybór kryterium P ma istotny wpływ przede wszystkim na algorytmy Single Linkage i DBSCAN, natomiast Complete Linkage jest na ogół niewrażliwy na zmianę kryterium (zawsze generując tę samą wartość progu d i takie same wyniki).
+    </p>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Podsumowanie wpływu kryteriów P na wyniki</div>
+        <div class="collapse-content">
+            # TO DO: Obrazki wykresów z wynikami dla różnych kryteriów P
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+    <!-- Divider -->
+
+    <h2 class="text-2xl font-semibold text-secondary">Wrażliwość na szum</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
+
+        <!-- Karta 1: Single Linkage – kształt grzyba (Rysunek 4.27) -->
+        <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
+            <div class="card-body">
+                <h3 class="card-title text-xl text-primary flex items-center gap-2">
+                🍄 Single Linkage – grzyb
+                </h3>
+                <p class="mt-2 text-sm text-gray-600">
+                Algorytm radzi sobie doskonale przy szumie do 60 % – <strong>dokładność > 90 %</strong>.  
+                Przy 70 % szumu dokładność spada drastycznie do ~34 %.
+                </p>
+                <div class="mt-4 space-y-2">
+                    <div>
+                        <span class="text-xs">40 % szumu – 92 %</span>
+                        <progress class="progress progress-success w-full" value="92" max="100"></progress>
+                    </div>
+                    <div>
+                        <span class="text-xs">50 % szumu – 90 %</span>
+                        <progress class="progress progress-success w-full" value="90" max="100"></progress>
+                    </div>
+                    <div>
+                        <span class="text-xs">60 % szumu – 91 %</span>
+                        <progress class="progress progress-success w-full" value="91" max="100"></progress>
+                    </div>
+                        <div>
+                            <span class="text-xs">70 % szumu – 34 %</span>
+                            <progress class="progress progress-error w-full" value="34" max="100"></progress>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Karta 2: DBSCAN – kształt grzyba (Rysunek 4.28) -->
+            <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
+                <div class="card-body">
+                    <h3 class="card-title text-xl text-primary flex items-center gap-2">
+                    🍄 DBSCAN – grzyb
+                    </h3>
+                    <p class="mt-2 text-sm text-gray-600">
+                    DBSCAN jest nieco bardziej odporny na szum – 
+                    <strong>90 %</strong> przy 40 %, <strong>88 %</strong> przy 50 %, <strong>86 %</strong> przy 60 %.  
+                    Przy 70 % dokładność spada do ~32 %.
+                    </p>
+                    <div class="mt-4 space-y-2">
+                    <div>
+                        <span class="text-xs">40 % szumu – 90 %</span>
+                        <progress class="progress progress-success w-full" value="90" max="100"></progress>
+                    </div>
+                    <div>
+                        <span class="text-xs">50 % szumu – 88 %</span>
+                        <progress class="progress progress-success w-full" value="88" max="100"></progress>
+                    </div>
+                    <div>
+                        <span class="text-xs">60 % szumu – 86 %</span>
+                        <progress class="progress progress-warning w-full" value="86" max="100"></progress>
+                    </div>
+                    <div>
+                        <span class="text-xs">70 % szumu – 32 %</span>
+                        <progress class="progress progress-error w-full" value="32" max="100"></progress>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Karta 3: Single Linkage – koło jednorodne (Rysunek 4.29) -->
+            <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
+            <div class="card-body">
+                <h3 class="card-title text-xl text-primary flex items-center gap-2">
+                ⭕ Single Linkage – koło
+                </h3>
+                <p class="mt-2 text-sm text-gray-600">
+                Bardzo wysoka skuteczność do 60 % szumu – ok. <strong>88–89 %</strong>.  
+                Pomiędzy 60 % a 70 % następuje silny spadek z ~84 % do ~~32 %.
+                </p>
+                <div class="mt-4 space-y-2">
+                <div>
+                    <span class="text-xs">40 % szumu – 89 %</span>
+                    <progress class="progress progress-success w-full" value="89" max="100"></progress>
+                </div>
+                <div>
+                    <span class="text-xs">50 % szumu – 88 %</span>
+                    <progress class="progress progress-success w-full" value="88" max="100"></progress>
+                </div>
+                <div>
+                    <span class="text-xs">60 % szumu – 84 %</span>
+                    <progress class="progress progress-warning w-full" value="84" max="100"></progress>
+                </div>
+                <div>
+                    <span class="text-xs">70 % szumu – 32 %</span>
+                    <progress class="progress progress-error w-full" value="32" max="100"></progress>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p class="mt-4 text-base">
+        Zarówno Single Linkage, jak i DBSCAN są odporne na dodatek szumu do poziomu około 60 %, przy czym DBSCAN w większości przypadków osiąga wyższą dokładność. Przy przekroczeniu 60 % szumu dochodzi do istotnego pogorszenia jakości grupowania, a przy 70 % oba algorytmy nie radzą sobie z wykryciem prawidłowych klastrów.
+    </p>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Podsumowanie wpływu szumu na klasteryzację</div>
+            <div class="collapse-content">
+                <p class="mt-4 text-base">
+                    <strong>Single Linkage:</strong> we wszystkich analizowanych zbiorach (koło jednorodne, von Mises, normalne, pierścień, półksiężyc, „X”, grzyb) algorytm utrzymuje wysoką dokładność (>80 %) przy poziomach szumu do 60 %. Najbardziej stabilne wyniki (powyżej 88 %) uzyskano dla koła i pierścienia, natomiast najtrudniejszym przypadkiem był półksiężyc – dokładność spadała do 54 % przy 60 % szumu. W każdym zestawie gwałtowny spadek poniżej 35 % obserwujemy przy 70 % szumu, co pokazuje granicę tolerancji Single Linkage.
+                </p>
+                <p class="mt-4 text-base">
+                    <strong>DBSCAN:</strong> również radzi sobie dobrze do 60 % szumu, często osiągając bardzo wysoką dokładność (np. 90 % dla koła, 92 % dla pierścienia, 90 % dla grzyba). Interesującym wyjątkiem jest rozkład von Mises, gdzie dokładność wzrasta z 50 % przy 40 % szumu do 80 % przy 70 % szumu, co wynika z premiowania gęstych, zwartch klastrów. Podobnie jak Single Linkage, DBSCAN traci skuteczność przy 70 % szumu (dokładność spada do ok. 30–37 % w większości przypadków).
+                </p>
+                <p class="mt-4 text-base">
+                    <strong>Complete Linkage:</strong> nie wykazuje istotnej wrażliwości na szum (zawsze wybiera ten sam próg przerwania i uzyskuje jednolite, niskie wyniki), dlatego jego prezentacja została pominięta.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Divider -->
+    <div class="divider"></div>
+    <!-- Divider -->
+
+    <h2 class="text-2xl font-semibold text-secondary">Czas wykonywania obliczeń</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
+
+        <!-- Karta 1: Koła jednorodne i von Mises (Tabela 4.1) -->
+        <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
+            <div class="card-body">
+            <h3 class="card-title text-xl text-primary flex items-center gap-2">
+                ⭕ Koła (Tabela 4.1)
+            </h3>
+            <p class="mt-2 text-sm text-gray-600">
+                <strong>DBSCAN:</strong> od ~377 s (koło von Mises, średnica 30) do ~172 s (koło jednorodne, średnica 70)<br>
+                <strong>Single Linkage:</strong> stabilnie ~45–58 s, rośnie nieco z rozmiarem zbioru<br>
+                <strong>Complete Linkage:</strong> najkrócej ~40–48 s, do 16 % szybciej od Single Linkage
+            </p>
+            <div class="mt-4 space-y-2">
+                <!-- przykład wizualnego paska (średnie czasy) -->
+                <div>
+                <span class="text-xs">DBSCAN (średnio ~280 s)</span>
+                <progress class="progress progress-error w-full" value="280" max="400"></progress>
+                </div>
+                <div>
+                <span class="text-xs">Single Linkage (średnio ~48 s)</span>
+                <progress class="progress progress-warning w-full" value="48" max="100"></progress>
+                </div>
+                <div>
+                <span class="text-xs">Complete Linkage (średnio ~44 s)</span>
+                <progress class="progress progress-success w-full" value="44" max="100"></progress>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Karta 2: Rozkład kołowy Gaussa vs pierścień (Tabela 4.2) -->
+        <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
+            <div class="card-body">
+            <h3 class="card-title text-xl text-primary flex items-center gap-2">
+                🔵 Rozkład kołowy Gaussa vs Pierścień (Tabela 4.2)
+            </h3>
+            <p class="mt-2 text-sm text-gray-600">
+                <strong>DBSCAN:</strong> ~265 s → ~178 s (malejący z rozmiarem, niezależnie od kształtu)<br>
+                <strong>Single Linkage:</strong> ~44–52 s, minimalna różnica między kołem a pierścieniem<br>
+                <strong>Complete Linkage:</strong> ~40–48 s, także stabilny niezależnie od kształtu
+            </p>
+            <div class="mt-4 space-y-2">
+                <div>
+                <span class="text-xs">DBSCAN (średnio ~225 s)</span>
+                <progress class="progress progress-error w-full" value="225" max="400"></progress>
+                </div>
+                <div>
+                <span class="text-xs">Single Linkage (średnio ~47 s)</span>
+                <progress class="progress progress-warning w-full" value="47" max="100"></progress>
+                </div>
+                <div>
+                <span class="text-xs">Complete Linkage (średnio ~42 s)</span>
+                <progress class="progress progress-success w-full" value="42" max="100"></progress>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Karta 3: Kształty nieregularne (Tabela 4.3) -->
+        <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
+            <div class="card-body">
+            <h3 class="card-title text-xl text-primary flex items-center gap-2">
+                🌀 Nieregularne (Tabela 4.3)
+            </h3>
+            <p class="mt-2 text-sm text-gray-600">
+                <strong>DBSCAN:</strong> ~150–200 s, najwolniejszy we wszystkich przypadkach<br>
+                <strong>Single Linkage:</strong> ~42–60 s, wzrost przy kształcie “grzyb”<br>
+                <strong>Complete Linkage:</strong> ~39–44 s, najszybszy, choć czasem problemy z grupowaniem
+            </p>
+            <div class="mt-4 space-y-2">
+                <div>
+                <span class="text-xs">DBSCAN (średnio ~170 s)</span>
+                <progress class="progress progress-error w-full" value="170" max="400"></progress>
+                </div>
+                <div>
+                <span class="text-xs">Single Linkage (średnio ~48 s)</span>
+                <progress class="progress progress-warning w-full" value="48" max="100"></progress>
+                </div>
+                <div>
+                <span class="text-xs">Complete Linkage (średnio ~41 s)</span>
+                <progress class="progress progress-success w-full" value="41" max="100"></progress>
+                </div>
+            </div>
+            </div>
+        </div>
+
+    </div>
+
+    <p class="mt-4 mb-4text-base">
+        <ul class="  p-4  list-disc pl-6">
+        <li>DBSCAN jest <strong>4-6 razy wolniejszy</strong> od metod hierarchicznych we wszystkich testowanych konfiguracjach</li>
+        <li>Hierarchiczne metody aglomeracyjne wykazują <strong>stabilny czas wykonania</strong> niezależnie od kształtu danych</li>
+        <li>Complete Linkage konsekwentnie przewyższa Single Linkage o <strong>3-16% w szybkości</strong></li>
+        <li>Wzrost średnicy koła zmniejsza czas wykonania DBSCAN nawet o <strong>30%</strong></li>
+        </ul>
+    </p>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Podsumowanie wyników czasowych algorytmów</div>
+        <div class="collapse-content">
+
+        </div>
+    </div>
+
+    
+    <!-- Divider -->
+    <div class="divider"></div>
+    <!-- Divider -->
+
+
+    <section class=" mx-auto px-4">
+    <div class="card bg-base-100 shadow-lg border border-base-200">
+        <div class="card-body">
+        <h2 class="text-3xl font-bold text-secondary mb-6 text-center">
+            <span class="badge badge-secondary mr-3">📌</span>
+            Wnioski
+        </h2>
+
+        <div class="prose prose-lg max-w-none text-base-content">
+            <p class="mb-4 text-justify leading-relaxed">
+            <span class="font-semibold text-secondary">Głównym celem</span> było wyodrębnienie jednego dużego klastra, który będzie zarówno wewnętrznie spójny, jak i wyraźnie odseparowany od pozostałego szumu w danych. Wdrożone kryteria oparte na uzasadnionej granulacji zapewniają, że klaster musi mieć dużą liczbę punktów oraz niską średnią odległość między nimi, co minimalizuje wpływ szumu i podkreśla rzeczywiste skupienia.
+            </p>
+
+        <!-- Stats -->
+        <div class="flex justify-center shadow my-4 p-4 mt-4 mb-4 text-center">
+            <div class="stat">
+            <div class="stat-title">Testowane kształty</div>
+            <div class="stat-value text-primary">7</div>
+            <div class="stat-desc">różne formy skupisk</div>
+            </div>
+            <div class="stat">
+            <div class="stat-title">Metryki jakości</div>
+            <div class="stat-value text-primary">15</div>
+            <div class="stat-desc">własne miary oceny</div>
+            </div>
+            <div class="stat">
+            <div class="stat-title">Algorytmy</div>
+            <div class="stat-value text-primary">3</div>
+            <div class="stat-desc">DBSCAN, Single i Complete Linkage</div>
+            </div>
+            <div class="stat">
+            <div class="stat-title">Konfiguracje</div>
+            <div class="stat-value text-primary">300+</div>
+            <div class="stat-desc">łacznie konfiguracji</div>
+            </div>
+        </div>
+
+            <p class="mb-4 text-justify leading-relaxed">
+            W badaniach porównano algorytmy DBSCAN, Single Linkage i Complete Linkage. Określono własne metryki oceny, pozwalające ustalić optymalne parametry dla każdego podejścia, zwłaszcza ε i MinPts w DBSCAN oraz moment przerwania scalania w hierarchicznych algorytmach.
+            </p>
+
+            <div class="flex flex-col gap-4 my-6">
+            <div class="alert alert-info shadow-lg">
+                <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>DBSCAN osiągnął wysoką dokładność w 6/7 przypadków</span>
+                </div>
+            </div>
+            </div>
+
+            <p class="mb-4 text-justify leading-relaxed">
+            Analiza wpływu szumu wykazała, że zwiększający się udział zakłóceń systematycznie obniża dokładność grupowania, ze znaczącym spadkiem przy 70% szumu. Szczególnym wyzwaniem okazało się wykrywanie klastrów w rozkładzie von Misesa (kształt kołowy), gdzie Single Linkage przewyższył DBSCAN.
+            </p>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+    <!-- Divider -->
+
+
+    <!-- Footer -->
+    <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
+        <div>
+            <p>📄 Licencja MIT - 💌 Kontakt przez GitHub Issues</p>
+        </div>
+    </footer>
+
 </div>
 
 {% endblock content %}

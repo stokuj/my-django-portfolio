@@ -3270,6 +3270,9 @@
   .pl-5 {
     padding-left: calc(var(--spacing) * 5);
   }
+  .pl-6 {
+    padding-left: calc(var(--spacing) * 6);
+  }
   .text-center {
     text-align: center;
   }
@@ -3345,6 +3348,9 @@
       }
     }
   }
+  .progress-primary {
+    color: var(--color-primary);
+  }
   .text-accent {
     color: var(--color-accent);
   }
@@ -3371,6 +3377,9 @@
   }
   .text-secondary {
     color: var(--color-secondary);
+  }
+  .text-success {
+    color: var(--color-success);
   }
   .lowercase {
     text-transform: lowercase;
@@ -3496,6 +3505,10 @@
   .badge-accent {
     --badge-color: var(--color-accent);
     --badge-fg: var(--color-accent-content);
+  }
+  .badge-error {
+    --badge-color: var(--color-error);
+    --badge-fg: var(--color-error-content);
   }
   .badge-info {
     --badge-color: var(--color-info);
