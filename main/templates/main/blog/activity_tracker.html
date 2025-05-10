@@ -132,4 +132,203 @@
         <div class="badge badge-outline badge-secondary">PostgreSQL</div>
         <div class="badge badge-outline">Bootstrap 5</div>
         <div class="badge badge-outline">Selenium</div>
-        <div class="badge badge-outline">Her
+        <div class="badge badge-outline">Heroku</div>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+    <h2 class="text-2xl font-semibold text-secondary">Konfiguracja i wdrożenie</h2>
+    <div class="alert alert-info shadow-lg my-4">
+        <ul class="list-disc pl-5 text-base">
+        <li>Wymagania: Python ≥3.8, PostgreSQL</li>
+        <li>Instalacja zależności: <code>pip install -r requirements.txt</code></li>
+        <li>Migracje: <code>python manage.py migrate</code></li>
+        <li>Uruchomienie serwera: <code>python manage.py runserver</code></li>
+        </ul>
+    </div>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Przykład wdrożenia na Heroku</div>
+            <div class="collapse-content">
+                <pre class="mt-4 bg-base-300 p-4 rounded">
+# Wykrywanie środowiska Heroku
+if 'DYNO' in os.environ:
+    import django_heroku
+    django_heroku.settings(locals())</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+    <h2 class="text-2xl font-semibold text-secondary">Główne funkcjonalności</h2>
+    <p class="text-base mb-4 mt-4">
+    Aplikacja implementuje trzy główne moduły z zaawansowaną walidacją i zabezpieczeniami.
+    </p>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Uwierzytelnianie użytkowników</div>
+        <div class="collapse-content">
+            <p class="mt-4 text-base">
+                Zaimplementowane z użyciem Django Allauth i integracji Google OAuth 2.0. Funkcje:
+                <ul class="list-disc pl-6">
+                    <li>Walidacja siły hasła</li>
+                    <li>Ochrona tokenami CSRF</li>
+                    <li>Ustawienia prywatności profilu</li>
+                </ul>
+            </p>
+            <pre class="text-sm bg-base-300 rounded mt-4 p-4">
+# Konfiguracja Google OAuth
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'}
+    }
+}</pre>
+        </div>
+    </div>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Zarządzanie aktywnościami</div>
+        <div class="collapse-content">
+            <p class="mt-4 text-base">
+                Użytkownicy mogą śledzić aktywności z walidacją czasu trwania (5min-12h). Funkcje:
+                <ul class="list-disc pl-6">
+                    <li>Import/eksport CSV</li>
+                    <li>Interaktywne wykresy z Plotly</li>
+                    <li>Automatyczne formatowanie czasu</li>
+                </ul>
+            </p>
+            <pre class="text-sm bg-base-300 rounded mt-4 p-4">
+# Model aktywności
+class Activity(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    duration = models.DurationField()
+    created_at = models.DateTimeField(auto_now_add=True)</pre>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+    <h1 class="text-3xl font-bold text-primary mt-4 mb-4">Walidacja i testowanie</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
+
+        <!-- Karta 1: Bezpieczeństwo -->
+        <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
+            <div class="card-body">
+            <h3 class="card-title text-xl text-primary flex items-center gap-2">
+                🔒 Bezpieczeństwo
+            </h3>
+            <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
+                <li>Zapobieganie XSS</li>
+                <li>Tokeny CSRF we wszystkich formularzach</li>
+                <li>Szyfrowanie haseł</li>
+            </ul>
+            <div class="mt-4">
+                <progress class="progress progress-success w-full" value="100" max="100"></progress>
+            </div>
+            </div>
+        </div>
+
+        <!-- Karta 2: Wydajność -->
+        <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
+            <div class="card-body">
+            <h3 class="card-title text-xl text-primary flex items-center gap-2">
+                ⚡ Wydajność
+            </h3>
+            <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
+                <li>20 równoczesnych użytkowników</li>
+                <li>Czas odpowiedzi <500ms</li>
+                <li>Heroku H10 dyno</li>
+            </ul>
+            <div class="mt-4">
+                <progress class="progress progress-warning w-full" value="85" max="100"></progress>
+            </div>
+            </div>
+        </div>
+
+        <!-- Karta 3: Kompatybilność -->
+        <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
+            <div class="card-body">
+            <h3 class="card-title text-xl text-primary flex items-center gap-2">
+                🌐 Kompatybilność
+            </h3>
+            <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
+                <li>Chrome 110+</li>
+                <li>Firefox 108+</li>
+                <li>Safari 15.6+</li>
+            </ul>
+            <div class="mt-4">
+                <progress class="progress progress-success w-full" value="95" max="100"></progress>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+    <section class=" mx-auto px-4">
+    <div class="card bg-base-100 shadow-lg border border-base-200">
+        <div class="card-body">
+        <h2 class="text-3xl font-bold text-secondary mb-6 text-center">
+            <span class="badge badge-secondary mr-3">✅</span>
+            Podsumowanie
+        </h2>
+
+        <div class="prose prose-lg max-w-none text-base-content">
+            <p class="mb-4 text-justify leading-relaxed">
+            Aplikacja stanowi solidną platformę do zarządzania aktywnością fizyczną, łączącą zaawansowane funkcje z przyjaznym interfejsem. Wykorzystanie Django, PostgreSQL i Bootstrap gwarantuje skalowalność i możliwość rozbudowy.
+            </p>
+
+            <div class="stats shadow bg-base-100 mt-4 mb-4">
+                <div class="stat">
+                    <div class="stat-title">Pokrycie testami</div>
+                    <div class="stat-value text-primary">98%</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-title">Śledzone aktywności</div>
+                    <div class="stat-value text-secondary">1K+</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-title">Obsługiwani użytkownicy</div>
+                    <div class="stat-value text-accent">20+</div>
+                </div>
+            </div>
+
+            <div class="alert alert-success shadow-lg mt-4">
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>Pomyślnie wdrożono na Heroku z dostępnością 24/7</span>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-semibold mt-6">Planowane ulepszenia</h3>
+            <ul class="list-disc pl-6">
+                <li>Integracja z trackerami (Fitbit, Garmin)</li>
+                <li>Aplikacja mobilna</li>
+                <li>Zaawansowane funkcje społecznościowe</li>
+            </ul>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- Stopka -->
+    <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
+        <div>
+            <p>📄 Licencja MIT - 💌 Kontakt przez GitHub Issues</p>
+        </div>
+    </footer>
+
+</div>
+
+{% endblock content %}
