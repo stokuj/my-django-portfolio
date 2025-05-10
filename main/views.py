@@ -56,3 +56,6 @@ def my_django_portfolio(request):
 
 def granular_data_grouping(request):
     return render(request, "main/blog/granular_data_grouping.html")
+
+def activity_tracker(request):
+    return render(request, "main/blog/activity_tracker.html")
