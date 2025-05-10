@@ -1,336 +1,135 @@
 {% extends "base.html" %}
 
-{% block page_name %}Web Application for Managing Physical Activity{% endblock page_name %}
+{% block page_name %}Aplikacja internetowa do zarządzania aktywnością fizyczną{% endblock page_name %}
 
 {% block content %}
 {% load static %}
-<h1 class="text-3xl font-bold text-center mt-8 mb-8">Web Application for Managing Physical Activity</h1><div class="container mx-auto p-6 max-w-6xl"> <div class="card bg-base-200 w-full p-8 shadow-xl"> <h1 class="text-3xl font-bold text-primary mb-6">Project Overview</h1>
 
-    <div class="prose">
-    <p class="text-lg mb-4 mt-2">
-        The goal of this project is to develop a web application that enables users to track their physical activities, interact with others through posts and comments, and analyze their progress using charts. The platform emphasizes user-friendly design, data security, and social engagement. Built with Django and deployed on Heroku, the application integrates PostgreSQL for database management and Bootstrap for responsive UI design.
-    </p>
+<h1 class="text-3xl font-bold text-center mt-8 mb-8">Aplikacja internetowa do zarządzania aktywnością fizyczną</h1>
+
+<div class="container mx-auto p-6 max-w-6xl">
+    <div class="card bg-base-200 w-full p-8 shadow-xl">
+        <h1 class="text-3xl font-bold text-primary mb-6">Przegląd projektu</h1>
+
+        <div class="prose">
+        <p class="text-lg mb-4 mt-2">
+            Celem projektu jest stworzenie aplikacji internetowej umożliwiającej śledzenie aktywności fizycznej, interakcje społeczne poprzez posty i komentarze oraz analizę postępów za pomocą wykresów. Platforma kładzie nacisk na przyjazny interfejs, bezpieczeństwo danych i zaangażowanie użytkowników. Zbudowana w Django i wdrożona na Heroku, aplikacja wykorzystuje PostgreSQL do zarządzania bazą danych oraz Bootstrap do responsywnego projektowania UI.
+        </p>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <h2 class="text-2xl font-semibold text-secondary">Kluczowe funkcje</h2>
+
+        <p class="text-base mb-4 mt-4">
+            Aplikacja oferuje kompleksowy zestaw funkcji promujących aktywność fizyczną i interakcje:
+            <ul class="list-disc pl-6">
+                <li>Rejestracja i uwierzytelnianie (w tym Google OAuth 2.0)</li>
+                <li>Śledzenie aktywności z czasem trwania i kategoriami</li>
+                <li>Funkcje społecznościowe: posty, komentarze, obserwowanie użytkowników</li>
+                <li>Wizualizacja danych poprzez interaktywne wykresy</li>
+                <li>Import/eksport danych aktywności do CSV</li>
+                <li>Ustawienia prywatności profilu</li>
+                <li>Panel administracyjny do moderacji treści</li>
+            </ul>
+        </p>
+
+    <div class="grid md:grid-cols-2 gap-4 mt-4 mb-4">
+
+        <!-- Lewa kolumna: Struktura projektu -->
+        <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow h-full border border-primary">
+            <div class="card-body">
+                <h2 class="card-title">📁 Struktura projektu</h2>
+                <pre class="bg-base-300 p-4 rounded-lg overflow-x-auto"><code>/activity_tracker/
+    ├── manage.py
+    ├── requirements.txt
+    ├── activityTracker/
+    │   ├── settings.py
+    │   ├── urls.py
+    │   └── models/
+    │       ├── User.py
+    │       ├── Activity.py
+    │       └── Post.py
+    ├── templates/
+    │   ├── base.html
+    │   └── dashboard.html
+    └── static/
+        ├── css/
+        └── js/</code></pre>
+            </div>
+        </div>
+
+<!-- Prawa kolumna: Zagnieżdżony grid -->
+<div class="grid grid-rows-2 gap-4 h-full">
+
+    <!-- Górna karta: Podstawowe technologie -->
+    <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary">
+        <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="text-2xl">🛠️</div>
+                <h3 class="card-title text-accent text-lg font-semibold">Główny stack</h3>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <span class="badge badge-primary badge-lg px-3 py-2">Django</span>
+                <span class="badge badge-secondary badge-lg px-3 py-2">PostgreSQL</span>
+                <span class="badge badge-accent badge-lg px-3 py-2">Bootstrap</span>
+            </div>
+            <div class="mt-4 space-y-1.5 text-base-content/80">
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-success badge-xs"></span>
+                    System uwierzytelniania użytkowników
+                </p>
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-success badge-xs"></span>
+                    Operacje CRUD dla aktywności/postów
+                </p>
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-success badge-xs"></span>
+                    Automatyczne testy z Selenium
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dolna karta: Metryki -->
+    <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary">
+        <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="text-2xl">📈</div>
+                <h3 class="card-title text-accent text-lg font-semibold">Kluczowe metryki</h3>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <span class="badge badge-primary badge-lg px-3 py-2">500+ LOC</span>
+                <span class="badge badge-secondary badge-lg px-3 py-2">15+ modeli</span>
+                <span class="badge badge-accent badge-lg px-3 py-2">98% pokrycia testami</span>
+            </div>
+            <div class="mt-4 space-y-1.5 text-base-content/80">
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-warning badge-xs"></span>
+                    20+ automatycznych testów
+                </p>
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-warning badge-xs"></span>
+                    5 walidatorów bezpieczeństwa
+                </p>
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-warning badge-xs"></span>
+                    Wdrożenie na Heroku
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
 
     <!-- Divider -->
     <div class="divider"></div>
 
-    <h2 class="text-2xl font-semibold text-secondary">Key Features</h2>
-
-    <p class="text-base mb-4 mt-4">
-        The application offers a comprehensive set of features designed to promote physical activity and user engagement:
-        <ul class="list-disc pl-6">
-            <li>User registration and authentication (including Google OAuth 2.0)</li>
-            <li>Activity tracking with duration and category management</li>
-            <li>Social features: posts, comments, and user following</li>
-            <li>Data visualization through interactive bar and pie charts</li>
-            <li>CSV import/export for activity data</li>
-            <li>Privacy settings for user profiles</li>
-            <li>Admin dashboard for content moderation</li>
-        </ul>
-    </p>
-
-<div class="grid md:grid-cols-2 gap-4 mt-4 mb-4">
-
-    <!-- Left Column: Project Structure -->
-    <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow h-full border border-primary">
-        <div class="card-body">
-            <h2 class="card-title">📁 Project Structure</h2>
-            <pre class="bg-base-300 p-4 rounded-lg overflow-x-auto"><code>/activity_tracker/
-├── manage.py
-├── requirements.txt
-├── activityTracker/
-│   ├── settings.py
-│   ├── urls.py
-│   └── models/
-│       ├── User.py
-│       ├── Activity.py
-│       └── Post.py
-├── templates/
-│   ├── base.html
-│   └── dashboard.html
-└── static/
-    ├── css/
-    └── js/</code></pre>
-        </div>
-    </div>
-
-<!-- Right Column: Nested Grid --><div class="grid grid-rows-2 gap-4 h-full">
-
-<!-- Upper Card: Core Technologies -->
-<div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary">
-    <div class="card-body p-5">
-        <div class="flex items-center gap-3 mb-4">
-            <div class="text-2xl">🛠️</div>
-            <h3 class="card-title text-accent text-lg font-semibold">Core Stack</h3>
-        </div>
-        <div class="flex flex-wrap gap-3">
-            <span class="badge badge-primary badge-lg px-3 py-2">Django</span>
-            <span class="badge badge-secondary badge-lg px-3 py-2">PostgreSQL</span>
-            <span class="badge badge-accent badge-lg px-3 py-2">Bootstrap</span>
-        </div>
-        <div class="mt-4 space-y-1.5 text-base-content/80">
-            <p class="text-sm flex items-center gap-2 mt-2 mb-2">
-                <span class="badge badge-success badge-xs"></span>
-                User authentication system
-            </p>
-            <p class="text-sm flex items-center gap-2 mt-2 mb-2">
-                <span class="badge badge-success badge-xs"></span>
-                CRUD operations for activities/posts
-            </p>
-            <p class="text-sm flex items-center gap-2 mt-2 mb-2">
-                <span class="badge badge-success badge-xs"></span>
-                Automated testing with Selenium
-            </p>
-        </div>
-    </div>
-</div>
-
-<!-- Lower Card: Metrics -->
-<div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary">
-    <div class="card-body p-5">
-        <div class="flex items-center gap-3 mb-4">
-            <div class="text-2xl">📈</div>
-            <h3 class="card-title text-accent text-lg font-semibold">Key Metrics</h3>
-        </div>
-        <div class="flex flex-wrap gap-3">
-            <span class="badge badge-primary badge-lg px-3 py-2">500+ LOC</span>
-            <span class="badge badge-secondary badge-lg px-3 py-2">15+ Models</span>
-            <span class="badge badge-accent badge-lg px-3 py-2">98% Test Coverage</span>
-        </div>
-        <div class="mt-4 space-y-1.5 text-base-content/80">
-            <p class="text-sm flex items-center gap-2 mt-2 mb-2">
-                <span class="badge badge-warning badge-xs"></span>
-                20+ Automated Tests
-            </p>
-            <p class="text-sm flex items-center gap-2 mt-2 mb-2">
-                <span class="badge badge-warning badge-xs"></span>
-                5 Security Validators
-            </p>
-            <p class="text-sm flex items-center gap-2 mt-2 mb-2">
-                <span class="badge badge-warning badge-xs"></span>
-                Heroku Deployment
-            </p>
-        </div>
-    </div>
-</div>
-
-</div> </div>
-
-<!-- Divider -->
-<div class="divider"></div>
-
-<h2 class="text-2xl font-semibold text-secondary">Technology Stack</h2>
-<div class="flex flex-wrap gap-4 mt-6">
-    <div class="badge badge-outline">Python 3.10</div>
-    <div class="badge badge-outline badge-primary">Django 4.2</div>
-    <div class="badge badge-outline badge-secondary">PostgreSQL</div>
-    <div class="badge badge-outline">Bootstrap 5</div>
-    <div class="badge badge-outline">Selenium</div>
-    <div class="badge badge-outline">Heroku</div>
-</div>
-
-<!-- Divider -->
-<div class="divider"></div>
-
-<h2 class="text-2xl font-semibold text-secondary">Setup & Deployment</h2>
-<div class="alert alert-info shadow-lg my-4">
-    <ul class="list-disc pl-5 text-base">
-    <li>Requirements: Python ≥3.8, PostgreSQL</li>
-    <li>Install dependencies: <code>pip install -r requirements.txt</code></li>
-    <li>Run migrations: <code>python manage.py migrate</code></li>
-    <li>Start server: <code>python manage.py runserver</code></li>
-    </ul>
-</div>
-
-<div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
-    <input type="checkbox" />
-    <div class="collapse-title text-xl font-medium">Heroku Deployment Example</div>
-        <div class="collapse-content">
-            <pre class="mt-4 bg-base-300 p-4 rounded">
-
-Detect Heroku environment
-
-if 'DYNO' in os.environ:
-import django_heroku
-django_heroku.settings(locals())</pre>
-</div>
-</div>
-</div>
-
-<!-- Divider -->
-<div class="divider"></div>
-
-<h2 class="text-2xl font-semibold text-secondary">Core Functionality</h2>
-<p class="text-base mb-4 mt-4">
-The application implements three main functional modules with detailed validation and security measures.
-</p>
-
-<div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
-    <input type="checkbox" />
-    <div class="collapse-title text-xl font-medium">User Authentication</div>
-    <div class="collapse-content">
-        <p class="mt-4 text-base">
-            Implemented using Django Allauth with Google OAuth 2.0 integration. Features include:
-            <ul class="list-disc pl-6">
-                <li>Password strength validation</li>
-                <li>CSRF token protection</li>
-                <li>Profile privacy settings</li>
-            </ul>
-        </p>
-        <pre class="text-sm bg-base-300 rounded mt-4 p-4">
-
-Google OAuth Configuration
-
-SOCIALACCOUNT_PROVIDERS = {
-'google': {
-'SCOPE': ['profile', 'email'],
-'AUTH_PARAMS': {'access_type': 'online'}
-}
-}</pre>
-</div>
-</div>
-
-<div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
-    <input type="checkbox" />
-    <div class="collapse-title text-xl font-medium">Activity Management</div>
-    <div class="collapse-content">
-        <p class="mt-4 text-base">
-            Users can track physical activities with duration validation (5min-12hrs). Features include:
-            <ul class="list-disc pl-6">
-                <li>CSV import/export</li>
-                <li>Interactive charts using Plotly</li>
-                <li>Automatic time formatting</li>
-            </ul>
-        </p>
-        <pre class="text-sm bg-base-300 rounded mt-4 p-4">
-
-Activity Model
-
-class Activity(models.Model):
-user = models.ForeignKey(User, on_delete=models.CASCADE)
-name = models.CharField(max_length=50)
-duration = models.DurationField()
-created_at = models.DateTimeField(auto_now_add=True)</pre>
-</div>
-</div>
-
-<!-- Divider -->
-<div class="divider"></div>
-
-<h2 class="text-2xl font-semibold text-secondary">Validation & Testing</h1>
-
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
-
-    <!-- Card 1: Security Tests -->
-    <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
-        <div class="card-body">
-        <h3 class="card-title text-xl text-primary flex items-center gap-2">
-            🔒 Security
-        </h3>
-        <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
-            <li>XSS prevention implemented</li>
-            <li>CSRF tokens in all forms</li>
-            <li>Password encryption</li>
-        </ul>
-        <div class="mt-4">
-            <progress class="progress progress-success w-full" value="100" max="100"></progress>
-        </div>
-        </div>
-    </div>
-
-    <!-- Card 2: Performance -->
-    <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
-        <div class="card-body">
-        <h3 class="card-title text-xl text-primary flex items-center gap-2">
-            ⚡ Performance
-        </h3>
-        <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
-            <li>20 concurrent users</li>
-            <li>Response time <500ms</li>
-            <li>Heroku H10 dyno</li>
-        </ul>
-        <div class="mt-4">
-            <progress class="progress progress-warning w-full" value="85" max="100"></progress>
-        </div>
-        </div>
-    </div>
-
-    <!-- Card 3: Compatibility -->
-    <div class="card bg-base-100 shadow-lg rounded-2xl border border-gray-200">
-        <div class="card-body">
-        <h3 class="card-title text-xl text-primary flex items-center gap-2">
-            🌐 Compatibility
-        </h3>
-        <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
-            <li>Chrome 110+</li>
-            <li>Firefox 108+</li>
-            <li>Safari 15.6+</li>
-        </ul>
-        <div class="mt-4">
-            <progress class="progress progress-success w-full" value="95" max="100"></progress>
-        </div>
-        </div>
-    </div>
-</div>
-
-<!-- Divider -->
-<div class="divider"></div>
-
-
-
-
-<h2 class="text-2xl font-semibold text-secondary">
-
-        Conclusions
-    </h2>
-
-
-      <p class="text-base mb-4 mt-4">
-            The web application for managing physical activity is a robust and user-friendly platform that successfully integrates various features to enhance user engagement and data management. The use of Django, PostgreSQL, and Bootstrap ensures a solid foundation for future scalability and feature expansion. The project has been thoroughly tested for security, performance, and compatibility, making it a reliable choice for users looking to track their physical activities.
-        </p>
-
-
-            <div class="stats shadow bg-base-100 mt-4 mb-4">
-                <div class="stat">
-                    <div class="stat-title">Test Coverage</div>
-                    <div class="stat-value text-primary">98%</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-title">Activities Tracked</div>
-                    <div class="stat-value text-secondary">1K+</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-title">Users Supported</div>
-                    <div class="stat-value text-accent">20+</div>
-                </div>
-            </div>
-
-
-        <div class="alert alert-success shadow-lg mt-4">
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span>Successfully deployed on Heroku with 24/7 availability</span>
-            </div>
-        </div>
-
-        <h3 class="text-xl font-semibold mt-6">Future Improvements</h3>
-        <ul class="list-disc pl-6">
-            <li>Integration with fitness trackers (Fitbit, Garmin)</li>
-            <li>Mobile app development</li>
-            <li>Advanced social features (groups, challenges)</li>
-        </ul>
-
-    </div>
-
-
-
-<!-- Footer -->
-<footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
-    <div>
-        <p>📄 MIT License - 💌 Contact via GitHub Issues</p>
-    </div>
-</footer>
-
-</div>
-
-{% endblock content %}
+    <h2 class="text-2xl font-semibold text-secondary">Stos technologiczny</h2>
+    <div class="flex flex-wrap gap-4 mt-6">
+        <div class="badge badge-outline">Python 3.10</div>
+        <div class="badge badge-outline badge-primary">Django 4.2</div>
+        <div class="badge badge-outline badge-secondary">PostgreSQL</div>
+        <div class="badge badge-outline">Bootstrap 5</div>
+        <div class="badge badge-outline">Selenium</div>
+        <div class="badge badge-outline">Her
