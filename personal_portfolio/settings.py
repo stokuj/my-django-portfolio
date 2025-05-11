@@ -12,24 +12,32 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-import dj_database_url 
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# load .env
+env = environ.Env(
+    # ustaw domyślne typy i wartości
+    DEBUG=(bool, False),
+    SECRET_KEY=(str, 'fallback_secret'),
+)
+# wskazujemy ścieżkę do .env
+environ.Env.read_env(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key')
+SECRET_KEY = env('SECRET_KEY')
+DEBUG      = env('DEBUG')
 
-
-ALLOWED_HOSTS = ['my-django-portfolio.up.railway.app','my-django-portfolio.onrender.com', 'localhost', '127.0.0.1']
+# Hosts możesz też trzymać w .env, np. ALLOWED_HOSTS=localhost,127.0.0.1
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
 
 # Application definition
-
 
 INSTALLED_APPS = [
     'ckeditor',
@@ -76,54 +84,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'personal_portfolio.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DJANGO_ENV = os.getenv('DJANGO_ENV', 'development')  # Domyślnie ustawiamy na 'development'
-RAILWAY_ENVIRONMENT_NAME = os.getenv('RAILWAY_ENVIRONMENT_NAME', 'development')  # Domyślnie ustawiamy na 'development'
 
+# Ustawienia lokalne (dla deweloperów)
+print("Running in development(local) mode <------------------------------------")
 
-if RAILWAY_ENVIRONMENT_NAME == 'production':
-    # Ustawienia dla produkcji
-    print("Running in production mode RAILWAY <------------------------------------")
-    SECRET_KEY = os.getenv('SECRET_KEY')
-    DEBUG = True
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.getenv('DATABASE_URL', 'postgresql://postgres:QdpkIDzXnPElyOwDlgKddNLxQZcfRVlB@postgres.railway.internal:5432/railway')
-        )
-    }
-elif DJANGO_ENV == 'production':
-    # Ustawienia dla produkcji
-    print("Running in production mode <------------------------------------")
-    SECRET_KEY = os.getenv('SECRET_KEY')
-    DEBUG = True
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.getenv('DATABASE_URL', 'postgresql://portfoliodb_9okm_user:kP39xpJ23Urmk8lZESdE006YJ5U0Qxj6@dpg-d06ft9ili9vc73eb8p3g-a.frankfurt-postgres.render.com/portfoliodb_9okm')
-        )
-    }
-else:
-    # Ustawienia lokalne (dla deweloperów)
-    print("Running in development mode <------------------------------------")
-    SECRET_KEY = 'your-local-secret-key'  # Możesz ustawić na lokalny klucz dla deweloperów
-    DEBUG = True
-    DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'portfolioDB',
-        'USER': 'postgres',
-        'PASSWORD': 'NstftHLz',
-        'HOST': 'localhost',  
-        'PORT': '5432',       # domyślny port PostgreSQL
-        }
-    }
-
-
-
-
-
+DATABASES = {
+    'default': env.db_url(
+        'DATABASE_URL',
+        default=f"postgresql://{env('DB_USER', default='default_user')}:{env('DB_PASSWORD', default='default_password')}@{env('DB_HOST', default='localhost')}:{env('DB_PORT', default='5432')}/{env('DB_NAME', default='default_db')}"
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -170,9 +143,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #####
-import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
