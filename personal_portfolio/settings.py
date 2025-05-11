@@ -24,7 +24,7 @@ env = environ.Env(
     SECRET_KEY=(str, 'fallback_secret'),
 )
 # wskazujemy ścieżkę do .env
-environ.Env.read_env(BASE_DIR / '.env')
+env.read_env(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
