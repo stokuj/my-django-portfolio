@@ -31,9 +31,11 @@ env.read_env(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
-DEBUG      = env('DEBUG')
 
-# Hosts możesz też trzymać w .env, np. ALLOWED_HOSTS=localhost,127.0.0.1
+# Debug mode
+DEBUG = env.bool('DJANGO_DEBUG', default=False)
+
+# Allowed hosts from .env
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
 
@@ -92,10 +94,14 @@ WSGI_APPLICATION = 'personal_portfolio.wsgi.application'
 print("Running in development(local) mode <------------------------------------")
 
 DATABASES = {
-    'default': env.db_url(
-        'DATABASE_URL',
-        default=f"postgresql://{env('DB_USER', default='default_user')}:{env('DB_PASSWORD', default='default_password')}@{env('DB_HOST', default='localhost')}:{env('DB_PORT', default='5432')}/{env('DB_NAME', default='default_db')}"
-    )
+    'default': {
+        'ENGINE': env('DB_ENGINE', default='django.db.backends.sqlite3'),
+        'NAME': env('DB_NAME', default=str(BASE_DIR / 'db.sqlite3')),
+        'USER': env('DB_USER', default=''),
+        'PASSWORD': env('DB_PASSWORD', default=''),
+        'HOST': env('DB_HOST', default=''),
+        'PORT': env('DB_PORT', default=''),
+    }
 }
 
 # Password validation
