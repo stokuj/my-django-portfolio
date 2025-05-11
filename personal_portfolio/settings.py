@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'personal_portfolio.wsgi.application'
 
 # Ustawienia lokalne (dla deweloperów)
 print("Running in development(local) mode <------------------------------------")
-
+print("Debug: ", DEBUG)
 DATABASES = {
     'default': {
         'ENGINE': env('DB_ENGINE', default='django.db.backends.sqlite3'),
