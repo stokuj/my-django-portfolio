@@ -22,7 +22,7 @@ class Project(models.Model):
     date = models.DateField(default=datetime.date(2022, 5, 1))     
     blog = models.BooleanField(default=True)
     blog_url = models.CharField(max_length=100, blank=True, null=True)
-
+    github_url = models.CharField(max_length=100, blank=True, null=True)
 
     tags = models.ManyToManyField(Tag, blank=True)
 

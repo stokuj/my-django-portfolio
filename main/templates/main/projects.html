@@ -49,10 +49,10 @@
             <!-- Projekty w kartach -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl">
                 {% for project in projects %}
+                {% if project.blog %}
                     <div 
                         class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow project-card"
-                        data-tags="{% for tag in project.tags.all %}{{ tag.name|lower }} {% endfor %}"
-                    >
+                        data-tags="{% for tag in project.tags.all %}{{ tag.name|lower }} {% endfor %}">
                         <figure class="px-4 pt-4">
                             <img 
                                 src="{{ project.thumbnail.url }}" 
@@ -82,9 +82,9 @@
                                 View Project
                             </a>
                             {% endif %}
-
                         </div>
                     </div>
+                {% endif %}   
                 {% endfor %}
             </div>
 
