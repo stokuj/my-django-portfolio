@@ -667,41 +667,42 @@
 
 
     <section class=" mx-auto px-4">
-    <div class="card bg-base-100 shadow-lg border border-base-200">
-        <div class="card-body">
-        <h2 class="text-3xl font-bold text-secondary mb-6 text-center">
-            <span class="badge badge-secondary mr-3">📌</span>
+        <!-- Nagłówek sekcji -->
+        <h2 class="text-2xl font-semibold text-secondary mt-4 mb-4">
             Wnioski
         </h2>
+
+
+
 
         <div class="prose prose-lg max-w-none text-base-content">
             <p class="mb-4 text-justify leading-relaxed">
             <span class="font-semibold text-secondary">Głównym celem</span> było wyodrębnienie jednego dużego klastra, który będzie zarówno wewnętrznie spójny, jak i wyraźnie odseparowany od pozostałego szumu w danych. Wdrożone kryteria oparte na uzasadnionej granulacji zapewniają, że klaster musi mieć dużą liczbę punktów oraz niską średnią odległość między nimi, co minimalizuje wpływ szumu i podkreśla rzeczywiste skupienia.
             </p>
 
-        <!-- Stats -->
-        <div class="flex justify-center shadow my-4 p-4 mt-4 mb-4 text-center">
-            <div class="stat">
-            <div class="stat-title">Testowane kształty</div>
-            <div class="stat-value text-primary">7</div>
-            <div class="stat-desc">różne formy skupisk</div>
+            <!-- Stats -->
+            <div class="flex justify-center shadow my-4 p-4 mt-4 mb-4 text-center bg-base-100">
+                <div class="stat">
+                <div class="stat-title">Testowane kształty</div>
+                <div class="stat-value text-primary">7</div>
+                <div class="stat-desc">różne formy skupisk</div>
+                </div>
+                <div class="stat">
+                <div class="stat-title">Metryki jakości</div>
+                <div class="stat-value text-primary">15</div>
+                <div class="stat-desc">własne miary oceny</div>
+                </div>
+                <div class="stat">
+                <div class="stat-title">Algorytmy</div>
+                <div class="stat-value text-primary">3</div>
+                <div class="stat-desc">DBSCAN, Single i Complete Linkage</div>
+                </div>
+                <div class="stat">
+                <div class="stat-title">Konfiguracje</div>
+                <div class="stat-value text-primary">300+</div>
+                <div class="stat-desc">łacznie konfiguracji</div>
+                </div>
             </div>
-            <div class="stat">
-            <div class="stat-title">Metryki jakości</div>
-            <div class="stat-value text-primary">15</div>
-            <div class="stat-desc">własne miary oceny</div>
-            </div>
-            <div class="stat">
-            <div class="stat-title">Algorytmy</div>
-            <div class="stat-value text-primary">3</div>
-            <div class="stat-desc">DBSCAN, Single i Complete Linkage</div>
-            </div>
-            <div class="stat">
-            <div class="stat-title">Konfiguracje</div>
-            <div class="stat-value text-primary">300+</div>
-            <div class="stat-desc">łacznie konfiguracji</div>
-            </div>
-        </div>
 
             <p class="mb-4 text-justify leading-relaxed">
             W badaniach porównano algorytmy DBSCAN, Single Linkage i Complete Linkage. Określono własne metryki oceny, pozwalające ustalić optymalne parametry dla każdego podejścia, zwłaszcza ε i MinPts w DBSCAN oraz moment przerwania scalania w hierarchicznych algorytmach.
@@ -721,7 +722,7 @@
             </p>
         </div>
         </div>
-    </div>
+
     </section>
 
     <!-- Divider -->

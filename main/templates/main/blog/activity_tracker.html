@@ -277,60 +277,49 @@ class Activity(models.Model):
     <div class="divider"></div>
 
     <!-- Nagłówek sekcji -->
-        <h2 class="text-2xl font-semibold text-secondary mt-4 mb-4">
+    <h2 class="text-2xl font-semibold text-secondary mt-4 mb-4">
         Podsumowanie
     </h2>
 
     <section class="container mx-auto">
+    <!-- Akapit -->
+    <p class="text-base mb-4 mt-4">
+        Aplikacja stanowi solidną platformę do zarządzania aktywnością fizyczną, 
+        łączącą zaawansowane funkcje z przyjaznym interfejsem. Wykorzystanie Django, 
+        PostgreSQL i Bootstrap gwarantuje skalowalność i możliwość rozbudowy.
 
-    <!-- Karta -->
-    <div class="card bg-base-100 shadow-lg border border-base-200 rounded-xl overflow-hidden">
-        <div class="card-body prose prose-lg max-w-none text-base-content space-y-6">
-            <!-- Akapit -->
-            <p class="text-center leading-relaxed">
-                Aplikacja stanowi solidną platformę do zarządzania aktywnością fizyczną, 
-                łączącą zaawansowane funkcje z przyjaznym interfejsem. Wykorzystanie Django, 
-                PostgreSQL i Bootstrap gwarantuje skalowalność i możliwość rozbudowy.
-            </p>
-            <!-- Planowane ulepszenia -->
-            <div>
-                <h3 class="text-2xl font-semibold mt-4 mb-2">Planowane ulepszenia</h3>
-                <ul class="list-disc pl-6 space-y-1">
-                <li>Integracja z trackerami (Fitbit, Garmin)</li>
-                <li>Aplikacja mobilna</li>
-                <li>Zaawansowane funkcje społecznościowe</li>
-                </ul>
-            </div>
-        
-            <!-- Statystyki -->
-            <div class="stats shadow-inner bg-base-200 justify-center p-4 mt-4 mb-4">
-                <div class="stat">
-                <div class="stat-title">Pokrycie testami</div>
-                <div class="stat-value text-primary">98%</div>
-                </div>
-                <div class="stat">
-                <div class="stat-title">Śledzone aktywności</div>
-                <div class="stat-value text-secondary">1K+</div>
-                </div>
-                <div class="stat">
-                <div class="stat-title">Obsługiwani użytkownicy</div>
-                <div class="stat-value text-accent">20+</div>
-                </div>
-            </div>
+        Planowane ulepszenia to chociażby integracja z trackerami (Fitbit, Garmin), aplikacja mobilna
+        czy integracja z API zewnętrznymi. W przyszłości planowane jest również stworzenie aplikacji mobilnej,
+        która umożliwi synchronizację danych w czasie rzeczywistym oraz rozszerzenie funkcjonalności o integrację z trackerami fitness, takimi jak Fitbit czy Garmin.
+    
+    </p>
 
-            <!-- Alert -->
-            <div class="alert alert-success shadow-md rounded-lg">
-                <div class="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current h-6 w-6" fill="none" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>Pomyślnie wdrożono na Heroku z dostępnością 24/7</span>
-                </div>
+    <!-- Stats -->
+    <div class="flex justify-center shadow my-4 p-4 mt-4 mb-4 text-center bg-base-100">
+        <div class="stat">
+        <div class="stat-title">Pokrycie testami</div>
+        <div class="stat-value text-primary">98%</div>
+        </div>
+        <div class="stat">
+        <div class="stat-title">Śledzone aktywności</div>
+        <div class="stat-value text-secondary">1K+</div>
+        </div>
+        <div class="stat">
+        <div class="stat-title">Obsługiwani użytkownicy</div>
+        <div class="stat-value text-accent">20+</div>
+        </div>
+    </div>
+
+                <!-- Alert -->
+        <div class="alert alert-success shadow-md rounded-lg mt-4">
+            <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current h-6 w-6" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Pomyślnie wdrożono na Heroku z dostępnością 24/7</span>
             </div>
         </div>
-
-    </div>
     </section>
 
 

@@ -181,72 +181,73 @@ class MyClass():
                 </div>
             </div>
 
-        <!-- Rozbudowana sekcja wizualizacji -->
-        <div class="grid md:grid-cols-2 gap-6 mt-8">
-            <div class="card bg-base-100 shadow">
-                <figure class="px-4 pt-4">
-                    <img src="{% static 'weather_dashboard.png' %}" alt="Panel kontrolny" class="rounded-xl" />
-                </figure>
-                <div class="card-body">
-                    <h3 class="card-title">📊 Statystyki stacji</h3>
-                    <div class="overflow-x-auto">
-                        <table class="table table-zebra">
-                            <thead>
-                                <tr>
-                                    <th>Stacja</th>
-                                    <th>Temp. [°C]</th>
-                                    <th>Wiatr [m/s]</th>
-                                    <th>Opady [mm]</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Warszawa</td>
-                                    <td>18.5</td>
-                                    <td>3.2</td>
-                                    <td>0.0</td>
-                                </tr>
-                                <tr>
-                                    <td>Kraków</td>
-                                    <td>20.1</td>
-                                    <td>2.8</td>
-                                    <td>1.2</td>
-                                </tr>
-                                <tr>
-                                    <td>Gdańsk</td>
-                                    <td>16.7</td>
-                                    <td>4.5</td>
-                                    <td>0.5</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
 
-            <div class="card bg-base-100 shadow">
-                <div class="card-body">
-                    <h3 class="card-title">🌪️ Parametry środowiskowe</h3>
-                    <div class="flex flex-col gap-4">
-                        <div class="radial-progress text-primary" style="--value:85;--size:8rem;">85%</div>
-                        <div class="flex flex-col gap-2">
-                            <div class="flex justify-between">
-                                <span>Wilgotność:</span>
-                                <span class="badge badge-info">65%</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Ciśnienie:</span>
-                                <span class="badge badge-success">1013 hPa</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Jakość powietrza:</span>
-                                <span class="badge badge-warning">PM2.5: 23</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Rozbudowana sekcja wizualizacji -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+
+        <!-- Karta 1: Statystyki stacji -->
+        <div class="card bg-base-100 shadow overflow-hidden">
+        <figure class="px-4 pt-4">
+            <img
+            src="{% static 'weather_dashboard.png' %}"
+            alt="Panel kontrolny"
+            class="rounded-xl w-full h-auto"
+            />
+        </figure>
+        <div class="card-body">
+            <h3 class="card-title">📊 Statystyki stacji</h3>
+            <div class="overflow-x-auto">
+            <table class="table table-zebra w-full">
+                <thead>
+                <tr>
+                    <th>Stacja</th>
+                    <th>Temp. [°C]</th>
+                    <th>Wiatr [m/s]</th>
+                    <th>Opady [mm]</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr> <td>Warszawa</td><td>18.5</td><td>3.2</td><td>0.0</td> </tr>
+                <tr> <td>Kraków</td>  <td>20.1</td><td>2.8</td><td>1.2</td> </tr>
+                <tr> <td>Gdańsk</td>  <td>16.7</td><td>4.5</td><td>0.5</td> </tr>
+                </tbody>
+            </table>
             </div>
         </div>
+        </div>
+
+        <!-- Karta 2: Parametry środowiskowe -->
+        <div class="card bg-base-100 shadow flex flex-col items-center overflow-hidden">
+        <div class="card-body w-full flex flex-col items-center">
+            <h3 class="card-title text-center w-full">🌪️ Parametry środowiskowe</h3>
+            <div class="flex justify-center my-4">
+            <div
+                class="radial-progress text-primary"
+                style="--value:85;--size:6rem;"
+            >
+                85%
+            </div>
+            </div>
+            <div class="w-full flex flex-col gap-3">
+            <div class="flex justify-between">
+                <span>Wilgotność:</span>
+                <span class="badge badge-info">65%</span>
+            </div>
+            <div class="flex justify-between">
+                <span>Ciśnienie:</span>
+                <span class="badge badge-success">1013 hPa</span>
+            </div>
+            <div class="flex justify-between">
+                <span>Jakość powietrza:</span>
+                <span class="badge badge-warning">PM2.5: 23</span>
+            </div>
+            </div>
+        </div>
+        </div>
+
+    </div>
+
+
 
         <!-- Sekcja rozwoju projektu -->
         <div class="card bg-base-100 shadow-xl mt-8">
