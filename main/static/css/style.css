@@ -988,6 +988,15 @@
       visibility: hidden;
     }
   }
+  .collapse-open {
+    grid-template-rows: max-content 1fr;
+    > .collapse-content {
+      visibility: visible;
+      min-height: fit-content;
+      padding-bottom: 1rem;
+      transition: padding 0.2s ease-out, background-color 0.2s ease-out;
+    }
+  }
   .collapse {
     visibility: collapse;
   }
@@ -2520,9 +2529,6 @@
   .mt-10 {
     margin-top: calc(var(--spacing) * 10);
   }
-  .mr-3 {
-    margin-right: calc(var(--spacing) * 3);
-  }
   .mb-1 {
     margin-bottom: calc(var(--spacing) * 1);
   }
@@ -3081,13 +3087,6 @@
   .gap-8 {
     gap: calc(var(--spacing) * 8);
   }
-  .space-y-1 {
-    :where(& > :not(:last-child)) {
-      --tw-space-y-reverse: 0;
-      margin-block-start: calc(calc(var(--spacing) * 1) * var(--tw-space-y-reverse));
-      margin-block-end: calc(calc(var(--spacing) * 1) * calc(1 - var(--tw-space-y-reverse)));
-    }
-  }
   .space-y-1\.5 {
     :where(& > :not(:last-child)) {
       --tw-space-y-reverse: 0;
@@ -3107,13 +3106,6 @@
       --tw-space-y-reverse: 0;
       margin-block-start: calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));
       margin-block-end: calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)));
-    }
-  }
-  .space-y-6 {
-    :where(& > :not(:last-child)) {
-      --tw-space-y-reverse: 0;
-      margin-block-start: calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));
-      margin-block-end: calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)));
     }
   }
   .space-x-2 {
@@ -3187,9 +3179,6 @@
     border-color: var(--color-success);
     color: var(--color-success-content);
     --alert-color: var(--color-success);
-  }
-  .border-base-200 {
-    border-color: var(--color-base-200);
   }
   .border-base-300 {
     border-color: var(--color-base-300);
@@ -3495,10 +3484,6 @@
   }
   .shadow {
     --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  }
-  .shadow-inner {
-    --tw-shadow: inset 0 2px 4px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.05));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
   .shadow-lg {

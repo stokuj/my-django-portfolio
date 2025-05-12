@@ -155,16 +155,14 @@
                 <br>
                 Generator określa kształt danych, które będą używane do testowania algorytmów. Przykład generatora:
 
-            <div class="mockup-code mt-4 mb-4 p-4">
-<pre><code>generators = {
-        "circle_A"  : (pg.generate_points_circle,  None),
-        "circle_B"  : (pg.generate_points_mises,   None),
-        "circle_C"  : (pg.generate_points_normal,  None),
-        "ring"      : (pg.generate_points_ring,    None),
-        # "shape_A"   : (pg.generate_points_in_shape, "drawn_figure_A.txt"),
-        # "shape_B"   : (pg.generate_points_in_shape, "drawn_figure_B.txt"),
-        # "shape_C"   : (pg.generate_points_in_shape, "drawn_figure_C.txt"),}</code></pre>
-            </div>
+            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4"><code>generators = {
+"circle_A"  : (pg.generate_points_circle,  None),
+"circle_B"  : (pg.generate_points_mises,   None),
+"circle_C"  : (pg.generate_points_normal,  None),
+"ring"      : (pg.generate_points_ring,    None),
+# "shape_A"   : (pg.generate_points_in_shape, "drawn_figure_A.txt"),
+# "shape_B"   : (pg.generate_points_in_shape, "drawn_figure_B.txt"),
+# "shape_C"   : (pg.generate_points_in_shape, "drawn_figure_C.txt"),}</code></pre>
         </div>
     </div>
 

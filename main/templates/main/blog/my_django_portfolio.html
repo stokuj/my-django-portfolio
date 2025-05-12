@@ -133,14 +133,12 @@
                 </div>
                 <div class="collapse-content">
                     <p class="text-base mb-4 mt-2">Aby uruchomić projekt lokalnie, sklonuj repozytorium i zainstaluj zależności:</p>
-                    <div class="mockup-code mt-2">
-                        <pre><code>
-    git clone https://github.com/stokuj/my_django_portfolio.git
-    cd my_django_portfolio
-    python -m venv venv
-    source venv/bin/activate  # lub venv\Scripts\Activate.ps1 na Windows
-    pip install -r requirements.txt</code></pre>
-                    </div>
+                        <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4"><code>git clone https://github.com/stokuj/my_django_portfolio.git
+cd my_django_portfolio
+python -m venv venv
+source venv/bin/activate  # lub venv\Scripts\Activate.ps1 na Windows
+pip install -r requirements.txt</code></pre>
+
                 </div>
             </div>
             
@@ -151,19 +149,16 @@
                 </div>
                 <div class="collapse-content">
                     <p class="text-base mb-4 mt-2">W pliku `settings.py` skonfiguruj połączenie z bazą danych PostgreSQL:</p>
-                    <div class="mockup-code mt-2">
-                        <pre><code>
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'twoja_baza',
-            'USER': 'twoj_uzytkownik',
-            'PASSWORD': 'twoje_haslo',
-            'HOST': 'localhost',
-            'PORT': '5432',
-        }
-    }</code></pre>
-                    </div>
+                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4"><code>DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'twoja_baza',
+        'USER': 'twoj_uzytkownik',
+        'PASSWORD': 'twoje_haslo',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}</code></pre>
                 </div>
             </div>
             
@@ -174,12 +169,10 @@
                 </div>
                 <div class="collapse-content">
                     <p class="text-base mb-4 mt-2">Wykonaj migracje i uruchom serwer lokalny:</p>
-                    <div class="mockup-code mt-2">
-                        <pre><code>
-    python manage.py makemigrations
-    python manage.py migrate
-    python manage.py runserver</code></pre>
-                    </div>
+                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4"><code>python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+</code></pre>
                 </div>
             </div>
             
