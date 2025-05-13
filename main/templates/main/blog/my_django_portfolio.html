@@ -131,16 +131,20 @@
                 <div class="collapse-title text-lg font-medium">
                     💾 Klonowanie repozytorium i instalacja zależności
                 </div>
-                <div class="collapse-content">
-                    <p class="text-base mb-4 mt-2">Aby uruchomić projekt lokalnie, sklonuj repozytorium i zainstaluj zależności:</p>
-                        <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4"><code>git clone https://github.com/stokuj/my_django_portfolio.git
+                <div class="collapse-content  overflow-y-auto">
+                    <p class="text-base mb-4 mt-2">
+                    Aby uruchomić projekt lokalnie, sklonuj repozytorium i zainstaluj zależności:
+                    </p>
+                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4"><code>git clone https://github.com/stokuj/my_django_portfolio.git
 cd my_django_portfolio
 python -m venv venv
-source venv/bin/activate  # lub venv\Scripts\Activate.ps1 na Windows
-pip install -r requirements.txt</code></pre>
-
+source venv/bin/activate   # Linux
+venv\Scripts\Activate.ps1  # Windows
+pip install -r requirements.txt</code>
+                    </pre>
                 </div>
             </div>
+
             
             <div class="collapse collapse-arrow bg-base-100 border mt-4">
                 <input type="checkbox" />

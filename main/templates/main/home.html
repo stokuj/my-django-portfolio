@@ -2,10 +2,14 @@
 
 {% block content %}
 <!-- Flowbite Jumbotron  -->
+{% load static %}
 
 <div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
-<section class="bg-center bg-no-repeat bg-cover p-4 rounded-box" {% load static %} style="background-image: url('{% static 'images/hero-bg.png' %}')">
-  <div class="px-4 mx-auto max-w-screen-xl text-center py-24 lg:py-56">
+<section 
+  class="bg-center bg-no-repeat bg-cover h-105 sm:h-full p-4 rounded-box"
+  style="background-image: url('{% static 'images/hero-bg.png' %}')">
+
+  <div class="px-4 mx-auto max-w-screen-xl text-center py-6 lg:py-56">
     <div class="p-6 rounded-lg shadow-lg max-w-xl mx-auto bg-base-200 dark:bg-base-900 opacity-80">
       <h1 class="text-primary mb-2 mt-8">
         I am Krystian Stasica
@@ -23,139 +27,139 @@
 <!-- End Flowbite Jumbotron  -->
 
 
-<section class="bg-center bg-no-repeat bg-base-200 bg-cover p-6 mt-4 rounded-box  border border-primary">
-  <h1 class="text-primary mb-2 mt-8">Project timeline</h1>
+  <section class="bg-center bg-no-repeat bg-base-200 bg-cover p-6 mt-4 rounded-box  border border-primary">
+    <h1 class="text-primary mb-2 mt-8">Project timeline</h1>
 
-  <!-- Planed-->
-  <div class="collapse collapse-plus bg-base-100 border border-base-neutral mb-2 mt-8">
-    <input type="radio" name="my-accordion-3" />
-    <div class="collapse-title font-semibold">
-      <h2 class="text-primary">Planed:</h2>
-    </div>
-    <div class="collapse-content text-sm">
+    <!-- Planed-->
+    <div class="collapse collapse-plus bg-base-100 border border-base-neutral mb-2 mt-8">
+      <input type="radio" name="my-accordion-3" />
+      <div class="collapse-title font-semibold">
+        <h2 class="text-primary">Planed:</h2>
+      </div>
+      <div class="collapse-content text-sm">
 
-      <ol class="relative border-s border-base-neutral dark:border-base-700">
-        {% for project in projects %}
-          {% if project.status == "planned" %}
-          <li class="mb-10 ms-4">
-            <div class="absolute w-3 h-3 bg-base-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-base-900 dark:bg-base-700"></div>
-            <time class="mb-1 text-sm font-normal leading-none text-base-400 dark:text-base-500">
-              {{ project.date|date:"F Y" }}
-            </time>
-            <h3 class="text-lg font-semibold text-base-900 dark:text-white">
-              {{ project.title }}
-            </h3>
-            <p class="mb-2 text-base font-normal text-base-500 dark:text-base-400">
-              {{ project.short_description }}
-              {% for tag in project.tags.all %}
-                <span class="badge badge-soft badge-primary">{{ tag.name }}</span>
-              {% endfor %}
-            </p>
-            {% if project.blog and project.blog_url %}
-            <a href="/blog/{{ project.blog_url }}" class="btn btn-primary btn btn-sm">
-              Learn more
-              <svg class="w-3 h-3 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M1 5h12m0 0L9 1m4 4L9 9"/>
-              </svg>
-            </a>
+        <ol class="relative border-s border-base-neutral dark:border-base-700">
+          {% for project in projects %}
+            {% if project.status == "planned" %}
+            <li class="mb-10 ms-4">
+              <div class="absolute w-3 h-3 bg-base-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-base-900 dark:bg-base-700"></div>
+              <time class="mb-1 text-sm font-normal leading-none text-base-400 dark:text-base-500">
+                {{ project.date|date:"F Y" }}
+              </time>
+              <p class="text-base font-semibold text-base-900 dark:text-white">
+                {{ project.title }}
+              </p>
+              <p class="mb-2 text-sm font-normal text-base-500 dark:text-base-400">
+                {{ project.short_description }}
+                {% for tag in project.tags.all %}
+                  <span class="badge badge-soft badge-primary hidden sm:inline-flex text-xs px-2 py-1">{{ tag.name }}</span>
+                {% endfor %}
+              </p>
+              {% if project.blog and project.blog_url %}
+              <a href="/blog/{{ project.blog_url }}" class="btn btn-primary btn btn-sm">
+                Learn more
+                <svg class="w-3 h-3 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                </svg>
+              </a>
+              {% endif %}
+            </li>
             {% endif %}
-          </li>
-          {% endif %}
-        {% endfor %}
-      </ol>
+          {% endfor %}
+        </ol>
+      </div>
     </div>
-  </div>
-  <!-- End Planed-->
-  <!-- Ongoing-->
-  <div class="collapse collapse-plus bg-base-100 border border-base-neutral mb-2 mt-8">
-    <input type="radio" name="my-accordion-3" />
-    <div class="collapse-title font-semibold">
-      <h2 class="text-primary">Ongoing:</h2>
-    </div>
-    <div class="collapse-content text-sm">
+    <!-- End Planed-->
+    <!-- Ongoing-->
+    <div class="collapse collapse-plus bg-base-100 border border-base-neutral mb-2 mt-8">
+      <input type="radio" name="my-accordion-3" />
+      <div class="collapse-title font-semibold">
+        <h2 class="text-primary">Ongoing:</h2>
+      </div>
+      <div class="collapse-content text-sm">
 
-      <ol class="relative border-s border-base-neutral dark:border-base-700">
-        {% for project in projects %}
-          {% if project.status == "ongoing" %}
-          <li class="mb-10 ms-4">
-            <div class="absolute w-3 h-3 bg-base-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-base-900 dark:bg-base-700"></div>
-            <time class="mb-1 text-sm font-normal leading-none text-base-400 dark:text-base-500">
-              {{ project.date|date:"F Y" }}
-            </time>
-            <h3 class="text-lg font-semibold text-base-900 dark:text-white">
-              {{ project.title }}
-            </h3>
-            <p class="mb-2 text-base font-normal text-base-500 dark:text-base-400">
-              {{ project.short_description }}
-              {% for tag in project.tags.all %}
-                <span class="badge badge-soft badge-primary">{{ tag.name }}</span>
-              {% endfor %}
-            </p>
-            {% if project.blog and project.blog_url %}
-            <a href="/blog/{{ project.blog_url }}" class="btn btn-primary btn btn-sm">
-              Learn more
-              <svg class="w-3 h-3 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M1 5h12m0 0L9 1m4 4L9 9"/>
-              </svg>
-            </a>
+        <ol class="relative border-s border-base-neutral dark:border-base-700">
+          {% for project in projects %}
+            {% if project.status == "ongoing" %}
+            <li class="mb-10 ms-4">
+              <div class="absolute w-3 h-3 bg-base-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-base-900 dark:bg-base-700"></div>
+              <time class="mb-1 text-sm font-normal leading-none text-base-400 dark:text-base-500">
+                {{ project.date|date:"F Y" }}
+              </time>
+              <p class="text-base font-semibold text-base-900 dark:text-white">
+                {{ project.title }}
+              </p>
+              <p class="mb-2 text-sm font-normal text-base-500 dark:text-base-400">
+                {{ project.short_description }}
+                {% for tag in project.tags.all %}
+                  <span class="badge badge-soft badge-primary hidden sm:inline-flex text-xs px-2 py-1">{{ tag.name }}</span>
+                {% endfor %}
+              </p>
+              {% if project.blog and project.blog_url %}
+              <a href="/blog/{{ project.blog_url }}" class="btn btn-primary btn btn-sm">
+                Learn more
+                <svg class="w-3 h-3 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                </svg>
+              </a>
+              {% endif %}
+            </li>
             {% endif %}
-          </li>
-          {% endif %}
-        {% endfor %}
-      </ol>
+          {% endfor %}
+        </ol>
+      </div>
     </div>
-  </div>
-  <!-- End Ongoing-->
-  <!-- Finished-->
-  <div class="collapse collapse-plus bg-base-100 border border-base-neutral mb-2 mt-8">
-    <input type="radio" name="my-accordion-3" checked />
-    <div class="collapse-title font-semibold">
-      <h2 class="text-primary">Finished:</h2>
-    </div>
-    <div class="collapse-content text-sm">
+    <!-- End Ongoing-->
+    <!-- Finished-->
+    <div class="collapse collapse-plus bg-base-100 border border-base-neutral mb-2 mt-8">
+      <input type="radio" name="my-accordion-3" checked />
+      <div class="collapse-title font-semibold">
+        <h2 class="text-primary">Finished:</h2>
+      </div>
+      <div class="collapse-content text-sm">
 
-      <ol class="relative border-s border-base-neutral dark:border-base-700">
-        {% for project in projects %}
-          {% if project.status == "finished" %}
-          <li class="mb-10 ms-4">
-            <div class="absolute w-3 h-3 bg-base-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-base-900 dark:bg-base-700"></div>
-            <time class="mb-1 text-sm font-normal leading-none text-base-400 dark:text-base-500">
-              {{ project.date|date:"F Y" }}
-            </time>
-            <h3 class="text-lg font-semibold text-base-900 dark:text-white">
-              {{ project.title }}
-            </h3>
-            <p class="mb-2 text-base font-normal text-base-500 dark:text-base-400">
-              {{ project.short_description }}
-              {% for tag in project.tags.all %}
-                <span class="badge badge-soft badge-primary">{{ tag.name }}</span>
-              {% endfor %}
-            </p>
-            {% if project.blog and project.blog_url %}
-            <a href="/blog/{{ project.blog_url }}" class="btn btn-primary btn btn-sm">
-              Learn more
-              <svg class="w-3 h-3 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M1 5h12m0 0L9 1m4 4L9 9"/>
-              </svg>
-            </a>
+        <ol class="relative border-s border-base-neutral dark:border-base-700">
+          {% for project in projects %}
+            {% if project.status == "finished" %}
+            <li class="mb-10 ms-4">
+              <div class="absolute w-3 h-3 bg-base-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-base-900 dark:bg-base-700"></div>
+              <time class="mb-1 text-sm font-normal leading-none text-base-400 dark:text-base-500">
+                {{ project.date|date:"F Y" }}
+              </time>
+              <p class="text-base font-semibold">
+                {{ project.title }}
+              </p>
+              <p class="mb-2 text-sm font-normal text-base-500 dark:text-base-400">
+                {{ project.short_description }}
+                {% for tag in project.tags.all %}
+                  <span class="badge badge-soft badge-primary hidden sm:inline-flex text-xs px-2 py-1">{{ tag.name }}</span>
+                {% endfor %}
+              </p>
+              {% if project.blog and project.blog_url %}
+              <a href="/blog/{{ project.blog_url }}" class="btn btn-primary btn btn-sm">
+                Learn more
+                <svg class="w-3 h-3 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                </svg>
+              </a>
+              {% endif %}
+            </li>
             {% endif %}
-          </li>
-          {% endif %}
-        {% endfor %}
-      </ol>
+          {% endfor %}
+        </ol>
+      </div>
     </div>
-  </div>
-  <!-- End Finished-->
+    <!-- End Finished-->
 
-  <!-- Timeline Flowbite --> <!-- https://flowbite.com/docs/components/timeline/ --> <!-- Integrated with DaisyUI texts for theme synergy-->
-  <!-- Timeline Flowbite -->
+    <!-- Timeline Flowbite --> <!-- https://flowbite.com/docs/components/timeline/ --> <!-- Integrated with DaisyUI texts for theme synergy-->
+    <!-- Timeline Flowbite -->
 
-  <!-- End Timeline Flowbite -->
+    <!-- End Timeline Flowbite -->
 
 
-</section>
+  </section>
 </div>
 {% endblock %}
