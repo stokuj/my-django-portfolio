@@ -19,13 +19,14 @@
 
             <!--Divider-->
             <div class="divider"></div>
+            <!--Divider-->
 
             <h2 class="text-2xl font-semibold text-secondary">Kluczowe funkcje</h2>
             <p class="text-base mb-4 mt-2">
                 Automatyczna aktualizacja danych co 5 minut z wykorzystaniem API IMGW. 
                 Zaawansowane wykresy z możliwością filtrowania danych według różnych przedziałów czasowych. 
                 Eksport wyników do formatu CSV oraz obliczenia statystyczne w czasie rzeczywistym.
-            </div>
+            </p>
             
             <div class="grid md:grid-cols-2 gap-4 mt-6">
                 <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
@@ -101,8 +102,9 @@
                 <div class="collapse-title text-xl font-medium">
                     Konfiguracja bazy danych
                 </div>
-                <div class="collapse-content"> 
-                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4"><code># Plik functions.py
+                <div class="collapse-content overflow-y-auto">
+                    
+                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code># Plik functions.py
 class MyClass():
     def do_conn():
         return psycopg2.connect(

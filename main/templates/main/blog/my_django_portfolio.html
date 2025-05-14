@@ -131,11 +131,11 @@
                 <div class="collapse-title text-lg font-medium">
                     💾 Klonowanie repozytorium i instalacja zależności
                 </div>
-                <div class="collapse-content  overflow-y-auto">
+                <div class="collapse-content overflow-y-auto">
                     <p class="text-base mb-4 mt-2">
                     Aby uruchomić projekt lokalnie, sklonuj repozytorium i zainstaluj zależności:
                     </p>
-                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4"><code>git clone https://github.com/stokuj/my_django_portfolio.git
+                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>git clone https://github.com/stokuj/my_django_portfolio.git
 cd my_django_portfolio
 python -m venv venv
 source venv/bin/activate   # Linux
@@ -151,9 +151,9 @@ pip install -r requirements.txt</code>
                 <div class="collapse-title text-lg font-medium">
                     ⚙️ Konfiguracja bazy danych w `settings.py`
                 </div>
-                <div class="collapse-content">
+                <div class="collapse-content overflow-y-auto">
                     <p class="text-base mb-4 mt-2">W pliku `settings.py` skonfiguruj połączenie z bazą danych PostgreSQL:</p>
-                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4"><code>DATABASES = {
+                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'twoja_baza',
@@ -171,9 +171,9 @@ pip install -r requirements.txt</code>
                 <div class="collapse-title text-lg font-medium">
                     ▶️ Migracje i uruchomienie serwera
                 </div>
-                <div class="collapse-content">
+                <div class="collapse-content overflow-y-auto">
                     <p class="text-base mb-4 mt-2">Wykonaj migracje i uruchom serwer lokalny:</p>
-                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4"><code>python manage.py makemigrations
+                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 </code></pre>

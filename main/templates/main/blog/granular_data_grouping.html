@@ -35,7 +35,7 @@
         <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow h-full border border-primary">
             <div class="card-body">
                 <h2 class="card-title">📁 Struktura projektu</h2>
-                <pre class="bg-base-300 p-4 rounded-lg overflow-x-auto"><code>/granular_clustering/
+                <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-base"><code>/granular_clustering/
     ├── main.py
     ├── dbscan_module.py
     ├── hierarchical.py
@@ -150,12 +150,12 @@
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Przykład konfiguracji</div>
-            <div class="collapse-content">
+            <div class="collapse-content overflow-y-auto">
                 W pliku main.py można ustawić parametry eksperymentu, takie jak liczba iteracji, poziom szumu i inne.
                 <br>
                 Generator określa kształt danych, które będą używane do testowania algorytmów. Przykład generatora:
 
-            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4"><code>generators = {
+            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>generators = {
 "circle_A"  : (pg.generate_points_circle,  None),
 "circle_B"  : (pg.generate_points_mises,   None),
 "circle_C"  : (pg.generate_points_normal,  None),
@@ -178,11 +178,11 @@
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Aglomeracyjne</div>
-        <div class="collapse-content">
+        <div class="collapse-content overflow-y-auto">
             <p class="mt-4 text-base">
                 Klasyczne klastrowanie aglomeracyjne zaczyna od traktowania każdego punktu jako osobnego klastra i iteracyjne łączy najbliższe pary klastrów, aż do osiągnięcia żądanej liczby klastrów. W badaniu zastosowano dwa warianty: Single Linkage (minimalny dystans między klastrami) i Complete Linkage (maksymalny dystans między klastrami).
             </p>
-            <pre class="text-sm bg-base-300 rounded mt-4 mb-4 p-4">
+            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs">
     function AGGLOMERATIVE(data, target_k):
         initialize clusters ← {x} for x in data 
         compute D[i,j] ← distance between clusters i and j
@@ -198,37 +198,37 @@
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Gęstościowe (DBSCAN)</div>
-        <div class="collapse-content">
+        <div class="collapse-content overflow-y-auto">
             <p class="mt-4 text-base">
                 DBSCAN identyfikuje obszary o wysokiej gęstości punktów. Dwa kluczowe parametry to ε – promień sąsiedztwa oraz MinPts – minimalna liczba punktów w otoczeniu. Algorytm oznacza punkty rdzeniowe, brzegowe i szum, tworząc klastry bez potrzeby określania ich liczby z góry.
             </p>
-            <pre class="text-sm bg-base-300 rounded mt-4 mb-4 p-4">
-    function DBSCAN(D, eps, MinPts):
-        C ← 0
-        for each point p in D:
-            if p not visited:
-                mark p visited
-                N ← regionQuery(p, eps)
-                if |N| < MinPts:
-                    label p as noise
-                else:
-                    C ← C + 1
-                    expandCluster(p, N, C, eps, MinPts)
-        return cluster labels
+            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs">
+function DBSCAN(D, eps, MinPts):
+    C ← 0
+    for each point p in D:
+        if p not visited:
+            mark p visited
+            N ← regionQuery(p, eps)
+            if |N| < MinPts:
+                label p as noise
+            else:
+                C ← C + 1
+                expandCluster(p, N, C, eps, MinPts)
+    return cluster labels
 
-    function expandCluster(p, N, C, eps, MinPts):
-        add p to cluster C
-        for each point q in N:
-            if q not visited:
-                mark q visited
-                N' ← regionQuery(q, eps)
-                if |N'| ≥ MinPts:
-                    N ← N ∪ N'
-            if q not yet member of any cluster:
-                add q to cluster C
+function expandCluster(p, N, C, eps, MinPts):
+    add p to cluster C
+    for each point q in N:
+        if q not visited:
+            mark q visited
+            N' ← regionQuery(q, eps)
+            if |N'| ≥ MinPts:
+                N ← N ∪ N'
+        if q not yet member of any cluster:
+            add q to cluster C
 
-    function regionQuery(p, eps):
-        return {q in D | distance(p, q) ≤ eps}
+function regionQuery(p, eps):
+    return {q in D | distance(p, q) ≤ eps}
             </pre>
         </div>
     </div>
@@ -236,17 +236,17 @@
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">KNN</div>
-        <div class="collapse-content">
+        <div class="collapse-content overflow-y-auto">
             <p class="mt-4 text-base">
                 Algorytm k najbliższych sąsiadów (KNN) w kontekście tego badania służył do oceny średnich odległości między punktami w klastrze. Wyznaczone wartości dₖ stanowią jedną z miar jakości klasteryzacji.</p>
-                <pre class="text-sm bg-base-300 rounded mt-4 mb-4 p-4">
-    function KNN_distance(data, k):
-        distances_list ← []
-        for each point x in data:
-            D_x ← sort([distance(x, y) for y ≠ x])
-            d_x ← average(D_x[1..k])
-            distances_list.append(d_x)
-        return mean(distances_list)
+                <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs">
+function KNN_distance(data, k):
+    distances_list ← []
+    for each point x in data:
+        D_x ← sort([distance(x, y) for y ≠ x])
+        d_x ← average(D_x[1..k])
+        distances_list.append(d_x)
+    return mean(distances_list)
             </pre>
         </div>
     </div>
@@ -263,7 +263,7 @@
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Aglomeracyjne</div>
-        <div class="collapse-content">
+        <div class="collapse-content overflow-y-auto">
             <p class="mt-4 text-base">
                 Dla klastrowania aglomeracyjnego decydującym parametrem była liczba klastrów (target_k = 2). Na podstawie dendrogramu określono próg cięcia tak, aby utworzyć dwa klastry, a następnie oceniono jakość za pomocą miar P1–P3,k, traktując mniejszy klaster jako szum.
             </p>
@@ -273,7 +273,7 @@
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Gęstościowe (DBSCAN)</div>
-        <div class="collapse-content">
+        <div class="collapse-content overflow-y-auto">
             <p class="mt-4 text-base">
                 Do dobrania ε oraz MinPts zaimplementowano funkcję <code>dbscanLoop</code>, która przeszukuje ε z zakresu [2, 20] co 0.2 oraz MinPts z zakresu [20, 150] co 1. Dla każdej pary parametrów obliczane są miary jakości klasteryzacji, a najlepszy zestaw wybierany jest na podstawie maksymalnej wartości kryteriów P1–P3,k.
             </p>
@@ -283,7 +283,7 @@
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Miary jakości skupienia</div>
-        <div class="collapse-content">
+        <div class="collapse-content overflow-y-auto">
             <p class="mt-4 text-base">
                 W ramach analizy granularnego grupowania opracowano zestaw <strong>15 miar oceny jakości skupienia</strong>, które łączą ze sobą informacje o liczbie punktów w największym klastrze oraz miary odległości między tymi punktami. Podstawowe trzy miary (P1, P2, P3) opierają się na średniej odległości między wszystkimi punktami w klastrze (<em>d̄</em>):
             </p>
@@ -323,7 +323,7 @@
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Przykładowe kształty zbiorów</div>
-        <div class="collapse-content">
+        <div class="collapse-content overflow-y-auto">
             <p class="mt-4 text-base">
                 # TO DO: Obrazki kształtów zbiorów danych
             </p>
@@ -417,7 +417,7 @@
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Podsumowanie wpływu kryteriów P na wyniki</div>
-        <div class="collapse-content">
+        <div class="collapse-content overflow-y-auto">
             # TO DO: Obrazki wykresów z wynikami dla różnych kryteriów P
         </div>
     </div>
@@ -532,7 +532,7 @@
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Podsumowanie wpływu szumu na klasteryzację</div>
-            <div class="collapse-content">
+            <div class="collapse-content overflow-y-auto">
                 <p class="mt-4 text-base">
                     <strong>Single Linkage:</strong> we wszystkich analizowanych zbiorach (koło jednorodne, von Mises, normalne, pierścień, półksiężyc, „X”, grzyb) algorytm utrzymuje wysoką dokładność (>80 %) przy poziomach szumu do 60 %. Najbardziej stabilne wyniki (powyżej 88 %) uzyskano dla koła i pierścienia, natomiast najtrudniejszym przypadkiem był półksiężyc – dokładność spadała do 54 % przy 60 % szumu. W każdym zestawie gwałtowny spadek poniżej 35 % obserwujemy przy 70 % szumu, co pokazuje granicę tolerancji Single Linkage.
                 </p>
@@ -653,7 +653,7 @@
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Podsumowanie wyników czasowych algorytmów</div>
-        <div class="collapse-content">
+        <div class="collapse-content overflow-y-auto">
 
         </div>
     </div>

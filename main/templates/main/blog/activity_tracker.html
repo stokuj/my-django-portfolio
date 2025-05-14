@@ -40,7 +40,7 @@
         <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow h-full border border-primary">
             <div class="card-body">
                 <h2 class="card-title">📁 Struktura projektu</h2>
-                <pre class="bg-base-300 p-4 rounded-lg overflow-x-auto"><code>/activity_tracker/
+                <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-base"><code>/activity_tracker/
     ├── manage.py
     ├── requirements.txt
     ├── activityTracker/
@@ -151,8 +151,8 @@
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Przykład wdrożenia na Heroku</div>
-            <div class="collapse-content">
-                <pre class="mt-4 bg-base-300 p-4 rounded">
+            <div class="collapse-content overflow-y-auto">
+                <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs">
 # Wykrywanie środowiska Heroku
 if 'DYNO' in os.environ:
     import django_heroku
@@ -172,7 +172,7 @@ if 'DYNO' in os.environ:
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Uwierzytelnianie użytkowników</div>
-        <div class="collapse-content">
+        <div class="collapse-content overflow-y-auto">
             <p class="mt-4 text-base">
                 Zaimplementowane z użyciem Django Allauth i integracji Google OAuth 2.0. Funkcje:
                 <ul class="list-disc pl-6">
@@ -181,7 +181,7 @@ if 'DYNO' in os.environ:
                     <li>Ustawienia prywatności profilu</li>
                 </ul>
             </p>
-            <pre class="text-sm bg-base-300 rounded mt-4 p-4">
+            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs">
 # Konfiguracja Google OAuth
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -195,7 +195,7 @@ SOCIALACCOUNT_PROVIDERS = {
     <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
         <input type="checkbox" />
         <div class="collapse-title text-xl font-medium">Zarządzanie aktywnościami</div>
-        <div class="collapse-content">
+        <div class="collapse-content overflow-y-auto">
             <p class="mt-4 text-base">
                 Użytkownicy mogą śledzić aktywności z walidacją czasu trwania (5min-12h). Funkcje:
                 <ul class="list-disc pl-6">
@@ -204,7 +204,7 @@ SOCIALACCOUNT_PROVIDERS = {
                     <li>Automatyczne formatowanie czasu</li>
                 </ul>
             </p>
-            <pre class="text-sm bg-base-300 rounded mt-4 p-4">
+            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs">
 # Model aktywności
 class Activity(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -216,7 +216,8 @@ class Activity(models.Model):
 
     <!-- Divider -->
     <div class="divider"></div>
-
+    <!-- Divider -->
+    
     <h2 class="text-2xl font-semibold text-secondary">Walidacja i testowanie</h1>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4 mb-4">
@@ -275,40 +276,39 @@ class Activity(models.Model):
 
     <!-- Divider -->
     <div class="divider"></div>
-
+    <!-- Divider -->
+    
     <!-- Nagłówek sekcji -->
-    <h2 class="text-2xl font-semibold text-secondary mt-4 mb-4">
-        Podsumowanie
-    </h2>
+    <h2 class="text-2xl font-semibold text-secondary mt-4 mb-4">Podsumowanie</h2>
 
     <section class="container mx-auto">
-    <!-- Akapit -->
-    <p class="text-base mb-4 mt-4">
-        Aplikacja stanowi solidną platformę do zarządzania aktywnością fizyczną, 
-        łączącą zaawansowane funkcje z przyjaznym interfejsem. Wykorzystanie Django, 
-        PostgreSQL i Bootstrap gwarantuje skalowalność i możliwość rozbudowy.
+        <!-- Akapit -->
+        <p class="text-base mb-4 mt-4">
+            Aplikacja stanowi solidną platformę do zarządzania aktywnością fizyczną, 
+            łączącą zaawansowane funkcje z przyjaznym interfejsem. Wykorzystanie Django, 
+            PostgreSQL i Bootstrap gwarantuje skalowalność i możliwość rozbudowy.
 
-        Planowane ulepszenia to chociażby integracja z trackerami (Fitbit, Garmin), aplikacja mobilna
-        czy integracja z API zewnętrznymi. W przyszłości planowane jest również stworzenie aplikacji mobilnej,
-        która umożliwi synchronizację danych w czasie rzeczywistym oraz rozszerzenie funkcjonalności o integrację z trackerami fitness, takimi jak Fitbit czy Garmin.
-    
-    </p>
+            Planowane ulepszenia to chociażby integracja z trackerami (Fitbit, Garmin), aplikacja mobilna
+            czy integracja z API zewnętrznymi. W przyszłości planowane jest również stworzenie aplikacji mobilnej,
+            która umożliwi synchronizację danych w czasie rzeczywistym oraz rozszerzenie funkcjonalności o integrację z trackerami fitness, takimi jak Fitbit czy Garmin.
+        
+        </p>
 
-    <!-- Stats -->
-    <div class="flex justify-center shadow my-4 p-4 mt-4 mb-4 text-center bg-base-100">
-        <div class="stat">
-        <div class="stat-title">Pokrycie testami</div>
-        <div class="stat-value text-primary">98%</div>
+        <!-- Stats -->
+        <div class="stats shadow bg-base-100 mt-6">
+            <div class="stat">
+                <div class="stat-title">Pokrycie testami</div>
+                <div class="stat-value text-primary">98%</div>
+            </div>
+            <div class="stat">
+                <div class="stat-title">Śledzone aktywności</div>
+                <div class="stat-value text-secondary">1K+</div>
+            </div>
+                <div class="stat">
+                <div class="stat-title">Obsługiwani użytkownicy</div>
+                <div class="stat-value text-accent">20+</div>
+            </div>
         </div>
-        <div class="stat">
-        <div class="stat-title">Śledzone aktywności</div>
-        <div class="stat-value text-secondary">1K+</div>
-        </div>
-        <div class="stat">
-        <div class="stat-title">Obsługiwani użytkownicy</div>
-        <div class="stat-value text-accent">20+</div>
-        </div>
-    </div>
 
                 <!-- Alert -->
         <div class="alert alert-success shadow-md rounded-lg mt-4">

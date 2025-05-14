@@ -11,6 +11,7 @@
         <h1 class="text-3xl font-bold text-primary mb-6">Automatyzacja pobierania danych o książkach</h1>
 
         <div class="prose">
+            
             <p class="text-lg mb-4 mt-2">
                 Projekt implementuje zaawansowany web scraper do pozyskiwania danych o książkach z portalu Lubimyczytać.pl. 
                 System pozwala na automatyczne zbieranie informacji z profili użytkowników i eksport do formatu CSV. Natępnie możliwa jest konwersja do formatu CSV przyjmowanego przez Goodreads.
@@ -29,7 +30,7 @@
                 nastepnie selenium przejdzie do następnej strony i powtórzy proces, aż do zebrania wszystkich książek.
 
                 Kolejny krok to uzyskanie brakujących takich jak orginalny tytuł, czy ISBN poprzez wejście bezpośrednio w link do książki.
-            </div>
+            </p>
             <div class="grid md:grid-cols-2 gap-4 mt-6">
                 <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
                     <div class="card-body">
@@ -121,11 +122,11 @@
                 <div class="collapse-title text-xl font-medium">
                     Konfiguracja
                 </div>
-                <div class="collapse-content"> 
+                <div class="collapse-content overflow-y-auto">
                     <p class="text-base mb-4 mt-2">
                         Aby skonfigurować scraper, należy edytować plik <code class="bg-base-200 text-primary font-bold">config.ini</code> i podać swój unikalny adres URL profilu na Lubimyczytać.pl.
                     </p>
-                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4"><code>[settings]
+                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>[settings]
 profile_url = https://lubimyczytac.pl/profil/605200/stokuj/</code></pre>
                 </div>
             </div>
@@ -136,12 +137,12 @@ profile_url = https://lubimyczytac.pl/profil/605200/stokuj/</code></pre>
                 <div class="collapse-title text-xl font-medium">
                     Instalacja i uruchomienie
                 </div>
-                <div class="collapse-content"> 
+                <div class="collapse-content overflow-y-auto">
                     <p class="text-base mb-4 mt-2">
                         to do
                         
                     </p>
-                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4"><code># Instalacja zależności
+                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code># Instalacja zależności
 pip install -r requirements.txt
 
 # Uruchomienie scrapera
@@ -219,8 +220,9 @@ python main.py </code></pre>
 
             <!--Divider-->
             <div class="divider"></div>
-
-            <div class="stats shadow bg-base-100 mt-6">
+            <!--Divider-->
+            <p>
+            <div class="stats shadow bg-base-100 mt-4 mb-4 ">
                 <div class="stat">
                     <div class="stat-title">Obsługiwane strony</div>
                     <div class="stat-value text-primary">2</div>
@@ -232,8 +234,7 @@ python main.py </code></pre>
                     <div class="stat-value text-secondary">500+</div>
                     <div class="stat-desc">Python + HTML</div>
                 </div>
-            </div>
-                        
+            </div>    
             <!--Divider-->
             <div class="divider"></div>
             <!--Divider-->

@@ -2926,9 +2926,6 @@
   .h-full {
     height: 100%;
   }
-  .max-h-60 {
-    max-height: calc(var(--spacing) * 60);
-  }
   .min-h-screen {
     min-height: 100vh;
   }
