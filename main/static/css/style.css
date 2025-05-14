@@ -3540,6 +3540,11 @@
     --btn-p: 1.5rem;
     --size: calc(var(--size-field, 0.25rem) * 14);
   }
+  .btn-xs {
+    --fontsize: 0.6875rem;
+    --btn-p: 0.5rem;
+    --size: calc(var(--size-field, 0.25rem) * 6);
+  }
   .badge-accent {
     --badge-color: var(--color-accent);
     --badge-fg: var(--color-accent-content);
@@ -3645,6 +3650,13 @@
     @media (width >= 40rem) {
       font-size: var(--text-base);
       line-height: var(--tw-leading, var(--text-base--line-height));
+    }
+  }
+  .sm\:btn-md {
+    @media (width >= 40rem) {
+      --fontsize: 0.875rem;
+      --btn-p: 1rem;
+      --size: calc(var(--size-field, 0.25rem) * 10);
     }
   }
   .md\:flex {
