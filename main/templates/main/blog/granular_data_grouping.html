@@ -35,25 +35,25 @@
         <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow h-full border border-primary">
             <div class="card-body">
                 <h2 class="card-title">📁 Struktura projektu</h2>
-                <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-base"><code>/granular_clustering/
-    ├── main.py
-    ├── dbscan_module.py
-    ├── hierarchical.py
-    ├── knn_utils.py
-    ├── results.csv
-    /data_analysis/
-    ├── clustering/
-    │   ├── dbscan_optimizer.py
-    │   ├── hierarchical.py
-    │   └── metrics_calculator.py
-    ├── datasets/
-    │   ├── generators/
-    │   │   ├── circles.py
-    │   │   └── custom_shapes.py
-    │   └── noise_injector.py
-    └── visualization/
-        ├── plotter.py
-        └── results_exporter.py</code></pre>
+                <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs sm:text-base"><code>/granular_clustering/
+├── main.py
+├── dbscan_module.py
+├── hierarchical.py
+├── knn_utils.py
+├── results.csv
+/data_analysis/
+├── clustering/
+│   ├── dbscan_optimizer.py
+│   ├── hierarchical.py
+│   └── metrics_calculator.py
+├── datasets/
+│   ├── generators/
+│   │   ├── circles.py
+│   │   └── custom_shapes.py
+│   └── noise_injector.py
+└── visualization/
+    ├── plotter.py
+    └── results_exporter.py</code></pre>
             </div>
         </div>
 
@@ -61,13 +61,13 @@
 <div class="grid grid-rows-2 gap-4 h-full">
 
     <!-- Górna karta: Algorytmy klasteryzacji -->
-    <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary">
+    <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary ">
         <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-4">
                 <div class="text-2xl">🔍</div>
                 <h3 class="card-title text-accent text-lg font-semibold">Algorytmy klasteryzacji</h3>
             </div>
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap gap-3 ">
                 <span class="badge badge-primary badge-lg px-3 py-2">DBSCAN</span>
                 <span class="badge badge-secondary badge-lg px-3 py-2">Single Linkage</span>
                 <span class="badge badge-accent badge-lg px-3 py-2">Complete Linkage</span>
@@ -288,9 +288,9 @@ function KNN_distance(data, k):
                 W ramach analizy granularnego grupowania opracowano zestaw <strong>15 miar oceny jakości skupienia</strong>, które łączą ze sobą informacje o liczbie punktów w największym klastrze oraz miary odległości między tymi punktami. Podstawowe trzy miary (P1, P2, P3) opierają się na średniej odległości między wszystkimi punktami w klastrze (<em>d̄</em>):
             </p>
             <ul class="list-disc list-inside">
-                <li class="text-xl font-mono text-blue-800"><strong>P1</strong> = liczba punktów × (1 / d̄)</li>
-                <li class="text-xl font-mono text-blue-800"><strong>P2</strong> = liczba punktów × (1 / d̄)<sup>2</sup></li>
-                <li class="text-xl font-mono text-blue-800"><strong>P3</strong> = √(liczba punktów) × (1 / d̄)<sup>2</sup></li>
+                <li class="text-base font-mono text-blue-800"><strong>P1</strong> = liczba punktów × (1 / d̄)</li>
+                <li class="text-base font-mono text-blue-800"><strong>P2</strong> = liczba punktów × (1 / d̄)<sup>2</sup></li>
+                <li class="text-base font-mono text-blue-800"><strong>P3</strong> = √(liczba punktów) × (1 / d̄)<sup>2</sup></li>
             </ul>
             
             <p class="mt-4 text-base">
@@ -298,9 +298,9 @@ function KNN_distance(data, k):
             </p>
             
             <ul class="list-disc list-inside">
-                <li class="text-xl font-mono text-blue-800"><strong>P1<sub>k</sub></strong> = liczba punktów × (1 / d<sub>k</sub>)</li>
-                <li class="text-xl font-mono text-blue-800"><strong>P2<sub>k</sub></strong> = liczba punktów × (1 / d<sub>k</sub>)<sup>2</sup></li>
-                <li class="text-xl font-mono text-blue-800"><strong>P3<sub>k</sub></strong> = √(liczba punktów) × (1 / d<sub>k</sub>)<sup>2</sup></li>
+                <li class="text-base font-mono text-blue-800"><strong>P1<sub>k</sub></strong> = liczba punktów × (1 / d<sub>k</sub>)</li>
+                <li class="text-base font-mono text-blue-800"><strong>P2<sub>k</sub></strong> = liczba punktów × (1 / d<sub>k</sub>)<sup>2</sup></li>
+                <li class="text-base font-mono text-blue-800"><strong>P3<sub>k</sub></strong> = √(liczba punktów) × (1 / d<sub>k</sub>)<sup>2</sup></li>
             </ul>
             
             <p class="mt-4 text-base">

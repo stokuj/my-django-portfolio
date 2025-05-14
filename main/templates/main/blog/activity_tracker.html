@@ -40,87 +40,87 @@
         <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow h-full border border-primary">
             <div class="card-body">
                 <h2 class="card-title">📁 Struktura projektu</h2>
-                <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-base"><code>/activity_tracker/
-    ├── manage.py
-    ├── requirements.txt
-    ├── activityTracker/
-    │   ├── settings.py
-    │   ├── urls.py
-    │   └── models/
-    │       ├── User.py
-    │       ├── Activity.py
-    │       └── Post.py
-    ├── templates/
-    │   ├── base.html
-    │   └── dashboard.html
-    └── static/
-        ├── css/
-        └── js/</code></pre>
+                <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs sm:text-base"><code>/activity_tracker/
+├── manage.py
+├── requirements.txt
+├── activityTracker/
+│   ├── settings.py
+│   ├── urls.py
+│   └── models/
+│       ├── User.py
+│       ├── Activity.py
+│       └── Post.py
+├── templates/
+│   ├── base.html
+│   └── dashboard.html
+└── static/
+    ├── css/
+    └── js/</code></pre>
             </div>
         </div>
 
-<!-- Prawa kolumna: Zagnieżdżony grid -->
-<div class="grid grid-rows-2 gap-4 h-full">
+        <!-- Prawa kolumna: Zagnieżdżony grid -->
+        <div class="grid grid-rows-2 gap-4 h-full">
 
-    <!-- Górna karta: Podstawowe technologie -->
-    <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary">
-        <div class="card-body p-5">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="text-2xl">🛠️</div>
-                <h3 class="card-title text-accent text-lg font-semibold">Główny stack</h3>
+            <!-- Górna karta: Podstawowe technologie -->
+            <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary">
+                <div class="card-body p-5">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="text-2xl">🛠️</div>
+                        <h3 class="card-title text-accent text-lg font-semibold">Główny stack</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="badge badge-primary badge-lg px-3 py-2">Django</span>
+                        <span class="badge badge-secondary badge-lg px-3 py-2">PostgreSQL</span>
+                        <span class="badge badge-accent badge-lg px-3 py-2">Bootstrap</span>
+                    </div>
+                    <div class="mt-4 space-y-1.5 text-base-content/80">
+                        <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                            <span class="badge badge-success badge-xs"></span>
+                            System uwierzytelniania użytkowników
+                        </p>
+                        <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                            <span class="badge badge-success badge-xs"></span>
+                            Operacje CRUD dla aktywności/postów
+                        </p>
+                        <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                            <span class="badge badge-success badge-xs"></span>
+                            Automatyczne testy z Selenium
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="flex flex-wrap gap-3">
-                <span class="badge badge-primary badge-lg px-3 py-2">Django</span>
-                <span class="badge badge-secondary badge-lg px-3 py-2">PostgreSQL</span>
-                <span class="badge badge-accent badge-lg px-3 py-2">Bootstrap</span>
-            </div>
-            <div class="mt-4 space-y-1.5 text-base-content/80">
-                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
-                    <span class="badge badge-success badge-xs"></span>
-                    System uwierzytelniania użytkowników
-                </p>
-                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
-                    <span class="badge badge-success badge-xs"></span>
-                    Operacje CRUD dla aktywności/postów
-                </p>
-                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
-                    <span class="badge badge-success badge-xs"></span>
-                    Automatyczne testy z Selenium
-                </p>
+
+            <!-- Dolna karta: Metryki -->
+            <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary">
+                <div class="card-body p-5">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="text-2xl">📈</div>
+                        <h3 class="card-title text-accent text-lg font-semibold">Kluczowe metryki</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="badge badge-primary badge-lg px-3 py-2">500+ LOC</span>
+                        <span class="badge badge-secondary badge-lg px-3 py-2">15+ modeli</span>
+                        <span class="badge badge-accent badge-lg px-3 py-2">98% pokrycia testami</span>
+                    </div>
+                    <div class="mt-4 space-y-1.5 text-base-content/80">
+                        <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                            <span class="badge badge-warning badge-xs"></span>
+                            20+ automatycznych testów
+                        </p>
+                        <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                            <span class="badge badge-warning badge-xs"></span>
+                            5 walidatorów bezpieczeństwa
+                        </p>
+                        <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                            <span class="badge badge-warning badge-xs"></span>
+                            Wdrożenie na Heroku
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Dolna karta: Metryki -->
-    <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary">
-        <div class="card-body p-5">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="text-2xl">📈</div>
-                <h3 class="card-title text-accent text-lg font-semibold">Kluczowe metryki</h3>
-            </div>
-            <div class="flex flex-wrap gap-3">
-                <span class="badge badge-primary badge-lg px-3 py-2">500+ LOC</span>
-                <span class="badge badge-secondary badge-lg px-3 py-2">15+ modeli</span>
-                <span class="badge badge-accent badge-lg px-3 py-2">98% pokrycia testami</span>
-            </div>
-            <div class="mt-4 space-y-1.5 text-base-content/80">
-                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
-                    <span class="badge badge-warning badge-xs"></span>
-                    20+ automatycznych testów
-                </p>
-                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
-                    <span class="badge badge-warning badge-xs"></span>
-                    5 walidatorów bezpieczeństwa
-                </p>
-                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
-                    <span class="badge badge-warning badge-xs"></span>
-                    Wdrożenie na Heroku
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
 
     <!-- Divider -->
     <div class="divider"></div>
