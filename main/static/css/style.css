@@ -3245,6 +3245,11 @@
     font-size: 1rem;
     padding-inline: calc(0.25rem * 3.5 - var(--border));
   }
+  .badge-sm {
+    --size: calc(var(--size-selector, 0.25rem) * 5);
+    font-size: 0.75rem;
+    padding-inline: calc(0.25rem * 2.5 - var(--border));
+  }
   .badge-xs {
     --size: calc(var(--size-selector, 0.25rem) * 4);
     font-size: 0.625rem;
