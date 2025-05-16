@@ -25,6 +25,7 @@
             <div class="divider"></div>
 
             <h2 class="text-2xl font-semibold text-secondary">🔧 Technologie i funkcjonalności</h2>
+            
             <div class="grid md:grid-cols-2 gap-6 mb-8 mt-4">
                 <!-- Technologie -->
                 <div class="card bg-base-100 shadow-xl">
@@ -62,22 +63,23 @@
             <h2 class="text-2xl font-semibold text-secondary">📁 Struktura projektu</h2>
             <p class="text-base mb-4 mt-4">Struktura projektu jest zgodna z konwencjami Django z podziałem na aplikacje i foldery statyczne oraz szablonowe.</p>
             <p class="text-base mb-4 mt-2">Frontend oparty na TailwindCSS i DaisyUI zapewnia responsywny i nowoczesny wygląd.</p>
-            <pre class="bg-base-300 p-4 rounded-lg text-sm overflow-x-auto mt-4 mb-4"><code>my_django_portfolio/
-├── main/
-│   ├── static/
-│   ├── templates/
-│   ├── models.py
-│   ├── views.py
-│   ├── urls.py
-│   └── ...
-├── personal_portfolio/
-│   ├── settings.py
-│   ├── urls.py
-│   └── ...
-├── templates/
-├── db.sqlite3
-├── requirements.txt
-└── tailwind.config.js</code></pre>
+            <pre class="bg-base-300 p-4 rounded-lg text-sm overflow-x-auto mt-4 mb-4 whitespace-pre-line">
+                <code>my_django_portfolio/
+                ├── main/
+                │   ├── static/
+                │   ├── templates/
+                │   ├── models.py
+                │   ├── views.py
+                │   ├── urls.py
+                │   └── ...
+                ├── personal_portfolio/
+                │   ├── settings.py
+                │   ├── urls.py
+                │   └── ...
+                ├── templates/
+                ├── requirements.txt
+                └── tailwind.config.js</code>
+            </pre>
 
             <div class="divider"></div>
 
@@ -135,12 +137,13 @@
                     <p class="text-base mb-4 mt-2">
                     Aby uruchomić projekt lokalnie, sklonuj repozytorium i zainstaluj zależności:
                     </p>
-                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>git clone https://github.com/stokuj/my_django_portfolio.git
-cd my_django_portfolio
-python -m venv venv
-source venv/bin/activate   # Linux
-venv\Scripts\Activate.ps1  # Windows
-pip install -r requirements.txt</code>
+                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs whitespace-pre-line">
+                        <code>git clone https://github.com/stokuj/my_django_portfolio.git
+                        cd my_django_portfolio
+                        python -m venv venv
+                        source venv/bin/activate   # Linux
+                        venv\Scripts\Activate.ps1  # Windows
+                        pip install -r requirements.txt</code>
                     </pre>
                 </div>
             </div>
@@ -153,16 +156,18 @@ pip install -r requirements.txt</code>
                 </div>
                 <div class="collapse-content overflow-y-auto">
                     <p class="text-base mb-4 mt-2">W pliku `settings.py` skonfiguruj połączenie z bazą danych PostgreSQL:</p>
-                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'twoja_baza',
-        'USER': 'twoj_uzytkownik',
-        'PASSWORD': 'twoje_haslo',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}</code></pre>
+                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs whitespace-pre-line">
+                        <code>DATABASES = {
+                        'default': {
+                            'ENGINE': 'django.db.backends.postgresql',
+                            'NAME': 'twoja_baza',
+                            'USER': 'twoj_uzytkownik',
+                            'PASSWORD': 'twoje_haslo',
+                            'HOST': 'localhost',
+                            'PORT': '5432',
+                            }
+                        }</code>
+                    </pre>
                 </div>
             </div>
             
