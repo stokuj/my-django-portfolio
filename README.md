@@ -141,7 +141,7 @@ Zmienne środowiskowe dla Dockera są zdefiniowane w pliku `docker-compose.yml`.
     └── tailwind.config.js
 
 ## 🧪 Testowanie
-
+TO DO
 ### Tworzenie testów
 
 1. Utwórz pliki testowe w katalogu aplikacji `main`
