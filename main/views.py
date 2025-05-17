@@ -27,9 +27,6 @@ def projects(request):
         'projects': projects,
         'all_tags': all_tags,
     })
-    
-def test(request):
-    return render(request, "main/blog/test.html")
 
 
 def project_detail(request, project_id):
