@@ -16,19 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf.urls.static import static
-from django.urls import path
-from django.urls import path, include
+from django.urls import re_path, path, include
 from django.conf import settings
-from main.views import handler404, handler500
+from django.views.static import serve
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", include("main.urls")),
-    path('ckeditor/', include('ckeditor_uploader.urls')),
+    path("", include("main.urls"))
 ]
-# Always serve media files for development
-# Note: In a real production environment, media files should be served by a web server like Nginx or Apache
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+# serwowanie mediów przy DEBUG=False
+if not settings.DEBUG:
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$',
+                serve,
+                {'document_root': settings.MEDIA_ROOT}),
+    ]
 # Configure custom error handlers
 handler404 = 'main.views.handler404'
 handler500 = 'main.views.handler500'
