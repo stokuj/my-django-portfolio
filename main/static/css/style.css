@@ -5085,7 +5085,7 @@ h3 {
   :where(:root),:root:has(input.theme-controller[value=fantasy2]:checked),[data-theme="fantasy2"] {
     color-scheme: light;
     --color-base-100: oklch(100% 0 0);
-    --color-base-200: oklch(100% 0.04 256.788);
+    --color-base-200: oklch(0.895 0.078 195.843);
     --color-base-300: oklch(100% 0.1 100);
     --color-base-content: oklch(27.807% 0.029 256.847);
     --color-primary: oklch(37.45% 0.189 325.02);
@@ -5115,36 +5115,203 @@ h3 {
   }
 }
 @layer base {
-  :root:has(input.theme-controller[value=synthwave2]:checked),[data-theme="synthwave2"] {
+  :root:has(input.theme-controller[value=dim2]:checked),[data-theme="dim2"] {
     color-scheme: dark;
-    --color-base-100: oklch(27% 0.041 260.031);
-    --color-base-200: oklch(44% 0.043 257.281);
-    --color-base-300: oklch(37% 0.01 67.558);
-    --color-base-content: oklch(78% 0.115 274.713);
-    --color-primary: oklch(71% 0.202 349.761);
-    --color-primary-content: oklch(28% 0.109 3.907);
-    --color-secondary: oklch(82% 0.111 230.318);
-    --color-secondary-content: oklch(29% 0.066 243.157);
-    --color-accent: oklch(75% 0.183 55.934);
-    --color-accent-content: oklch(26% 0.079 36.259);
-    --color-neutral: oklch(39% 0.195 277.366);
-    --color-neutral-content: oklch(87% 0.065 274.039);
-    --color-info: oklch(74% 0.16 232.661);
-    --color-info-content: oklch(29% 0.066 243.157);
-    --color-success: oklch(77% 0.152 181.912);
-    --color-success-content: oklch(27% 0.046 192.524);
-    --color-warning: oklch(90% 0.182 98.111);
-    --color-warning-content: oklch(42% 0.095 57.708);
-    --color-error: oklch(73.7% 0.121 32.639);
-    --color-error-content: oklch(23.501% 0.096 290.329);
+    --color-base-100: oklch(0.334 0.045 265.117);
+    --color-base-200: oklch(28.036% 0.019 264.182);
+    --color-base-300: oklch(26.346% 0.018 262.177);
+    --color-base-content: oklch(82.901% 0.031 222.959);
+    --color-primary: oklch(86.133% 0.141 139.549);
+    --color-primary-content: oklch(17.226% 0.028 139.549);
+    --color-secondary: oklch(73.375% 0.165 35.353);
+    --color-secondary-content: oklch(14.675% 0.033 35.353);
+    --color-accent: oklch(74.229% 0.133 311.379);
+    --color-accent-content: oklch(14.845% 0.026 311.379);
+    --color-neutral: oklch(24.731% 0.02 264.094);
+    --color-neutral-content: oklch(82.901% 0.031 222.959);
+    --color-info: oklch(86.078% 0.142 206.182);
+    --color-info-content: oklch(17.215% 0.028 206.182);
+    --color-success: oklch(86.171% 0.142 166.534);
+    --color-success-content: oklch(17.234% 0.028 166.534);
+    --color-warning: oklch(86.163% 0.142 94.818);
+    --color-warning-content: oklch(17.232% 0.028 94.818);
+    --color-error: oklch(82.418% 0.099 33.756);
+    --color-error-content: oklch(16.483% 0.019 33.756);
     --radius-selector: 1rem;
-    --radius-field: 1rem;
+    --radius-field: 0.5rem;
     --radius-box: 1rem;
     --size-selector: 0.25rem;
     --size-field: 0.25rem;
     --border: 1px;
-    --depth: 0;
+    --depth: 1;
     --noise: 0;
+  }
+}
+@layer base {
+  :root:has(input.theme-controller[value=latte]:checked),[data-theme="latte"] {
+    color-scheme: light;
+    --radius-selector: 0.25rem;
+    --radius-field: 0.5rem;
+    --radius-box: 0.5rem;
+    --size-field: 0.25rem;
+    --size-selector: 0.25rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
+    --color-primary: #7287fd;
+    --color-primary-content: #e6e9ef;
+    --color-secondary: #ccd0da;
+    --color-secondary-content: #4c4f69;
+    --color-accent: #dc8a78;
+    --color-accent-content: #e6e9ef;
+    --color-neutral: #8c8fa1;
+    --color-neutral-content: #e6e9ef;
+    --color-success: #40a02b;
+    --color-success-content: #eff1f5;
+    --color-warning: #df8e1d;
+    --color-warning-content: #eff1f5;
+    --color-error: #d20f39;
+    --color-error-content: #eff1f5;
+    --color-info: #04a5e5;
+    --color-info-content: #e6e9ef;
+    --color-base-100: #eff1f5;
+    --color-base-200: #e6e9ef;
+    --color-base-300: #dce0e8;
+    --color-base-content: #4c4f69;
+  }
+}
+@layer base {
+  :root:has(input.theme-controller[value=frappe]:checked),[data-theme="frappe"] {
+    color-scheme: dark;
+    --radius-selector: 0.25rem;
+    --radius-field: 0.5rem;
+    --radius-box: 0.5rem;
+    --size-field: 0.25rem;
+    --size-selector: 0.25rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
+    --color-primary: #babbf1;
+    --color-primary-content: #292c3c;
+    --color-secondary: #414559;
+    --color-secondary-content: #c6d0f5;
+    --color-accent: #babbf1;
+    --color-accent-content: #292c3c;
+    --color-neutral: #838ba7;
+    --color-neutral-content: #292c3c;
+    --color-success: #a6d189;
+    --color-success-content: #303446;
+    --color-warning: #e5c890;
+    --color-warning-content: #303446;
+    --color-error: #e78284;
+    --color-error-content: #303446;
+    --color-info: #99d1db;
+    --color-info-content: #292c3c;
+    --color-base-100: #303446;
+    --color-base-200: #292c3c;
+    --color-base-300: #232634;
+    --color-base-content: #c6d0f5;
+  }
+}
+@layer base {
+  :root:has(input.theme-controller[value=macchiato]:checked),[data-theme="macchiato"] {
+    color-scheme: dark;
+    --radius-selector: 0.25rem;
+    --radius-field: 0.5rem;
+    --radius-box: 0.5rem;
+    --size-field: 0.25rem;
+    --size-selector: 0.25rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
+    --color-primary: #b7bdf8;
+    --color-primary-content: #1e2030;
+    --color-secondary: #363a4f;
+    --color-secondary-content: #cad3f5;
+    --color-accent: #f4dbd6;
+    --color-accent-content: #1e2030;
+    --color-neutral: #8087a2;
+    --color-neutral-content: #1e2030;
+    --color-success: #a6da95;
+    --color-success-content: #24273a;
+    --color-warning: #eed49f;
+    --color-warning-content: #24273a;
+    --color-error: #ed8796;
+    --color-error-content: #24273a;
+    --color-info: #91d7e3;
+    --color-info-content: #1e2030;
+    --color-base-100: #24273a;
+    --color-base-200: #1e2030;
+    --color-base-300: #181926;
+    --color-base-content: #cad3f5;
+  }
+}
+@layer base {
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+      --radius-selector: 0.25rem;
+      --radius-field: 0.5rem;
+      --radius-box: 0.5rem;
+      --size-field: 0.25rem;
+      --size-selector: 0.25rem;
+      --border: 1px;
+      --depth: 1;
+      --noise: 0;
+      --color-primary: #b4befe;
+      --color-primary-content: #181825;
+      --color-secondary: #313244;
+      --color-secondary-content: #cdd6f4;
+      --color-accent: #f5e0dc;
+      --color-accent-content: #181825;
+      --color-neutral: #7f849c;
+      --color-neutral-content: #181825;
+      --color-success: #a6e3a1;
+      --color-success-content: #1e1e2e;
+      --color-warning: #f9e2af;
+      --color-warning-content: #1e1e2e;
+      --color-error: #f38ba8;
+      --color-error-content: #1e1e2e;
+      --color-info: #89dceb;
+      --color-info-content: #181825;
+      --color-base-100: #1e1e2e;
+      --color-base-200: #181825;
+      --color-base-300: #11111b;
+      --color-base-content: #cdd6f4;
+    }
+  }
+}
+@layer base {
+  :root:has(input.theme-controller[value=mocha]:checked),[data-theme="mocha"] {
+    color-scheme: dark;
+    --radius-selector: 0.25rem;
+    --radius-field: 0.5rem;
+    --radius-box: 0.5rem;
+    --size-field: 0.25rem;
+    --size-selector: 0.25rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
+    --color-primary: #b4befe;
+    --color-primary-content: #181825;
+    --color-secondary: #313244;
+    --color-secondary-content: #cdd6f4;
+    --color-accent: #f5e0dc;
+    --color-accent-content: #181825;
+    --color-neutral: #7f849c;
+    --color-neutral-content: #181825;
+    --color-success: #a6e3a1;
+    --color-success-content: #1e1e2e;
+    --color-warning: #f9e2af;
+    --color-warning-content: #1e1e2e;
+    --color-error: #f38ba8;
+    --color-error-content: #1e1e2e;
+    --color-info: #89dceb;
+    --color-info-content: #181825;
+    --color-base-100: #1e1e2e;
+    --color-base-200: #181825;
+    --color-base-300: #11111b;
+    --color-base-content: #cdd6f4;
   }
 }
 @property --tw-rotate-x {

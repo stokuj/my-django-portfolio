@@ -1,9 +1,4 @@
 from django.db import models
-from tinymce.models import HTMLField
-from django_summernote.fields import SummernoteTextField
-from ckeditor.fields import RichTextField
-from django.contrib.postgres.fields import ArrayField
-from django.db.models import JSONField
 import datetime
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)

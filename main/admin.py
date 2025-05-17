@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Project, Tag
+from .models import Project, Tag, PageView
 from ckeditor.widgets import CKEditorWidget
 from ckeditor.fields import RichTextField
 
@@ -11,3 +11,4 @@ class ProjectAdmin(admin.ModelAdmin):
 admin.site.register(Project, ProjectAdmin)
 #admin.site.register(Project)
 admin.site.register(Tag)
+admin.site.register(PageView)
