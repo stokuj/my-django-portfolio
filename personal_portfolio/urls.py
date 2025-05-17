@@ -26,8 +26,8 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 # Always serve media files for development
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Note: In a real production environment, media files should be served by a web server like Nginx or Apache
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Configure custom error handlers
 handler404 = 'main.views.handler404'
