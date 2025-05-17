@@ -2,13 +2,19 @@ from django.shortcuts import render, get_object_or_404
 from .models import Project, Tag
 from .models import PageView
 
+def handler404(request, exception):
+    return render(request, 'main/404.html', status=404)
+
+def handler500(request):
+    return render(request, 'main/500.html', status=500)
+
 def home(request):
     if not request.session.get('has_visited'):
         view_counter, created = PageView.objects.get_or_create(id=1)
         view_counter.count += 1
         view_counter.save()
         request.session['has_visited'] = True
-        
+
     count = PageView.objects.get(id=1).count
     projects = Project.objects.all().order_by('date')
     return render(request, "main/home.html", {'projects': projects})

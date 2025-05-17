@@ -19,10 +19,16 @@ from django.conf.urls.static import static
 from django.urls import path
 from django.urls import path, include
 from django.conf import settings
+from main.views import handler404, handler500
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("main.urls")),
     path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
+# Always serve media files for development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Configure custom error handlers
+handler404 = 'main.views.handler404'
+handler500 = 'main.views.handler500'
