@@ -15,5 +15,5 @@ urlpatterns = [
     path("blog/my_django_portfolio/", views.my_django_portfolio, name="my_django_portfolio"),
     path("blog/granular_data_grouping/", views.granular_data_grouping, name="granular_data_grouping"),
     path("blog/activity_tracker/", views.activity_tracker, name="activity_tracker"),
+    path("blog/obliczenia_ziarniste/", views.obliczenia_ziarniste, name="obliczenia_ziarniste"),
 ]
-

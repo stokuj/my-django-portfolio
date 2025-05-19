@@ -679,26 +679,28 @@ function KNN_distance(data, k):
             </p>
 
             <!-- Stats -->
-            <div class="flex justify-center shadow my-4 p-4 mt-4 mb-4 text-center bg-base-100">
-                <div class="stat">
-                <div class="stat-title">Testowane kształty</div>
-                <div class="stat-value text-primary">7</div>
-                <div class="stat-desc">różne formy skupisk</div>
-                </div>
-                <div class="stat">
-                <div class="stat-title">Metryki jakości</div>
-                <div class="stat-value text-primary">15</div>
-                <div class="stat-desc">własne miary oceny</div>
-                </div>
-                <div class="stat">
-                <div class="stat-title">Algorytmy</div>
-                <div class="stat-value text-primary">3</div>
-                <div class="stat-desc">DBSCAN, Single i Complete Linkage</div>
-                </div>
-                <div class="stat">
-                <div class="stat-title">Konfiguracje</div>
-                <div class="stat-value text-primary">300+</div>
-                <div class="stat-desc">łacznie konfiguracji</div>
+            <div class="flex justify-center">
+                <div class="stats stats-vertical lg:stats-horizontal shadow bg-base-100 mt-4 mb-4 w-full">
+                    <div class="stat">
+                        <div class="stat-title">Testowane kształty</div>
+                        <div class="stat-value text-primary">7</div>
+                        <div class="stat-desc">różne formy skupisk</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Metryki jakości</div>
+                        <div class="stat-value text-primary">15</div>
+                        <div class="stat-desc">własne miary oceny</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Algorytmy</div>
+                        <div class="stat-value text-primary">3</div>
+                        <div class="stat-desc">DBSCAN, Single i Complete Linkage</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Konfiguracje</div>
+                        <div class="stat-value text-primary">300+</div>
+                        <div class="stat-desc">łacznie konfiguracji</div>
+                    </div>
                 </div>
             </div>
 
@@ -707,18 +709,17 @@ function KNN_distance(data, k):
             </p>
 
             <div class="flex flex-col gap-4 my-6">
-            <div class="alert alert-info shadow-lg">
-                <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span>DBSCAN osiągnął wysoką dokładność w 6/7 przypadków</span>
+                <div class="alert alert-info shadow-lg">
+                    <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>DBSCAN osiągnął wysoką dokładność w 6/7 przypadków</span>
+                    </div>
                 </div>
-            </div>
             </div>
 
             <p class="mb-4 text-justify leading-relaxed">
             Analiza wpływu szumu wykazała, że zwiększający się udział zakłóceń systematycznie obniża dokładność grupowania, ze znaczącym spadkiem przy 70% szumu. Szczególnym wyzwaniem okazało się wykrywanie klastrów w rozkładzie von Misesa (kształt kołowy), gdzie Single Linkage przewyższył DBSCAN.
             </p>
-        </div>
         </div>
 
     </section>

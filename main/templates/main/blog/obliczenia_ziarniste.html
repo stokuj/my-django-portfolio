@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+
+{% block page_name %}Obliczenia na Liczbach Rozmytych (Fuzzy Numbers){% endblock page_name %}
+
+{% block content %}
+{% load static %}
+
+<h1 class="text-3xl font-bold text-center mt-8 mb-8">Obliczenia na Liczbach Rozmytych (Fuzzy Numbers)</h1>
+
+<div class="container mx-auto p-6 max-w-6xl">
+    <div class="card bg-base-200 w-full p-8 shadow-xl">
+        <h1 class="text-3xl font-bold text-primary mb-6">Projekt "odległość rozmyta granul" z przedmiotu NTwI</h1>
+
+        <div class="prose">
+        <p class="text-lg mb-4 mt-2">
+            Program implementuje operacje na liczbach rozmytych (fuzzy numbers) reprezentowanych jako trójkątne funkcje przynależności. 
+            Liczby rozmyte są używane w logice rozmytej i teorii zbiorów rozmytych do reprezentowania nieprecyzyjnych wartości.
+        </p>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <h2 class="text-2xl font-semibold text-secondary">Reprezentacja liczby rozmytej</h2>
+
+        <p class="text-base mb-4 mt-4">
+            W tym projekcie liczba rozmyta jest reprezentowana przez trzy parametry:
+        </p>
+        <ul class="list-disc pl-5 text-base">
+            <li><strong>x1</strong> (lewy punkt) - dolna granica nośnika funkcji przynależności</li>
+            <li><strong>m</strong> (środek) - wartość z maksymalną przynależnością (równą 1)</li>
+            <li><strong>x2</strong> (prawy punkt) - górna granica nośnika funkcji przynależności</li>
+        </ul>
+
+
+    <div class="grid md:grid-cols-2 gap-4 mt-4 mb-4">
+
+        <!-- Lewa kolumna: Struktura projektu -->
+        <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow h-full border border-primary">
+            <div class="card-body">
+                <h2 class="card-title">📁 Struktura projektu</h2>
+                <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs sm:text-base"><code>/NTwI-obliczenia-ziarniste/
+├── app.py
+├── RozmytyZbior.py
+└── README.md</code></pre>
+            </div>
+        </div>
+
+<!-- Prawa kolumna: zagnieżdżony grid -->
+<div class="grid grid-rows-2 gap-4 h-full">
+
+    <!-- Górna karta: Operacje na liczbach rozmytych -->
+    <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary ">
+        <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="text-2xl">🧮</div>
+                <h3 class="card-title text-accent text-lg font-semibold">Operacje na liczbach rozmytych</h3>
+            </div>
+            <div class="flex flex-wrap gap-3 ">
+                <span class="badge badge-primary badge-lg px-3 py-2">Dodawanie</span>
+                <span class="badge badge-secondary badge-lg px-3 py-2">Odejmowanie</span>
+                <span class="badge badge-accent badge-lg px-3 py-2">Mnożenie</span>
+                <span class="badge badge-info badge-lg px-3 py-2">Potęgowanie</span>
+            </div>
+            <div class="mt-4 space-y-1.5 text-base-content/80">
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-success badge-xs"></span>
+                    Wyświetlanie pojedynczej liczby rozmytej
+                </p>
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-success badge-xs"></span>
+                    Mnożenie liczby rozmytej przez liczbę rzeczywistą
+                </p>
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-success badge-xs"></span>
+                    Łańcuch operacji na wielu liczbach rozmytych
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dolna karta: Wymagania -->
+    <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 ease-out hover:-translate-y-1 border border-primary">
+        <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="text-2xl">📋</div>
+                <h3 class="card-title text-accent text-lg font-semibold">Wymagania</h3>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <span class="badge badge-primary badge-lg px-3 py-2">Python 3.x</span>
+                <span class="badge badge-secondary badge-lg px-3 py-2">NumPy</span>
+                <span class="badge badge-accent badge-lg px-3 py-2">Matplotlib</span>
+            </div>
+            <div class="mt-4 space-y-1.5 text-base-content/80">
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-warning badge-xs"></span>
+                    Instalacja: <code>pip install numpy matplotlib</code>
+                </p>
+                <p class="text-sm flex items-center gap-2 mt-2 mb-2">
+                    <span class="badge badge-warning badge-xs"></span>
+                    Uruchomienie: <code>python app.py [argumenty]</code>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+
+    <h2 class="text-2xl font-semibold text-secondary">Użycie programu</h2>
+    <p class="text-base mb-4 mt-4">
+        Program jest uruchamiany z linii poleceń z różnymi argumentami w zależności od operacji, którą chcemy wykonać.
+    </p>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Wyświetlanie pojedynczej liczby rozmytej</div>
+            <div class="collapse-content overflow-y-auto">
+                <p class="mt-4 text-base">
+                    Aby wyświetlić pojedynczą liczbę rozmytą, należy podać trzy parametry: lewy punkt, środek i prawy punkt.
+                </p>
+                <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>python app.py x1 m x2</code></pre>
+
+                <p class="mt-2 text-base">Przykład:</p>
+                <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>python app.py 2 3 4</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Mnożenie liczby rozmytej przez liczbę rzeczywistą lub potęgowanie</div>
+        <div class="collapse-content overflow-y-auto">
+            <p class="mt-4 text-base">
+                Aby pomnożyć liczbę rozmytą przez liczbę rzeczywistą lub podnieść ją do potęgi, należy podać parametry liczby rozmytej, operator ("*" dla mnożenia lub "^" dla potęgowania) oraz liczbę rzeczywistą.
+            </p>
+            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>python app.py x1 m x2 operator liczba</code></pre>
+
+            <p class="mt-2 text-base">Przykłady:</p>
+            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>python app.py 2 3 4 * 2
+python app.py 2 3 4 ^ 2</code></pre>
+        </div>
+    </div>
+
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Operacje na dwóch liczbach rozmytych</div>
+        <div class="collapse-content overflow-y-auto">
+            <p class="mt-4 text-base">
+                Aby wykonać operację na dwóch liczbach rozmytych (dodawanie, odejmowanie, mnożenie), należy podać parametry obu liczb rozmytych oraz operator ("+" dla dodawania, "-" dla odejmowania, "*" dla mnożenia).
+            </p>
+            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>python app.py x1_A m_A x2_A operator x1_B m_B x2_B</code></pre>
+
+            <p class="mt-2 text-base">Przykłady:</p>
+            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>python app.py 2 3 4 + 5 6 7
+python app.py 2 3 4 - 1 2 3
+python app.py 2 3 4 * 1 2 3</code></pre>
+        </div>
+    </div>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Łańcuch operacji na wielu liczbach rozmytych</div>
+        <div class="collapse-content overflow-y-auto">
+            <p class="mt-4 text-base">
+                Program obsługuje również łańcuch operacji na wielu liczbach rozmytych. Wynik poprzedniej operacji jest używany jako pierwszy argument kolejnej operacji.
+            </p>
+            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>python app.py x1_A m_A x2_A operator1 x1_B m_B x2_B operator2 x1_C m_C x2_C ...</code></pre>
+
+            <p class="mt-2 text-base">Przykład:</p>
+            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>python app.py 2 3 4 + 5 6 7 - 1 2 3</code></pre>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+    <!-- Divider -->
+
+    <h2 class="text-2xl font-semibold text-secondary">Teoria zbiorów rozmytych</h2>
+    <p class="text-base mb-4 mt-4">
+        Zbiór rozmyty to zbiór, w którym każdy element należy do zbioru z pewnym stopniem przynależności z przedziału [0, 1]. W przeciwieństwie do klasycznej teorii zbiorów, gdzie element albo należy do zbioru (przynależność 1), albo nie należy (przynależność 0), w zbiorach rozmytych element może należeć do zbioru częściowo.
+    </p>
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Operacje na zbiorach rozmytych</div>
+        <div class="collapse-content overflow-y-auto">
+            <p class="mt-4 text-base">
+                W projekcie zaimplementowano następujące operacje:
+            </p>
+            <ol class="list-decimal pl-5 text-base">
+                <li class="mt-2">
+                    <strong>Dodawanie</strong>: Jeśli A i B są liczbami rozmytymi, to A + B jest liczbą rozmytą, której parametry są obliczane jako:
+                    <ul class="list-disc pl-5 mt-1">
+                        <li>m = m_A + m_B</li>
+                        <li>x1 i x2 są obliczane na podstawie odległości od środka</li>
+                    </ul>
+                </li>
+                <li class="mt-2">
+                    <strong>Odejmowanie</strong>: Jeśli A i B są liczbami rozmytymi, to A - B jest liczbą rozmytą, której parametry są obliczane jako:
+                    <ul class="list-disc pl-5 mt-1">
+                        <li>m = m_A - m_B</li>
+                        <li>x1 i x2 są obliczane na podstawie odległości od środka</li>
+                    </ul>
+                </li>
+                <li class="mt-2">
+                    <strong>Mnożenie przez liczbę rzeczywistą</strong>: Jeśli A jest liczbą rozmytą, a k jest liczbą rzeczywistą, to A * k jest liczbą rozmytą, której parametry są obliczane jako:
+                    <ul class="list-disc pl-5 mt-1">
+                        <li>m = m_A * k</li>
+                        <li>x1 i x2 są obliczane na podstawie odległości od środka</li>
+                    </ul>
+                </li>
+                <li class="mt-2">
+                    <strong>Potęgowanie</strong>: Jeśli A jest liczbą rozmytą, a n jest liczbą rzeczywistą, to A^n jest liczbą rozmytą, której parametry są obliczane jako:
+                    <ul class="list-disc pl-5 mt-1">
+                        <li>m = m_A^n</li>
+                        <li>x1 i x2 są obliczane na podstawie odległości od środka</li>
+                    </ul>
+                </li>
+                <li class="mt-2">
+                    <strong>Mnożenie dwóch liczb rozmytych</strong>: Jeśli A i B są liczbami rozmytymi, to A * B jest liczbą rozmytą, której parametry są obliczane jako:
+                    <ul class="list-disc pl-5 mt-1">
+                        <li>m = m_A * m_B</li>
+                        <li>x1 i x2 są obliczane na podstawie odległości od środka</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+
+    <div class="collapse collapse-arrow bg-base-100 border mt-4 mb-4">
+        <input type="checkbox" />
+        <div class="collapse-title text-xl font-medium">Implementacja klasy RozmytyZbior</div>
+        <div class="collapse-content overflow-y-auto">
+            <p class="mt-4 text-base">
+                Klasa RozmytyZbior implementuje zbiór rozmyty z trójkątną funkcją przynależności. Poniżej przedstawiono fragment kodu implementujący dodawanie dwóch zbiorów rozmytych:
+            </p>
+            <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code>def dodaj(self, inny_zbior):
+"""
+Dodaje dwa zbiory rozmyte.
+
+:param inny_zbior: Inny zbiór rozmyty do dodania.
+:return: Nowy zbiór rozmyty będący wynikiem dodawania.
+"""
+m = self.m + inny_zbior.m
+x1=(m-abs(self.m-self.x1)+(m-abs(inny_zbior.m-inny_zbior.x1)))/2
+x2=(m+abs(self.m-self.x2)+(m+abs(inny_zbior.m-inny_zbior.x2)))/2
+return RozmytyZbior(x1, m, x2, np.arange(x1-0.2, x2+0.2, 0.01))</code></pre>
+        </div>
+    </div>
+
+
+    <!-- Divider -->
+    <div class="divider"></div>
+    <!-- Divider -->
+
+    <h2 class="text-2xl font-semibold text-secondary">Wnioski</h2>
+
+    <div class="flex justify-center">
+        <div class="stats stats-vertical lg:stats-horizontal shadow bg-base-100 mt-4 mb-4 w-full">
+            <div class="stat">
+                <div class="stat-title">Operacje</div>
+                <div class="stat-value text-primary">5</div>
+                <div class="stat-desc">podstawowych operacji</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-title">Wizualizacja</div>
+                <div class="stat-value text-secondary">3</div>
+                <div class="stat-desc">wykresy dla każdej operacji</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-title">Implementacja</div>
+                <div class="stat-value">140+</div>
+                <div class="stat-desc">linii kodu</div>
+            </div>
+        </div>
+    </div>
+    <div class="alert alert-info shadow-lg mt-6">
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span>Liczby rozmyte stanowią efektywne narzędzie do modelowania niepewności i nieprecyzyjności w danych, pozwalając na operowanie na wartościach, które nie są dokładnie określone.</span>
+        </div>
+    </div>
+
+    <!--Divider-->
+    <div class="divider"></div>
+    <!--Divider-->
+
+    <!-- Footer -->
+    <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
+        <div>
+            <p>📄 Licencja MIT - 💌 Kontakt przez GitHub Issues
+                <a href="https://github.com/stokuj/NTwI-obliczenia-ziarniste-krystian-stasica" target="_blank" >
+                    🌐 Zobacz źródło na GitHubie
+                </a>
+            </p>
+        </div>
+    </footer>
+    <!-- Footer -->
+
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

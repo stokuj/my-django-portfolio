@@ -62,3 +62,6 @@ def granular_data_grouping(request):
 
 def activity_tracker(request):
     return render(request, "main/blog/activity_tracker.html")
+
+def obliczenia_ziarniste(request):
+    return render(request, "main/blog/obliczenia_ziarniste.html")
