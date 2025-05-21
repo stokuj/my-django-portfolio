@@ -9,7 +9,7 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 class Project(models.Model):
     title = models.CharField(max_length=200)
     thumbnail = models.ImageField(upload_to='thumbnails/', blank=True, null=True, default='thumbnails/default_image.png')
@@ -26,7 +26,7 @@ class Project(models.Model):
         ('ongoing', 'Ongoing'),
         ('finished', 'Finished'),
     ]
-    
+
     status = models.CharField(max_length=10,choices=STATUS_CHOICES,default='planned',)
 
     def __str__(self):
@@ -34,3 +34,12 @@ class Project(models.Model):
 
 class PageView(models.Model):
     count = models.IntegerField(default=0)
+
+    @classmethod
+    def get_instance(cls):
+        """
+        Singleton pattern implementation.
+        Always returns the same instance of PageView.
+        """
+        instance, created = cls.objects.get_or_create(id=1)
+        return instance

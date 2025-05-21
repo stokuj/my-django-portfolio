@@ -9,5 +9,6 @@ def project_count(request):
 
 
 def visitor_counter(request):
-    count = PageView.objects.get(id=1).count if PageView.objects.filter(id=1).exists() else 0
+    # Use Singleton pattern to get the PageView instance
+    count = PageView.get_instance().count
     return {'visitor_count': count}
