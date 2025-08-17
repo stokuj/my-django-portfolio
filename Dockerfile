@@ -6,7 +6,7 @@ WORKDIR /app
 
 # 3. Zainstaluj systemowe zależności (jeśli potrzebne, np. psycopg2)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc libpq-dev && \
+    apt-get install -y --no-install-recommends gcc libpq-dev postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
 # 4. Skopiuj i zainstaluj zależności
@@ -15,6 +15,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # 5. Skopiuj resztę kodu
 COPY . .
+
+# Make entrypoint script executable
+RUN chmod +x /app/entrypoints/wait-for-db.sh
 
 # 6. Otwórz port (domyślnie Django na 8000)
 EXPOSE 8000

@@ -13,6 +13,7 @@ services:
 
   web:
     build: .
+    entrypoint: ["sh", "/app/entrypoints/wait-for-db.sh"]
     command: >
       sh -c "python manage.py migrate &&
             python manage.py collectstatic --noinput &&
@@ -24,12 +25,15 @@ services:
     depends_on:
       - db
     environment:
-
-      POSTGRES_DB: mydb
-      POSTGRES_USER: myuser        
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
+      DJANGO_DEBUG: 1
+      SECRET_KEY: your_secret_key_here
+      ALLOWED_HOSTS: '*'
+      DB_ENGINE: django.db.backends.postgresql
+      DB_NAME: mydb
+      DB_USER: myuser        
+      DB_PASSWORD: mypassword
+      DB_HOST: db
+      DB_PORT: 5432
 
 volumes:
   postgres_data:

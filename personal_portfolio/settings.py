@@ -100,6 +100,7 @@ DATABASES = {
         'PORT': env('DB_PORT', default=''),
     }
 }
+print(ALLOWED_HOSTS)
 for key, value in DATABASES['default'].items():
     print(f"{key}: {value}")
 # Password validation
