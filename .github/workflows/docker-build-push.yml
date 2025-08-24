@@ -36,8 +36,8 @@ jobs:
       # Test Docker Compose configuration
       - name: Validate Docker Compose
         run: |
-          docker-compose config
-          docker-compose build --no-cache web
+          docker compose config
+          docker compose build --no-cache web
 
       # Extract metadata for Django image
       - name: Extract Docker metadata
@@ -60,6 +60,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+  # Optional deployment job
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -69,14 +70,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Here you can add deployment steps to your server
+      # e.g. copy docker-compose.yml and run it
       - name: Prepare deployment files
         run: |
           echo "Deployment files ready:"
           ls -la docker-compose.yml Caddyfile
 
-      # to do deployment
+      # Example deployment (commented - adjust to your server)
       # - name: Deploy to server
       #   run: |
       #     # scp docker-compose.yml user@server:/path/to/app/
       #     # scp Caddyfile user@server:/path/to/app/
-      #     # ssh user@server 'cd /path/to/app && docker-compose pull && docker-compose up -d'
+      #     # ssh user@server 'cd /path/to/app && docker compose pull && docker compose up -d'
