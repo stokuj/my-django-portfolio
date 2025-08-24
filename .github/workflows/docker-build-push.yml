@@ -36,6 +36,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # TESTIng
+      - name: Check if password secret is received
+        run: |
+          if [ -z "${{ secrets.DOCKER_DB_PASSWORD }}" ]; then
+            echo "Password secret is EMPTY or NOT SET!"
+            exit 1
+          else
+            echo "Password secret has been received successfully."
+          fi
       # Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
