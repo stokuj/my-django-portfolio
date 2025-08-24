@@ -165,7 +165,7 @@ cython_debug/
 #.idea/
 /.junie
 /.idea
-/media/thumbnails
+/media/
 /staticfiles/css
 /staticfiles/css
 staticfiles/css/style.css

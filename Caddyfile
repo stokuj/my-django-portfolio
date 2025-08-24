@@ -15,19 +15,19 @@
     reverse_proxy web:8000
 }
 
-# For production -> domain
-# yourdomain.com {
-#     # Static files served directly by Caddy
-#     handle /static/* {
-#         root * /srv
-#         file_server
-#     }
-#
-#     handle /media/* {
-#         root * /srv
-#         file_server
-#     }
-#
-#     # Django app
-#     reverse_proxy web:8000
-# }
+#For production -> domain
+yourdomain.com {
+ # Static files served directly by Caddy
+ handle /static/* {
+     root * /srv
+     file_server
+ }
+
+ handle /media/* {
+     root * /srv
+     file_server
+ }
+
+ # Django app
+ reverse_proxy web:8000
+}

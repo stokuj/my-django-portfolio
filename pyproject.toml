@@ -23,3 +23,9 @@ dependencies = [
     "webencodings==0.5.1",
     "whitenoise==6.9.0",
 ]
+
+[tool.uv]
+# UV-specific configuration
+pip = { upgrade = true }
+# Use pyproject.toml as the primary source for dependencies
+use-pyproject-toml = true

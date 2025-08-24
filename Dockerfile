@@ -9,12 +9,13 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc libpq-dev postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
-# 4. Copy requirements file
+# 4. Copy dependency files
 # Copy only dependency files first to leverage Docker cache
-COPY requirements.txt ./
+COPY pyproject.toml ./
 
-# 5. Install dependencies via pip
-RUN pip install --no-cache-dir -r requirements.txt
+# 5. Install uv and use it to install dependencies
+RUN pip install --no-cache-dir uv
+RUN uv pip install --system --no-cache-dir .
 
 # Copy the rest of the application code
 COPY . .
