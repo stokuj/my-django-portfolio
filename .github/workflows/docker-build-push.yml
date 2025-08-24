@@ -1,109 +1,43 @@
-name: Build and Push Docker Images
+name: Test Docker Build
 
 on:
   push:
-    branches: [ main, master ]
-  # Allow manual triggering
+    branches: [ "main", "master" ]
   workflow_dispatch:
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
-  build-and-push:
+  build-test:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
-
-    # It acts like a temporary .env file for the GitHub Actions runner.
-    env:
-      # Secrets (for sensitive data)
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      DOCKER_DB_PASSWORD: ${{ secrets.DOCKER_DB_PASSWORD }}
-
-      # Variables (for non-sensitive configuration)
-      DEBUG: ${{ vars.DEBUG }}
-      ALLOWED_HOSTS: ${{ vars.ALLOWED_HOSTS }}
-      DOCKER_DB_ENGINE: ${{ vars.DOCKER_DB_ENGINE }}
-      DOCKER_DB_NAME: ${{ vars.DOCKER_DB_NAME }}
-      DOCKER_DB_USER: ${{ vars.DOCKER_DB_USER }}
-      DOCKER_DB_HOST: ${{ vars.DOCKER_DB_HOST }}
-      DOCKER_DB_PORT: ${{ vars.DOCKER_DB_PORT }}
+      contents: read # Only read permission is needed
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # TESTIng
-      - name: Check if password secret is received
+      # This step creates a temporary .env file using repository secrets and variables.
+      # This mimics your local setup and solves the "file not found" error.
+      - name: Create .env file from secrets
         run: |
-          if [ -z "${{ secrets.DOCKER_DB_PASSWORD }}" ]; then
-            echo "Password secret is EMPTY or NOT SET!"
-            exit 1
-          else
-            echo "Password secret has been received successfully."
-          fi
-      # Set up Docker Buildx
+          cat <<EOF > .env
+          # This file is generated automatically during the GitHub Actions workflow
+
+          # Django settings
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          DEBUG=${{ vars.DEBUG }}
+          ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }}
+
+          # Docker Database settings
+          DOCKER_DB_ENGINE=${{ vars.DOCKER_DB_ENGINE }}
+          DOCKER_DB_NAME=${{ vars.DOCKER_DB_NAME }}
+          DOCKER_DB_USER=${{ vars.DOCKER_DB_USER }}
+          DOCKER_DB_PASSWORD=${{ secrets.DOCKER_DB_PASSWORD }}
+          DOCKER_DB_HOST=${{ vars.DOCKER_DB_HOST }}
+          DOCKER_DB_PORT=${{ vars.DOCKER_DB_PORT }}
+          EOF
+
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
-      # Login to GitHub Container Registry
-      - name: Log in to the Container registry
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # Test Docker Compose configuration
-      - name: Validate Docker Compose
-        run: |
-          docker compose config
-          docker compose build --no-cache web
-
-      # Extract metadata for Django image
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=sha,format=short
-            type=raw,value=latest,enable={{is_default_branch}}
-
-      # Build and push Django image
-      - name: Build and push Django image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  # Optional deployment job
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # Here you can add deployment steps to your server
-      # e.g. copy docker-compose.yml and run it
-      - name: Prepare deployment files
-        run: |
-          echo "Deployment files ready:"
-          ls -la docker-compose.yml Caddyfile
-
-      # Example deployment (commented - adjust to your server)
-      # - name: Deploy to server
-      #   run: |
-      #     # scp docker-compose.yml user@server:/path/to/app/
-      #     # scp Caddyfile user@server:/path/to/app/
-      #     # ssh user@server 'cd /path/to/app && docker compose pull && docker compose up -d'
+      - name: Build images using docker-compose
+        run: docker compose build
