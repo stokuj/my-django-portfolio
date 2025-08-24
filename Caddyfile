@@ -16,7 +16,7 @@
 }
 
 #For production -> domain
-yourdomain.com {
+{$APP_DOMAIN:80} {
  # Static files served directly by Caddy
  handle /static/* {
      root * /srv
