@@ -1,12 +1,12 @@
-# Remove the version attribute as it is obsolete
 services:
   db:
     image: postgres:13
     restart: always
+    # Use variables from the .env file for security
     environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -21,18 +21,25 @@ services:
              gunicorn personal_portfolio.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/app
+      # Mount the shared volume where static files will be collected
+      - staticfiles_volume:/app/staticfiles
+      # Mount the shared volume for user-uploaded media files
+      - media_volume:/app/media
+    # Load all environment variables from the .env file
+    env_file:
+      - ./.env
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - DB_ENGINE=${DOCKER_DB_ENGINE}
+      - DB_NAME=${DOCKER_DB_NAME}
+      - DB_USER=${DOCKER_DB_USER}
+      - DB_PASSWORD=${DOCKER_DB_PASSWORD}
+      - DB_HOST=${DOCKER_DB_HOST}
+      - DB_PORT=${DOCKER_DB_PORT}
     depends_on:
       - db
-    environment:
-      DJANGO_DEBUG: 1
-      SECRET_KEY: your_secret_key_here
-      ALLOWED_HOSTS: '*'
-      DB_ENGINE: django.db.backends.postgresql
-      DB_NAME: mydb
-      DB_USER: myuser
-      DB_PASSWORD: mypassword
-      DB_HOST: db
-      DB_PORT: 5432
     networks:
       - app-network
 
@@ -43,8 +50,10 @@ services:
       - "443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
-      - ./staticfiles:/srv/static
-      - ./media:/srv/media
+      # Mount the same shared volume to serve static files
+      - staticfiles_volume:/srv/static
+      # Mount the same shared volume to serve media files
+      - media_volume:/srv/media
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
@@ -56,7 +65,10 @@ networks:
   app-network:
     driver: bridge
 
+# Define the named volumes that will be shared between containers
 volumes:
   postgres_data:
+  staticfiles_volume: # For static files (CSS, JS)
+  media_volume:     # For media files (user uploads)
   caddy_data:
   caddy_config:
