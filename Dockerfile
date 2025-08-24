@@ -23,6 +23,11 @@ RUN uv sync --frozen
 # Make entrypoint script executable
 RUN chmod +x /app/entrypoints/wait-for-db.sh
 
+#Set Python path to use uv virtual environment
+ENV VIRTUAL_ENV=/app/.venv
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH="/app"
+
 # 7. Expose port
 EXPOSE 8000
 
