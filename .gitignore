@@ -170,3 +170,4 @@ cython_debug/
 /staticfiles/css
 staticfiles/css/style.css
 .env.dev
+/staticfiles

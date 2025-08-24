@@ -1,3 +1,0 @@
--add supersuer 
--zmien eng/pl
--poprawic opis
