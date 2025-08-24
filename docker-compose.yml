@@ -1,5 +1,4 @@
-version: '3.9'
-
+# Remove the version attribute as it is obsolete
 services:
   db:
     image: postgres:13
@@ -18,8 +17,8 @@ services:
     entrypoint: ["sh", "/app/entrypoints/wait-for-db.sh"]
     command: >
       sh -c "python manage.py migrate &&
-            python manage.py collectstatic --noinput &&
-            gunicorn personal_portfolio.wsgi:application --bind 0.0.0.0:8000"
+             python manage.py collectstatic --noinput &&
+             gunicorn personal_portfolio.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/app
     depends_on:
@@ -44,6 +43,8 @@ services:
       - "443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./staticfiles:/srv/static
+      - ./media:/srv/media
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
