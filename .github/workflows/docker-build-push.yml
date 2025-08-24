@@ -17,6 +17,21 @@ jobs:
       contents: read
       packages: write
 
+    # It acts like a temporary .env file for the GitHub Actions runner.
+    env:
+      # Secrets (for sensitive data)
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      DOCKER_DB_PASSWORD: ${{ secrets.DOCKER_DB_PASSWORD }}
+
+      # Variables (for non-sensitive configuration)
+      DEBUG: ${{ vars.DEBUG }}
+      ALLOWED_HOSTS: ${{ vars.ALLOWED_HOSTS }}
+      DOCKER_DB_ENGINE: ${{ vars.DOCKER_DB_ENGINE }}
+      DOCKER_DB_NAME: ${{ vars.DOCKER_DB_NAME }}
+      DOCKER_DB_USER: ${{ vars.DOCKER_DB_USER }}
+      DOCKER_DB_HOST: ${{ vars.DOCKER_DB_HOST }}
+      DOCKER_DB_PORT: ${{ vars.DOCKER_DB_PORT }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
