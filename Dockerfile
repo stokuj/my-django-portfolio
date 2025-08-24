@@ -1,26 +1,30 @@
-# 1. Bazowy obraz Pythona
-FROM python:3.11-slim
+# 1. Base Python image
+FROM python:3.13-slim
 
-# 2. Ustawienie katalogu roboczego
+# 2. Set working directory
 WORKDIR /app
 
-# 3. Zainstaluj systemowe zależności (jeśli potrzebne, np. psycopg2)
+# 3. Install system dependencies + uv
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc libpq-dev postgresql-client && \
+    apt-get install -y --no-install-recommends gcc libpq-dev postgresql-client curl && \
+    curl -LsSf https://astral.sh/uv/install.sh | sh && \
     rm -rf /var/lib/apt/lists/*
 
-# 4. Skopiuj i zainstaluj zależności
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# 4. Add uv to PATH
+ENV PATH="/root/.local/bin:$PATH"
 
-# 5. Skopiuj resztę kodu
+# 5. Copy project files (uv needs pyproject.toml)
+COPY pyproject.toml uv.lock* ./
 COPY . .
+
+# 6. Install dependencies via uv
+RUN uv sync --frozen
 
 # Make entrypoint script executable
 RUN chmod +x /app/entrypoints/wait-for-db.sh
 
-# 6. Otwórz port (domyślnie Django na 8000)
+# 7. Expose port
 EXPOSE 8000
 
-# 7. Komenda domyślna
-CMD ["gunicorn", "personal_portfolio.wsgi:application", "--bind", "0.0.0.0:8000"]
+# 8. Default command with uv
+CMD ["uv", "run", "gunicorn", "personal_portfolio.wsgi:application", "--bind", "0.0.0.0:8000"]

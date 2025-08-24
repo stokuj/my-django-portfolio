@@ -1,17 +1,33 @@
-# For deployment -> localhost
+# For development -> localhost
 :80 {
+    # Static files served directly by Caddy (faster)
+    handle /static/* {
+        root * /srv
+        file_server
+    }
+
+    handle /media/* {
+        root * /srv
+        file_server
+    }
+
+    # Everything else to Django
     reverse_proxy web:8000
 }
 
 # For production -> domain
-# todo.pl {
-#     reverse_proxy web:8000
-
-#     # Obsługa plików statycznych
+# yourdomain.com {
+#     # Static files served directly by Caddy
 #     handle /static/* {
-#         reverse_proxy web:8000
+#         root * /srv
+#         file_server
 #     }
+#
 #     handle /media/* {
-#         reverse_proxy web:8000
+#         root * /srv
+#         file_server
 #     }
+#
+#     # Django app
+#     reverse_proxy web:8000
 # }
