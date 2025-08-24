@@ -27,5 +27,6 @@ dependencies = [
 [tool.uv]
 # UV-specific configuration
 pip = { upgrade = true }
-# Use pyproject.toml as the primary source for dependencies
-use-pyproject-toml = true
+
+[tool.setuptools]
+packages = ["main", "personal_portfolio", "entrypoints"]
