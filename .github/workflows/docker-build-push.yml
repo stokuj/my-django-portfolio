@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build and Push Docker Images
 
 on:
   push:
@@ -13,7 +13,6 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job
     permissions:
       contents: read
       packages: write
@@ -34,7 +33,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Extract metadata for Docker
+      # Test Docker Compose configuration
+      - name: Validate Docker Compose
+        run: |
+          docker-compose config
+          docker-compose build --no-cache web
+
+      # Extract metadata for Django image
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v4
@@ -44,8 +49,8 @@ jobs:
             type=sha,format=short
             type=raw,value=latest,enable={{is_default_branch}}
 
-      # Build and push Docker image
-      - name: Build and push Docker image
+      # Build and push Django image
+      - name: Build and push Django image
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -54,3 +59,24 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Prepare deployment files
+        run: |
+          echo "Deployment files ready:"
+          ls -la docker-compose.yml Caddyfile
+
+      # to do deployment
+      # - name: Deploy to server
+      #   run: |
+      #     # scp docker-compose.yml user@server:/path/to/app/
+      #     # scp Caddyfile user@server:/path/to/app/
+      #     # ssh user@server 'cd /path/to/app && docker-compose pull && docker-compose up -d'

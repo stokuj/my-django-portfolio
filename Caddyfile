@@ -1,0 +1,17 @@
+# For deployment -> localhost
+:80 {
+    reverse_proxy web:8000
+}
+
+# For production -> domain
+# todo.pl {
+#     reverse_proxy web:8000
+
+#     # Obsługa plików statycznych
+#     handle /static/* {
+#         reverse_proxy web:8000
+#     }
+#     handle /media/* {
+#         reverse_proxy web:8000
+#     }
+# }

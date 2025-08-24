@@ -10,6 +10,8 @@ services:
       POSTGRES_PASSWORD: mypassword
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
 
   web:
     build: .
@@ -20,8 +22,6 @@ services:
             gunicorn personal_portfolio.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/app
-    ports:
-      - "8000:8000"
     depends_on:
       - db
     environment:
@@ -30,10 +30,32 @@ services:
       ALLOWED_HOSTS: '*'
       DB_ENGINE: django.db.backends.postgresql
       DB_NAME: mydb
-      DB_USER: myuser        
+      DB_USER: myuser
       DB_PASSWORD: mypassword
       DB_HOST: db
       DB_PORT: 5432
+    networks:
+      - app-network
+
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   postgres_data:
+  caddy_data:
+  caddy_config:
