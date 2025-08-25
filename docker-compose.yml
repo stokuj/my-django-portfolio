@@ -14,6 +14,7 @@ services:
 
   web:
     build: .
+    image: ${IMAGE_NAME}:latest
     entrypoint: ["sh", "/app/entrypoints/wait-for-db.sh"]
     command: >
       sh -c "python manage.py migrate &&
