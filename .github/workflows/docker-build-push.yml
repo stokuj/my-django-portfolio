@@ -67,12 +67,15 @@ jobs:
           script: |
             # Navigate to the project directory on the server
             cd /home/ubuntu/my_django_portfolio  
-            
+
             # Log in to GitHub Container Registry on the server
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            
+
+            # Set the IMAGE_NAME environment variable
+            export IMAGE_NAME=ghcr.io/${{ github.repository }}
+
             # Pull the latest version of the image from the registry
             docker compose pull
-            
+
             # Restart the services with the new image
             docker compose up -d --remove-orphans
