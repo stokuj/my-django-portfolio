@@ -55,7 +55,8 @@ class ViewsTest(TestCase):
             title="Test Project",
             short_description="A test project",
             date=datetime.date(2023, 1, 1),
-            status="finished"
+            status="finished",
+            blog_url="test-project-views"
         )
         self.tag = Tag.objects.create(name="python")
         self.project.tags.add(self.tag)
@@ -97,7 +98,8 @@ class URLsTest(TestCase):
             title="Test Project",
             short_description="A test project",
             date=datetime.date(2023, 1, 1),
-            status="finished"
+            status="finished",
+            blog_url="test-project-urls"
         )
         PageView.objects.create(id=1, count=0)
 
