@@ -69,6 +69,7 @@ jobs:
             cd /home/ubuntu/my_django_portfolio  
             
             # Pull the latest changes from the main branch of the repository
+            git reset --hard origin/main #ALSO RESET, make sure we have pulled code from github
             git pull origin main
 
             # Log in to GitHub Container Registry on the server
