@@ -87,9 +87,24 @@ WSGI_APPLICATION = 'personal_portfolio.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-# Ustawienia lokalne (dla deweloperów)
-print("Running in development(local) mode <------------------------------------")
-print("Debug: ", DEBUG)
+# Production security settings
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000 #year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'httpss')
+
+    print("Running in PRODUCTION mode <------------------------------------")
+    print("Debug: ", DEBUG)
+else:
+    print("Running in DEVELOPMENT mode <------------------------------------")
+    print("Debug: ", DEBUG)
+
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+
 DATABASES = {
     'default': {
         'ENGINE': env('DB_ENGINE', default='django.db.backends.sqlite3'),
@@ -100,9 +115,9 @@ DATABASES = {
         'PORT': env('DB_PORT', default=''),
     }
 }
-print(ALLOWED_HOSTS)
-for key, value in DATABASES['default'].items():
-    print(f"{key}: {value}")
+# print(ALLOWED_HOSTS)
+# for key, value in DATABASES['default'].items():
+#     print(f"{key}: {value}")
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
