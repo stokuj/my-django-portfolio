@@ -131,44 +131,42 @@ For local development, comment out the production block in `Caddyfile`:
 **Solution:** Run `docker-compose exec web python manage.py collectstatic` if files are missing
 
 ## 📁 Project Structure
-    MY-DJANGO-PORTFOLIO/
-    │
-    ├── main/                      # Main application containing models, views, and templates
-    │   ├── migrations/            # Database migrations
-    │   ├── static/                # Static files (CSS, images)
-    │   ├── templates/             # HTML templates
-    │   │   └── main/
-    │   │       ├── blog/          # Each project has its own subpage
-    │   │       ├── about.html     # About page
-    │   │       ├── home.html      # Home page
-    │   │       └── projects.html  # Projects list
-    │   │   └── base.html          # Base template
-    │   ├── __init__.py
-    │   ├── admin.py               # Admin panel configuration
-    │   ├── apps.py                # Application configuration
-    │   ├── context_processors.py  # Context processors
-    │   ├── models.py              # Data models
-    │   ├── tests.py               # Tests
-    │   ├── urls.py                # URL configuration
-    │   └── views.py               # Views
-    ├── media/                     # User-uploaded files
-    ├── node_modules/              # Node.js dependencies
-    ├── personal_portfolio/        # Main project directory
-    │   ├── __pycache__/
-    │   ├── __init__.py
-    │   ├── asgi.py                # ASGI configuration
-    │   ├── settings.py            # Project settings
-    │   ├── urls.py                # Main project URLs
-    │   └── wsgi.py                # WSGI configuration
-    ├── staticfiles/               # Collected static files for production
-    ├── LICENSE                    # Project license
-    ├── manage.py                  # Django management script
-    ├── package-lock.json          # npm dependencies (lock)
-    ├── package.json               # npm configuration
-    ├── Procfile                   # Heroku configuration
-    ├── README.md                  # Project documentation
-    ├── requirements.txt           # Python dependencies
-    └── tailwind.config.js         # Tailwind CSS configuration
+```text
+MY-DJANGO-PORTFOLIO/
+|-- .github/                    # GitHub templates and workflows
+|-- entrypoints/                # Startup scripts (Docker entrypoints)
+|-- main/                       # Main Django app
+|   |-- migrations/
+|   |-- static/                 # Source static assets
+|   |   |-- css/
+|   |   |-- images/
+|   |   `-- src/
+|   |-- templates/
+|   |   `-- main/
+|   |       `-- blog/
+|   |-- admin.py
+|   |-- apps.py
+|   |-- context_processors.py
+|   |-- models.py
+|   |-- tests.py
+|   |-- urls.py
+|   `-- views.py
+|-- media/                      # User-uploaded files
+|-- personal_portfolio/         # Django project config (settings/urls/wsgi/asgi)
+|-- staticfiles/                # collectstatic output (build artifact)
+|-- Caddyfile
+|-- docker-compose.yml
+|-- Dockerfile
+|-- LICENSE
+|-- Makefile
+|-- manage.py
+|-- package-lock.json
+|-- package.json
+|-- pyproject.toml
+|-- README.md
+|-- tailwind.config.js
+`-- uv.lock
+```
 
 ## 🔧 Technologies
 
