@@ -53,3 +53,4 @@ migrate: ## Run database migrations
 .PHONY: makemigrations
 makemigrations: ## Create new migration files
 	docker compose exec $(SERVICE_WEB) python manage.py makemigrations
+

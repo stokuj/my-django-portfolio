@@ -29,4 +29,7 @@ dependencies = [
 pip = { upgrade = true }
 
 [tool.setuptools]
-packages = ["main", "personal_portfolio", "entrypoints"]
+packages = ["main", "personal_portfolio"]
+
+[tool.setuptools.package-dir]
+"" = "django"

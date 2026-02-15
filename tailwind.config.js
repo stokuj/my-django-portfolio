@@ -1,7 +1,7 @@
 module.exports = {
   content: [
-    "./main/templates/**/*.html",
-    "./main/static/src/**/*.js"
+    "./django/main/templates/**/*.html",
+    "./django/main/static/src/**/*.js"
   ],
   plugins: [
     require("daisyui"),

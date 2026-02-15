@@ -17,10 +17,10 @@ RUN pip install --no-cache-dir uv
 RUN uv pip install --system --no-cache-dir .
 
 # 6. Make entrypoint script executable
-RUN chmod +x /app/entrypoints/wait-for-db.sh
+RUN chmod +x /app/django/entrypoints/wait-for-db.sh
 
 # 7. Set Python path
-ENV PYTHONPATH="/app"
+ENV PYTHONPATH="/app/django"
 
 # 8. Expose port
 EXPOSE 8000
