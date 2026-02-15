@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# FORCE LF for sh files. Important!
+*.sh text eol=lf
