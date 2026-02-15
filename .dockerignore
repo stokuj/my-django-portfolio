@@ -1,0 +1,23 @@
+.git
+.github
+.venv
+node_modules
+media
+staticfiles
+
+# Never include runtime secrets in image context
+.env
+.env.*
+!.env.example
+
+# Python/cache artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache
+
+# Local/editor artifacts
+.vscode
+.idea
+*.log

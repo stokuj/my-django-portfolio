@@ -13,6 +13,16 @@ jobs:
   build-and-push:
     name: Build and Push Image
     runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ci-build-placeholder-secret
+      DJANGO_DEBUG: "False"
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      DOCKER_DB_ENGINE: django.db.backends.postgresql
+      DOCKER_DB_NAME: ci_build_db
+      DOCKER_DB_USER: ci_build_user
+      DOCKER_DB_PASSWORD: ci_build_password
+      DOCKER_DB_HOST: db
+      DOCKER_DB_PORT: "5432"
     permissions:
       contents: read
       packages: write # Required to push to GitHub Container Registry
@@ -20,21 +30,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      # This step creates a temporary .env file to be used during the build process.
-      - name: Create .env file for build
-        run: |
-          cat <<EOF > .env
-          SECRET_KEY=${{ secrets.SECRET_KEY }}
-          DJANGO_DEBUG=${{ vars.DJANGO_DEBUG }}
-          ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }}
-          DOCKER_DB_ENGINE=${{ vars.DOCKER_DB_ENGINE }}
-          DOCKER_DB_NAME=${{ vars.DOCKER_DB_NAME }}
-          DOCKER_DB_USER=${{ vars.DOCKER_DB_USER }}
-          DOCKER_DB_PASSWORD=${{ secrets.DOCKER_DB_PASSWORD }}
-          DOCKER_DB_HOST=${{ vars.DOCKER_DB_HOST }}
-          DOCKER_DB_PORT=${{ vars.DOCKER_DB_PORT }}
-          EOF
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3

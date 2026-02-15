@@ -9,8 +9,9 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc libpq-dev postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
-# 4. Copy all application code
-COPY . .
+# 4. Copy only files required to build and run backend
+COPY pyproject.toml uv.lock ./
+COPY django ./django
 
 # 5. Install uv and use it to install dependencies
 RUN pip install --no-cache-dir uv
