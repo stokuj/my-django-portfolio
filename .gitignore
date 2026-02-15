@@ -172,3 +172,4 @@ staticfiles/css/style.css
 .env.dev
 /staticfiles
 .claude/settings.local.json
+/.vscode
