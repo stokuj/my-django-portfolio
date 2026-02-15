@@ -51,7 +51,16 @@ Rename `.env.example` to `.env` and update the values:
 cp .env.example .env
 ```
 
-Edit `.env` with your database credentials.
+**Generate a secure SECRET_KEY:**
+```bash
+# Using Python
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+Copy the generated key and paste it into your `.env` file:
+```bash
+SECRET_KEY=your_generated_secure_key_here
+```
 
 ### Step 3: Create PostgreSQL database
 
