@@ -32,7 +32,7 @@ services:
       - ./.env
     environment:
       - SECRET_KEY=${SECRET_KEY}
-      - DEBUG=${DJANGO_DEBUG}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
       - DB_ENGINE=${DOCKER_DB_ENGINE}
       - DB_NAME=${DOCKER_DB_NAME}
