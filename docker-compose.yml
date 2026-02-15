@@ -29,9 +29,6 @@ services:
       - staticfiles_volume:/app/staticfiles
       # Mount the shared volume for user-uploaded media files
       - media_volume:/app/media
-    # Load all environment variables from the .env file
-    env_file:
-      - ./.env
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - DJANGO_DEBUG=${DJANGO_DEBUG}
@@ -60,8 +57,8 @@ services:
       - media_volume:/srv/media
       - caddy_data:/data
       - caddy_config:/config
-    env_file:
-          - ./.env
+    environment:
+      - APP_DOMAIN=${APP_DOMAIN:-localhost}
     depends_on:
       - web
     networks:

@@ -39,10 +39,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build images with Docker Compose
-        run: docker compose build
+        run: docker compose build web
 
       - name: Push images to GitHub Container Registry
-        run: docker compose push
+        run: docker compose push web
 
   deploy:
     name: Deploy to DigitalOcean Droplet
