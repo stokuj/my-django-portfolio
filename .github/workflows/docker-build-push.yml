@@ -26,7 +26,7 @@ jobs:
         run: |
           cat <<EOF > .env
           SECRET_KEY=${{ secrets.SECRET_KEY }}
-          DEBUG=${{ vars.DEBUG }}
+          DJANGO_DEBUG=${{ vars.DJANGO_DEBUG }}
           ALLOWED_HOSTS=${{ vars.ALLOWED_HOSTS }}
           DOCKER_DB_ENGINE=${{ vars.DOCKER_DB_ENGINE }}
           DOCKER_DB_NAME=${{ vars.DOCKER_DB_NAME }}
@@ -64,7 +64,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script_stop: true
           script: |
-            cd /home/ubuntu/my_django_portfolio
+            cd ~/my_django_portfolio
 
             git fetch --all
             git checkout main || git checkout master
