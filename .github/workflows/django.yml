@@ -29,9 +29,9 @@ jobs:
 
     - name: Create .env file
       run: |
-        echo "SECRET_KEY=django-insecure-test-key-for-ci" > django/.env
-        echo "DJANGO_DEBUG=True" >> django/.env
-        echo "ALLOWED_HOSTS=localhost,127.0.0.1" >> django/.env
+        echo "SECRET_KEY=django-insecure-test-key-for-ci" > .env
+        echo "DJANGO_DEBUG=True" >> .env
+        echo "ALLOWED_HOSTS=localhost,127.0.0.1" >> .env  
 
     - name: Run Tests
       working-directory: django
