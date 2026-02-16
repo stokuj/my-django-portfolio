@@ -51,7 +51,7 @@
                 {% for project in projects %}
                     <div 
                         class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow project-card"
-                        data-tags="{% for tag in project.tags.all %}{{ tag.name|lower }} {% endfor %}">
+                        data-tags="{% for tag in project.tags.all %}{{ tag.name|lower }}|{% endfor %}">
                         <figure class="px-4 pt-4">
                             <img 
                                 src="{{ project.thumbnail.url }}" 
@@ -135,7 +135,10 @@
 
                     // Filtrowanie projektów
                     projectCards.forEach(card => {
-                        const cardTags = card.dataset.tags.trim().split(' ');
+                        const cardTags = card.dataset.tags
+                            .split('|')
+                            .map(tag => tag.trim())
+                            .filter(Boolean);
 
                         if (selectedTag === 'all') {
                             card.style.display = 'block'

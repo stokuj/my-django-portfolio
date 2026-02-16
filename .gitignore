@@ -174,3 +174,4 @@ staticfiles/css/style.css
 .claude/settings.local.json
 /.vscode
 AGENTS.MD
+.sqlquerry
