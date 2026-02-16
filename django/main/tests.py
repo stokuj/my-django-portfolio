@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from .models import Tag, Project, PageView
 import datetime
 
@@ -21,7 +22,7 @@ class ProjectModelTest(TestCase):
             short_description="A test project",
             date=datetime.date(2023, 1, 1),
             blog=True,
-            blog_url="https://example.com/blog",
+            blog_url="test-project-blog",
             github_url="https://github.com/example/test",
             status="finished"
         )
@@ -34,7 +35,7 @@ class ProjectModelTest(TestCase):
         self.assertEqual(self.project.short_description, "A test project")
         self.assertEqual(self.project.date, datetime.date(2023, 1, 1))
         self.assertTrue(self.project.blog)
-        self.assertEqual(self.project.blog_url, "https://example.com/blog")
+        self.assertEqual(self.project.blog_url, "test-project-blog")
         self.assertEqual(self.project.github_url, "https://github.com/example/test")
         self.assertEqual(self.project.status, "finished")
         self.assertEqual(str(self.project), "Test Project")
@@ -79,6 +80,18 @@ class ProjectModelTest(TestCase):
                 status="finished",
             )
 
+    def test_blog_url_must_be_slug_if_present(self):
+        project = Project(
+            title="Invalid Slug Project",
+            short_description="Project with invalid blog URL format",
+            blog=True,
+            blog_url="https://example.com/blog",
+            status="planned",
+        )
+
+        with self.assertRaises(ValidationError):
+            project.full_clean()
+
 class PageViewModelTest(TestCase):
     def test_pageview_creation(self):
         page_view = PageView.objects.create(count=10)
@@ -115,6 +128,22 @@ class ViewsTest(TestCase):
         self.assertTemplateUsed(response, 'main/projects.html')
         self.assertIn('projects', response.context)
         self.assertIn('all_tags', response.context)
+        self.assertContains(response, '/blog/test-project-views')
+
+    def test_projects_view_uses_detail_link_when_blog_slug_missing(self):
+        no_slug_project = Project.objects.create(
+            title="No Slug Blog Project",
+            short_description="Blog project without slug",
+            date=datetime.date(2023, 2, 1),
+            blog=True,
+            blog_url=None,
+            status="ongoing",
+        )
+
+        response = self.client.get(reverse('projects'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, f'/projects/{no_slug_project.id}')
+        self.assertNotContains(response, '/blog/None')
 
     def test_project_detail_view(self):
         response = self.client.get(reverse('project_detail', args=[self.project.id]))

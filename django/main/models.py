@@ -16,7 +16,7 @@ class Project(models.Model):
     short_description = models.CharField(max_length=100)
     date = models.DateField(default=datetime.date(2022, 5, 1))     
     blog = models.BooleanField(default=True)
-    blog_url = models.CharField(max_length=100, blank=True, null=True, default=None)
+    blog_url = models.SlugField(max_length=100, blank=True, null=True, default=None)
     github_url = models.CharField(max_length=100, blank=True, null=True)
 
     tags = models.ManyToManyField(Tag, blank=True)
