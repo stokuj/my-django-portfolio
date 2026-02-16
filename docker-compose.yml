@@ -24,7 +24,6 @@ services:
              python manage.py collectstatic --noinput &&
              gunicorn personal_portfolio.wsgi:application --bind 0.0.0.0:8000"
     volumes:
-      - .:/app
       # Mount the shared volume where static files will be collected
       - staticfiles_volume:/app/staticfiles
       # Mount the shared volume for user-uploaded media files
