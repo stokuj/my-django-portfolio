@@ -1,4 +1,7 @@
 from .models import PageView
+from django.core.cache import cache
+
+from .context_processors import VISITOR_COUNT_CACHE_KEY, COUNT_CACHE_TIMEOUT
 
 
 class VisitorCountMiddleware:
@@ -13,6 +16,7 @@ class VisitorCountMiddleware:
             counter = PageView.get_instance()
             counter.count += 1
             counter.save()
+            cache.set(VISITOR_COUNT_CACHE_KEY, counter.count, COUNT_CACHE_TIMEOUT)
             request.session["has_visited"] = True
 
         return self.get_response(request)
