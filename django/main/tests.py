@@ -203,6 +203,12 @@ class VisitorCountMiddlewareTest(TestCase):
         self.client.get(self.home_url)
         self.assertEqual(PageView.get_instance().count, 1)
 
+    def test_home_visit_in_different_session_increments_again(self):
+        self.client.get(self.home_url)
+        second_client = Client()
+        second_client.get(self.home_url)
+        self.assertEqual(PageView.get_instance().count, 2)
+
     def test_home_alias_path_is_counted(self):
         self.client.get('/home/')
         self.assertEqual(PageView.get_instance().count, 1)

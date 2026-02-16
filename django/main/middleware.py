@@ -1,3 +1,5 @@
+from django.db.models import F
+
 from .models import PageView
 
 
@@ -11,8 +13,7 @@ class VisitorCountMiddleware:
         is_home = request.path in ("/", "/home/")
         if is_home and not request.session.get("has_visited"):
             counter = PageView.get_instance()
-            counter.count += 1
-            counter.save()
+            PageView.objects.filter(id=counter.id).update(count=F("count") + 1)
             request.session["has_visited"] = True
 
         return self.get_response(request)
