@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 import environ
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,8 +22,7 @@ PROJECT_ROOT = BASE_DIR.parent
 # load .env
 env = environ.Env(
     # ustaw domyślne typy i wartości
-    DEBUG=(bool, False),
-    SECRET_KEY=(str, 'fallback_secret'),
+    DEBUG=(bool, False)
 )
 # wskazujemy ścieżkę do .env
 env.read_env(PROJECT_ROOT / '.env')
@@ -31,7 +31,9 @@ env.read_env(PROJECT_ROOT / '.env')
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY', default='').strip()
+if not SECRET_KEY:
+    raise ImproperlyConfigured("Missing required environment variable: SECRET_KEY")
 
 # Debug mode
 DEBUG = env.bool('DJANGO_DEBUG', default=False)
