@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.db import IntegrityError
 from .models import Tag, Project, PageView
 import datetime
 
@@ -42,6 +43,41 @@ class ProjectModelTest(TestCase):
         self.assertEqual(self.project.tags.count(), 2)
         self.assertIn(self.tag1, self.project.tags.all())
         self.assertIn(self.tag2, self.project.tags.all())
+
+    def test_multiple_projects_without_blog_url_can_be_created(self):
+        first = Project.objects.create(
+            title="No Blog URL 1",
+            short_description="First project without blog URL",
+            blog=False,
+            status="planned",
+        )
+        second = Project.objects.create(
+            title="No Blog URL 2",
+            short_description="Second project without blog URL",
+            blog=False,
+            status="ongoing",
+        )
+
+        self.assertIsNone(first.blog_url)
+        self.assertIsNone(second.blog_url)
+
+    def test_non_empty_blog_url_must_remain_unique(self):
+        Project.objects.create(
+            title="Unique Blog URL 1",
+            short_description="First project with URL",
+            blog=True,
+            blog_url="duplicate-slug",
+            status="finished",
+        )
+
+        with self.assertRaises(IntegrityError):
+            Project.objects.create(
+                title="Unique Blog URL 2",
+                short_description="Second project with same URL",
+                blog=True,
+                blog_url="duplicate-slug",
+                status="finished",
+            )
 
 class PageViewModelTest(TestCase):
     def test_pageview_creation(self):
