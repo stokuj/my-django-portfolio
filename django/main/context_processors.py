@@ -9,6 +9,6 @@ def project_count(request):
 
 
 def visitor_counter(request):
-    # Use Singleton pattern to get the PageView instance
+    # Pobieramy globalny licznik odwiedzin
     count = PageView.get_instance().count
     return {'visitor_count': count}
