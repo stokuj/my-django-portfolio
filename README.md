@@ -21,6 +21,7 @@ This will:
 - Start PostgreSQL
 - Build and run Django with Gunicorn
 - Serve static files through Caddy
+- Run `web` from the image filesystem (no source bind mount to `/app`)
 
 Open `https://localhost`.
 
