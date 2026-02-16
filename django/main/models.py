@@ -16,7 +16,7 @@ class Project(models.Model):
     short_description = models.CharField(max_length=100)
     date = models.DateField(default=datetime.date(2022, 5, 1))     
     blog = models.BooleanField(default=True)
-    blog_url = models.CharField(max_length=100, unique=True, default='')
+    blog_url = models.SlugField(max_length=100, blank=True, null=True, default=None)
     github_url = models.CharField(max_length=100, blank=True, null=True)
 
     tags = models.ManyToManyField(Tag, blank=True)
@@ -28,6 +28,15 @@ class Project(models.Model):
     ]
 
     status = models.CharField(max_length=10,choices=STATUS_CHOICES,default='planned',)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["blog_url"],
+                condition=models.Q(blog_url__isnull=False) & ~models.Q(blog_url=""),
+                name="uniq_project_blog_url_when_present",
+            ),
+        ]
 
     def __str__(self):
         return self.title
