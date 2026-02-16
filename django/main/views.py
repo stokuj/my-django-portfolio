@@ -39,4 +39,4 @@ def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     return render(request, "main/project_detail.html", {"project": project})
 
-# Blog post views have been moved to blog_views.py using the Template Method pattern
+# Blog post routes are configured directly in urls.py with TemplateView
