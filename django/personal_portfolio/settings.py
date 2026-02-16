@@ -100,12 +100,6 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-    print("Running in PRODUCTION mode <------------------------------------")
-    print("Debug: ", DEBUG)
-else:
-    print("Running in DEVELOPMENT mode <------------------------------------")
-    print("Debug: ", DEBUG)
-
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
 
 DATABASES = {
@@ -172,3 +166,24 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880 # 5 MB limit for file uploads
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # Commented out as we're using Caddy for static files
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'  # Using default Django storage
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s %(levelname)s %(name)s: %(message)s',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
+
