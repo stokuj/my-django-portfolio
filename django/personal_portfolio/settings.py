@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-import logging
 import environ
 from django.core.exceptions import ImproperlyConfigured
 
@@ -188,5 +187,3 @@ LOGGING = {
     },
 }
 
-logger = logging.getLogger(__name__)
-logger.info("Django mode: %s", "PRODUCTION" if not DEBUG else "DEVELOPMENT")
