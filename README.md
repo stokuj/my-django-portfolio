@@ -107,7 +107,6 @@ MY-DJANGO-PORTFOLIO/
 - Tailwind CSS + DaisyUI
 - Gunicorn
 - Docker + Docker Compose
-- CKEditor, TinyMCE, Summernote
 
 ## Features
 
