@@ -1,330 +1,81 @@
 {% extends "base.html" %}
 
-{% block page_name %}Aplikacja Pogodowa IMGW{% endblock page_name %}
+{% block page_name %}Weather Web Scraping{% endblock page_name %}
 
 {% block content %}
-{% load static %}
-<h1 class="text-xl font-bold text-center mt-8 mb-8">System monitorowania danych meteorologicznych IMGW</h1>
+<h1 class="text-xl font-bold text-center mt-8 mb-8">Weather Web Scraping</h1>
 
 <div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
     <div class="card bg-base-200 w-full p-8 shadow-xl">
-        <h1 class="text-3xl font-bold text-primary mb-6">Monitorowanie warunków pogodowych w czasie rzeczywistym</h1>
+        <h1 class="text-3xl font-bold text-primary mb-6">Desktop weather monitoring with IMGW data, PostgreSQL storage, and Plotly charts</h1>
 
-        <div class="prose">
+        <div class="prose max-w-none">
             <p class="text-lg mb-4 mt-2">
-                Aplikacja umożliwia automatyczne pobieranie, przechowywanie i wizualizację danych meteorologicznych 
-                z ponad 50 stacji pogodowych IMGW. System integruje się z bazą danych PostgreSQL i oferuje zaawansowane 
-                narzędzia analityczne z interaktywnymi wykresami.
+                This desktop project collects current observations from IMGW, persists records in PostgreSQL, and visualizes weather trends across multiple time windows.
             </p>
 
-            <!--Divider-->
             <div class="divider"></div>
-            <!--Divider-->
 
-            <h2 class="text-2xl font-semibold text-secondary">Kluczowe funkcje</h2>
-            <p class="text-base mb-4 mt-2">
-                Automatyczna aktualizacja danych co 5 minut z wykorzystaniem API IMGW. 
-                Zaawansowane wykresy z możliwością filtrowania danych według różnych przedziałów czasowych. 
-                Eksport wyników do formatu CSV oraz obliczenia statystyczne w czasie rzeczywistym.
-            </p>
-            
-            <div class="grid md:grid-cols-2 gap-4 mt-6">
-                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
+            <h2 class="text-2xl font-semibold text-secondary">Features</h2>
+            <ul class="list-disc pl-6">
+                <li>Automated fetch from IMGW Synop endpoint.</li>
+                <li>Storage and filtering in PostgreSQL.</li>
+                <li>Interactive charts for temperature, precipitation, wind, humidity, and pressure.</li>
+                <li>CSV export for filtered datasets.</li>
+            </ul>
+
+            <div class="grid md:grid-cols-2 gap-6 mt-6">
+                <div class="card bg-base-100 shadow">
                     <div class="card-body">
-                        <h3 class="card-title text-accent">🌦️ Monitorowane parametry</h3>
-                        <div class="flex flex-wrap items-center gap-2 mt-4">
-                            <span class="badge badge-primary">Temperatura</span>
-                            <span class="badge badge-secondary">Prędkość wiatru</span>
-                            <span class="badge badge-primary">Kierunek wiatru</span>
-                            <span class="badge badge-secondary">Wilgotność</span>
-                            <span class="badge badge-primary">Opady</span>
-                            <span class="badge badge-secondary">Ciśnienie</span>
+                        <h3 class="card-title">Tech Stack</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="badge badge-outline">Python 3.10+</span>
+                            <span class="badge badge-outline badge-primary">Tkinter</span>
+                            <span class="badge badge-outline badge-secondary">Plotly</span>
+                            <span class="badge badge-outline">requests</span>
+                            <span class="badge badge-outline">BeautifulSoup</span>
+                            <span class="badge badge-outline">PostgreSQL</span>
                         </div>
                     </div>
                 </div>
-
-                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow p-6">
-                    <h2 class="text-2xl font-semibold text-secondary mb-4">📁 Architektura systemu</h2>
-                    <div class="text-neutral-content p-4 rounded-lg font-mono text-sm">
-                        <div class="flex items-baseline">
-                            <span class="text-accent">/aplikacja_pogodowa/</span>
-                        </div>
-                        <div class="flex items-baseline ml-4">
-                            <span>├──</span> <span class="text-primary">app.py</span>
-                        </div>
-                        <div class="flex items-baseline ml-4">
-                            <span>├──</span> <span class="text-primary">functions.py</span>
-                        </div>
-                        <div class="flex items-baseline ml-4">
-                            <span>├──</span> <span class="text-accent">data/</span><span class="text-primary">weather_data.csv</span>
-                        </div>
-                        <div class="flex items-baseline ml-4">
-                            <span>└──</span> <span class="text-primary">requirements.txt</span>
-                        </div>
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <h3 class="card-title">Project Layout</h3>
+                        <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>weather-web-scraping/
+|-- app.py
+|-- functions.py
+|-- data.csv
+|-- downloaded.csv
+`-- .env.example</code></pre>
                     </div>
                 </div>
             </div>
 
-            <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow mt-4">
-                <div class="card-body">
-                    <h3 class="card-title text-accent">⚙️ Stos technologiczny</h3>
-                    <div class="flex flex-wrap gap-2 mt-3">
-                        <div class="badge badge-outline">Python 3.10</div>
-                        <div class="badge badge-outline badge-primary">PostgreSQL</div>
-                        <div class="badge badge-outline badge-secondary">Plotly</div>
-                        <div class="badge badge-outline">Tkinter</div>
-                        <div class="badge badge-outline">Pandas</div>
-                    </div>
-                </div>
-            </div>
-
-            <!--Divider-->
             <div class="divider"></div>
-            <h2 class="text-2xl font-semibold text-secondary">Konfiguracja systemu</h2>
-
-            <div class="alert alert-info shadow-lg my-4">
-                <div class="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div class="ml-2">
-                        <ul class="list-disc pl-5 text-base">
-                            <li>Wymagana instalacja <span class="font-semibold">PostgreSQL 13+</span></li>
-                            <li>Konfiguracja połączenia z bazą danych w klasie <code>MyClass</code></li>
-                            <li>Automatyczne tworzenie potrzebnych tabel przy pierwszym uruchomieniu</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
 
             <div class="collapse collapse-arrow bg-base-100 border">
-                <input type="checkbox" /> 
-                <div class="collapse-title text-xl font-medium">
-                    Konfiguracja bazy danych
-                </div>
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium">Setup and Run</div>
                 <div class="collapse-content overflow-y-auto">
-                    
-                    <pre class="bg-base-300 p-4 rounded-lg mt-4 mb-4 w-full overflow-x-auto text-xs"><code># Plik functions.py
-class MyClass():
-    def do_conn():
-        return psycopg2.connect(
-            host="localhost",
-            database="html",
-            user="postgres",
-            password="twoje_hasło"
-        )</code></pre>
+                    <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>Copy-Item .env.example .env
+uv sync
+uv run python app.py</code></pre>
                 </div>
             </div>
-
-
-            <!--Divider-->
-            <div class="divider"></div>
-
-            <h2 class="text-2xl font-semibold text-secondary">Wizualizacja danych</h2>
-            
-            <div class="grid md:grid-cols-2 gap-4 mt-6">
-                <div class="card bg-base-100 shadow">
-                    <figure class="px-4 pt-4">
-                        <img src="{% static 'temp_chart.png' %}" alt="Wykres temperatury" class="rounded-xl" />
-                    </figure>
-                    <div class="card-body">
-                        <h3 class="card-title">📈 Przykładowy wykres temperatury</h3>
-                        <p>Interaktywny wykres z możliwością przybliżania i przesuwania osi czasu</p>
-                    </div>
-                </div>
-                
-                <div class="card bg-base-100 shadow">
-                    <figure class="px-4 pt-4">
-                        <img src="{% static 'wind_chart.png' %}" alt="Róża wiatrów" class="rounded-xl" />
-                    </figure>
-                    <div class="card-body">
-                        <h3 class="card-title">🌪️ Analiza kierunków wiatru</h3>
-                        <p>Róża wiatrów z kolorowym oznaczeniem prędkości</p>
-                    </div>
-                </div>
-            </div>
-
-            <!--Divider-->
-            <div class="divider"></div>
-
-            <div class="flex justify-center">
-                <div class="stats stats-vertical lg:stats-horizontal shadow bg-base-100 mt-4 mb-4 w-full">
-                    <div class="stat">
-                        <div class="stat-title">Obsługiwane stacje</div>
-                        <div class="stat-value text-primary">56</div>
-                        <div class="stat-desc">Na terenie całej Polski</div>
-                    </div>
-
-                    <div class="stat">
-                        <div class="stat-title">Aktualizacja danych</div>
-                        <div class="stat-value text-secondary">5 min</div>
-                        <div class="stat-desc">Cykl pobierania danych</div>
-                    </div>
-                </div>
-            </div>
-            <!--Divider-->
-            <div class="divider"></div>
 
             <div class="alert alert-success shadow-lg mt-6">
-                <div class="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div class="ml-2">
-                        <p class="text-base">
-                            Dane meteorologiczne pochodzą z oficjalnego API Instytutu Meteorologii i Gospodarki Wodnej.<br>
-                            Aktualna dokumentacja API: 
-                            <a href="https://danepubliczne.imgw.pl/apiinfo" class="link link-primary" target="_blank">danepubliczne.imgw.pl/apiinfo</a>
-                        </p>
-                    </div>
+                <span>Data source: https://danepubliczne.imgw.pl/api/data/synop/format/html</span>
+            </div>
+
+            <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
+                <div>
+                    <p>
+                        MIT License
+                        <a href="https://github.com/stokuj/WeatherWebScraping" target="_blank">View source on GitHub</a>
+                    </p>
                 </div>
-            </div>
-
-
-    <!-- Rozbudowana sekcja wizualizacji -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-
-        <!-- Karta 1: Statystyki stacji -->
-        <div class="card bg-base-100 shadow overflow-hidden">
-        <figure class="px-4 pt-4">
-            <img
-            src="{% static 'weather_dashboard.png' %}"
-            alt="Panel kontrolny"
-            class="rounded-xl w-full h-auto"
-            />
-        </figure>
-        <div class="card-body">
-            <h3 class="card-title">📊 Statystyki stacji</h3>
-            <div class="overflow-x-auto">
-            <table class="table table-zebra w-full">
-                <thead>
-                <tr>
-                    <th>Stacja</th>
-                    <th>Temp. [°C]</th>
-                    <th>Wiatr [m/s]</th>
-                    <th>Opady [mm]</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr> <td>Warszawa</td><td>18.5</td><td>3.2</td><td>0.0</td> </tr>
-                <tr> <td>Kraków</td>  <td>20.1</td><td>2.8</td><td>1.2</td> </tr>
-                <tr> <td>Gdańsk</td>  <td>16.7</td><td>4.5</td><td>0.5</td> </tr>
-                </tbody>
-            </table>
-            </div>
+            </footer>
         </div>
-        </div>
-
-        <!-- Karta 2: Parametry środowiskowe -->
-        <div class="card bg-base-100 shadow flex flex-col items-center overflow-hidden">
-        <div class="card-body w-full flex flex-col items-center">
-            <h3 class="card-title text-center w-full">🌪️ Parametry środowiskowe</h3>
-            <div class="flex justify-center my-4">
-            <div
-                class="radial-progress text-primary"
-                style="--value:85;--size:6rem;"
-            >
-                85%
-            </div>
-            </div>
-            <div class="w-full flex flex-col gap-3">
-            <div class="flex justify-between">
-                <span>Wilgotność:</span>
-                <span class="badge badge-info">65%</span>
-            </div>
-            <div class="flex justify-between">
-                <span>Ciśnienie:</span>
-                <span class="badge badge-success">1013 hPa</span>
-            </div>
-            <div class="flex justify-between">
-                <span>Jakość powietrza:</span>
-                <span class="badge badge-warning">PM2.5: 23</span>
-            </div>
-            </div>
-        </div>
-        </div>
-
-    </div>
-
-
-
-        <!-- Sekcja rozwoju projektu -->
-        <div class="card bg-base-100 shadow-xl mt-8">
-            <div class="card-body">
-                <h2 class="card-title">🚀 Planowany rozwój</h2>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                    <div class="bg-base-200 p-4 rounded-lg">
-                        <h3 class="font-bold text-accent">Integracje</h3>
-                        <ul class="list-disc pl-5">
-                            <li>Aplikacja mobilna</li>
-                            <li>Powiadomienia SMS/email</li>
-                            <li>API dla developerów</li>
-                        </ul>
-                    </div>
-                    <div class="bg-base-200 p-4 rounded-lg">
-                        <h3 class="font-bold text-secondary">Analiza</h3>
-                        <ul class="list-disc pl-5">
-                            <li>Prognoza długoterminowa</li>
-                            <li>Modele ML</li>
-                            <li>Wykrywanie anomalii</li>
-                        </ul>
-                    </div>
-                    <div class="bg-base-200 p-4 rounded-lg">
-                        <h3 class="font-bold text-accent">Hardware</h3>
-                        <ul class="list-disc pl-5">
-                            <li>Czujniki IoT</li>
-                            <li>Stacje prywatne</li>
-                            <li>Drony pomiarowe</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
-        <!-- Historyczne dane pogodowe -->
-        <div class="card bg-base-100 shadow-xl mt-8">
-            <div class="card-body">
-                <h2 class="card-title">📅 Archiwum pogodowe</h2>
-                <div class="overflow-x-auto">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Średnia temp.</th>
-                                <th>Maks. wiatr</th>
-                                <th>Suma opadów</th>
-                                <th>Ciśnienie</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for day in weather_history %}
-                            <tr>
-                                <td>{{ day.date }}</td>
-                                <td>{{ day.avg_temp }}°C</td>
-                                <td>{{ day.max_wind }} m/s</td>
-                                <td>{{ day.precipitation }} mm</td>
-                                <td>{{ day.pressure }} hPa</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
-            <div>
-                <p>📄 Licencja MIT - 💌 Kontakt przez GitHub Issues
-                    <a href="https://github.com/stokuj/WeatherWebScraping" target="_blank" >
-                        🌐 Zobacz źródło na GitHubie
-                    </a>
-                </p>
-            </div>
-        </footer>
-        <!-- Footer -->
     </div>
 </div>
 {% endblock content %}
