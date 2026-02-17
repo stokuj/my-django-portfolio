@@ -1,160 +1,171 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block content %}
 {% load static %}
-<div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
-    <div class="hero bg-base-200 rounded-box" style="background-image: url('{% static 'images/hero-bg2.png' %}')">
-        <div class="hero-content flex-col w-full">
+<div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <section class="rounded-box border border-base-300 bg-base-200 bg-cover bg-center p-4 sm:p-6" style="background-image: url('{% static 'images/hero-bg2.png' %}')">
+        <header class="mb-6 rounded-box bg-base-100/85 p-4 sm:p-6">
+            <h1 class="text-2xl font-bold text-primary sm:text-3xl">Projects</h1>
+            <p class="mt-2 text-sm text-base-content/80 sm:text-base">
+                Explore selected work by technology and topic.
+            </p>
+        </header>
 
-            <!-- Search Input -->
-            <div class="mb-2 mt-4 relative w-full max-w-4xl">
-                <div class="relative">
-                    <input 
-                        type="text" 
-                        placeholder="Search by name or description" 
-                        class="input input-bordered w-full pr-12" 
-                        id="searchInput"
-                    />
-                    <button 
-                        class="absolute right-3 top-3 opacity-50 hover:opacity-100 transition-opacity hidden" 
-                        id="clearButton"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
+        <div class="mb-4">
+            <label for="searchInput" class="sr-only">Search projects</label>
+            <div class="relative w-full">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search by project name or description"
+                    class="input input-bordered w-full pr-12"
+                />
+                <button
+                    type="button"
+                    id="clearButton"
+                    class="btn btn-ghost btn-sm absolute right-2 top-1/2 hidden -translate-y-1/2"
+                    aria-label="Clear search"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
-
-            <!-- Lista wszystkich badge/tags w karcie -->
-            <div class="card bg-base-200 p-6 mb-8 w-full max-w-4xl">
-                <div class="flex flex-wrap justify-center gap-4" id="tagFilter">
-                    <button 
-                        class="btn btn-xs sm:btn-md btn-primary text-base px-4 py-2 cursor-pointer active-tag" 
-                        data-tag="all"
-                    >
-                        All Projects
-                    </button>
-                    {% for tag in all_tags %}
-                        <button 
-                            class="btn btn-xs sm:btn-md btn-outline text-base px-4 py-2 cursor-pointer" 
-                            data-tag="{{ tag.name|lower }}"
-                        >
-                            {{ tag.name }}
-                        </button>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!-- Projekty w kartach -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl">
-                {% for project in projects %}
-                    <div 
-                        class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow project-card"
-                        data-tags="{% for tag in project.tags.all %}{{ tag.name|lower }}|{% endfor %}">
-                        <figure class="px-4 pt-4">
-                            {% if project.thumbnail %}
-                            <img 
-                                src="{{ project.thumbnail.url }}" 
-                                alt="{{ project.title }}" 
-                                class="rounded-xl h-64 w-full object-cover"
-                            />
-                            {% else %}
-                            <img 
-                                src="{% static 'images/default_image.png' %}" 
-                                alt="{{ project.title }}" 
-                                class="rounded-xl h-64 w-full object-cover"
-                            />
-                            {% endif %}
-                        </figure>
-                        <div class="card-body">
-                            <h2 class="card-title">
-                                {{ project.title }}
-                                <div class="badge badge-secondary">NEW</div>
-                            </h2>
-                            <p class="line-clamp-3">{{ project.short_description }}</p>
-                            <div class="card-actions ">
-                                {% for tag in project.tags.all %}
-                                    <div class="badge badge-sm badge-outline ">{{ tag.name }}</div>
-                                {% endfor %}
-                            </div>
-                            <br>
-                            {% if project.blog and project.blog_url %}
-                                <a href="/blog/{{ project.blog_url }}" class="btn btn-primary btn-xl ">
-                                    View Project
-                                </a>
-                            {% else %}
-                                <a href="/projects/{{ project.id }}" class="btn btn-primary btn-xl ">
-                                    View Project
-                                </a>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-
         </div>
-    </div>
+
+        <div id="tagFilter" class="mb-8 flex flex-wrap gap-2">
+            <button class="btn btn-sm btn-primary" data-tag="all" type="button">All Projects</button>
+            {% for tag in all_tags %}
+            <button class="btn btn-sm btn-outline" data-tag="{{ tag.name|lower }}" type="button">{{ tag.name }}</button>
+            {% endfor %}
+        </div>
+
+        <div id="projectGrid" class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {% for project in projects %}
+            <article
+                class="project-card card border border-base-300 bg-base-100 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                data-tags="{% for tag in project.tags.all %}{{ tag.name|lower }}|{% endfor %}"
+                data-title="{{ project.title|lower }}"
+                data-description="{{ project.short_description|lower }}"
+            >
+                <figure class="aspect-[16/10] overflow-hidden rounded-t-box bg-base-200">
+                    {% if project.thumbnail %}
+                    <img
+                        src="{{ project.thumbnail.url }}"
+                        alt="Thumbnail for {{ project.title }}"
+                        class="h-full w-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                    />
+                    {% else %}
+                    <img
+                        src="{% static 'images/default_image.png' %}"
+                        alt="Default thumbnail for {{ project.title }}"
+                        class="h-full w-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                    />
+                    {% endif %}
+                </figure>
+
+                <div class="card-body p-5">
+                    <div class="mb-2 flex items-center justify-between gap-2">
+                        <h2 class="card-title text-lg leading-tight">{{ project.title }}</h2>
+                        {% if project.status == "finished" %}
+                        <span class="badge badge-success badge-outline">Finished</span>
+                        {% elif project.status == "ongoing" %}
+                        <span class="badge badge-warning badge-outline">Ongoing</span>
+                        {% else %}
+                        <span class="badge badge-info badge-outline">Planned</span>
+                        {% endif %}
+                    </div>
+
+                    <p class="mb-3 text-sm text-base-content/80">{{ project.short_description }}</p>
+
+                    <p class="mb-3 text-xs text-base-content/60">{{ project.date|date:"F Y" }}</p>
+
+                    <div class="mb-4 flex flex-wrap gap-1.5">
+                        {% for tag in project.tags.all %}
+                        <span class="badge badge-sm badge-outline">{{ tag.name }}</span>
+                        {% endfor %}
+                    </div>
+
+                    {% if project.blog and project.blog_url %}
+                    <a href="/blog/{{ project.blog_url }}" class="btn btn-primary btn-sm w-full sm:w-auto">
+                        View Project
+                    </a>
+                    {% else %}
+                    <a href="/projects/{{ project.id }}" class="btn btn-primary btn-sm w-full sm:w-auto">
+                        View Project
+                    </a>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+
+        <div id="emptyState" class="alert mt-6 hidden border border-base-300 bg-base-100 text-sm">
+            No projects match your filters.
+        </div>
+    </section>
 </div>
 
-        <!-- JavaScript for client-side filtering -->
-        <script>
-            const searchInput = document.getElementById('searchInput')
-            const clearButton = document.getElementById('clearButton')
+<script>
+    const searchInput = document.getElementById("searchInput");
+    const clearButton = document.getElementById("clearButton");
+    const tagButtons = document.querySelectorAll("#tagFilter button");
+    const projectCards = document.querySelectorAll(".project-card");
+    const emptyState = document.getElementById("emptyState");
 
-            const tagBadges = document.querySelectorAll('#tagFilter button'); // Zmieniamy z .badge na button
-            const projectCards = document.querySelectorAll('.project-card'); // Tylko projekty
+    let activeTag = "all";
 
-            // Funkcja filtrowania po wyszukiwaniu
-            function filterProjects() {
-                const searchTerm = searchInput.value.toLowerCase()
-                clearButton.classList.toggle('hidden', !searchTerm)
-                
-                projectCards.forEach(card => {
-                    const title = card.querySelector('.card-title').textContent.toLowerCase()
-                    const description = card.querySelector('.card-body p').textContent.toLowerCase()
-                    card.style.display = (title.includes(searchTerm) || description.includes(searchTerm)) 
-                        ? 'block' 
-                        : 'none'
-                })
+    function applyFilters() {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        clearButton.classList.toggle("hidden", searchTerm.length === 0);
+
+        let visibleCount = 0;
+
+        projectCards.forEach((card) => {
+            const title = card.dataset.title || "";
+            const description = card.dataset.description || "";
+            const tags = (card.dataset.tags || "").split("|").filter(Boolean);
+
+            const matchesSearch = !searchTerm || title.includes(searchTerm) || description.includes(searchTerm);
+            const matchesTag = activeTag === "all" || tags.includes(activeTag);
+            const visible = matchesSearch && matchesTag;
+
+            card.style.display = visible ? "flex" : "none";
+            if (visible) {
+                visibleCount += 1;
             }
+        });
 
-            // Nasłuchiwanie zdarzeń
-            searchInput.addEventListener('input', filterProjects)
+        emptyState.classList.toggle("hidden", visibleCount > 0);
+    }
 
-            clearButton.addEventListener('click', () => {
-                searchInput.value = ''
-                filterProjects()
-                searchInput.focus()
-            })
+    searchInput.addEventListener("input", applyFilters);
+    clearButton.addEventListener("click", () => {
+        searchInput.value = "";
+        searchInput.focus();
+        applyFilters();
+    });
 
-            // Funkcja filtrowania przez kliknięcie w tag
-            tagBadges.forEach(button => {
-                button.addEventListener('click', () => {
-                    const selectedTag = button.dataset.tag
+    tagButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            activeTag = button.dataset.tag;
 
-                    // Czyszczenie pola wyszukiwania przy kliknięciu tagu
-                    searchInput.value = ''
-                    clearButton.classList.add('hidden')
+            tagButtons.forEach((btn) => {
+                btn.classList.remove("btn-primary");
+                btn.classList.add("btn-outline");
+            });
 
-                    // Zmieniamy klasę aktywnego taga
-                    tagBadges.forEach(btn => btn.classList.remove('btn-primary'));
-                    button.classList.add('btn-primary');
+            button.classList.remove("btn-outline");
+            button.classList.add("btn-primary");
 
-                    // Filtrowanie projektów
-                    projectCards.forEach(card => {
-                        const cardTags = card.dataset.tags
-                            .split('|')
-                            .map(tag => tag.trim())
-                            .filter(Boolean);
+            applyFilters();
+        });
+    });
 
-                        if (selectedTag === 'all') {
-                            card.style.display = 'block'
-                        } else {
-                            card.style.display = cardTags.includes(selectedTag) ? 'block' : 'none'
-                        }
-                    })
-                })
-            })
-        </script>
+    applyFilters();
+</script>
 {% endblock %}
