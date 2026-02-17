@@ -11,7 +11,7 @@ def handler500(request):
 
 
 def home(request):
-    projects = Project.objects.all().order_by('date')
+    projects = Project.objects.all().order_by('-date')
     return render(request, "main/home.html", {'projects': projects})
 
 
