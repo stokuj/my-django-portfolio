@@ -53,11 +53,19 @@
                         class="card bg-base-200 shadow-xl hover:shadow-2xl transition-shadow project-card"
                         data-tags="{% for tag in project.tags.all %}{{ tag.name|lower }}|{% endfor %}">
                         <figure class="px-4 pt-4">
+                            {% if project.thumbnail %}
                             <img 
                                 src="{{ project.thumbnail.url }}" 
                                 alt="{{ project.title }}" 
                                 class="rounded-xl h-64 w-full object-cover"
                             />
+                            {% else %}
+                            <img 
+                                src="{% static 'images/default_image.png' %}" 
+                                alt="{{ project.title }}" 
+                                class="rounded-xl h-64 w-full object-cover"
+                            />
+                            {% endif %}
                         </figure>
                         <div class="card-body">
                             <h2 class="card-title">
