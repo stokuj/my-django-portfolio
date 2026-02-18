@@ -26,7 +26,7 @@
                     <a href="{{ project.github_url }}" class="btn btn-outline btn-xs ui-motion" target="_blank" rel="noopener noreferrer">GitHub</a>
                     {% endif %}
                     {% if project.blog and project.blog_url %}
-                    <a href="/blog/{{ project.blog_url }}" class="btn btn-primary btn-xs ui-motion">Read Blog</a>
+                    <a href="{% url 'blog_detail' project.blog_url %}" class="btn btn-primary btn-xs ui-motion">Read Blog</a>
                     {% endif %}
                 </div>
             </div>

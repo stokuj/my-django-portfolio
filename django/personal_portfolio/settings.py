@@ -191,6 +191,14 @@ LOGGING = {
 PORTFOLIO_PROFILE = {
     'site_name': env('PORTFOLIO_SITE_NAME', default='My Portfolio'),
     'full_name': env('PORTFOLIO_FULL_NAME', default='John Doe'),
+    'role_line': env(
+        'PORTFOLIO_ROLE_LINE',
+        default='Junior Full-Stack Developer & Data Science enthusiast',
+    ),
+    'specialization_line': env(
+        'PORTFOLIO_SPECIALIZATION_LINE',
+        default='Specialized in Python, Django, PostgreSQL',
+    ),
     'email': env('PORTFOLIO_EMAIL', default='john.doe@example.com'),
     'github_url': env('PORTFOLIO_GITHUB_URL', default='https://github.com/your-username'),
     'linkedin_url': env(

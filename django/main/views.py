@@ -1,4 +1,6 @@
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404
+from django.template import TemplateDoesNotExist
 from .models import Project, Tag
 
 
@@ -58,4 +60,11 @@ def project_detail(request, project_id):
     return render(request, "main/project_detail.html", {"project": project})
 
 
-# Blog post routes are configured directly in urls.py with TemplateView
+def blog_detail(request, blog_slug):
+    project = get_object_or_404(Project, blog=True, blog_url=blog_slug)
+    template_name = f"main/blog/{project.blog_url}.html"
+
+    try:
+        return render(request, template_name)
+    except TemplateDoesNotExist as exc:
+        raise Http404("Blog template not found.") from exc

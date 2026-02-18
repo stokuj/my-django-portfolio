@@ -24,6 +24,14 @@ def portfolio_profile(request):
     return {
         'site_name': profile.get('site_name', 'My Portfolio'),
         'profile_full_name': profile.get('full_name', ''),
+        'profile_role_line': profile.get(
+            'role_line',
+            'Junior Full-Stack Developer & Data Science enthusiast',
+        ),
+        'profile_specialization_line': profile.get(
+            'specialization_line',
+            'Specialized in Python, Django, PostgreSQL',
+        ),
         'profile_email': email,
         'profile_email_href': f"mailto:{email}" if email else '#',
         'profile_github_url': github_url,

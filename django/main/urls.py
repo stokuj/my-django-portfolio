@@ -53,4 +53,5 @@ urlpatterns = [
         TemplateView.as_view(template_name="main/blog/NTwI-obliczenia-ziarniste.html"),
         name="obliczenia_ziarniste",
     ),
+    path("blog/<slug:blog_slug>/", views.blog_detail, name="blog_detail"),
 ]
