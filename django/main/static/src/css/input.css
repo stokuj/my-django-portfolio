@@ -13,6 +13,10 @@ h3 {
     @apply text-lg;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 @layer components {
     .ui-motion {
         @apply motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out;
