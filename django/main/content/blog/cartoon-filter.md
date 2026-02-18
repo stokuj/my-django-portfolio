@@ -1,4 +1,4 @@
-﻿# cartoon-filter
+# cartoon-filter
 
 `cartoon-filter` is an engineering project focused on building a cartoon-style image filter and comparing performance between C++ and x64 Assembly implementations inside one Windows solution.
 

@@ -1,7 +1,5 @@
 # Granularne grupowanie danych w Pythonie
 
-## Wstęp
-
 Grupowanie danych (ang. clustering) jest jedną z fundamentalnych technik eksploracji danych, stosowaną w wielu dziedzinach nauki i przemysłu, takich jak:
 
 - Analiza biochemiczna (grupowanie sekwencji genów)

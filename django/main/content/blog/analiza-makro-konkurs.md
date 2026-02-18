@@ -1,6 +1,4 @@
-﻿# Tax Burden Distribution Analysis - Competition Project
-
-## Project Overview
+# Tax Burden Distribution Analysis - Competition Project
 
 This project was prepared for an analytical competition.
 The analysis focuses on the distribution of tax burdens in the fictional country **Fiskalia**, based on micro-level tax data.

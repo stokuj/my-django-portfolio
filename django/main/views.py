@@ -80,6 +80,7 @@ def _render_markdown_to_html(markdown_content):
     """Render markdown content to HTML for trusted local blog files."""
     if not markdown_content:
         return None
+    markdown_content = markdown_content.lstrip("\ufeff")
     return markdown.markdown(
         markdown_content,
         extensions=["fenced_code", "tables"],

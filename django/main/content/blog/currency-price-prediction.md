@@ -2,6 +2,7 @@
 
 Desktop application for cryptocurrency price forecasting with recurrent neural networks (LSTM, GRU, and LSTM+GRU).
 This project is educational and should not be treated as trading advice.
+
 ## Overview
 
 The project uses a Tkinter GUI (MVC structure) to:

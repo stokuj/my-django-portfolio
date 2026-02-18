@@ -1,4 +1,4 @@
-﻿# Weather Web Scraping
+# Weather Web Scraping
 
 A desktop weather monitoring app that collects current observations from IMGW, stores them in PostgreSQL, and visualizes trends with interactive Plotly charts.
 
