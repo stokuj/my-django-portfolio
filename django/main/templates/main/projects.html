@@ -11,33 +11,35 @@
             </p>
         </header>
 
-        <div class="mb-4">
-            <label for="searchInput" class="sr-only">Search projects</label>
-            <div class="relative w-full">
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="Search by project name or description"
-                    class="input input-bordered w-full pr-12"
-                />
-                <button
-                    type="button"
-                    id="clearButton"
-                    class="btn btn-ghost btn-sm absolute right-2 top-1/2 hidden -translate-y-1/2 ui-motion"
-                    aria-label="Clear search"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+        <div data-theme="fantasy3" class="mb-8 rounded-box bg-base-100/90 p-3 sm:p-4">
+            <div class="mb-4">
+                <label for="searchInput" class="sr-only">Search projects</label>
+                <div class="relative w-full">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search by project name or description"
+                        class="input input-bordered w-full pr-12"
+                    />
+                    <button
+                        type="button"
+                        id="clearButton"
+                        class="btn btn-ghost btn-sm absolute right-2 top-1/2 hidden -translate-y-1/2 ui-motion"
+                        aria-label="Clear search"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <div id="tagFilter" class="mb-8 flex flex-wrap gap-2">
-            <button class="btn btn-sm btn-primary ui-motion" data-tag="all" type="button">All Projects</button>
-            {% for tag in all_tags %}
-            <button class="btn btn-sm btn-outline ui-motion" data-tag="{{ tag.name|lower }}" type="button">{{ tag.name }}</button>
-            {% endfor %}
+            <div id="tagFilter" class="flex flex-wrap gap-2">
+                <button class="btn btn-sm btn-primary ui-motion" data-tag="all" type="button">All Projects</button>
+                {% for tag in all_tags %}
+                <button class="btn btn-sm btn-outline ui-motion" data-tag="{{ tag.name|lower }}" type="button">{{ tag.name }}</button>
+                {% endfor %}
+            </div>
         </div>
 
         <div id="projectGridSkeleton" class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3" aria-hidden="true">

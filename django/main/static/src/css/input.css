@@ -29,6 +29,7 @@ h3 {
     .ui-card-interactive {
         @apply motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg;
     }
+
 }
 
 @plugin "daisyui/theme" {
