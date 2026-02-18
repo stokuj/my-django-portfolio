@@ -1,9 +1,0 @@
-# 1) Create DB (must match DB_NAME in .env)
-CREATE DATABASE activityDB;
-
-# 2) Install dependencies
-uv sync
-
-# 3) Run migrations and start server
-uv run python manage.py migrate
-uv run python manage.py runserver

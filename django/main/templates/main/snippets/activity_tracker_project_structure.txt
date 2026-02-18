@@ -1,9 +1,0 @@
-activity_tracker/
-|-- manage.py
-|-- activityTracker/
-|-- templates/
-|-- static/
-|-- main/
-|-- tests/
-|-- .env.example
-`-- pyproject.toml
