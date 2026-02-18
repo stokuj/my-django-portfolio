@@ -17,6 +17,8 @@ services:
   web:
     build: .
     image: ${IMAGE_NAME}:latest
+    env_file:
+      - .env
     working_dir: /app/django
     entrypoint: ["sh", "/app/django/entrypoints/wait-for-db.sh"]
     command: >
@@ -32,6 +34,7 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - DJANGO_DEBUG=${DJANGO_DEBUG}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
       - DB_ENGINE=${DOCKER_DB_ENGINE}
       - DB_NAME=${DOCKER_DB_NAME}
       - DB_USER=${DOCKER_DB_USER}

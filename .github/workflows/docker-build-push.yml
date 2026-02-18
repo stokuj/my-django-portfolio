@@ -31,6 +31,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Create temporary .env for Compose parsing
+        run: |
+          cat > .env << 'EOF'
+          SECRET_KEY=ci-build-placeholder-secret
+          DJANGO_DEBUG=False
+          ALLOWED_HOSTS=localhost,127.0.0.1
+          CSRF_TRUSTED_ORIGINS=http://127.0.0.1
+          IMAGE_NAME=ghcr.io/${{ github.repository }}
+          DOCKER_DB_ENGINE=django.db.backends.postgresql
+          DOCKER_DB_NAME=ci_build_db
+          DOCKER_DB_USER=ci_build_user
+          DOCKER_DB_PASSWORD=ci_build_password
+          DOCKER_DB_HOST=db
+          DOCKER_DB_PORT=5432
+          PORTFOLIO_SITE_NAME=My Portfolio
+          PORTFOLIO_FULL_NAME=CI User
+          PORTFOLIO_ROLE_LINE=Role
+          PORTFOLIO_SPECIALIZATION_LINE=Specialization
+          PORTFOLIO_EMAIL=ci@example.com
+          PORTFOLIO_GITHUB_URL=https://github.com/example
+          PORTFOLIO_LINKEDIN_URL=https://www.linkedin.com/in/example/
+          APP_DOMAIN=localhost
+          EOF
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -70,7 +94,7 @@ jobs:
             export IMAGE_NAME=ghcr.io/${{ github.repository }}
 
             docker compose pull
-            docker compose up -d --remove-orphans
+            docker compose up -d --remove-orphans --force-recreate
 
             docker image prune -f
 
