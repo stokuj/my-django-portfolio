@@ -1,0 +1,15 @@
+<div class="collapse collapse-plus border border-base-300 bg-base-100">
+    <input type="radio" name="timeline-accordion" {% if section.checked %}checked{% endif %} />
+    <div class="collapse-title text-lg font-semibold text-primary">{{ section.title }}</div>
+    <div class="collapse-content">
+        <ol class="space-y-4 text-sm">
+            {% for project in section.projects %}
+                {% include "main/components/timeline_project_item.html" with project=project %}
+            {% empty %}
+            <li class="rounded-box border border-base-300 bg-base-200 p-4 text-base-content/70">
+                No projects in this section yet.
+            </li>
+            {% endfor %}
+        </ol>
+    </div>
+</div>

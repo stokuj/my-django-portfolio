@@ -1,4 +1,6 @@
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404
+from django.template import TemplateDoesNotExist
 from .models import Project, Tag
 
 
@@ -11,8 +13,30 @@ def handler500(request):
 
 
 def home(request):
-    projects = Project.objects.all().order_by('date')
-    return render(request, "main/home.html", {'projects': projects})
+    projects = Project.objects.prefetch_related('tags').order_by('-date')
+    status_labels = {
+        'planned': 'Planned',
+        'ongoing': 'Ongoing',
+        'finished': 'Finished',
+    }
+    status_order = ['planned', 'ongoing', 'finished']
+
+    projects_by_status = {status: [] for status in status_order}
+    for project in projects:
+        if project.status in projects_by_status:
+            projects_by_status[project.status].append(project)
+
+    timeline_sections = [
+        {
+            'status': status,
+            'title': status_labels[status],
+            'checked': status == 'finished',
+            'projects': projects_by_status[status],
+        }
+        for status in status_order
+    ]
+
+    return render(request, "main/home.html", {'timeline_sections': timeline_sections})
 
 
 def about(request):
@@ -36,4 +60,11 @@ def project_detail(request, project_id):
     return render(request, "main/project_detail.html", {"project": project})
 
 
-# Blog post routes are configured directly in urls.py with TemplateView
+def blog_detail(request, blog_slug):
+    project = get_object_or_404(Project, blog=True, blog_url=blog_slug)
+    template_name = f"main/blog/{project.blog_url}.html"
+
+    try:
+        return render(request, template_name)
+    except TemplateDoesNotExist as exc:
+        raise Http404("Blog template not found.") from exc

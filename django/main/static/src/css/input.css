@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: all;
+  themes: fantasy2, dim2;
 }
 
 h1 {
@@ -11,6 +11,24 @@ h2 {
 }
 h3 {
     @apply text-lg;
+}
+
+@layer components {
+    .ui-motion {
+        @apply motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out;
+    }
+
+    .ui-link-motion {
+        @apply motion-safe:transition-colors motion-safe:duration-200 motion-safe:ease-out;
+    }
+
+    .ui-hover-lift {
+        @apply motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out motion-safe:hover:-translate-y-0.5;
+    }
+
+    .ui-card-interactive {
+        @apply motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg;
+    }
 }
 
 @plugin "daisyui/theme" {

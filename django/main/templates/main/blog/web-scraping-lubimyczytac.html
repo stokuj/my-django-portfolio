@@ -1,0 +1,84 @@
+﻿{% extends "base.html" %}
+
+{% block page_name %}Lubimyczytac Scraper to Goodreads Pipeline{% endblock page_name %}
+
+{% block content %}
+<h1 class="text-xl font-bold text-center mt-8 mb-8">Lubimyczytac Scraper to Goodreads Pipeline</h1>
+
+<div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
+    <div class="card bg-base-200 w-full p-8 shadow-xl">
+        <h1 class="text-3xl font-bold text-primary mb-6">Selenium pipeline for scraping, enrichment, and Goodreads-ready export</h1>
+
+        <div class="prose max-w-none">
+            <p class="text-lg mb-4 mt-2">
+                This project reads a public Lubimyczytac profile library, enriches each book with additional metadata, and converts the final dataset to a CSV format compatible with Goodreads import.
+            </p>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Pipeline Phases</h2>
+            <ul class="list-disc pl-6">
+                <li>Phase 1: profile pagination scrape to <code>dane/books.csv</code>.</li>
+                <li>Phase 2: per-book enrichment (ISBN and original title) to <code>dane/books_enriched.csv</code>.</li>
+                <li>Phase 3: Goodreads schema mapping to <code>dane/goodreads.csv</code>.</li>
+            </ul>
+
+            <div class="grid md:grid-cols-2 gap-6 mt-6">
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <h3 class="card-title">Tech Stack</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="badge badge-outline">Python 3</span>
+                            <span class="badge badge-outline badge-primary">Selenium</span>
+                            <span class="badge badge-outline badge-secondary">ChromeDriver</span>
+                            <span class="badge badge-outline">CSV processing</span>
+                            <span class="badge badge-outline">uv</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <h3 class="card-title">Project Layout</h3>
+                        <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>web-scraping-lubimyczytac/
+|-- scraper/
+|-- models/
+|-- data_io/
+|-- dane/
+|-- main.py
+`-- config.example.ini</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="collapse collapse-arrow bg-base-100 border">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium">Config and Run</div>
+                <div class="collapse-content overflow-y-auto">
+                    <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code># config.ini
+[settings]
+profile_url = https://lubimyczytac.pl/profil/YOUR_PROFILE_ID/YOUR_PROFILE_NAME
+
+uv sync
+uv run python main.py</code></pre>
+                </div>
+            </div>
+
+            <div class="alert alert-info shadow-lg mt-6">
+                <span>Educational pipeline intended for workflow practice in scraping and CSV transformation.</span>
+            </div>
+
+            <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
+                <div>
+                    <p>
+                        MIT License
+                        <a href="{{ profile_github_base }}/web_scraping_lubimyczytac" target="_blank">View source on GitHub</a>
+                    </p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+

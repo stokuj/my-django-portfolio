@@ -1,0 +1,94 @@
+﻿{% extends "base.html" %}
+
+{% block page_name %}Django Portfolio Blog{% endblock page_name %}
+
+{% block content %}
+<h1 class="text-xl font-bold text-center mt-8 mb-8">Django Portfolio Blog</h1>
+
+<div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
+    <div class="card bg-base-200 w-full p-8 shadow-xl">
+        <h1 class="text-3xl font-bold text-primary mb-6">Portfolio and blog platform built with Django, PostgreSQL, Tailwind, and Docker</h1>
+
+        <div class="prose max-w-none">
+            <p class="text-lg mb-4 mt-2">
+                This repository is the core portfolio project: a production-oriented Django app with project detail pages, filtering, tagging, and deployment-ready infrastructure with Gunicorn and Caddy.
+            </p>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Highlights</h2>
+            <ul class="list-disc pl-6">
+                <li>Project list and details with status and tag system.</li>
+                <li>PostgreSQL-backed data model and visitor counter.</li>
+                <li>Tailwind + DaisyUI frontend and responsive templates.</li>
+                <li>Docker Compose setup with Caddy reverse proxy.</li>
+            </ul>
+
+            <div class="grid md:grid-cols-2 gap-6 mt-6">
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <h3 class="card-title">Tech Stack</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="badge badge-outline">Python 3.13</span>
+                            <span class="badge badge-outline badge-primary">Django 5</span>
+                            <span class="badge badge-outline badge-secondary">PostgreSQL</span>
+                            <span class="badge badge-outline">Tailwind</span>
+                            <span class="badge badge-outline">DaisyUI</span>
+                            <span class="badge badge-outline">Docker</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <h3 class="card-title">Project Layout</h3>
+                        <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>my_django_portfolio/
+|-- django/
+|-- docker-compose.yml
+|-- Dockerfile
+|-- Caddyfile
+|-- pyproject.toml
+`-- README.md</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="collapse collapse-arrow bg-base-100 border">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium">Docker Quick Start</div>
+                <div class="collapse-content overflow-y-auto">
+                    <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>cp .env.example .env
+docker-compose up --build -d</code></pre>
+                </div>
+            </div>
+
+            <div class="collapse collapse-arrow bg-base-100 border mt-4">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium">Local Quick Start</div>
+                <div class="collapse-content overflow-y-auto">
+                    <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>uv sync
+npm install
+npm run build:css
+python django/manage.py migrate
+python django/manage.py runserver</code></pre>
+                </div>
+            </div>
+
+            <div class="alert alert-info shadow-lg mt-6">
+                <span>Tailwind build path: django/main/static/src/css/input.css -> django/main/static/css/style.css.</span>
+            </div>
+
+            <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
+                <div>
+                    <p>
+                        MIT License
+                        <a href="{{ profile_github_base }}/my_django_portfolio" target="_blank">View source on GitHub</a>
+                    </p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+

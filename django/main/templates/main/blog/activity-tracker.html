@@ -1,0 +1,82 @@
+﻿{% extends "base.html" %}
+
+{% block page_name %}Activity Tracker{% endblock page_name %}
+
+{% block content %}
+<h1 class="text-xl font-bold text-center mt-8 mb-8">Activity Tracker</h1>
+
+<div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
+    <div class="card bg-base-200 w-full p-8 shadow-xl">
+        <h1 class="text-3xl font-bold text-primary mb-6">Django app for activity logging, social feed, and progress analytics</h1>
+
+        <div class="prose max-w-none">
+            <p class="text-lg mb-4 mt-2">
+                Activity Tracker is a Django 5 project focused on daily physical activity management. It combines structured tracking, social interactions, and visual reporting in one workflow.
+            </p>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Highlights</h2>
+            <ul class="list-disc pl-6">
+                <li>User auth with Google OAuth support via django-allauth.</li>
+                <li>Activity tracking by category and duration.</li>
+                <li>Post/comment feed with follow and profile privacy controls.</li>
+                <li>CSV import/export and Plotly-based activity reporting.</li>
+            </ul>
+
+            <div class="grid md:grid-cols-2 gap-6 mt-6">
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <h3 class="card-title">Tech Stack</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="badge badge-outline">Python 3.10</span>
+                            <span class="badge badge-outline badge-primary">Django 5</span>
+                            <span class="badge badge-outline badge-secondary">PostgreSQL</span>
+                            <span class="badge badge-outline">Plotly</span>
+                            <span class="badge badge-outline">Pandas</span>
+                            <span class="badge badge-outline">uv</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <h3 class="card-title">Project Layout</h3>
+                        <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>activity_tracker/
+|-- manage.py
+|-- activityTracker/
+|-- templates/
+|-- static/
+`-- pyproject.toml</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="collapse collapse-arrow bg-base-100 border">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium">Quick Start</div>
+                <div class="collapse-content overflow-y-auto">
+                    <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>uv sync
+uv run python manage.py migrate
+uv run python manage.py runserver</code></pre>
+                </div>
+            </div>
+
+            <div class="alert alert-info shadow-lg mt-6">
+                <span>Local startup validates PostgreSQL connectivity and fails fast on invalid DB config.</span>
+            </div>
+
+            <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
+                <div>
+                    <p>
+                        MIT License
+                        <a href="{{ profile_github_base }}/activity_tracker" target="_blank">View source on GitHub</a>
+                    </p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+

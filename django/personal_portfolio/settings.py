@@ -75,6 +75,7 @@ TEMPLATES = [
             'context_processors': [
                 'main.context_processors.visitor_counter',
                 'main.context_processors.project_count',
+                'main.context_processors.portfolio_profile',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -94,7 +95,7 @@ WSGI_APPLICATION = 'personal_portfolio.wsgi.application'
 if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
-    #SECURE_SSL_REDIRECT = False # Caddy does it !
+    SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 31536000 #year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
@@ -185,5 +186,24 @@ LOGGING = {
         'handlers': ['console'],
         'level': 'INFO',
     },
+}
+
+PORTFOLIO_PROFILE = {
+    'site_name': env('PORTFOLIO_SITE_NAME', default='My Portfolio'),
+    'full_name': env('PORTFOLIO_FULL_NAME', default='John Doe'),
+    'role_line': env(
+        'PORTFOLIO_ROLE_LINE',
+        default='Junior Full-Stack Developer & Data Science enthusiast',
+    ),
+    'specialization_line': env(
+        'PORTFOLIO_SPECIALIZATION_LINE',
+        default='Specialized in Python, Django, PostgreSQL',
+    ),
+    'email': env('PORTFOLIO_EMAIL', default='john.doe@example.com'),
+    'github_url': env('PORTFOLIO_GITHUB_URL', default='https://github.com/your-username'),
+    'linkedin_url': env(
+        'PORTFOLIO_LINKEDIN_URL',
+        default='https://www.linkedin.com/in/your-profile/',
+    ),
 }
 

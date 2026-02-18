@@ -175,3 +175,4 @@ staticfiles/css/style.css
 /.vscode
 AGENTS.MD
 .sqlquerry
+memory.md
