@@ -52,7 +52,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro,Z
       # Mount the same shared volume to serve static files
       - staticfiles_volume:/srv/static
       # Mount the same shared volume to serve media files
