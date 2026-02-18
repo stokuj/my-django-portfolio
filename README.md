@@ -1,6 +1,6 @@
 # Django Portfolio Blog
 
-This repository contains a Django portfolio/blog project using PostgreSQL.
+The goal of the project was to create a portfolio using Django, PostgreSQL, and Tailwind. During implementation, DaisyUI was added as a plugin to Tailwind. The project was containerized to Docker Compose, has tests, and runs on DigitalOcean Droplet. The project is educational in nature.
 
 ## Running with Docker
 
@@ -11,56 +11,47 @@ This repository contains a Django portfolio/blog project using PostgreSQL.
 ### Quick Start
 ```bash
 # Rename .env.example to .env
+# Change variables and secret key
 cp .env.example .env
 
 # Start all services in detached mode
 docker-compose up --build -d
+
+# To stop
+docker-compose down
 ```
 
 This will:
 - Start PostgreSQL
 - Build and run Django with Gunicorn
 - Serve static files through Caddy
-- Run `web` from the image filesystem (no source bind mount to `/app`)
 
 Open `https://localhost`.
-
-To stop:
-```bash
-docker-compose down
-```
 
 ## Local Setup
 
 ### Prerequisites
-- Python 3.x
+- Python 3.13+
 - PostgreSQL
 - [uv](https://github.com/astral-sh/uv)
+- Node.js + npm
 
-### 1. Clone
-```bash
-git clone https://github.com/stokuj/my_django_portfolio.git
-cd my_django_portfolio
-```
+### 1. Configure .env
 
-### 2. Configure env
 ```bash
+# Rename .env.example to .env
+# Change variables and secret key
 cp .env.example .env
 ```
 
-Generate a secret key:
-```bash
-python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
-```
-
-### 3. Create database
+### 2. Create database
 ```sql
 psql -U postgres
 CREATE DATABASE your_db_name;
 \q
 ```
 
-### 4. Install and run
+### 3. Install and run
 ```bash
 uv sync
 
@@ -101,22 +92,36 @@ MY-DJANGO-PORTFOLIO/
 
 ## Technologies
 
-- Python 3.13
-- Django 5.1.7
+- Python 3.13 + Django 5.1.7
 - PostgreSQL
 - Tailwind CSS + DaisyUI
-- Gunicorn
 - Docker + Docker Compose
 
 ## Features
 
 - Project detail pages
+- Blog pages routed by slug (`/blog/<slug>/`)
 - Status and tag system
 - Project filtering
 - PostgreSQL-backed data model
 - Visitor counter
 - Responsive UI
 - Media file handling
+
+## Environment Variables
+
+Core environment variables are defined in `.env.example`.
+
+Important optional profile variables:
+- `PORTFOLIO_SITE_NAME`
+- `PORTFOLIO_FULL_NAME`
+- `PORTFOLIO_ROLE_LINE`
+- `PORTFOLIO_SPECIALIZATION_LINE`
+- `PORTFOLIO_EMAIL`
+- `PORTFOLIO_GITHUB_URL`
+- `PORTFOLIO_LINKEDIN_URL`
+
+These values are rendered in templates via a Django context processor, so you can update site identity and contact details without editing templates.
 
 ## Solved Problems
 
@@ -147,9 +152,8 @@ MY-DJANGO-PORTFOLIO/
 ## Author
 
 - Name: Krystian Stasica
-- Portfolio: TODO
-- LinkedIn: TODO
-- Email: TODO
+- Portfolio: krystianstasica.pl
+- Email: krystian.stasica@outlook.com
 
 ## License
 
