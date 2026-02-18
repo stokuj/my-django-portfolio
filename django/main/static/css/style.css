@@ -1728,6 +1728,9 @@
   .right-2 {
     right: calc(var(--spacing) * 2);
   }
+  .left-0 {
+    left: calc(var(--spacing) * 0);
+  }
   .hero-content {
     isolation: isolate;
     display: flex;
@@ -2411,6 +2414,12 @@
     border-top-style: var(--tw-border-style);
     border-top-width: 1px;
   }
+  .badge-ghost {
+    border-color: var(--color-base-200);
+    background-color: var(--color-base-200);
+    color: var(--color-base-content);
+    background-image: none;
+  }
   .border-base-300 {
     border-color: var(--color-base-300);
   }
@@ -2443,6 +2452,9 @@
   }
   .object-cover {
     object-fit: cover;
+  }
+  .p-0 {
+    padding: calc(var(--spacing) * 0);
   }
   .p-2 {
     padding: calc(var(--spacing) * 2);
@@ -2493,6 +2505,9 @@
   }
   .pb-6 {
     padding-bottom: calc(var(--spacing) * 6);
+  }
+  .pl-6 {
+    padding-left: calc(var(--spacing) * 6);
   }
   .text-center {
     text-align: center;
@@ -2596,6 +2611,9 @@
   }
   .underline {
     text-decoration-line: underline;
+  }
+  .opacity-60 {
+    opacity: 60%;
   }
   .opacity-75 {
     opacity: 75%;
@@ -3298,9 +3316,9 @@ html {
 @layer base {
   :root:has(input.theme-controller[value=dim2]:checked),[data-theme="dim2"] {
     color-scheme: dark;
-    --color-base-100: oklch(0.200 0.015 264);
-    --color-base-200: oklch(0.175 0.013 264);
-    --color-base-300: oklch(0.155 0.012 264);
+    --color-base-100: oklch(0.250 0.015 264);
+    --color-base-200: oklch(0.190 0.013 264);
+    --color-base-300: oklch(0.140 0.011 264);
     --color-base-content: oklch(0.820 0.018 222);
     --color-primary: oklch(0.820 0.155 145);
     --color-primary-content: oklch(0.140 0.031 145);

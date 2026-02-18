@@ -250,10 +250,10 @@ html {
     prefersdark: false;
     color-scheme: "dark";
 
-    /* ── Backgrounds — głębsze, mniej niebieskawe ── */
-    --color-base-100: oklch(0.200 0.015 264);     /* główne tło — prawie czarne */
-    --color-base-200: oklch(0.175 0.013 264);     /* sidebar, karty */
-    --color-base-300: oklch(0.155 0.012 264);     /* najciemniejszy element */
+    /* ── Backgrounds — rozciągnięta skala jasności dla wyraźnych warstw ── */
+    --color-base-100: oklch(0.250 0.015 264);     /* główne tło */
+    --color-base-200: oklch(0.190 0.013 264);     /* navbar, footer, karty */
+    --color-base-300: oklch(0.140 0.011 264);     /* najciemniejszy element, bordery */
     --color-base-content: oklch(0.820 0.018 222); /* tekst — chłodna biel */
 
     /* ── Primary — zieleń, ale bardziej wysycona i czysta ── */
