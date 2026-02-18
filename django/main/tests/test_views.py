@@ -93,6 +93,23 @@ class ViewsTest(TestCase):
         self.assertIn("all_projects", response.context)
         self.assertIn(other_project, response.context["all_projects"])
 
+    def test_blog_detail_builds_branch_agnostic_readme_url(self):
+        project = Project.objects.create(
+            title="README Link Project",
+            short_description="Project with explicit GitHub URL",
+            blog=True,
+            blog_url="readme-link-project",
+            github_url="https://github.com/example/readme-link-project",
+            status="finished",
+        )
+
+        response = self.client.get(reverse("blog_detail", args=[project.blog_url]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.context["readme_url"],
+            "https://github.com/example/readme-link-project#readme",
+        )
+
 
 class ErrorHandlersTest(TestCase):
     def setUp(self):

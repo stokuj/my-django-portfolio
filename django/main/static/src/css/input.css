@@ -250,29 +250,29 @@ html {
     prefersdark: false;
     color-scheme: "dark";
 
-    /* ── Backgrounds — rozciągnięta skala jasności dla wyraźnych warstw ── */
-    --color-base-100: oklch(0.250 0.015 264);     /* główne tło */
-    --color-base-200: oklch(0.190 0.013 264);     /* navbar, footer, karty */
-    --color-base-300: oklch(0.140 0.011 264);     /* najciemniejszy element, bordery */
-    --color-base-content: oklch(0.820 0.018 222); /* tekst — chłodna biel */
+    /* Background layers with clearer contrast */
+    --color-base-100: oklch(0.250 0.015 264);     /* main page background */
+    --color-base-200: oklch(0.190 0.013 264);     /* navbar, footer, cards */
+    --color-base-300: oklch(0.140 0.011 264);     /* darkest layer and borders */
+    --color-base-content: oklch(0.820 0.018 222); /* body text */
 
-    /* ── Primary — zieleń, ale bardziej wysycona i czysta ── */
+    /* Primary - green, slightly more saturated */
     --color-primary: oklch(0.820 0.155 145);
     --color-primary-content: oklch(0.140 0.031 145);
 
-    /* ── Secondary — ciepły bursztyn zamiast pomarańczowego ── */
+    /* Secondary - warm amber */
     --color-secondary: oklch(0.720 0.130 75);
     --color-secondary-content: oklch(0.140 0.026 75);
 
-    /* ── Accent — fiolet (subtelny, nie krzykliwy) ── */
+    /* Accent - subtle violet */
     --color-accent: oklch(0.680 0.120 295);
     --color-accent-content: oklch(0.136 0.024 295);
 
-    /* ── Neutral — ciemniejszy, wyraźniejszy kontrast ── */
+    /* Neutral - stronger contrast for dark surfaces */
     --color-neutral: oklch(0.230 0.015 264);
     --color-neutral-content: oklch(0.820 0.018 222);
 
-    /* ── Semantyczne ── */
+    /* Semantic colors */
     --color-info: oklch(0.720 0.130 220);
     --color-info-content: oklch(0.144 0.026 220);
 
@@ -285,16 +285,16 @@ html {
     --color-error: oklch(0.650 0.180 25);
     --color-error-content: oklch(0.130 0.036 25);
 
-    /* ── Shape — ostrzejsze narożniki = bardziej techniczny wygląd ── */
+    /* Shape - slightly sharper corners */
     --radius-selector: 0.5rem;
     --radius-field: 0.375rem;
     --radius-box: 0.75rem;
 
-    /* ── Size ── */
+    /* Size */
     --size-selector: 0.25rem;
     --size-field: 0.25rem;
 
-    /* ── Misc ── */
+    /* Misc */
     --border: 1px;
     --depth: 1;
     --noise: 0;

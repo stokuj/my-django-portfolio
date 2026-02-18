@@ -1,6 +1,9 @@
 from pathlib import Path
-from django.shortcuts import render, get_object_or_404
+
 import markdown
+from django.conf import settings
+from django.shortcuts import get_object_or_404, render
+
 from .models import Project, Tag
 
 
@@ -108,11 +111,24 @@ def _render_markdown_to_html(markdown_content):
     )
 
 
+def _build_readme_url(project, repo_path):
+    """Build a branch-agnostic README URL for a project repository."""
+    if project.github_url:
+        return f"{project.github_url.rstrip('/')}#readme"
+
+    github_base = settings.PORTFOLIO_PROFILE.get(
+        "github_base",
+        "https://github.com/your-username",
+    ).rstrip("/")
+    return f"{github_base}/{repo_path}#readme"
+
+
 def blog_detail(request, blog_slug):
     project = get_object_or_404(Project, blog=True, blog_url=blog_slug)
     markdown_content = _load_project_markdown(project)
     markdown_html = _render_markdown_to_html(markdown_content)
     repo_path = BLOG_REPO_PATHS.get(project.blog_url, project.blog_url)
+    readme_url = _build_readme_url(project, repo_path)
     all_projects = Project.objects.order_by("-date")
 
     return render(
@@ -124,5 +140,6 @@ def blog_detail(request, blog_slug):
             "blog_markdown_content": markdown_content,
             "blog_markdown_html": markdown_html,
             "repo_path": repo_path,
+            "readme_url": readme_url,
         },
     )

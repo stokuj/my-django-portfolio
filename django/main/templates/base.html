@@ -11,12 +11,12 @@
     <body>
         <!-- Navbar -->
         <nav class="navbar shadow-lg bg-base-200">
-            <div class="max-w-3/4 mx-auto px-4 w-full">
+            <div class="mx-auto w-full max-w-7xl px-4">
                 <div class="flex justify-between items-center h-16">
 
                     <!-- Left side: Logo -->
                     <div class="flex items-center">
-                        <!-- Hamburger tylko na mobilkach -->
+                        <!-- Mobile menu -->
                         <div class="dropdown lg:hidden">
                             <label tabindex="0" class="btn btn-ghost btn-circle">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-6 h-6" fill="none"
@@ -47,12 +47,20 @@
                     <div class="flex items-center space-x-2">
 
                         <!-- GitHub -->
-                        <a href="{{ profile_github_url }}" class="hidden sm:inline-flex btn btn-ghost btn-circle ui-motion">
+                        <a
+                            href="{{ profile_github_url }}"
+                            class="hidden sm:inline-flex btn btn-ghost btn-circle ui-motion"
+                            aria-label="Open GitHub profile"
+                        >
                             {% include "main/components/icons/github_icon.html" %}
                         </a>
 
                         <!-- LinkedIn -->
-                        <a href="{{ profile_linkedin_url }}" class="hidden sm:inline-flex btn btn-ghost btn-circle ui-motion">
+                        <a
+                            href="{{ profile_linkedin_url }}"
+                            class="hidden sm:inline-flex btn btn-ghost btn-circle ui-motion"
+                            aria-label="Open LinkedIn profile"
+                        >
                             {% include "main/components/icons/linkedin_icon.html" %}
                         </a>
 
@@ -72,54 +80,53 @@
             {% block sidebar %}{% endblock %}
         </div>
 
-        <!-- ==================== -->
-        <!-- FOOTER - GŁÓWNY KONTENER -->
-        <!-- ==================== -->
+        <!-- Footer -->
         <footer class="footer p-10 bg-base-200 text-base-content">
-            <div class="max-w-3/4 mx-auto w-full">
+            <div class="mx-auto w-full max-w-7xl">
 
-                <!-- GÓRNA CZĘŚĆ STOPKI - 3 KOLUMNY -->
+                <!-- Top footer section -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
 
-                    <!-- ==================== -->
-                    <!-- LEWA KOLUMNA - DANE KONTAKTOWE -->
-                    <!-- ==================== -->
+                    <!-- Left column -->
                     <div class="space-y-4">
-                        <!-- Nagłówek z imieniem i nazwiskiem -->
                         <h2 class="text-2xl font-bold">{{ profile_full_name }}</h2>
 
-                        <!-- Specjalizacja -->
                         <p class="opacity-75">
                             {{ profile_role_line }}<br>
                             {{ profile_specialization_line }}
                         </p>
 
-                        <!-- Ikony społecznościowe -->
                         <div class="flex gap-4 mt-4">
-                            <!-- GitHub -->
-                            <a href="{{ profile_github_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-circle hover:bg-base-300 ui-motion">
+                            <a
+                                href="{{ profile_github_url }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn btn-ghost btn-circle hover:bg-base-300 ui-motion"
+                                aria-label="Open GitHub profile"
+                            >
                                 {% include "main/components/icons/github_icon.html" %}
                             </a>
 
-                            <!-- LinkedIn -->
-                            <a href="{{ profile_linkedin_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-circle hover:bg-base-300 ui-motion">
+                            <a
+                                href="{{ profile_linkedin_url }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn btn-ghost btn-circle hover:bg-base-300 ui-motion"
+                                aria-label="Open LinkedIn profile"
+                            >
                                 {% include "main/components/icons/linkedin_icon.html" %}
                             </a>
                         </div>
                     </div>
 
-                    <!-- ==================== -->
-                    <!-- ŚRODKOWA KOLUMNA - LINKI -->
-                    <!-- ==================== -->
+                    <!-- Middle column -->
                     <div class="grid grid-cols-2 gap-4">
-                        <!-- Pierwsza kolumna linków -->
                         <div class="flex flex-col gap-2">
                             <a href="{% url 'home' %}" class="link link-hover hover:text-primary ui-link-motion">Home</a>
                             <a href="{% url 'about' %}" class="link link-hover hover:text-primary ui-link-motion">About me</a>
                             <a href="{% url 'projects' %}" class="link link-hover hover:text-primary ui-link-motion">My projects</a>
                         </div>
 
-                        <!-- Druga kolumna linków -->
                         <div class="flex flex-col gap-2">
                             <a href="{% url 'projects' %}" class="link link-hover hover:text-primary ui-link-motion">Projects</a>
                             <a href="{{ profile_email_href }}" class="link link-hover hover:text-primary ui-link-motion">Contact me</a>
@@ -127,11 +134,8 @@
                         </div>
                     </div>
 
-                    <!-- ==================== -->
-                    <!-- PRAWA KOLUMNA - CTA -->
-                    <!-- ==================== -->
+                    <!-- Right column -->
                     <div class="space-y-4">
-                        <!-- Przycisk główny -->
                         <a href="{{ profile_email_href }}" class="btn btn-primary w-full hover:bg-primary-focus ui-motion">
                             Get In Touch
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -139,30 +143,24 @@
                             </svg>
                         </a>
 
-                        <!-- Tekst zachęcający -->
                         <p class="opacity-75 text-sm">
                             I'm always open to interesting collaborations and new challenges!
                         </p>
 
-                        <!-- Dodatkowy kontakt -->
                         <div class="text-sm">
                             <p>Email: <a href="{{ profile_email_href }}" class="link link-hover hover:text-primary ui-link-motion">{{ profile_email }}</a></p>
                         </div>
                     </div>
                 </div>
 
-                <!-- ==================== -->
-                <!-- DOLNA CZĘŚĆ STOPKI -->
-                <!-- ==================== -->
+                <!-- Bottom footer section -->
                 <div class="border-t border-base-primary pt-6 w-full">
                     <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <!-- Statystyki -->
                         <div class="flex gap-6 opacity-75 text-sm">
                             <span>Visitors: {{ visitor_count }}</span>
                             <span>{{ project_count }} projects</span>
                         </div>
 
-                        <!-- Copyright -->
                         <div class="text-center md:text-right">
                             <p class="text-sm opacity-75">
                                 (c) {% now "Y" %} {{ profile_full_name }}. All rights reserved.<br>
@@ -175,6 +173,3 @@
         </footer>
     </body>
 </html>
-
-
-
