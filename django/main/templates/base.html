@@ -6,30 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}My Portfolio{% endblock %}</title>
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
-        <script>
-            // 1. Przy ładowaniu strony – ustawiamy theme według localStorage
-            document.addEventListener('DOMContentLoaded', () => {
-            const saved = localStorage.getItem('theme');
-            if (saved) {
-                document.documentElement.setAttribute('data-theme', saved);
-                // też zaznaczamy checkbox, jeśli go masz
-                const ctl = document.querySelector('.theme-controller');
-                if (ctl && ctl.value === saved) ctl.checked = true;
-            }
-            });
-
-            // 2. Nasłuchiwanie zmiany checkboxa
-            function themeControllerHandler(e) {
-                const theme = e.target.checked ? e.target.value : 'fantasy2';
-                document.documentElement.setAttribute('data-theme', theme);
-                localStorage.setItem('theme', theme);
-            }
-            // po załadowaniu – podpinamy listener
-            document.addEventListener('DOMContentLoaded', () => {
-            const ctl = document.querySelector('.theme-controller');
-            if (ctl) ctl.addEventListener('change', themeControllerHandler);
-            });
-        </script>
+        <script src="{% static 'js/theme-toggle.js' %}" defer></script>
     </head>
     <body>
         <!-- Navbar -->
