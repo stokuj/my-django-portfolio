@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const root = document.documentElement;
     const ctl = document.querySelector(".theme-controller");
-    const defaultTheme = "fantasy2";
+    const defaultTheme = "fantasy3";
     const savedTheme = localStorage.getItem("theme");
 
     if (savedTheme) {
