@@ -1,13 +1,12 @@
 ﻿{% extends "base.html" %}
 
-{% block page_name %}Django Portfolio Blog{% endblock page_name %}
+{% block page_name %}{{ project.title }}{% endblock page_name %}
 
 {% block content %}
-<h1 class="text-xl font-bold text-center mt-8 mb-8">Django Portfolio Blog</h1>
 
 <div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
     <div class="card bg-base-200 w-full p-8 shadow-xl">
-        <h1 class="text-3xl font-bold text-primary mb-6">Portfolio and blog platform built with Django, PostgreSQL, Tailwind, and Docker</h1>
+        <h1 class="text-3xl font-bold text-primary mb-6">{{ project.title }}</h1>
 
         <div class="prose max-w-none">
             <p class="text-lg mb-4 mt-2">
@@ -75,11 +74,14 @@ python django/manage.py runserver</code></pre>
                 </div>
             </div>
 
-            <p class="mt-6 text-sm text-base-content/80">Tailwind build path: django/main/static/src/css/input.css -> django/main/static/css/style.css.</p>
 
             {% include "main/components/project_footer.html" with repo_path="my_django_portfolio" %}
         </div>
     </div>
 </div>
 {% endblock content %}
+
+
+
+
 

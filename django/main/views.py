@@ -65,6 +65,6 @@ def blog_detail(request, blog_slug):
     template_name = f"main/blog/{project.blog_url}.html"
 
     try:
-        return render(request, template_name)
+        return render(request, template_name, {"project": project})
     except TemplateDoesNotExist as exc:
         raise Http404("Blog template not found.") from exc
