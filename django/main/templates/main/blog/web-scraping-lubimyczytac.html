@@ -3,7 +3,7 @@
 {% block page_name %}{{ project.title }}{% endblock page_name %}
 
 {% block content %}
-<div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
+<div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
     <div class="card bg-base-200 w-full p-8 shadow-xl">
         <h1 class="text-3xl font-bold text-primary mb-6">{{ project.title }}</h1>
 
@@ -37,10 +37,13 @@ uv run python main.py</code></pre>
                 </div>
             </div>
 
-            <div class="divider"></div>
-
-            <h2 class="text-2xl font-semibold text-secondary">Showcase</h2>
-            <div class="card bg-base-100 border border-dashed border-base-300"><div class="card-body"><p class="text-sm text-base-content/70">Showcase section coming soon.</p></div></div>
+            <div class="collapse collapse-arrow bg-base-100 border mt-6">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium">Showcase</div>
+                <div class="collapse-content overflow-y-auto">
+                    <p class="text-sm mt-2 text-base-content/70">Showcase section coming soon.</p>
+                </div>
+            </div>
 
             <p class="mt-6 text-sm text-base-content/80">Educational pipeline intended for workflow practice in scraping and CSV transformation.</p>
 
@@ -49,3 +52,6 @@ uv run python main.py</code></pre>
     </div>
 </div>
 {% endblock content %}
+
+
+
