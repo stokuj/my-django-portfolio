@@ -95,7 +95,7 @@ WSGI_APPLICATION = 'personal_portfolio.wsgi.application'
 if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
-    #SECURE_SSL_REDIRECT = False # Caddy does it !
+    SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 31536000 #year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True

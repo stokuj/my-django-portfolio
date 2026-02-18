@@ -1,18 +1,6 @@
-# For development -> localhost
+# Redirect all HTTP traffic to HTTPS.
 :80 {
-    # Static files served directly by Caddy (faster)
-    handle /static/* {
-        root * /srv
-        file_server
-    }
-
-    handle /media/* {
-        root * /srv
-        file_server
-    }
-
-    # Everything else to Django
-    reverse_proxy web:8000
+    redir https://{host}{uri} permanent
 }
 
 #For production -> domain
