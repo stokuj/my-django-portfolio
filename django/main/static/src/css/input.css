@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: all;
+  themes: fantasy2, dim2;
 }
 
 h1 {
