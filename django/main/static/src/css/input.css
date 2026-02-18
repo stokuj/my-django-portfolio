@@ -34,6 +34,69 @@ html {
         @apply motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-out motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-lg;
     }
 
+    .md-sheet {
+        @apply rounded-2xl border border-base-300 bg-base-100 p-5 sm:p-6 shadow;
+    }
+
+    .md-pill {
+        @apply inline-flex items-center rounded-full border border-base-300 bg-base-200 px-3 py-1 text-xs text-base-content/80;
+    }
+
+    .md-article {
+        @apply mt-4 text-base leading-7 text-base-content;
+    }
+
+    .md-article h1 {
+        @apply mt-6 text-3xl font-semibold text-primary;
+    }
+
+    .md-article h2 {
+        @apply mt-6 text-2xl font-semibold text-base-content;
+    }
+
+    .md-article h3 {
+        @apply mt-5 text-xl font-semibold text-base-content;
+    }
+
+    .md-article p {
+        @apply mt-3 text-base-content/90;
+    }
+
+    .md-article ul {
+        @apply mt-3 list-disc pl-6;
+    }
+
+    .md-article ol {
+        @apply mt-3 list-decimal pl-6;
+    }
+
+    .md-article li {
+        @apply mt-1;
+    }
+
+    .md-article pre {
+        @apply mt-4 overflow-x-auto rounded-xl border border-base-300 bg-base-200 p-4 text-xs;
+    }
+
+    .md-article code {
+        @apply rounded bg-base-200 px-1 py-0.5 text-sm;
+    }
+
+    .md-article pre code {
+        @apply bg-transparent p-0 text-xs;
+    }
+
+    .md-article table {
+        @apply mt-4 w-full border-collapse overflow-hidden rounded-lg border border-base-300;
+    }
+
+    .md-article th {
+        @apply bg-base-200 px-3 py-2 text-left font-semibold;
+    }
+
+    .md-article td {
+        @apply border-t border-base-300 px-3 py-2;
+    }
 }
 
 @plugin "daisyui/theme" {

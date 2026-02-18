@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block page_name %}{{ project.title }}{% endblock page_name %}
+
+{% block content %}
+<div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <div class="card bg-base-200 w-full p-8 shadow-xl">
+        <h1 class="text-3xl font-bold text-primary mb-6 text-center">{{ project.title }}</h1>
+
+        <div class="prose max-w-none">
+            <div class="not-prose mt-2 lg:grid lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start lg:gap-5">
+                <section>
+                    {% if blog_markdown_html %}
+                    <div class="md-sheet">
+                        <div class="flex justify-end">
+                            <div class="md-pill">
+                                <a class="ml-1 underline" href="{{ profile_github_base }}/{{ repo_path }}/blob/main/README.md" target="_blank" rel="noopener noreferrer">README.md</a>
+                            </div>
+                        </div>
+                        <article class="md-article">{{ blog_markdown_html|safe }}</article>
+                    </div>
+                    {% else %}
+                    <p class="text-sm text-base-content/70">No markdown content available for this project yet.</p>
+                    {% endif %}
+                </section>
+
+                <aside class="mt-4 lg:mt-0 lg:sticky lg:top-24">
+                    <div class="card bg-base-100 shadow border border-base-300 mb-4">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Tech Stack</h2>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="badge badge-outline">Python</span>
+                                <span class="badge badge-outline badge-primary">Django</span>
+                                <span class="badge badge-outline">PostgreSQL</span>
+                                <span class="badge badge-outline">Docker</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card bg-base-100 shadow border border-base-300">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Tools / Libraries</h2>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="badge badge-outline">pandas</span>
+                                <span class="badge badge-outline">numpy</span>
+                                <span class="badge badge-outline">plotly</span>
+                                <span class="badge badge-outline">BeautifulSoup</span>
+                                <span class="badge badge-outline">requests</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            {% include "main/components/project_footer.html" with repo_path=repo_path %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

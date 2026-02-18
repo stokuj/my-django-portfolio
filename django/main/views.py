@@ -1,7 +1,22 @@
-from django.http import Http404
+from pathlib import Path
 from django.shortcuts import render, get_object_or_404
-from django.template import TemplateDoesNotExist
+import markdown
 from .models import Project, Tag
+
+
+BLOG_REPO_PATHS = {
+    "activity-tracker": "activity_tracker",
+    "analiza-makro-konkurs": "analiza-makro-konkurs",
+    "cartoon-filter": "cartoon-filter",
+    "currency-price-prediction": "CryptoCurrencyPP",
+    "github-heatmap": "github-heatmap",
+    "granular-data-grouping": "granular_data_grouping",
+    "multidimensional-dashboard": "multidimensional-dashboard",
+    "my-django-portfolio": "my_django_portfolio",
+    "NTwI-obliczenia-ziarniste": "NTwI-obliczenia-ziarniste",
+    "weather-web-scraping": "WeatherWebScraping",
+    "web-scraping-lubimyczytac": "web_scraping_lubimyczytac",
+}
 
 
 def handler404(request, exception):
@@ -55,16 +70,57 @@ def projects(request):
     })
 
 
-def project_detail(request, project_id):
-    project = get_object_or_404(Project, id=project_id)
-    return render(request, "main/project_detail.html", {"project": project})
+def _load_blog_markdown(blog_slug):
+    """Load optional markdown content for a blog slug from local project files."""
+    # Reject path-like slugs; we only allow simple file names.
+    if Path(blog_slug).name != blog_slug:
+        return None
+
+    md_path = Path(__file__).resolve().parent / "content" / "blog" / f"{blog_slug}.md"
+    try:
+        return md_path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return None
+
+
+def _load_project_markdown(project):
+    """Load markdown from uploaded project file, then fallback to slug-based local file."""
+    if project.markdown_file:
+        try:
+            project.markdown_file.open("rb")
+            raw = project.markdown_file.read()
+            return raw.decode("utf-8")
+        except (UnicodeDecodeError, OSError):
+            return None
+        finally:
+            project.markdown_file.close()
+
+    return _load_blog_markdown(project.blog_url)
+
+
+def _render_markdown_to_html(markdown_content):
+    """Render markdown content to HTML for trusted local blog files."""
+    if not markdown_content:
+        return None
+    return markdown.markdown(
+        markdown_content,
+        extensions=["fenced_code", "tables"],
+    )
 
 
 def blog_detail(request, blog_slug):
     project = get_object_or_404(Project, blog=True, blog_url=blog_slug)
-    template_name = f"main/blog/{project.blog_url}.html"
+    markdown_content = _load_project_markdown(project)
+    markdown_html = _render_markdown_to_html(markdown_content)
+    repo_path = BLOG_REPO_PATHS.get(project.blog_url, project.blog_url)
 
-    try:
-        return render(request, template_name, {"project": project})
-    except TemplateDoesNotExist as exc:
-        raise Http404("Blog template not found.") from exc
+    return render(
+        request,
+        "main/blog/detail.html",
+        {
+            "project": project,
+            "blog_markdown_content": markdown_content,
+            "blog_markdown_html": markdown_html,
+            "repo_path": repo_path,
+        },
+    )

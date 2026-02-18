@@ -52,19 +52,8 @@ class ViewsTest(TestCase):
 
         response = self.client.get(reverse("projects"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, reverse("project_detail", args=[no_slug_project.id]))
+        self.assertNotContains(response, "/projects/")
         self.assertNotContains(response, "/blog/None")
-
-    def test_project_detail_view(self):
-        response = self.client.get(reverse("project_detail", args=[self.project.id]))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "main/project_detail.html")
-        self.assertIn("project", response.context)
-        self.assertEqual(response.context["project"], self.project)
-
-    def test_nonexistent_project_detail(self):
-        response = self.client.get(reverse("project_detail", args=[999]))
-        self.assertEqual(response.status_code, 404)
 
     def test_blog_detail_renders_existing_template(self):
         Project.objects.create(
@@ -76,9 +65,9 @@ class ViewsTest(TestCase):
         )
         response = self.client.get(reverse("blog_detail", args=["my-django-portfolio"]))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "main/blog/my-django-portfolio.html")
+        self.assertTemplateUsed(response, "main/blog/detail.html")
 
-    def test_blog_detail_returns_404_when_template_is_missing(self):
+    def test_blog_detail_renders_even_without_markdown_file(self):
         Project.objects.create(
             title="Missing Blog Template",
             short_description="A project with no matching template",
@@ -88,7 +77,7 @@ class ViewsTest(TestCase):
         )
 
         response = self.client.get(reverse("blog_detail", args=["missing-template"]))
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
 
 
 class ErrorHandlersTest(TestCase):

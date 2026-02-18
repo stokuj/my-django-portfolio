@@ -31,7 +31,3 @@ class URLsTest(TestCase):
     def test_projects_url(self):
         response = self.client.get("/projects/")
         self.assertEqual(response.status_code, 200)
-
-    def test_project_detail_url(self):
-        response = self.client.get(f"/projects/{self.project.id}/")
-        self.assertEqual(response.status_code, 200)
