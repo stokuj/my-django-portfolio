@@ -35,8 +35,8 @@
 {% endblock content %}
 
 {% block sidebar %}
-<aside class="hidden lg:block w-[300px] shrink-0 py-8 pr-6">
-    <div class="sticky top-24 space-y-4">
+<aside class="hidden lg:block absolute top-0 right-0 w-[300px] pr-6 h-full">
+    <div class="sticky top-[50vh] -translate-y-1/2 space-y-4">
         {% include "main/components/blog_sidebar_cards.html" %}
     </div>
 </aside>
