@@ -166,9 +166,8 @@ cython_debug/
 /.junie
 /.idea
 /media/
-/staticfiles/css
-/staticfiles/css
-staticfiles/css/style.css
+.DS_Store
+Thumbs.db
 .env.dev
 /staticfiles
 .claude/settings.local.json
