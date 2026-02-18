@@ -1,0 +1,24 @@
+<div class="card bg-base-100 shadow border border-base-300">
+    <div class="card-body">
+        <h2 class="card-title text-base">All Projects</h2>
+        <ul class="menu bg-base-100 rounded-box p-0">
+            {% for sidebar_project in all_projects %}
+            <li>
+                {% if sidebar_project.blog and sidebar_project.blog_url %}
+                <a href="{% url 'blog_detail' sidebar_project.blog_url %}" class="ui-link-motion {% if sidebar_project.id == project.id %}active{% endif %}">
+                    {{ sidebar_project.title }}
+                </a>
+                {% elif sidebar_project.github_url %}
+                <a href="{{ sidebar_project.github_url }}" target="_blank" rel="noopener noreferrer" class="ui-link-motion">
+                    {{ sidebar_project.title }}
+                </a>
+                {% else %}
+                <span class="opacity-60">{{ sidebar_project.title }}</span>
+                {% endif %}
+            </li>
+            {% empty %}
+            <li><span class="opacity-60">No projects available.</span></li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

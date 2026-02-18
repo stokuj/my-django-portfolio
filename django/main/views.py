@@ -113,12 +113,14 @@ def blog_detail(request, blog_slug):
     markdown_content = _load_project_markdown(project)
     markdown_html = _render_markdown_to_html(markdown_content)
     repo_path = BLOG_REPO_PATHS.get(project.blog_url, project.blog_url)
+    all_projects = Project.objects.order_by("-date")
 
     return render(
         request,
         "main/blog/detail.html",
         {
             "project": project,
+            "all_projects": all_projects,
             "blog_markdown_content": markdown_content,
             "blog_markdown_html": markdown_html,
             "repo_path": repo_path,

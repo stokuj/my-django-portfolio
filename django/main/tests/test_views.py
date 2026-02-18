@@ -79,6 +79,20 @@ class ViewsTest(TestCase):
         response = self.client.get(reverse("blog_detail", args=["missing-template"]))
         self.assertEqual(response.status_code, 200)
 
+    def test_blog_detail_includes_all_projects_for_sidebar(self):
+        other_project = Project.objects.create(
+            title="Sidebar Item Project",
+            short_description="Project visible in sidebar list",
+            blog=True,
+            blog_url="sidebar-item-project",
+            status="finished",
+        )
+
+        response = self.client.get(reverse("blog_detail", args=[self.project.blog_url]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("all_projects", response.context)
+        self.assertIn(other_project, response.context["all_projects"])
+
 
 class ErrorHandlersTest(TestCase):
     def setUp(self):
