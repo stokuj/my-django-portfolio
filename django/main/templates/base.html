@@ -27,32 +27,32 @@
                             </label>
                             <ul tabindex="0"
                                 class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-72 text-lg space-y-2">
-                                <li class="mb-2 mt-2"><a href="/">Home</a></li>
-                                <li class="mb-2 mt-2"><a href="/projects/">My Projects</a></li>
-                                <li class="mb-2 mt-2"><a href="/about/">About me</a></li>
+                                <li class="mb-2 mt-2"><a href="/" class="ui-link-motion">Home</a></li>
+                                <li class="mb-2 mt-2"><a href="/projects/" class="ui-link-motion">My Projects</a></li>
+                                <li class="mb-2 mt-2"><a href="/about/" class="ui-link-motion">About me</a></li>
                             </ul>
                         </div>
 
-                        <a href="/" class="btn btn-ghost text-xl">{{ site_name|default:"My Portfolio" }}</a>
+                        <a href="/" class="btn btn-ghost text-xl ui-motion">{{ site_name|default:"My Portfolio" }}</a>
                     </div>
 
                     <!-- Center: Navigation links -->
                     <div class="hidden md:flex items-center space-x-4">
-                        <a href="/" class="btn btn-ghost text-xl">Home</a>
-                        <a href="/projects/" class="btn btn-ghost text-xl">My Projects</a>
-                        <a href="/about/" class="btn btn-ghost text-xl">About me</a>
+                        <a href="/" class="btn btn-ghost text-xl ui-motion">Home</a>
+                        <a href="/projects/" class="btn btn-ghost text-xl ui-motion">My Projects</a>
+                        <a href="/about/" class="btn btn-ghost text-xl ui-motion">About me</a>
                     </div>
 
                     <!-- Right side: Social links + Theme toggle -->
                     <div class="flex items-center space-x-2">
 
                         <!-- GitHub -->
-                        <a href="{{ profile_github_url }}" class="hidden sm:inline-flex btn btn-ghost btn-circle">
+                        <a href="{{ profile_github_url }}" class="hidden sm:inline-flex btn btn-ghost btn-circle ui-motion">
                             {% include "main/components/icons/github_icon.html" %}
                         </a>
 
                         <!-- LinkedIn -->
-                        <a href="{{ profile_linkedin_url }}" class="hidden sm:inline-flex btn btn-ghost btn-circle">
+                        <a href="{{ profile_linkedin_url }}" class="hidden sm:inline-flex btn btn-ghost btn-circle ui-motion">
                             {% include "main/components/icons/linkedin_icon.html" %}
                         </a>
 
@@ -95,12 +95,12 @@
                         <!-- Ikony społecznościowe -->
                         <div class="flex gap-4 mt-4">
                             <!-- GitHub -->
-                            <a href="{{ profile_github_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-circle hover:bg-base-300">
+                            <a href="{{ profile_github_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-circle hover:bg-base-300 ui-motion">
                                 {% include "main/components/icons/github_icon.html" %}
                             </a>
 
                             <!-- LinkedIn -->
-                            <a href="{{ profile_linkedin_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-circle hover:bg-base-300">
+                            <a href="{{ profile_linkedin_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-circle hover:bg-base-300 ui-motion">
                                 {% include "main/components/icons/linkedin_icon.html" %}
                             </a>
                         </div>
@@ -112,16 +112,16 @@
                     <div class="grid grid-cols-2 gap-4">
                         <!-- Pierwsza kolumna linków -->
                         <div class="flex flex-col gap-2">
-                            <a href="/" class="link link-hover hover:text-primary">Home</a>
-                            <a href="/about/" class="link link-hover hover:text-primary">About me</a>
-                            <a href="/projects/" class="link link-hover hover:text-primary">My projects</a>
+                            <a href="/" class="link link-hover hover:text-primary ui-link-motion">Home</a>
+                            <a href="/about/" class="link link-hover hover:text-primary ui-link-motion">About me</a>
+                            <a href="/projects/" class="link link-hover hover:text-primary ui-link-motion">My projects</a>
                         </div>
 
                         <!-- Druga kolumna linków -->
                         <div class="flex flex-col gap-2">
-                            <a href="/projects/" class="link link-hover hover:text-primary">Projects</a>
-                            <a href="{{ profile_email_href }}" class="link link-hover hover:text-primary">Contact me</a>
-                            <a href="#TODO" class="link link-hover hover:text-primary">Privacy Policy</a>
+                            <a href="/projects/" class="link link-hover hover:text-primary ui-link-motion">Projects</a>
+                            <a href="{{ profile_email_href }}" class="link link-hover hover:text-primary ui-link-motion">Contact me</a>
+                            <a href="#TODO" class="link link-hover hover:text-primary ui-link-motion">Privacy Policy</a>
                         </div>
                     </div>
 
@@ -130,7 +130,7 @@
                     <!-- ==================== -->
                     <div class="space-y-4">
                         <!-- Przycisk główny -->
-                        <a href="{{ profile_email_href }}" class="btn btn-primary w-full hover:bg-primary-focus">
+                        <a href="{{ profile_email_href }}" class="btn btn-primary w-full hover:bg-primary-focus ui-motion">
                             Get In Touch
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -144,7 +144,7 @@
 
                         <!-- Dodatkowy kontakt -->
                         <div class="text-sm">
-                            <p>Email: <a href="{{ profile_email_href }}" class="link link-hover hover:text-primary">{{ profile_email }}</a></p>
+                            <p>Email: <a href="{{ profile_email_href }}" class="link link-hover hover:text-primary ui-link-motion">{{ profile_email }}</a></p>
                         </div>
                     </div>
                 </div>

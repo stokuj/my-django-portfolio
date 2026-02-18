@@ -23,7 +23,7 @@
                 <button
                     type="button"
                     id="clearButton"
-                    class="btn btn-ghost btn-sm absolute right-2 top-1/2 hidden -translate-y-1/2"
+                    class="btn btn-ghost btn-sm absolute right-2 top-1/2 hidden -translate-y-1/2 ui-motion"
                     aria-label="Clear search"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -34,9 +34,9 @@
         </div>
 
         <div id="tagFilter" class="mb-8 flex flex-wrap gap-2">
-            <button class="btn btn-sm btn-primary" data-tag="all" type="button">All Projects</button>
+            <button class="btn btn-sm btn-primary ui-motion" data-tag="all" type="button">All Projects</button>
             {% for tag in all_tags %}
-            <button class="btn btn-sm btn-outline" data-tag="{{ tag.name|lower }}" type="button">{{ tag.name }}</button>
+            <button class="btn btn-sm btn-outline ui-motion" data-tag="{{ tag.name|lower }}" type="button">{{ tag.name }}</button>
             {% endfor %}
         </div>
 
@@ -65,7 +65,7 @@
         <div id="projectGrid" class="hidden grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {% for project in projects %}
             <article
-                class="project-card card border border-base-300 bg-base-100 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                class="project-card card border border-base-300 bg-base-100 shadow-sm ui-card-interactive"
                 data-tags="{% for tag in project.tags.all %}{{ tag.name|lower }}|{% endfor %}"
                 data-title="{{ project.title|lower }}"
                 data-description="{{ project.short_description|lower }}"
@@ -113,11 +113,11 @@
                     </div>
 
                     {% if project.blog and project.blog_url %}
-                    <a href="/blog/{{ project.blog_url }}" class="btn btn-primary btn-sm w-full sm:w-auto">
+                    <a href="/blog/{{ project.blog_url }}" class="btn btn-primary btn-sm w-full sm:w-auto ui-motion">
                         View Project
                     </a>
                     {% else %}
-                    <a href="/projects/{{ project.id }}" class="btn btn-primary btn-sm w-full sm:w-auto">
+                    <a href="/projects/{{ project.id }}" class="btn btn-primary btn-sm w-full sm:w-auto ui-motion">
                         View Project
                     </a>
                     {% endif %}
