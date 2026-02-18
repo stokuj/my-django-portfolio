@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import markdown
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
@@ -73,32 +71,9 @@ def projects(request):
     })
 
 
-def _load_blog_markdown(blog_slug):
-    """Load optional markdown content for a blog slug from local project files."""
-    # Reject path-like slugs; we only allow simple file names.
-    if Path(blog_slug).name != blog_slug:
-        return None
-
-    md_path = Path(__file__).resolve().parent / "content" / "blog" / f"{blog_slug}.md"
-    try:
-        return md_path.read_text(encoding="utf-8")
-    except FileNotFoundError:
-        return None
-
-
 def _load_project_markdown(project):
-    """Load markdown from uploaded project file, then fallback to slug-based local file."""
-    if project.markdown_file:
-        try:
-            project.markdown_file.open("rb")
-            raw = project.markdown_file.read()
-            return raw.decode("utf-8")
-        except (UnicodeDecodeError, OSError):
-            return None
-        finally:
-            project.markdown_file.close()
-
-    return _load_blog_markdown(project.blog_url)
+    """Load markdown content stored directly in the database."""
+    return project.markdown_content or None
 
 
 def _render_markdown_to_html(markdown_content):

@@ -67,7 +67,7 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "main/blog/detail.html")
 
-    def test_blog_detail_renders_even_without_markdown_file(self):
+    def test_blog_detail_renders_even_without_markdown_content(self):
         Project.objects.create(
             title="Missing Blog Template",
             short_description="A project with no matching template",

@@ -1,6 +1,5 @@
 from django.db import models
 import datetime
-from django.core.validators import FileExtensionValidator
 
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -15,12 +14,7 @@ class Tag(models.Model):
 class Project(models.Model):
     title = models.CharField(max_length=200)
     thumbnail = models.ImageField(upload_to='thumbnails/', blank=True, null=True)
-    markdown_file = models.FileField(
-        upload_to='blog_markdown/',
-        blank=True,
-        null=True,
-        validators=[FileExtensionValidator(allowed_extensions=['md'])],
-    )
+    markdown_content = models.TextField(blank=True, default="")
     tech_stack = models.JSONField(default=list, blank=True)
     tools_libraries = models.JSONField(default=list, blank=True)
     short_description = models.CharField(max_length=100)

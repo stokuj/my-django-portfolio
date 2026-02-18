@@ -57,6 +57,7 @@ class ProjectModelTest(TestCase):
 
         self.assertEqual(project.tech_stack, [])
         self.assertEqual(project.tools_libraries, [])
+        self.assertEqual(project.markdown_content, "")
 
     def test_project_tags(self):
         self.assertEqual(self.project.tags.count(), 2)

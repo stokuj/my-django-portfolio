@@ -4,7 +4,7 @@ from .models import Project, Tag, PageView
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ("title", "status", "blog", "blog_url", "markdown_file", "tech_stack", "tools_libraries")
+    list_display = ("title", "status", "blog", "blog_url", "markdown_content", "tech_stack", "tools_libraries")
     search_fields = ("title", "blog_url")
 
 
