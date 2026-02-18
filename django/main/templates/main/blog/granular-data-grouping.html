@@ -55,25 +55,16 @@
 
             <div class="collapse collapse-arrow bg-base-100 border">
                 <input type="checkbox" />
-                <div class="collapse-title text-xl font-medium">Run Experiments</div>
+                <div class="collapse-title text-xl font-medium">How to Run</div>
                 <div class="collapse-content overflow-y-auto">
                     <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>pip install -r requirements.txt
 python main.py</code></pre>
                 </div>
             </div>
 
-            <div class="alert alert-success shadow-lg mt-6">
-                <span>DBSCAN delivered the strongest average accuracy but required careful parameter tuning.</span>
-            </div>
+            <p class="mt-6 text-sm text-base-content/80">DBSCAN delivered the strongest average accuracy but required careful parameter tuning.</p>
 
-            <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
-                <div>
-                    <p>
-                        MIT License
-                        <a href="{{ profile_github_base }}/granular_data_grouping" target="_blank">View source on GitHub</a>
-                    </p>
-                </div>
-            </footer>
+            {% include "main/components/project_footer.html" with repo_path="granular_data_grouping" %}
         </div>
     </div>
 </div>

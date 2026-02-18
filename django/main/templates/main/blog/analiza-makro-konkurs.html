@@ -200,20 +200,19 @@
 
             <div class="h-8"></div>
 
-            <div class="alert alert-info shadow-lg mt-0">
-                <span>Fiskalia's tax system shows strong redistribution effects, especially for employment income.</span>
-            </div>
+            <p class="mt-0 text-sm text-base-content/80">Fiskalia's tax system shows strong redistribution effects, especially for employment income.</p>
 
             <div class="divider"></div>
 
-            <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
-                <div>
-                    <p>
-                        MIT License.
-                        <a href="{{ profile_github_base }}/analiza_makro_konkurs" target="_blank">View source on GitHub</a>
-                    </p>
+            <div class="collapse collapse-arrow bg-base-100 border">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium">How to Run</div>
+                <div class="collapse-content overflow-y-auto">
+                    <p class="text-sm mt-2">Open the project report in RStudio, install required packages, and render the <code>.Rmd</code> file to reproduce the PDF analysis output.</p>
                 </div>
-            </footer>
+            </div>
+
+            {% include "main/components/project_footer.html" with repo_path="analiza_makro_konkurs" %}
         </div>
     </div>
 </div>

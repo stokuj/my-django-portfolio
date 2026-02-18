@@ -23,18 +23,19 @@
                 <li>CLI or web usage examples with sample outputs.</li>
             </ul>
 
-            <div class="alert alert-info shadow-lg mt-6">
-                <span>Draft stage. Detailed documentation will be published in the next update.</span>
+            <div class="divider"></div>
+
+            <div class="collapse collapse-arrow bg-base-100 border">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium">How to Run</div>
+                <div class="collapse-content overflow-y-auto">
+                    <p class="text-sm mt-2">Implementation is in progress. Running instructions will be added with the first public release.</p>
+                </div>
             </div>
 
-            <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
-                <div>
-                    <p>
-                        Source code:
-                        <a href="{{ profile_github_base }}/github-heatmap" target="_blank">View on GitHub</a>
-                    </p>
-                </div>
-            </footer>
+            <p class="mt-6 text-sm text-base-content/80">Draft stage. Detailed documentation will be published in the next update.</p>
+
+            {% include "main/components/project_footer.html" with repo_path="github-heatmap" %}
         </div>
     </div>
 </div>

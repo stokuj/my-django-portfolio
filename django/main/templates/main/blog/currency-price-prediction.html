@@ -57,7 +57,7 @@
 
             <div class="collapse collapse-arrow bg-base-100 border">
                 <input type="checkbox" />
-                <div class="collapse-title text-xl font-medium">Quick Start</div>
+                <div class="collapse-title text-xl font-medium">How to Run</div>
                 <div class="collapse-content overflow-y-auto">
                     <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>uv sync
 uv run python app.py</code></pre>
@@ -68,18 +68,9 @@ uv run python app.py</code></pre>
                 <img src="{% static 'images/currency-price-prediction/GUI_DEMO.png' %}" alt="App GUI preview" loading="lazy" decoding="async" class="block w-auto h-auto p-4" />
             </div>
 
-            <div class="alert alert-warning shadow-lg mt-6">
-                <span>Educational project only. Forecasts are not financial advice.</span>
-            </div>
+            <p class="mt-6 text-sm text-base-content/80">Educational project only. Forecasts are not financial advice.</p>
 
-            <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
-                <div>
-                    <p>
-                        MIT License
-                        <a href="{{ profile_github_base }}/CryptoCurrencyPP" target="_blank">View source on GitHub</a>
-                    </p>
-                </div>
-            </footer>
+            {% include "main/components/project_footer.html" with repo_path="CryptoCurrencyPP" %}
         </div>
     </div>
 </div>

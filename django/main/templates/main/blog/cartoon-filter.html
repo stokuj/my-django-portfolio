@@ -56,18 +56,19 @@
                 <li>.NET Framework 4.8 runtime</li>
             </ul>
 
-            <div class="alert alert-success shadow-lg mt-6">
-                <span>License: MIT (see <code>LICENSE</code> in the repository).</span>
+            <div class="divider"></div>
+
+            <div class="collapse collapse-arrow bg-base-100 border">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium">How to Run</div>
+                <div class="collapse-content overflow-y-auto">
+                    <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>msbuild .\GraphicFilter.sln /t:Build /p:Configuration=Debug /p:Platform=x64
+# then run the desktop app from:
+.\src\GraphicFilterPrototyp\bin\x64\Debug\GraphicFilterPrototyp.exe</code></pre>
+                </div>
             </div>
 
-            <footer class="footer footer-center p-4 bg-base-300 text-base-content rounded-lg mt-8">
-                <div>
-                    <p>
-                        Source code:
-                        <a href="{{ profile_github_base }}/cartoon-filter" target="_blank">View on GitHub</a>
-                    </p>
-                </div>
-            </footer>
+            {% include "main/components/project_footer.html" with repo_path="cartoon-filter" %}
         </div>
     </div>
 </div>
