@@ -8,15 +8,15 @@
     <section class="rounded-box border border-base-300 bg-cover bg-center p-4 sm:p-6" style="background-image: url('{% static 'images/hero-bg2.png' %}')">
         <div class="rounded-box bg-base-100/90 p-6 sm:p-8">
             <p class="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-primary">About Me</p>
-            <h1 class="text-3xl font-bold sm:text-4xl">Hi, I am Krystian Stasica</h1>
+            <h1 class="text-3xl font-bold sm:text-4xl">Hi, I am {{ profile_full_name }}</h1>
             <p class="mt-4 max-w-3xl text-base text-base-content/80 sm:text-lg">
                 Junior Full-Stack and Data Science enthusiast focused on robust Django applications,
                 clean architecture, and practical data tooling.
             </p>
             <div class="mt-6 flex flex-col gap-3 sm:flex-row">
                 <a href="{% url 'projects' %}" class="btn btn-primary btn-sm w-full sm:w-auto">See My Work</a>
-                <a href="mailto:krystian.stasica@outlook.com" class="btn btn-outline btn-sm w-full sm:w-auto">Contact Me</a>
-                <a href="https://github.com/stokuj/" class="btn btn-outline btn-sm w-full sm:w-auto" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="{{ profile_email_href }}" class="btn btn-outline btn-sm w-full sm:w-auto">Contact Me</a>
+                <a href="{{ profile_github_url }}" class="btn btn-outline btn-sm w-full sm:w-auto" target="_blank" rel="noopener noreferrer">GitHub</a>
             </div>
         </div>
     </section>

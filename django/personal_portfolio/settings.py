@@ -75,6 +75,7 @@ TEMPLATES = [
             'context_processors': [
                 'main.context_processors.visitor_counter',
                 'main.context_processors.project_count',
+                'main.context_processors.portfolio_profile',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -185,5 +186,16 @@ LOGGING = {
         'handlers': ['console'],
         'level': 'INFO',
     },
+}
+
+PORTFOLIO_PROFILE = {
+    'site_name': env('PORTFOLIO_SITE_NAME', default='My Portfolio'),
+    'full_name': env('PORTFOLIO_FULL_NAME', default='John Doe'),
+    'email': env('PORTFOLIO_EMAIL', default='john.doe@example.com'),
+    'github_url': env('PORTFOLIO_GITHUB_URL', default='https://github.com/your-username'),
+    'linkedin_url': env(
+        'PORTFOLIO_LINKEDIN_URL',
+        default='https://www.linkedin.com/in/your-profile/',
+    ),
 }
 

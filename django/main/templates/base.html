@@ -47,12 +47,12 @@
                     <div class="flex items-center space-x-2">
 
                         <!-- GitHub -->
-                        <a href="https://github.com/stokuj" class="hidden sm:inline-flex btn btn-ghost btn-circle">
+                        <a href="{{ profile_github_url }}" class="hidden sm:inline-flex btn btn-ghost btn-circle">
                             {% include "main/components/icons/github_icon.html" %}
                         </a>
 
                         <!-- LinkedIn -->
-                        <a href="https://www.linkedin.com/in/krystian-stasica-252b82242/" class="hidden sm:inline-flex btn btn-ghost btn-circle">
+                        <a href="{{ profile_linkedin_url }}" class="hidden sm:inline-flex btn btn-ghost btn-circle">
                             {% include "main/components/icons/linkedin_icon.html" %}
                         </a>
 
@@ -84,7 +84,7 @@
                     <!-- ==================== -->
                     <div class="space-y-4">
                         <!-- Nagłówek z imieniem i nazwiskiem -->
-                        <h2 class="text-2xl font-bold">Krystian Stasica</h2>
+                        <h2 class="text-2xl font-bold">{{ profile_full_name }}</h2>
 
                         <!-- Specjalizacja -->
                         <p class="opacity-75">
@@ -95,12 +95,12 @@
                         <!-- Ikony społecznościowe -->
                         <div class="flex gap-4 mt-4">
                             <!-- GitHub -->
-                            <a href="https://github.com/stokuj" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-circle hover:bg-base-300">
+                            <a href="{{ profile_github_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-circle hover:bg-base-300">
                                 {% include "main/components/icons/github_icon.html" %}
                             </a>
 
                             <!-- LinkedIn -->
-                            <a href="https://www.linkedin.com/in/krystian-stasica-252b82242/" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-circle hover:bg-base-300">
+                            <a href="{{ profile_linkedin_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-circle hover:bg-base-300">
                                 {% include "main/components/icons/linkedin_icon.html" %}
                             </a>
                         </div>
@@ -120,7 +120,7 @@
                         <!-- Druga kolumna linków -->
                         <div class="flex flex-col gap-2">
                             <a href="/projects/" class="link link-hover hover:text-primary">Projects</a>
-                            <a href="mailto:krystian.stasica@outlook.com" class="link link-hover hover:text-primary">Contact me</a>
+                            <a href="{{ profile_email_href }}" class="link link-hover hover:text-primary">Contact me</a>
                             <a href="#TODO" class="link link-hover hover:text-primary">Privacy Policy</a>
                         </div>
                     </div>
@@ -130,7 +130,7 @@
                     <!-- ==================== -->
                     <div class="space-y-4">
                         <!-- Przycisk główny -->
-                        <a href="mailto:krystian.stasica@outlook.com" class="btn btn-primary w-full hover:bg-primary-focus">
+                        <a href="{{ profile_email_href }}" class="btn btn-primary w-full hover:bg-primary-focus">
                             Get In Touch
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -144,7 +144,7 @@
 
                         <!-- Dodatkowy kontakt -->
                         <div class="text-sm">
-                            <p>Email: <a href="mailto:krystian.stasica@outlook.com" class="link link-hover hover:text-primary">krystian.stasica@outlook.com</a></p>
+                            <p>Email: <a href="{{ profile_email_href }}" class="link link-hover hover:text-primary">{{ profile_email }}</a></p>
                         </div>
                     </div>
                 </div>
@@ -163,7 +163,7 @@
                         <!-- Copyright -->
                         <div class="text-center md:text-right">
                             <p class="text-sm opacity-75">
-                                © 2025 Krystian Stasica. All rights reserved.<br>
+                                © 2025 {{ profile_full_name }}. All rights reserved.<br>
                                 Built with Django, Tailwind CSS and ❤️
                             </p>
                         </div>
