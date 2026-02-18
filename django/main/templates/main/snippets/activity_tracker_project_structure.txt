@@ -3,5 +3,7 @@ activity_tracker/
 |-- activityTracker/
 |-- templates/
 |-- static/
+|-- main/
+|-- tests/
 |-- .env.example
 `-- pyproject.toml

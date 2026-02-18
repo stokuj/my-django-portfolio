@@ -8,22 +8,26 @@
         <h1 class="text-3xl font-bold text-primary mb-6">{{ project.title }}</h1>
 
         <div class="prose max-w-none">
-            <p class="text-lg mb-4 mt-2">Activity Tracker is a Django web application for tracking physical activity, sharing posts, and generating activity statistics.</p>
+            <p class="text-lg mb-4 mt-2">
+                A web application for tracking physical activity, sharing posts, and generating activity statistics.
+                Build using Django + Bootstrap + PostgreSQL for backed. Some chart are generated using plotly.
+                Use can download/upload data in CSV format
+            </p>
             
             <div class="divider"></div>
 
             <div class="grid gap-6 mt-6 md:grid-cols-2">
                 <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Tech Stack</h2><div class="flex flex-wrap gap-2"><span class="badge badge-outline">Python 3.10</span><span class="badge badge-outline badge-primary">Django 5</span><span class="badge badge-outline badge-secondary">PostgreSQL</span></div></div></div>
                 <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Libraries/Tools</h2><div class="flex flex-wrap gap-2"><span class="badge badge-outline">uv</span><span class="badge badge-outline">Plotly</span><span class="badge badge-outline">Pandas</span><span class="badge badge-outline">Crispy Forms</span></div></div></div>
-                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Key Features</h2><ul class="list-disc pl-6"><li>User registration and authentication with Google OAuth</li><li>Activity tracking by category and duration</li><li>Social feed with posts, comments, and follow/unfollow</li><li>CSV import/export for activities and Plotly reports</li><li>Profile privacy and account settings</li></ul></div></div>
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Key Features</h2><ul class="list-disc pl-6"><li>User registration and authentication with Google OAuth</li><li>Activity tracking by category and duration</li><li>Social feed with posts, comments, and follow/unfollow</li><li>CSV import/export for activities</li><li>Activity reports with Plotly charts</li><li>Profile privacy and account settings</li></ul></div></div>
                 <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Project Structure</h2><pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>{% include "main/snippets/activity_tracker_project_structure.txt" %}</code></pre></div></div>
             </div>
 
             <div class="divider"></div>
 
-            <div class="collapse collapse-arrow bg-base-100 border">
+            <div class="collapse collapse-arrow bg-base-100 border mb-8">
                 <input type="checkbox" />
-                <div class="collapse-title text-xl font-medium">How to Run</div>
+                <div class="collapse-title text-xl text-primary  font-medium">How to Run</div>
                 <div class="collapse-content overflow-y-auto">
                     <p class="text-sm text-base-content/80 mb-3">In order to run the application, make sure PostgreSQL, Python 3.10, and uv are installed.</p>
                     <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>{% include "main/snippets/activity_tracker_quick_start.txt" %}</code></pre>
@@ -31,17 +35,15 @@
                 </div>
             </div>
 
-            <section class="mt-8">
-                <h2 class="text-2xl font-semibold text-primary mb-4">Showcase</h2>
-
-                <div class="card bg-base-100 shadow mb-6">
-                    <div class="card-body">
-                        <h3 class="card-title">Use Cases</h3>
-
-                    </div>
+            <div class="collapse collapse-arrow bg-base-100 border mb-8">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl text-primary  font-medium">Showcase</div>
+                <div class="collapse-content overflow-y-auto">
+                    User can
                 </div>
+            </div>
 
-            </section>
+            <div class="divider"></div>
 
             <section class="mt-8">
                 <h2 class="text-2xl font-semibold text-primary mb-4">Additional Details</h2>
@@ -50,11 +52,11 @@
                     <div class="card-body">
                         <h3 class="card-title">Use Cases</h3>
                         <ul class="list-disc pl-6">
-                            <li>Track physical activity entries with category and duration.</li>
-                            <li>Review progress by generating charts and activity reports.</li>
-                            <li>Share updates by publishing posts and adding comments.</li>
-                            <li>Discover other people by searching profiles and following accounts.</li>
-                            <li>Keep data portable via CSV export and import.</li>
+                            <li>As a user, I track my physical activity by creating entries with category and duration.</li>
+                            <li>As a user, I review my progress by generating charts and activity reports.</li>
+                            <li>As a user, I share updates by publishing posts and adding comments.</li>
+                            <li>As a user, I discover other people by searching profiles and following accounts.</li>
+                            <li>As a user, I keep my data portable by exporting and importing activities via CSV.</li>
                         </ul>
                     </div>
                 </div>
