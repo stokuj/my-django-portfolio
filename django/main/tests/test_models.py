@@ -27,6 +27,8 @@ class ProjectModelTest(TestCase):
             blog=True,
             blog_url="test-project-blog",
             github_url="https://github.com/example/test",
+            tech_stack=["Python", "Django"],
+            tools_libraries=["pytest", "requests"],
             status="finished",
         )
         self.tag1 = Tag.objects.create(name="python")
@@ -40,8 +42,21 @@ class ProjectModelTest(TestCase):
         self.assertTrue(self.project.blog)
         self.assertEqual(self.project.blog_url, "test-project-blog")
         self.assertEqual(self.project.github_url, "https://github.com/example/test")
+        self.assertEqual(self.project.tech_stack, ["Python", "Django"])
+        self.assertEqual(self.project.tools_libraries, ["pytest", "requests"])
         self.assertEqual(self.project.status, "finished")
         self.assertEqual(str(self.project), "Test Project")
+
+    def test_project_json_fields_default_to_empty_lists(self):
+        project = Project.objects.create(
+            title="Defaults",
+            short_description="Defaults test",
+            blog=False,
+            status="planned",
+        )
+
+        self.assertEqual(project.tech_stack, [])
+        self.assertEqual(project.tools_libraries, [])
 
     def test_project_tags(self):
         self.assertEqual(self.project.tags.count(), 2)

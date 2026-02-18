@@ -21,6 +21,8 @@ class Project(models.Model):
         null=True,
         validators=[FileExtensionValidator(allowed_extensions=['md'])],
     )
+    tech_stack = models.JSONField(default=list, blank=True)
+    tools_libraries = models.JSONField(default=list, blank=True)
     short_description = models.CharField(max_length=100)
     date = models.DateField(default=datetime.date(2022, 5, 1))     
     blog = models.BooleanField(default=True)
