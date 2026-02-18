@@ -4,8 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const tagButtons = document.querySelectorAll("#tagFilter button");
     const projectCards = document.querySelectorAll(".project-card");
     const emptyState = document.getElementById("emptyState");
+    const projectGrid = document.getElementById("projectGrid");
+    const projectGridSkeleton = document.getElementById("projectGridSkeleton");
 
-    if (!searchInput || !clearButton || !emptyState) {
+    if (!searchInput || !clearButton || !emptyState || !projectGrid || !projectGridSkeleton) {
         return;
     }
 
@@ -59,4 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     applyFilters();
+    projectGrid.classList.remove("hidden");
+    projectGridSkeleton.classList.add("hidden");
 });
