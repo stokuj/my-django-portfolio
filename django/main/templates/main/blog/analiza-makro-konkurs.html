@@ -3,203 +3,22 @@
 {% block page_name %}{{ project.title }}{% endblock page_name %}
 
 {% block content %}
-{% load static %}
-
 <div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
     <div class="card bg-base-200 w-full p-8 shadow-xl">
         <h1 class="text-3xl font-bold text-primary mb-6">{{ project.title }}</h1>
 
         <div class="prose max-w-none">
-            <p class="text-lg mb-4 mt-2">
-                This project was prepared for an analytical competition. The topic was the distribution of tax burdens in the fictional state of Fiskalia, based on micro-tax data.
-                The objective was to examine how different income sources and taxation regimes affect redistribution outcomes. The analysis was built in RStudio using an
-                <code>.Rmd</code> report and rendered to <code>.pdf</code>.
-            </p>
+            <p class="text-lg mb-4 mt-2">This competition project analyzes tax burden distribution in the fictional state of Fiskalia using micro-tax data and RStudio workflows.</p>
 
-            <div class="divider"></div>
-
-            <h2 class="text-2xl font-semibold text-secondary">Income Taxes in Fiskalia</h2>
-            <div class="grid md:grid-cols-3 gap-4 mt-6">
-                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
-                    <div class="card-body">
-                        <h3 class="card-title text-accent">PIT</h3>
-                        <p>Employment income tax</p>
-                        <div class="flex flex-col gap-2 mt-3">
-                            <div class="flex justify-between items-center">
-                                <span class="font-medium">Tax scale:</span>
-                                <div class="flex gap-1">
-                                    <span class="badge badge-outline">15%</span>
-                                    <span class="badge badge-outline">40%</span>
-                                </div>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="font-medium">Tax-free allowance:</span>
-                                <span class="text-primary">25k PLN</span>
-                            </div>
-                        </div>
-                        <div class="card-actions justify-end mt-3">
-                            <div class="badge badge-primary">Progressive</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
-                    <div class="card-body">
-                        <h3 class="card-title text-accent">Business Tax</h3>
-                        <p>Income tax on business activity</p>
-                        <div class="flex flex-col gap-2 mt-3">
-                            <div class="flex justify-between items-center">
-                                <span class="font-medium">Flat rate:</span>
-                                <span class="badge badge-outline badge-secondary">20%</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="font-medium">Tax scale option:</span>
-                                <div class="flex gap-1">
-                                    <span class="badge badge-outline">15%</span>
-                                    <span class="badge badge-outline">40%</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-actions justify-end mt-3">
-                            <div class="badge badge-secondary">Regime Choice</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow">
-                    <div class="card-body">
-                        <h3 class="card-title text-accent">Capital Gains</h3>
-                        <p>Tax on capital income</p>
-                        <div class="flex flex-col gap-2 mt-3">
-                            <div class="flex justify-between items-center">
-                                <span class="font-medium">Tax rate:</span>
-                                <span class="badge badge-outline badge-accent">25%</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="font-medium">No allowance</span>
-                                <span class="text-error">0 PLN</span>
-                            </div>
-                        </div>
-                        <div class="card-actions justify-end mt-3">
-                            <div class="badge badge-accent">Flat</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="grid md:grid-cols-3 gap-6 mt-6">
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Key Features</h2><ul class="list-disc pl-6"><li>Tax regime comparison by income source</li><li>Progressivity analysis for labor and business income</li><li>Reform simulation scenarios</li><li>PDF reporting from R Markdown</li></ul></div></div>
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Tech Stack</h2><div class="flex flex-wrap gap-2"><span class="badge badge-outline">R</span><span class="badge badge-outline badge-primary">RStudio</span><span class="badge badge-outline badge-secondary">R Markdown</span><span class="badge badge-outline">Statistical analysis</span></div></div></div>
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Project Structure</h2><pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>analiza-makro-konkurs/
+|-- report.Rmd
+|-- data/
+|-- charts/
+`-- output/report.pdf</code></pre></div></div>
             </div>
-
-            <div class="divider"></div>
-
-            <h2 class="text-2xl font-semibold text-secondary">Labor Tax Progressivity</h2>
-            <p class="mb-4">
-                The effective tax rate increases with income, confirming the progressive nature of labor taxation.
-                Higher deciles bear proportionally larger tax burdens than lower-income groups.
-            </p>
-            <div class="card bg-base-100 shadow w-full mx-auto mb-8 overflow-hidden">
-                <figure class="p-4 pb-0">
-                    <img src="{% static 'images/analiza-makro-konkurs/2.1.png' %}" alt="Tax wedge and empirical tax rate by income level and decile groups" class="rounded-xl w-full border border-base-300" loading="lazy" decoding="async">
-                </figure>
-                <div class="card-body items-center text-center p-4">
-                    <h4 class="card-title">Figure 1</h4>
-                    <p class="text-sm text-gray-500">Gross income vs tax burden percentage (employment income)</p>
-                </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <h2 class="text-2xl font-semibold text-secondary">Business Income Taxation</h2>
-            <p class="mb-4">
-                Progressivity appears limited for business income. The tax wedge rises quickly to around 20% and then flattens,
-                suggesting near-proportional taxation in higher-income groups.
-            </p>
-            <div class="card bg-base-100 shadow w-full mx-auto mb-8 overflow-hidden">
-                <figure class="p-4 pb-0">
-                    <img src="{% static 'images/analiza-makro-konkurs/2.2.png' %}" alt="Tax wedge for business income" class="rounded-xl w-full border border-base-300" loading="lazy" decoding="async">
-                </figure>
-                <div class="card-body items-center text-center p-4">
-                    <h4 class="card-title">Figure 2</h4>
-                    <p class="text-sm text-gray-500">Gross income vs tax burden percentage</p>
-                </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <h2 class="text-2xl font-semibold text-secondary">Proposed Tax Reforms</h2>
-            <div class="grid md:grid-cols-2 gap-6 mt-6 mb-0">
-                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow border-2 border-primary">
-                    <div class="card-body">
-                        <h3 class="card-title text-primary">Scenario A</h3>
-                        <p class="text-lg font-medium mb-4">Lower bottom rate + higher top rate</p>
-                        <ul class="list-disc pl-5 text-sm">
-                            <li>New scale: 10% / 45%</li>
-                            <li>Lower burden for lower incomes</li>
-                            <li>Estimated revenue drop: ~5.8%</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="card bg-base-100 shadow hover:shadow-lg transition-shadow border-2 border-secondary">
-                    <div class="card-body">
-                        <h3 class="card-title text-secondary">Scenario B</h3>
-                        <p class="text-lg font-medium mb-4">2.5k PLN deduction + higher top rate</p>
-                        <ul class="list-disc pl-5 text-sm">
-                            <li>New top rate: 45%</li>
-                            <li>Deduction: 2,500 PLN</li>
-                            <li>Estimated revenue drop: ~4.9%</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="h-8"></div>
-
-            <div class="card bg-base-100 shadow w-full mx-auto mt-0 mb-0 overflow-hidden">
-                <figure class="p-4 pb-0">
-                    <img src="{% static 'images/analiza-makro-konkurs/3.png' %}" alt="Comparison of tax reform effects" class="rounded-xl w-full border border-base-300" loading="lazy" decoding="async">
-                </figure>
-                <div class="card-body items-center text-center p-4">
-                    <h4 class="card-title">Figure 3</h4>
-                    <p class="text-sm text-gray-500">Comparison of reform scenario outcomes</p>
-                </div>
-            </div>
-
-            <div class="h-8"></div>
-
-            <div class="overflow-x-auto">
-                <table class="table w-full">
-                    <thead>
-                        <tr class="bg-base-300">
-                            <th class="text-left">Scenario</th>
-                            <th class="text-right">Total Tax Revenue (PLN)</th>
-                            <th class="text-right">Difference (PLN)</th>
-                            <th class="text-right">Change (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="bg-base-100">
-                            <td class="font-medium">Current system</td>
-                            <td class="text-right">11 157 871 321</td>
-                            <td class="text-right">0</td>
-                            <td class="text-right">0%</td>
-                        </tr>
-                        <tr class="bg-base-100">
-                            <td class="font-medium text-primary">Scenario A</td>
-                            <td class="text-right">10 509 847 295</td>
-                            <td class="text-right text-error">-648 024 026</td>
-                            <td class="text-right text-error">-5.8%</td>
-                        </tr>
-                        <tr class="bg-base-100">
-                            <td class="font-medium text-secondary">Scenario B</td>
-                            <td class="text-right">10 612 548 155</td>
-                            <td class="text-right text-error">-545 323 166</td>
-                            <td class="text-right text-error">-4.9%</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="h-8"></div>
-
-            <p class="mt-0 text-sm text-base-content/80">Fiskalia's tax system shows strong redistribution effects, especially for employment income.</p>
 
             <div class="divider"></div>
 
@@ -207,16 +26,22 @@
                 <input type="checkbox" />
                 <div class="collapse-title text-xl font-medium">How to Run</div>
                 <div class="collapse-content overflow-y-auto">
-                    <p class="text-sm mt-2">Open the project report in RStudio, install required packages, and render the <code>.Rmd</code> file to reproduce the PDF analysis output.</p>
+                    <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code># open in RStudio
+# install required packages
+# then render report
+rmarkdown::render("report.Rmd")</code></pre>
                 </div>
             </div>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Showcase</h2>
+            <div class="card bg-base-100 border border-dashed border-base-300"><div class="card-body"><p class="text-sm text-base-content/70">Showcase section coming soon.</p></div></div>
+
+            <p class="mt-6 text-sm text-base-content/80">Fiskalia's tax system shows strong redistribution effects, especially for employment income.</p>
 
             {% include "main/components/project_footer.html" with repo_path="analiza_makro_konkurs" %}
         </div>
     </div>
 </div>
 {% endblock content %}
-
-
-
-

@@ -3,51 +3,22 @@
 {% block page_name %}{{ project.title }}{% endblock page_name %}
 
 {% block content %}
-
 <div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
     <div class="card bg-base-200 w-full p-8 shadow-xl">
         <h1 class="text-3xl font-bold text-primary mb-6">{{ project.title }}</h1>
 
         <div class="prose max-w-none">
-            <p class="text-lg mb-4 mt-2">
-                This research project compares clustering strategies for a specific objective: identify a single coherent cluster and classify the remaining points as noise. It combines classical algorithms with custom granular quality metrics.
-            </p>
+            <p class="text-lg mb-4 mt-2">Research project comparing clustering strategies to isolate one dominant cluster while classifying remaining points as noise.</p>
 
-            <div class="divider"></div>
-
-            <h2 class="text-2xl font-semibold text-secondary">Key Contributions</h2>
-            <ul class="list-disc pl-6">
-                <li>Comparison of DBSCAN, Single Linkage, and Complete Linkage.</li>
-                <li>Evaluation on multiple synthetic shapes with varied noise levels.</li>
-                <li>Custom P1-P3 and neighbor-based quality criteria for model selection.</li>
-                <li>Automated parameter sweeps and CSV-based experiment outputs.</li>
-            </ul>
-
-            <div class="grid md:grid-cols-2 gap-6 mt-6">
-                <div class="card bg-base-100 shadow">
-                    <div class="card-body">
-                        <h3 class="card-title">Tech Stack</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="badge badge-outline">Python 3.9+</span>
-                            <span class="badge badge-outline badge-primary">NumPy</span>
-                            <span class="badge badge-outline badge-secondary">scikit-learn</span>
-                            <span class="badge badge-outline">SciPy</span>
-                            <span class="badge badge-outline">Pandas</span>
-                            <span class="badge badge-outline">Matplotlib</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card bg-base-100 shadow">
-                    <div class="card-body">
-                        <h3 class="card-title">Project Layout</h3>
-                        <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>granular-data-grouping/
+            <div class="grid md:grid-cols-3 gap-6 mt-6">
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Key Features</h2><ul class="list-disc pl-6"><li>DBSCAN and hierarchical clustering comparison</li><li>Synthetic datasets with controlled noise</li><li>Custom quality metrics for selection</li><li>Automated parameter sweeps</li></ul></div></div>
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Tech Stack</h2><div class="flex flex-wrap gap-2"><span class="badge badge-outline">Python 3.9+</span><span class="badge badge-outline badge-primary">NumPy</span><span class="badge badge-outline badge-secondary">scikit-learn</span><span class="badge badge-outline">SciPy</span><span class="badge badge-outline">Pandas</span><span class="badge badge-outline">Matplotlib</span></div></div></div>
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Project Structure</h2><pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>granular-data-grouping/
 |-- point_generators.py
 |-- DBscan.py
 |-- KNN.py
 |-- main.py
-`-- results/</code></pre>
-                    </div>
-                </div>
+`-- results/</code></pre></div></div>
             </div>
 
             <div class="divider"></div>
@@ -61,6 +32,11 @@ python main.py</code></pre>
                 </div>
             </div>
 
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Showcase</h2>
+            <div class="card bg-base-100 border border-dashed border-base-300"><div class="card-body"><p class="text-sm text-base-content/70">Showcase section coming soon.</p></div></div>
+
             <p class="mt-6 text-sm text-base-content/80">DBSCAN delivered the strongest average accuracy but required careful parameter tuning.</p>
 
             {% include "main/components/project_footer.html" with repo_path="granular_data_grouping" %}
@@ -68,8 +44,3 @@ python main.py</code></pre>
     </div>
 </div>
 {% endblock content %}
-
-
-
-
-

@@ -3,50 +3,23 @@
 {% block page_name %}{{ project.title }}{% endblock page_name %}
 
 {% block content %}
-
 <div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
     <div class="card bg-base-200 w-full p-8 shadow-xl">
         <h1 class="text-3xl font-bold text-primary mb-6">{{ project.title }}</h1>
 
         <div class="prose max-w-none">
-            <p class="text-lg mb-4 mt-2">
-                This project reads a public Lubimyczytac profile library, enriches each book with additional metadata, and converts the final dataset to a CSV format compatible with Goodreads import.
-            </p>
+            <p class="text-lg mb-4 mt-2">Selenium-based pipeline that scrapes a Lubimyczytac library, enriches metadata, and exports a Goodreads-compatible CSV.</p>
 
-            <div class="divider"></div>
-
-            <h2 class="text-2xl font-semibold text-secondary">Pipeline Phases</h2>
-            <ul class="list-disc pl-6">
-                <li>Phase 1: profile pagination scrape to <code>dane/books.csv</code>.</li>
-                <li>Phase 2: per-book enrichment (ISBN and original title) to <code>dane/books_enriched.csv</code>.</li>
-                <li>Phase 3: Goodreads schema mapping to <code>dane/goodreads.csv</code>.</li>
-            </ul>
-
-            <div class="grid md:grid-cols-2 gap-6 mt-6">
-                <div class="card bg-base-100 shadow">
-                    <div class="card-body">
-                        <h3 class="card-title">Tech Stack</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="badge badge-outline">Python 3</span>
-                            <span class="badge badge-outline badge-primary">Selenium</span>
-                            <span class="badge badge-outline badge-secondary">ChromeDriver</span>
-                            <span class="badge badge-outline">CSV processing</span>
-                            <span class="badge badge-outline">uv</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card bg-base-100 shadow">
-                    <div class="card-body">
-                        <h3 class="card-title">Project Layout</h3>
-                        <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>web-scraping-lubimyczytac/
+            <div class="grid md:grid-cols-3 gap-6 mt-6">
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Key Features</h2><ul class="list-disc pl-6"><li>Pagination scraping from public profile</li><li>ISBN and original title enrichment</li><li>Goodreads schema mapping</li><li>Automated CSV pipeline stages</li></ul></div></div>
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Tech Stack</h2><div class="flex flex-wrap gap-2"><span class="badge badge-outline">Python 3</span><span class="badge badge-outline badge-primary">Selenium</span><span class="badge badge-outline badge-secondary">ChromeDriver</span><span class="badge badge-outline">CSV</span><span class="badge badge-outline">uv</span></div></div></div>
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Project Structure</h2><pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>web-scraping-lubimyczytac/
 |-- scraper/
 |-- models/
 |-- data_io/
 |-- dane/
 |-- main.py
-`-- config.example.ini</code></pre>
-                    </div>
-                </div>
+`-- config.example.ini</code></pre></div></div>
             </div>
 
             <div class="divider"></div>
@@ -64,6 +37,11 @@ uv run python main.py</code></pre>
                 </div>
             </div>
 
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Showcase</h2>
+            <div class="card bg-base-100 border border-dashed border-base-300"><div class="card-body"><p class="text-sm text-base-content/70">Showcase section coming soon.</p></div></div>
+
             <p class="mt-6 text-sm text-base-content/80">Educational pipeline intended for workflow practice in scraping and CSV transformation.</p>
 
             {% include "main/components/project_footer.html" with repo_path="web_scraping_lubimyczytac" %}
@@ -71,8 +49,3 @@ uv run python main.py</code></pre>
     </div>
 </div>
 {% endblock content %}
-
-
-
-
-

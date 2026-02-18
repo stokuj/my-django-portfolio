@@ -3,46 +3,20 @@
 {% block page_name %}{{ project.title }}{% endblock page_name %}
 
 {% block content %}
-
 <div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
     <div class="card bg-base-200 w-full p-8 shadow-xl">
         <h1 class="text-3xl font-bold text-primary mb-6">{{ project.title }}</h1>
 
         <div class="prose max-w-none">
-            <p class="text-lg mb-4 mt-2">
-                The application implements core fuzzy-number operations where each value is represented by three parameters: left bound, center, and right bound.
-            </p>
+            <p class="text-lg mb-4 mt-2">CLI application for operations on triangular fuzzy numbers, including arithmetic and chained calculations.</p>
 
-            <div class="divider"></div>
-
-            <h2 class="text-2xl font-semibold text-secondary">Supported Operations</h2>
-            <ul class="list-disc pl-6">
-                <li>Display a single fuzzy number.</li>
-                <li>Multiply by a scalar and exponentiation.</li>
-                <li>Add, subtract, and multiply two fuzzy numbers.</li>
-                <li>Evaluate chained operations across multiple inputs.</li>
-            </ul>
-
-            <div class="grid md:grid-cols-2 gap-6 mt-6">
-                <div class="card bg-base-100 shadow">
-                    <div class="card-body">
-                        <h3 class="card-title">Tech Stack</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="badge badge-outline">Python 3.10+</span>
-                            <span class="badge badge-outline badge-primary">uv</span>
-                            <span class="badge badge-outline badge-secondary">CLI workflow</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card bg-base-100 shadow">
-                    <div class="card-body">
-                        <h3 class="card-title">Project Layout</h3>
-                        <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>NTwI-obliczenia-ziarniste/
+            <div class="grid md:grid-cols-3 gap-6 mt-6">
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Key Features</h2><ul class="list-disc pl-6"><li>Single fuzzy number display</li><li>Scalar multiplication and exponentiation</li><li>Binary arithmetic on fuzzy numbers</li><li>Chained expression support</li></ul></div></div>
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Tech Stack</h2><div class="flex flex-wrap gap-2"><span class="badge badge-outline">Python 3.10+</span><span class="badge badge-outline badge-primary">CLI</span><span class="badge badge-outline badge-secondary">uv</span></div></div></div>
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Project Structure</h2><pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>NTwI-obliczenia-ziarniste/
 |-- app.py
 |-- RozmytyZbior.py
-`-- README.md</code></pre>
-                    </div>
-                </div>
+`-- README.md</code></pre></div></div>
             </div>
 
             <div class="divider"></div>
@@ -58,6 +32,11 @@ uv run python app.py 2 3 4 + 5 6 7 - 1 2 3</code></pre>
                 </div>
             </div>
 
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Showcase</h2>
+            <div class="card bg-base-100 border border-dashed border-base-300"><div class="card-body"><p class="text-sm text-base-content/70">Showcase section coming soon.</p></div></div>
+
             <p class="mt-6 text-sm text-base-content/80">The project focuses on educational fuzzy-set arithmetic with triangular membership functions.</p>
 
             {% include "main/components/project_footer.html" with repo_path="NTwI-obliczenia-ziarniste-krystian-stasica" %}
@@ -65,8 +44,3 @@ uv run python app.py 2 3 4 + 5 6 7 - 1 2 3</code></pre>
     </div>
 </div>
 {% endblock content %}
-
-
-
-
-

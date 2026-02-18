@@ -3,51 +3,22 @@
 {% block page_name %}{{ project.title }}{% endblock page_name %}
 
 {% block content %}
-
 <div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
     <div class="card bg-base-200 w-full p-8 shadow-xl">
         <h1 class="text-3xl font-bold text-primary mb-6">{{ project.title }}</h1>
 
         <div class="prose max-w-none">
-            <p class="text-lg mb-4 mt-2">
-                Activity Tracker is a Django 5 project focused on daily physical activity management. It combines structured tracking, social interactions, and visual reporting in one workflow.
-            </p>
+            <p class="text-lg mb-4 mt-2">Activity Tracker is a Django 5 project focused on daily physical activity management with social interactions and visual reporting.</p>
 
-            <div class="divider"></div>
-
-            <h2 class="text-2xl font-semibold text-secondary">Highlights</h2>
-            <ul class="list-disc pl-6">
-                <li>User auth with Google OAuth support via django-allauth.</li>
-                <li>Activity tracking by category and duration.</li>
-                <li>Post/comment feed with follow and profile privacy controls.</li>
-                <li>CSV import/export and Plotly-based activity reporting.</li>
-            </ul>
-
-            <div class="grid md:grid-cols-2 gap-6 mt-6">
-                <div class="card bg-base-100 shadow">
-                    <div class="card-body">
-                        <h3 class="card-title">Tech Stack</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="badge badge-outline">Python 3.10</span>
-                            <span class="badge badge-outline badge-primary">Django 5</span>
-                            <span class="badge badge-outline badge-secondary">PostgreSQL</span>
-                            <span class="badge badge-outline">Plotly</span>
-                            <span class="badge badge-outline">Pandas</span>
-                            <span class="badge badge-outline">uv</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card bg-base-100 shadow">
-                    <div class="card-body">
-                        <h3 class="card-title">Project Layout</h3>
-                        <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>activity_tracker/
+            <div class="grid md:grid-cols-3 gap-6 mt-6">
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Key Features</h2><ul class="list-disc pl-6"><li>Google OAuth authentication</li><li>Activity tracking by category and duration</li><li>Social feed with comments and follows</li><li>CSV import/export and reports</li></ul></div></div>
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Tech Stack</h2><div class="flex flex-wrap gap-2"><span class="badge badge-outline">Python 3.10</span><span class="badge badge-outline badge-primary">Django 5</span><span class="badge badge-outline badge-secondary">PostgreSQL</span><span class="badge badge-outline">Plotly</span><span class="badge badge-outline">Pandas</span><span class="badge badge-outline">uv</span></div></div></div>
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Project Structure</h2><pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>activity_tracker/
 |-- manage.py
 |-- activityTracker/
 |-- templates/
 |-- static/
-`-- pyproject.toml</code></pre>
-                    </div>
-                </div>
+`-- pyproject.toml</code></pre></div></div>
             </div>
 
             <div class="divider"></div>
@@ -62,6 +33,11 @@ uv run python manage.py runserver</code></pre>
                 </div>
             </div>
 
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Showcase</h2>
+            <div class="card bg-base-100 border border-dashed border-base-300"><div class="card-body"><p class="text-sm text-base-content/70">Showcase section coming soon.</p></div></div>
+
             <p class="mt-6 text-sm text-base-content/80">Local startup validates PostgreSQL connectivity and fails fast on invalid DB config.</p>
 
             {% include "main/components/project_footer.html" with repo_path="activity_tracker" %}
@@ -69,8 +45,3 @@ uv run python manage.py runserver</code></pre>
     </div>
 </div>
 {% endblock content %}
-
-
-
-
-

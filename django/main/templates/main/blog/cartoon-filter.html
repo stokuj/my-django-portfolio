@@ -3,57 +3,23 @@
 {% block page_name %}{{ project.title }}{% endblock page_name %}
 
 {% block content %}
-
 <div class="container mx-auto w-full px-4 py-6 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-3/4">
     <div class="card bg-base-200 w-full p-8 shadow-xl">
         <h1 class="text-3xl font-bold text-primary mb-6">{{ project.title }}</h1>
 
         <div class="prose max-w-none">
-            <p class="text-lg mb-4 mt-2">
-                <code>cartoon-filter</code> is an engineering project focused on building a cartoon-style image filter and comparing performance between C++ and x64 Assembly implementations inside one Windows solution.
-            </p>
-            <p class="text-lg mb-4">
-                The main objective was educational and experimental: implement the same processing approach in C++ and ASM, integrate both into a C# desktop app, and use the project to study cross-language architecture, native interop, and optimization tradeoffs.
-            </p>
-            <p class="text-lg mb-4">
-                The objective was achieved: both native paths were implemented and integrated, the application runs in x64 builds, and the full workflow (load image, tune <code>density</code>, apply filter, save output) works in a single executable environment.
-            </p>
+            <p class="text-lg mb-4 mt-2">Cartoon Filter is an engineering project comparing performance between C++ and x64 ASM implementations integrated into one desktop app.</p>
 
-            <div class="divider"></div>
-
-            <h2 class="text-2xl font-semibold text-secondary">Software Engineering Outcomes</h2>
-            <ul class="list-disc pl-6">
-                <li>Working cross-language architecture: <code>C# -&gt; C++/ASM DLL</code> with runtime integration.</li>
-                <li>Functional image-processing pipeline for BMP, JPG, and PNG formats.</li>
-                <li>Practical setup for C++ vs ASM speed comparison and low-level optimization learning.</li>
-            </ul>
-
-            <div class="divider"></div>
-
-            <h2 class="text-2xl font-semibold text-secondary">Simplified Project Structure</h2>
-            <pre class="bg-base-300 rounded-lg p-4 overflow-x-auto text-sm leading-relaxed"><code>cartoon-filter/
+            <div class="grid md:grid-cols-3 gap-6 mt-6">
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Key Features</h2><ul class="list-disc pl-6"><li>C# to C++/ASM DLL integration</li><li>Image filtering for BMP/JPG/PNG</li><li>x64-focused native build setup</li><li>Performance comparison baseline</li></ul></div></div>
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Tech Stack</h2><div class="flex flex-wrap gap-2"><span class="badge badge-outline">C#</span><span class="badge badge-outline badge-primary">C++</span><span class="badge badge-outline badge-secondary">x64 ASM</span><span class="badge badge-outline">WinForms</span><span class="badge badge-outline">Visual Studio 2022</span></div></div></div>
+                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Project Structure</h2><pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>cartoon-filter/
 |- GraphicFilter.sln
-|- README.md
 `- src/
-   |- GraphicFilterPrototyp/   # C# WinForms app (.NET Framework 4.8)
-   |- CppCode/                 # Native C++ DLL
-   `- ASMCode/                 # x64 MASM DLL</code></pre>
-
-            <div class="divider"></div>
-
-            <h2 class="text-2xl font-semibold text-secondary">Build and Validation</h2>
-            <p class="mb-3">
-                Build and validation are centered on Visual Studio 2022 and the <code>x64</code> target. Build <code>GraphicFilter.sln</code> (Debug or Release), then run artifacts from <code>bin\x64\&lt;Configuration&gt;\</code>.
-            </p>
-            <pre class="bg-base-300 rounded-lg p-4 overflow-x-auto text-sm leading-relaxed"><code>msbuild .\GraphicFilter.sln /t:Build /p:Configuration=Debug /p:Platform=x64</code></pre>
-
-            <h2 class="text-2xl font-semibold text-secondary mt-6">Requirements</h2>
-            <ul class="list-disc pl-6">
-                <li>Windows (x64)</li>
-                <li>Visual Studio 2022 with C#/.NET desktop and C++ workloads</li>
-                <li>MASM build tools</li>
-                <li>.NET Framework 4.8 runtime</li>
-            </ul>
+   |- GraphicFilterPrototyp/
+   |- CppCode/
+   `- ASMCode/</code></pre></div></div>
+            </div>
 
             <div class="divider"></div>
 
@@ -62,17 +28,18 @@
                 <div class="collapse-title text-xl font-medium">How to Run</div>
                 <div class="collapse-content overflow-y-auto">
                     <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>msbuild .\GraphicFilter.sln /t:Build /p:Configuration=Debug /p:Platform=x64
-# then run the desktop app from:
+# then run:
 .\src\GraphicFilterPrototyp\bin\x64\Debug\GraphicFilterPrototyp.exe</code></pre>
                 </div>
             </div>
+
+            <div class="divider"></div>
+
+            <h2 class="text-2xl font-semibold text-secondary">Showcase</h2>
+            <div class="card bg-base-100 border border-dashed border-base-300"><div class="card-body"><p class="text-sm text-base-content/70">Showcase section coming soon.</p></div></div>
 
             {% include "main/components/project_footer.html" with repo_path="cartoon-filter" %}
         </div>
     </div>
 </div>
 {% endblock content %}
-
-
-
-
