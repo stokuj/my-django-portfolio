@@ -52,7 +52,7 @@ class ViewsTest(TestCase):
 
         response = self.client.get(reverse("projects"))
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "/projects/")
+        self.assertContains(response, no_slug_project.title)
         self.assertNotContains(response, "/blog/None")
 
     def test_blog_detail_renders_existing_template(self):
