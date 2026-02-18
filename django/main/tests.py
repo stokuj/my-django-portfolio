@@ -115,7 +115,7 @@ class ViewsTest(TestCase):
         response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'main/home.html')
-        self.assertIn('projects', response.context)
+        self.assertIn('timeline_sections', response.context)
 
     def test_about_view(self):
         response = self.client.get(reverse('about'))

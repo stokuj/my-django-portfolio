@@ -56,11 +56,7 @@
             <article class="card border border-base-300 bg-base-100">
                 <div class="card-body p-5">
                     <h2 class="card-title text-lg text-primary">Overview</h2>
-                    {% if project.description %}
-                    <div class="text-sm text-base-content/80">{{ project.description|linebreaks }}</div>
-                    {% else %}
                     <p class="text-sm text-base-content/80">{{ project.short_description }}</p>
-                    {% endif %}
                 </div>
             </article>
 
@@ -76,33 +72,6 @@
                     </div>
                 </div>
             </article>
-
-            {% if project.challenges %}
-            <article class="card border border-base-300 bg-base-100 md:col-span-2">
-                <div class="card-body p-5">
-                    <h2 class="card-title text-lg text-primary">Technical Challenges and Solutions</h2>
-                    <div class="text-sm text-base-content/80">{{ project.challenges|linebreaks }}</div>
-                </div>
-            </article>
-            {% endif %}
-
-            {% if project.features %}
-            <article class="card border border-base-300 bg-base-100 md:col-span-2">
-                <div class="card-body p-5">
-                    <h2 class="card-title text-lg text-primary">Key Features</h2>
-                    <div class="text-sm text-base-content/80">{{ project.features|linebreaks }}</div>
-                </div>
-            </article>
-            {% endif %}
-
-            {% if project.technical_details %}
-            <article class="card border border-base-300 bg-base-100 md:col-span-2">
-                <div class="card-body p-5">
-                    <h2 class="card-title text-lg text-primary">Technical Details and Impact</h2>
-                    <div class="text-sm text-base-content/80">{{ project.technical_details|linebreaks }}</div>
-                </div>
-            </article>
-            {% endif %}
         </section>
     </article>
 </div>
