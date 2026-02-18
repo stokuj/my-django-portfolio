@@ -8,45 +8,62 @@
         <h1 class="text-3xl font-bold text-primary mb-6">{{ project.title }}</h1>
 
         <div class="prose max-w-none">
-            <p class="text-lg mb-4 mt-2">CLI application for operations on triangular fuzzy numbers, including arithmetic and chained calculations.</p>
+            <p class="text-lg mb-4 mt-2">A fuzzy-granule distance project from the New Technologies in Computer Science course, focused on arithmetic over triangular fuzzy numbers.</p>
 
-            <div class="grid md:grid-cols-3 gap-6 mt-6">
-                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Key Features</h2><ul class="list-disc pl-6"><li>Single fuzzy number display</li><li>Scalar multiplication and exponentiation</li><li>Binary arithmetic on fuzzy numbers</li><li>Chained expression support</li></ul></div></div>
-                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Tech Stack</h2><div class="flex flex-wrap gap-2"><span class="badge badge-outline">Python 3.10+</span><span class="badge badge-outline badge-primary">CLI</span><span class="badge badge-outline badge-secondary">uv</span></div></div></div>
-                <div class="card bg-base-100 shadow"><div class="card-body"><h2 class="card-title">Project Structure</h2><pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>NTwI-obliczenia-ziarniste/
-|-- app.py
-|-- RozmytyZbior.py
-`-- README.md</code></pre></div></div>
-            </div>
+            <section class="mt-6">
+                <h2 class="text-2xl font-semibold mb-3">Fuzzy Logic</h2>
+                <p>The program implements arithmetic operations on fuzzy numbers represented by triangular membership functions.</p>
+                <p>Each fuzzy number is defined by three parameters: <code>x1</code> (left point), <code>m</code> (center with membership degree 1), and <code>x2</code> (right point).</p>
+                <p>A fuzzy set assigns each element a membership degree in the range <code>[0, 1]</code>.</p>
+                <p>This project uses triangular membership functions parameterized by <code>x1</code>, <code>m</code>, and <code>x2</code>.</p>
+            </section>
 
-            <div class="divider"></div>
-
-            <div class="collapse collapse-arrow bg-base-100 border">
-                <input type="checkbox" />
-                <div class="collapse-title text-xl font-medium">How to Run</div>
-                <div class="collapse-content overflow-y-auto">
-                    <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>uv run python app.py 2 3 4
-uv run python app.py 2 3 4 * 2
-uv run python app.py 2 3 4 + 5 6 7
-uv run python app.py 2 3 4 + 5 6 7 - 1 2 3</code></pre>
+            <div class="mt-6 flex justify-center">
+                <div class="card bg-base-100 shadow w-full md:w-3/5">
+                    <div class="card-body">
+                        <h2 class="card-title">Supported Operations</h2>
+                        <ul class="list-disc pl-6 space-y-1">
+                            <li>Display a single fuzzy number</li>
+                            <li>Multiply by a real scalar</li>
+                            <li>Raise a fuzzy number to a power</li>
+                            <li>Add two fuzzy numbers</li>
+                            <li>Subtract two fuzzy numbers</li>
+                            <li>Multiply two fuzzy numbers</li>
+                            <li>Evaluate chained expressions</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
-            <div class="collapse collapse-arrow bg-base-100 border mt-6">
-                <input type="checkbox" />
-                <div class="collapse-title text-xl font-medium">Showcase</div>
-                <div class="collapse-content overflow-y-auto">
-                    <p class="text-sm mt-2 text-base-content/70">Showcase section coming soon.</p>
-                </div>
-            </div>
+            <section class="mt-6">
+                <h2 class="text-2xl font-semibold mb-3">CLI Usage</h2>
+                <p>Install dependencies:</p>
+                <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>uv sync</code></pre>
+                <p class="mt-3"><strong>Display a single fuzzy number:</strong></p>
+                <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>uv run python app.py x1 m x2</code></pre>
+                <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto mt-2"><code>uv run python app.py 2 3 4</code></pre>
+                <p class="mt-3"><strong>Scalar multiplication or exponentiation:</strong></p>
+                <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>uv run python app.py x1 m x2 operator value</code></pre>
+                <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto mt-2"><code>uv run python app.py 2 3 4 * 2
+uv run python app.py 2 3 4 ^ 2</code></pre>
+                <p class="mt-3"><strong>Operations on two fuzzy numbers:</strong></p>
+                <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>uv run python app.py x1_A m_A x2_A operator x1_B m_B x2_B</code></pre>
+                <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto mt-2"><code>uv run python app.py 2 3 4 + 5 6 7
+uv run python app.py 2 3 4 - 1 2 3
+uv run python app.py 2 3 4 * 1 2 3</code></pre>
+                <p class="mt-3"><strong>Chained operations:</strong></p>
+                <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto"><code>uv run python app.py x1_A m_A x2_A operator1 x1_B m_B x2_B operator2 x1_C m_C x2_C ...</code></pre>
+                <pre class="bg-base-300 p-4 rounded-lg text-xs overflow-x-auto mt-2"><code>uv run python app.py 2 3 4 + 5 6 7 - 1 2 3</code></pre>
+            </section>
 
-            <p class="mt-6 text-sm text-base-content/80">The project focuses on educational fuzzy-set arithmetic with triangular membership functions.</p>
+            <section class="mt-6">
+                <h2 class="text-2xl font-semibold mb-3">Implementation Notes</h2>
+                <p>The tool is implemented as a lightweight Python CLI application (Python 3.10+) with <code>uv</code> used for dependency and environment management.</p>
+                <p>The codebase is intentionally small and focused: <code>app.py</code> handles command-line input and operation flow, while <code>RozmytyZbior.py</code> contains fuzzy-number modeling and arithmetic logic.</p>
+            </section>
 
-            {% include "main/components/project_footer.html" with repo_path="NTwI-obliczenia-ziarniste-krystian-stasica" %}
+            {% include "main/components/project_footer.html" with repo_path="NTwI-obliczenia-ziarniste" %}
         </div>
     </div>
 </div>
 {% endblock content %}
-
-
-

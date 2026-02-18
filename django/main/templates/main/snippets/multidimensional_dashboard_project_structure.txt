@@ -1,0 +1,16 @@
+.
+|- app/
+|  |- controller.py
+|  |- model.py
+|  |- view.py
+|  |- data.py
+|  |- resourceController.py
+|  |- dashApp.py
+|  |- assets/
+|  \- web/
+|     \- main.html
+|- Exemplary_data/
+|  \- League_of_legends_stats.csv
+|- main.py
+|- pyproject.toml
+\- uv.lock
