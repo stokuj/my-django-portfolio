@@ -12,7 +12,29 @@ def handler500(request):
 
 def home(request):
     projects = Project.objects.prefetch_related('tags').order_by('-date')
-    return render(request, "main/home.html", {'projects': projects})
+    status_labels = {
+        'planned': 'Planned',
+        'ongoing': 'Ongoing',
+        'finished': 'Finished',
+    }
+    status_order = ['planned', 'ongoing', 'finished']
+
+    projects_by_status = {status: [] for status in status_order}
+    for project in projects:
+        if project.status in projects_by_status:
+            projects_by_status[project.status].append(project)
+
+    timeline_sections = [
+        {
+            'status': status,
+            'title': status_labels[status],
+            'checked': status == 'finished',
+            'projects': projects_by_status[status],
+        }
+        for status in status_order
+    ]
+
+    return render(request, "main/home.html", {'timeline_sections': timeline_sections})
 
 
 def about(request):
