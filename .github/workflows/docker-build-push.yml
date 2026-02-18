@@ -31,6 +31,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Build CSS (preflight)
+        run: |
+          npm ci
+          npm run build:css:prod
+
       - name: Create temporary .env for Compose parsing
         run: |
           cat > .env << 'EOF'
