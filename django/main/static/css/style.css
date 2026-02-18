@@ -1710,8 +1710,14 @@
   .static {
     position: static;
   }
+  .sticky {
+    position: sticky;
+  }
   .top-1\/2 {
     top: calc(1/2 * 100%);
+  }
+  .top-24 {
+    top: calc(var(--spacing) * 24);
   }
   .right-2 {
     right: calc(var(--spacing) * 2);
@@ -2237,6 +2243,9 @@
   .w-72 {
     width: calc(var(--spacing) * 72);
   }
+  .w-\[300px\] {
+    width: 300px;
+  }
   .w-full {
     width: 100%;
   }
@@ -2254,6 +2263,15 @@
   }
   .max-w-none {
     max-width: none;
+  }
+  .min-w-0 {
+    min-width: calc(var(--spacing) * 0);
+  }
+  .flex-1 {
+    flex: 1;
+  }
+  .shrink-0 {
+    flex-shrink: 0;
   }
   .-translate-y-1\/2 {
     --tw-translate-y: calc(calc(1/2 * 100%) * -1);
@@ -2417,12 +2435,6 @@
   .bg-base-200 {
     background-color: var(--color-base-200);
   }
-  .bg-base-200\/80 {
-    background-color: var(--color-base-200);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-base-200) 80%, transparent);
-    }
-  }
   .bg-base-300 {
     background-color: var(--color-base-300);
   }
@@ -2475,6 +2487,9 @@
   }
   .pt-6 {
     padding-top: calc(var(--spacing) * 6);
+  }
+  .pr-6 {
+    padding-right: calc(var(--spacing) * 6);
   }
   .pr-12 {
     padding-right: calc(var(--spacing) * 12);
@@ -2784,19 +2799,14 @@
       text-align: right;
     }
   }
-  .lg\:absolute {
+  .lg\:block {
     @media (width >= 64rem) {
-      position: absolute;
+      display: block;
     }
   }
-  .lg\:top-24 {
+  .lg\:flex {
     @media (width >= 64rem) {
-      top: calc(var(--spacing) * 24);
-    }
-  }
-  .lg\:right-0 {
-    @media (width >= 64rem) {
-      right: calc(var(--spacing) * 0);
+      display: flex;
     }
   }
   .lg\:hidden {
@@ -2804,25 +2814,9 @@
       display: none;
     }
   }
-  .lg\:w-80 {
-    @media (width >= 64rem) {
-      width: calc(var(--spacing) * 80);
-    }
-  }
-  .lg\:translate-x-1\/4 {
-    @media (width >= 64rem) {
-      --tw-translate-x: calc(1/4 * 100%);
-      translate: var(--tw-translate-x) var(--tw-translate-y);
-    }
-  }
   .lg\:px-8 {
     @media (width >= 64rem) {
       padding-inline: calc(var(--spacing) * 8);
-    }
-  }
-  .lg\:pr-\[22rem\] {
-    @media (width >= 64rem) {
-      padding-right: 22rem;
     }
   }
   .xl\:grid-cols-3 {

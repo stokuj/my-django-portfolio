@@ -63,12 +63,14 @@
             </div>
         </nav>
 
-        test
-        <!-- Content -->
-        <main class="container mx-auto px-4 py-8">
-            {% block content %}
-            {% endblock %}
-        </main>
+        <!-- Content + Sidebar -->
+        <div class="w-full lg:flex">
+            <main class="flex-1 min-w-0 py-8">
+                {% block content %}
+                {% endblock %}
+            </main>
+            {% block sidebar %}{% endblock %}
+        </div>
 
         <!-- ==================== -->
         <!-- FOOTER - GŁÓWNY KONTENER -->
