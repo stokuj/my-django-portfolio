@@ -202,7 +202,7 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULE = {
     "sync-project-markdowns-hourly": {
         "task": "main.tasks.sync_project_markdowns_task",
-        "schedule": crontab(minute=0),
+        "schedule": crontab(hour="*/2", minute=0),
     },
 }
 
