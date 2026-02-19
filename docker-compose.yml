@@ -22,7 +22,7 @@ services:
 
   web:
     build: .
-    image: ${IMAGE_NAME}:latest
+    image: ghcr.io/stokuj/my-django-portfolio:latest
     env_file:
       - .env
     working_dir: /app/django
@@ -57,7 +57,7 @@ services:
 
   worker:
     build: .
-    image: ${IMAGE_NAME}:latest
+    image: ghcr.io/stokuj/my-django-portfolio:latest
     env_file:
       - .env
     working_dir: /app/django
@@ -85,7 +85,7 @@ services:
 
   beat:
     build: .
-    image: ${IMAGE_NAME}:latest
+    image: ghcr.io/stokuj/my-django-portfolio:latest
     restart: always
     env_file:
       - .env
