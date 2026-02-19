@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
 
-from main.models import PageView, Project, Tag
+from main.models import PageView, PortfolioProfile, Project, Tag
 
 
 class TagModelTest(TestCase):
@@ -116,3 +116,15 @@ class PageViewModelTest(TestCase):
     def test_pageview_creation(self):
         page_view = PageView.objects.create(count=10)
         self.assertEqual(page_view.count, 10)
+
+
+class PortfolioProfileModelTest(TestCase):
+    def test_profile_defaults(self):
+        profile = PortfolioProfile.objects.get(is_active=True)
+        self.assertEqual(profile.site_name, "My Portfolio")
+        self.assertEqual(profile.full_name, "John Doe")
+        self.assertTrue(profile.is_active)
+
+    def test_only_one_active_profile_is_allowed(self):
+        with self.assertRaises(IntegrityError):
+            PortfolioProfile.objects.create(full_name="Second Active", is_active=True)

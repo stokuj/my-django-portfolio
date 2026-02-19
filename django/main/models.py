@@ -1,6 +1,7 @@
 from django.db import models
 import datetime
 
+
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
@@ -56,3 +57,32 @@ class PageView(models.Model):
         """
         instance, created = cls.objects.get_or_create(id=1)
         return instance
+
+
+class PortfolioProfile(models.Model):
+    site_name = models.CharField(max_length=100, default="My Portfolio")
+    full_name = models.CharField(max_length=120, default="John Doe")
+    role_line = models.CharField(
+        max_length=160,
+        default="Junior Full-Stack Developer & Data Science enthusiast",
+    )
+    specialization_line = models.CharField(
+        max_length=160,
+        default="Specialized in Python, Django, PostgreSQL",
+    )
+    email = models.EmailField(blank=True, default="example@mail.com")
+    github_url = models.URLField(blank=True, default="https://github.com/your-username")
+    linkedin_url = models.URLField(blank=True, default="https://www.linkedin.com/in/your-profile/")
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["is_active"],
+                condition=models.Q(is_active=True),
+                name="uniq_active_portfolio_profile",
+            ),
+        ]
+
+    def __str__(self):
+        return self.full_name

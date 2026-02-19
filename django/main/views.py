@@ -1,8 +1,7 @@
 import markdown
-from django.conf import settings
 from django.shortcuts import get_object_or_404, render
 
-from .models import Project, Tag
+from .models import PortfolioProfile, Project, Tag
 
 
 BLOG_REPO_PATHS = {
@@ -92,10 +91,8 @@ def _build_readme_url(project, repo_path):
     if project.github_url:
         return f"{project.github_url.rstrip('/')}#readme"
 
-    github_base = settings.PORTFOLIO_PROFILE.get(
-        "github_base",
-        "https://github.com/your-username",
-    ).rstrip("/")
+    profile = PortfolioProfile.objects.filter(is_active=True).first() or PortfolioProfile()
+    github_base = (profile.github_url or "https://github.com/your-username").rstrip("/")
     return f"{github_base}/{repo_path}#readme"
 
 

@@ -116,16 +116,8 @@ MY-DJANGO-PORTFOLIO/
 
 Core environment variables are defined in `.env.example`.
 
-Important optional profile variables:
-- `PORTFOLIO_SITE_NAME`
-- `PORTFOLIO_FULL_NAME`
-- `PORTFOLIO_ROLE_LINE`
-- `PORTFOLIO_SPECIALIZATION_LINE`
-- `PORTFOLIO_EMAIL`
-- `PORTFOLIO_GITHUB_URL`
-- `PORTFOLIO_LINKEDIN_URL`
-
-These values are rendered in templates via a Django context processor, so you can update site identity and contact details without editing templates.
+Profile identity/contact data is stored in the database table `main_portfolioprofile` (editable via Django Admin).
+The app uses the active profile record (`is_active=True`), and model defaults are used when creating the first profile row.
 
 ## Solved Problems
 
