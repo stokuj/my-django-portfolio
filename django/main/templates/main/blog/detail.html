@@ -34,13 +34,13 @@
 {% endblock content %}
 
 {% block sidebar %}
-<aside class="hidden 2xl:block absolute top-0 left-0 w-60 h-full">
-    <div class="sticky top-[50vh] -translate-y-1/2 space-y-4">
+<aside class="hidden 2xl:block fixed left-4 top-1/2 w-60 -translate-y-1/2">
+    <div class="max-h-[calc(100vh-8rem)] overflow-y-auto space-y-4 pr-1">
         {% include "main/blog/components/blog_projects_sidebar.html" %}
     </div>
 </aside>
-<aside class="hidden 2xl:block absolute top-0 right-0 w-60 h-full">
-    <div class="sticky top-[50vh] -translate-y-1/2 space-y-4">
+<aside class="hidden 2xl:block fixed right-4 top-1/2 w-60 -translate-y-1/2">
+    <div class="max-h-[calc(100vh-8rem)] overflow-y-auto space-y-4 pr-1">
         {% include "main/blog/components/blog_sidebar_cards.html" %}
     </div>
 </aside>
