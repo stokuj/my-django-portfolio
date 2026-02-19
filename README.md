@@ -28,6 +28,10 @@ This will:
 
 Open `https://localhost`.
 
+For rootless Podman, privileged host ports (`80`/`443`) are not available by default.
+This project maps Caddy to non-privileged host ports out of the box (`8080` and `8443`),
+so open `https://localhost:8443`.
+
 ## Local Setup
 
 ### Prerequisites
