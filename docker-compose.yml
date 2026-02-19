@@ -86,10 +86,13 @@ services:
   beat:
     build: .
     image: ${IMAGE_NAME}:latest
+    restart: always
     env_file:
       - .env
     working_dir: /app/django
-    command: celery -A personal_portfolio beat --loglevel=info
+    command: celery -A personal_portfolio beat --loglevel=info --schedule=/app/django/celerybeat-schedule/celerybeat-schedule.db
+    volumes:
+      - celerybeat_schedule:/app/django/celerybeat-schedule
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - DJANGO_DEBUG=${DJANGO_DEBUG}
@@ -139,5 +142,6 @@ volumes:
   postgres_data:
   staticfiles_volume: # For static files (CSS, JS)
   media_volume:     # For media files (user uploads)
+  celerybeat_schedule:
   caddy_data:
   caddy_config:

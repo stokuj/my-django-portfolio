@@ -13,9 +13,18 @@ class _DummyResponse:
     def __init__(self, payload, status=200):
         self._payload = payload
         self.status = status
+        self._cursor = 0
+        self.headers = {}
 
-    def read(self):
-        return self._payload
+    def read(self, size=-1):
+        if size is None or size < 0:
+            size = len(self._payload) - self._cursor
+        if self._cursor >= len(self._payload):
+            return b""
+        start = self._cursor
+        end = min(start + size, len(self._payload))
+        self._cursor = end
+        return self._payload[start:end]
 
     def __enter__(self):
         return self
@@ -85,6 +94,35 @@ class MarkdownSyncTests(TestCase):
         result = sync_project_markdown(project, opener=opener)
 
         self.assertFalse(result["updated"])
+        project.refresh_from_db()
+        self.assertEqual(project.markdown_file.name, old_name)
+        project.markdown_file.open("rb")
+        self.assertEqual(project.markdown_file.read().decode("utf-8"), "# Old")
+        project.markdown_file.close()
+
+    def test_sync_project_markdown_rejects_oversized_download(self):
+        project = Project.objects.create(
+            title="Sync Too Large",
+            short_description="sync test",
+            date=datetime.date(2025, 1, 1),
+            blog=True,
+            blog_url="sync-too-large",
+            github_url="https://github.com/example/sync-too-large",
+            status="finished",
+        )
+        project.markdown_file.save("sync-too-large.md", ContentFile(b"# Old"), save=True)
+        old_name = project.markdown_file.name
+        oversized_payload = b"a" * (10 * 1024 * 1024 + 1)
+
+        def opener(request, timeout=20):
+            return _DummyResponse(oversized_payload)
+
+        result = sync_project_markdown(project, opener=opener)
+
+        self.assertFalse(result["updated"])
+        self.assertEqual(result["reason"], "download_failed")
+        self.assertIn("exceeds size limit", result["error"])
+
         project.refresh_from_db()
         self.assertEqual(project.markdown_file.name, old_name)
         project.markdown_file.open("rb")

@@ -9,6 +9,7 @@ from django.core.files.base import ContentFile
 from .models import PortfolioProfile
 
 logger = logging.getLogger(__name__)
+MAX_MARKDOWN_SIZE_BYTES = 10 * 1024 * 1024
 
 BLOG_REPO_PATHS = {
     "activity-tracker": "activity_tracker",
@@ -102,7 +103,32 @@ def _download_markdown(url, timeout=20, opener=urlopen):
         status = getattr(response, "status", 200)
         if status != 200:
             raise HTTPError(url, status, "Non-200 response", None, None)
-        raw_bytes = response.read()
+        content_length = None
+        if hasattr(response, "getheader"):
+            content_length = response.getheader("Content-Length")
+        elif getattr(response, "headers", None) is not None:
+            content_length = response.headers.get("Content-Length")
+
+        if content_length is not None:
+            try:
+                parsed_length = int(content_length)
+            except (TypeError, ValueError):
+                parsed_length = None
+
+            if parsed_length is not None and parsed_length > MAX_MARKDOWN_SIZE_BYTES:
+                raise ValueError(f"Downloaded markdown exceeds size limit ({MAX_MARKDOWN_SIZE_BYTES} bytes)")
+
+        chunks = []
+        total_size = 0
+        while True:
+            chunk = response.read(64 * 1024)
+            if not chunk:
+                break
+            total_size += len(chunk)
+            if total_size > MAX_MARKDOWN_SIZE_BYTES:
+                raise ValueError(f"Downloaded markdown exceeds size limit ({MAX_MARKDOWN_SIZE_BYTES} bytes)")
+            chunks.append(chunk)
+        raw_bytes = b"".join(chunks)
 
     text = raw_bytes.decode("utf-8-sig")
     if text.lstrip().lower().startswith("<!doctype html") or text.lstrip().lower().startswith("<html"):
