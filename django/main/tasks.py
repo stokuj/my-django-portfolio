@@ -2,7 +2,6 @@ from celery import shared_task
 
 from .markdown_sync import sync_project_markdown
 from .models import Project
-
 @shared_task
 def healthcheck_task():
     return "ok"
