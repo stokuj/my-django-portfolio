@@ -107,6 +107,17 @@ class PortfolioProfile(models.Model):
         max_length=160,
         default="Specialized in Python, Django, PostgreSQL",
     )
+    home_intro = models.CharField(
+        max_length=255,
+        default="Junior Programmer and Data Science Enthusiast building practical web and analytics projects.",
+    )
+    about_intro = models.CharField(
+        max_length=255,
+        default=(
+            "Junior Full-Stack and Data Science enthusiast focused on robust Django applications, "
+            "clean architecture, and practical data tooling."
+        ),
+    )
     email = models.EmailField(blank=True, default="example@mail.com")
     github_url = models.URLField(blank=True, default="https://github.com/your-username")
     linkedin_url = models.URLField(blank=True, default="https://www.linkedin.com/in/your-profile/")

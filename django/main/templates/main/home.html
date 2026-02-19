@@ -9,7 +9,7 @@
             <p class="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-primary">Portfolio</p>
             <h1 class="font-bold text-base-content">I am {{ profile_full_name }}</h1>
             <p class="mx-auto mt-3 max-w-2xl text-base text-base-content/80 sm:text-lg">
-                Junior Programmer and Data Science Enthusiast building practical web and analytics projects.
+                {{ profile_home_intro }}
             </p>
             <div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <a href="{% url 'projects' %}" class="btn btn-primary btn-sm w-full sm:w-auto ui-motion">View All Projects</a>

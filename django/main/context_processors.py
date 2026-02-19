@@ -25,6 +25,8 @@ def portfolio_profile(request):
         'profile_full_name': source.full_name,
         'profile_role_line': source.role_line,
         'profile_specialization_line': source.specialization_line,
+        'profile_home_intro': source.home_intro,
+        'profile_about_intro': source.about_intro,
         'profile_email': email,
         'profile_email_href': f"mailto:{email}" if email else '#',
         'profile_github_url': github_url,

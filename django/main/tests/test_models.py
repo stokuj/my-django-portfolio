@@ -175,6 +175,14 @@ class PortfolioProfileModelTest(TestCase):
         profile = PortfolioProfile.objects.get(is_active=True)
         self.assertEqual(profile.site_name, "My Portfolio")
         self.assertEqual(profile.full_name, "John Doe")
+        self.assertEqual(
+            profile.home_intro,
+            "Junior Programmer and Data Science Enthusiast building practical web and analytics projects.",
+        )
+        self.assertEqual(
+            profile.about_intro,
+            "Junior Full-Stack and Data Science enthusiast focused on robust Django applications, clean architecture, and practical data tooling.",
+        )
         self.assertTrue(profile.is_active)
 
     def test_only_one_active_profile_is_allowed(self):
