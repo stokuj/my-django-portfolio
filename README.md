@@ -23,20 +23,24 @@ docker-compose down
 
 This will:
 - Start PostgreSQL
+- Start Redis
 - Build and run Django with Gunicorn
+- Start Celery worker
+- Start Celery beat scheduler
 - Serve static files through Caddy
 
 Open `https://localhost`.
 
 For rootless Podman, privileged host ports (`80`/`443`) are not available by default.
-This project maps Caddy to non-privileged host ports out of the box (`8080` and `8443`),
-so open `https://localhost:8443`.
+It's recommended to change ports then.
+Open `https://localhost:{port}`.
 
 ## Local Setup
 
 ### Prerequisites
 - Python 3.13+
 - PostgreSQL
+- Redis
 - [uv](https://github.com/astral-sh/uv)
 - Node.js + npm
 
@@ -67,6 +71,16 @@ npm run build:css
 python django/manage.py migrate
 python django/manage.py collectstatic --noinput
 python django/manage.py runserver
+
+# Run Celery worker (second terminal)
+celery -A personal_portfolio worker --workdir=django --loglevel=info
+
+# Run Celery beat scheduler (third terminal)
+celery -A personal_portfolio beat --workdir=django --loglevel=info
+
+# Manual markdown sync from GitHub README links
+python django/manage.py sync_project_markdowns
+python django/manage.py sync_project_markdowns --slug my-django-portfolio
 ```
 Open `http://localhost:8000`.
 
@@ -111,6 +125,8 @@ MY-DJANGO-PORTFOLIO/
 - Visitor counter
 - Responsive UI
 - Media file handling
+- Background task support with Celery + Redis
+- Hourly markdown synchronization with Celery Beat (`main.tasks.sync_project_markdowns_task`)
 
 ## Environment Variables
 

@@ -1,22 +1,8 @@
 import markdown
 from django.shortcuts import get_object_or_404, render
 
-from .models import PortfolioProfile, Project, Tag
-
-
-BLOG_REPO_PATHS = {
-    "activity-tracker": "activity_tracker",
-    "analiza-makro-konkurs": "analiza-makro-konkurs",
-    "cartoon-filter": "cartoon-filter",
-    "currency-price-prediction": "CryptoCurrencyPP",
-    "github-heatmap": "github-heatmap",
-    "granular-data-grouping": "granular_data_grouping",
-    "multidimensional-dashboard": "multidimensional-dashboard",
-    "my-django-portfolio": "my_django_portfolio",
-    "NTwI-obliczenia-ziarniste": "NTwI-obliczenia-ziarniste",
-    "weather-web-scraping": "WeatherWebScraping",
-    "web-scraping-lubimyczytac": "web_scraping_lubimyczytac",
-}
+from .markdown_sync import build_readme_url, get_repo_path
+from .models import Project, Tag
 
 
 def handler404(request, exception):
@@ -98,22 +84,12 @@ def _render_markdown_to_html(markdown_content):
     )
 
 
-def _build_readme_url(project, repo_path):
-    """Build a branch-agnostic README URL for a project repository."""
-    if project.github_url:
-        return f"{project.github_url.rstrip('/')}#readme"
-
-    profile = PortfolioProfile.objects.filter(is_active=True).first() or PortfolioProfile()
-    github_base = (profile.github_url or "https://github.com/your-username").rstrip("/")
-    return f"{github_base}/{repo_path}#readme"
-
-
 def blog_detail(request, blog_slug):
     project = get_object_or_404(Project, blog=True, blog_url=blog_slug)
     markdown_content = _load_project_markdown(project)
     markdown_html = _render_markdown_to_html(markdown_content)
-    repo_path = BLOG_REPO_PATHS.get(project.blog_url, project.blog_url)
-    readme_url = _build_readme_url(project, repo_path)
+    repo_path = get_repo_path(project)
+    readme_url = build_readme_url(project)
     all_projects = Project.objects.order_by("-date")
 
     return render(
