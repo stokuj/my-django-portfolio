@@ -31,3 +31,8 @@ class URLsTest(TestCase):
     def test_projects_url(self):
         response = self.client.get("/projects/")
         self.assertEqual(response.status_code, 200)
+
+    def test_run_markdown_sync_url_requires_staff(self):
+        response = self.client.post("/admin-tools/run-markdown-sync/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/admin/login/", response.url)

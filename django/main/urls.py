@@ -7,4 +7,5 @@ urlpatterns = [
     path("about/", views.about, name="about"),
     path("projects/", views.projects, name="projects"),
     path("blog/<slug:blog_slug>/", views.blog_detail, name="blog_detail"),
+    path("admin-tools/run-markdown-sync/", views.run_markdown_sync_task, name="run_markdown_sync_task"),
 ]

@@ -1,6 +1,8 @@
 import datetime
+from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.contrib.auth import get_user_model
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
@@ -129,6 +131,32 @@ class ViewsTest(TestCase):
             response.context["readme_url"],
             "https://github.com/example/readme-link-project#readme",
         )
+
+    def test_run_markdown_sync_task_requires_staff_access(self):
+        response = self.client.post(reverse("run_markdown_sync_task"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/admin/login/", response.url)
+
+    def test_run_markdown_sync_task_enqueues_task_for_staff(self):
+        User = get_user_model()
+        staff_user = User.objects.create_user(
+            username="staff-user",
+            email="staff@example.com",
+            password="secret",
+            is_staff=True,
+        )
+        self.client.force_login(staff_user)
+
+        with patch("main.views.sync_project_markdowns_task.delay") as delay_mock:
+            delay_mock.return_value.id = "task-123"
+            response = self.client.post(
+                reverse("run_markdown_sync_task"),
+                {"next": reverse("home")},
+            )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("home"))
+        delay_mock.assert_called_once_with(blog_slug=None)
 
 
 class ErrorHandlersTest(TestCase):

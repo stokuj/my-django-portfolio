@@ -30,6 +30,15 @@
                                 <li class="mb-2 mt-2"><a href="{% url 'home' %}" class="ui-link-motion">Home</a></li>
                                 <li class="mb-2 mt-2"><a href="{% url 'projects' %}" class="ui-link-motion">My Projects</a></li>
                                 <li class="mb-2 mt-2"><a href="{% url 'about' %}" class="ui-link-motion">About me</a></li>
+                                {% if request.user.is_staff %}
+                                <li class="mb-2 mt-2">
+                                    <form method="post" action="{% url 'run_markdown_sync_task' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <button type="submit" class="btn btn-primary btn-sm w-full">Run Sync</button>
+                                    </form>
+                                </li>
+                                {% endif %}
                             </ul>
                         </div>
 
@@ -45,6 +54,13 @@
 
                     <!-- Right side: Social links + Theme toggle -->
                     <div class="flex items-center space-x-2">
+                        {% if request.user.is_staff %}
+                        <form method="post" action="{% url 'run_markdown_sync_task' %}" class="hidden md:block">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit" class="btn btn-sm btn-primary ui-motion">Run Sync</button>
+                        </form>
+                        {% endif %}
 
                         <!-- GitHub -->
                         <a
@@ -75,6 +91,15 @@
                 </div>
             </div>
         </nav>
+        {% if messages %}
+        <div class="mx-auto mt-4 w-full max-w-7xl px-4">
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %} mb-2">
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
         <!-- Content + Sidebar -->
         <div class="relative w-full flex-1">

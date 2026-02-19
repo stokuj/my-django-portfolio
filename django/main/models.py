@@ -66,6 +66,30 @@ class PageView(models.Model):
         return instance
 
 
+class TaskExecutionStatus(models.Model):
+    STATUS_SUCCESS = "success"
+    STATUS_PARTIAL_SUCCESS = "partial_success"
+    STATUS_FAILURE = "failure"
+    STATUS_CHOICES = [
+        (STATUS_SUCCESS, "Success"),
+        (STATUS_PARTIAL_SUCCESS, "Partial success"),
+        (STATUS_FAILURE, "Failure"),
+    ]
+
+    task_name = models.CharField(max_length=150, unique=True)
+    last_status = models.CharField(max_length=20, choices=STATUS_CHOICES, blank=True, default="")
+    last_run_at = models.DateTimeField(blank=True, null=True)
+    last_success_at = models.DateTimeField(blank=True, null=True)
+    last_failure_at = models.DateTimeField(blank=True, null=True)
+    last_total = models.PositiveIntegerField(default=0)
+    last_updated = models.PositiveIntegerField(default=0)
+    last_failed = models.PositiveIntegerField(default=0)
+    last_error = models.TextField(blank=True, default="")
+
+    def __str__(self):
+        return self.task_name
+
+
 class PortfolioProfile(models.Model):
     site_name = models.CharField(max_length=100, default="My Portfolio")
     full_name = models.CharField(max_length=120, default="John Doe")

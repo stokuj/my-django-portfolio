@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
 
-from main.models import PageView, PortfolioProfile, Project, Tag
+from main.models import PageView, PortfolioProfile, Project, Tag, TaskExecutionStatus
 
 
 class TagModelTest(TestCase):
@@ -128,3 +128,16 @@ class PortfolioProfileModelTest(TestCase):
     def test_only_one_active_profile_is_allowed(self):
         with self.assertRaises(IntegrityError):
             PortfolioProfile.objects.create(full_name="Second Active", is_active=True)
+
+
+class TaskExecutionStatusModelTest(TestCase):
+    def test_task_execution_status_creation(self):
+        status = TaskExecutionStatus.objects.create(task_name="main.sync_project_markdowns_task")
+
+        self.assertEqual(status.task_name, "main.sync_project_markdowns_task")
+        self.assertEqual(status.last_status, "")
+        self.assertEqual(status.last_total, 0)
+        self.assertEqual(status.last_updated, 0)
+        self.assertEqual(status.last_failed, 0)
+        self.assertEqual(status.last_error, "")
+        self.assertEqual(str(status), "main.sync_project_markdowns_task")

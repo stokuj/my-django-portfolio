@@ -1,8 +1,13 @@
 import markdown
-from django.shortcuts import get_object_or_404, render
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from .markdown_sync import build_readme_url, get_repo_path
 from .models import Project, Tag
+from .tasks import sync_project_markdowns_task
 
 
 def handler404(request, exception):
@@ -104,3 +109,28 @@ def blog_detail(request, blog_slug):
             "readme_url": readme_url,
         },
     )
+
+
+@staff_member_required
+@require_POST
+def run_markdown_sync_task(request):
+    blog_slug = (request.POST.get("blog_slug") or "").strip() or None
+
+    try:
+        async_result = sync_project_markdowns_task.delay(blog_slug=blog_slug)
+    except Exception:
+        messages.error(request, "Failed to enqueue markdown sync task.")
+    else:
+        if blog_slug:
+            messages.success(
+                request,
+                f"Markdown sync task queued for slug '{blog_slug}' (task id: {async_result.id}).",
+            )
+        else:
+            messages.success(
+                request,
+                f"Markdown sync task queued for all blog projects (task id: {async_result.id}).",
+            )
+
+    next_url = request.POST.get("next") or request.META.get("HTTP_REFERER") or reverse("home")
+    return redirect(next_url)
