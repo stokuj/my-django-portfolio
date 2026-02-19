@@ -7,7 +7,7 @@
     redir https://{$APP_DOMAIN}:{$CADDY_HTTPS_PORT}{uri} permanent
 }
 
-#For production -> domain
+# For production -> domain
 https://{$APP_DOMAIN} {
  # Static files served directly by Caddy
  handle /static/* {
