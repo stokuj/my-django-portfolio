@@ -2,13 +2,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const root = document.documentElement;
     const ctl = document.querySelector(".theme-controller");
     const defaultTheme = "fantasy3";
-    const savedTheme = localStorage.getItem("theme");
+    const allowedThemes = new Set(["fantasy3", "dim2"]);
+    const legacyThemeMap = { fantasy2: "fantasy3" };
+    const savedThemeRaw = localStorage.getItem("theme");
+    const savedTheme = legacyThemeMap[savedThemeRaw] || savedThemeRaw;
 
-    if (savedTheme) {
+    if (savedTheme && allowedThemes.has(savedTheme)) {
         root.setAttribute("data-theme", savedTheme);
         if (ctl && ctl.value === savedTheme) {
             ctl.checked = true;
         }
+        if (savedThemeRaw !== savedTheme) {
+            localStorage.setItem("theme", savedTheme);
+        }
+    } else {
+        root.setAttribute("data-theme", defaultTheme);
+        localStorage.setItem("theme", defaultTheme);
     }
 
     if (!ctl) {
