@@ -111,6 +111,58 @@ class ProjectModelTest(TestCase):
         with self.assertRaises(ValidationError):
             project.full_clean()
 
+    def test_github_url_accepts_valid_repository_root_url(self):
+        project = Project(
+            title="Valid GitHub URL Project",
+            short_description="Project with valid GitHub URL",
+            blog=True,
+            blog_url="valid-github-url-project",
+            github_url="https://github.com/org-name/repo-name",
+            status="planned",
+        )
+
+        project.full_clean()
+
+    def test_github_url_rejects_non_github_domain(self):
+        project = Project(
+            title="Non GitHub URL Project",
+            short_description="Project with non-GitHub URL",
+            blog=True,
+            blog_url="non-github-url-project",
+            github_url="https://gitlab.com/org-name/repo-name",
+            status="planned",
+        )
+
+        with self.assertRaises(ValidationError):
+            project.full_clean()
+
+    def test_github_url_rejects_missing_repository_segment(self):
+        project = Project(
+            title="Missing Repo Segment URL Project",
+            short_description="Project with invalid GitHub URL path",
+            blog=True,
+            blog_url="missing-repo-segment-url-project",
+            github_url="https://github.com/org-name",
+            status="planned",
+        )
+
+        with self.assertRaises(ValidationError):
+            project.full_clean()
+
+    def test_github_url_allows_long_valid_url(self):
+        owner = "o" * 60
+        repo = "r" * 120
+        project = Project(
+            title="Long URL Project",
+            short_description="Project with long but valid GitHub URL",
+            blog=True,
+            blog_url="long-url-project",
+            github_url=f"https://github.com/{owner}/{repo}",
+            status="planned",
+        )
+
+        project.full_clean()
+
 
 class PageViewModelTest(TestCase):
     def test_pageview_creation(self):

@@ -3,6 +3,7 @@ import datetime
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
+from .validators import validate_github_repo_url
 
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -29,7 +30,12 @@ class Project(models.Model):
     date = models.DateField(default=datetime.date(2022, 5, 1))     
     blog = models.BooleanField(default=True)
     blog_url = models.SlugField(max_length=100, blank=True, null=True, default=None)
-    github_url = models.CharField(max_length=100, blank=True, null=True)
+    github_url = models.URLField(
+        max_length=255,
+        blank=True,
+        null=True,
+        validators=[validate_github_repo_url],
+    )
 
     tags = models.ManyToManyField(Tag, blank=True)
 

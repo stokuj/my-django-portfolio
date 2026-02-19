@@ -1,9 +1,11 @@
 import datetime
+import shutil
+import tempfile
 from unittest.mock import patch
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
-from django.test import Client, RequestFactory, TestCase
+from django.test import Client, RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
 from main.models import PageView, Project, Tag
@@ -11,6 +13,19 @@ from main.views import handler404, handler500
 
 
 class ViewsTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._media_root = tempfile.mkdtemp(prefix="views-tests-media-")
+        cls._override = override_settings(MEDIA_ROOT=cls._media_root)
+        cls._override.enable()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._override.disable()
+        shutil.rmtree(cls._media_root, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.client = Client()
         self.project = Project.objects.create(
@@ -101,6 +116,74 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "<h1>Title</h1>", html=True)
 
+    def test_blog_detail_sanitizes_script_tags_in_markdown(self):
+        markdown_file = SimpleUploadedFile(
+            "malicious-readme.md",
+            b"# Title\n\n<script>alert('xss')</script>\n\nParagraph.",
+            content_type="text/markdown",
+        )
+        project = Project.objects.create(
+            title="Unsafe Markdown Project",
+            short_description="Project with potentially unsafe markdown",
+            blog=True,
+            blog_url="unsafe-markdown-project",
+            status="finished",
+            markdown_file=markdown_file,
+        )
+
+        response = self.client.get(reverse("blog_detail", args=[project.blog_url]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "<h1>Title</h1>", html=True)
+        self.assertNotContains(response, "<script>")
+
+    def test_blog_detail_sanitizes_unsafe_image_attributes(self):
+        markdown_file = SimpleUploadedFile(
+            "unsafe-image-readme.md",
+            b"<img src='x' alt='preview' onerror='alert(1)'>",
+            content_type="text/markdown",
+        )
+        project = Project.objects.create(
+            title="Unsafe Image Attributes Project",
+            short_description="Project with unsafe image attributes",
+            blog=True,
+            blog_url="unsafe-image-attrs-project",
+            status="finished",
+            markdown_file=markdown_file,
+        )
+
+        response = self.client.get(reverse("blog_detail", args=[project.blog_url]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "<img")
+        self.assertContains(response, 'src="x"')
+        self.assertContains(response, 'alt="preview"')
+        self.assertNotContains(response, "onerror")
+
+    def test_blog_detail_keeps_safe_markdown_elements(self):
+        markdown_file = SimpleUploadedFile(
+            "safe-elements-readme.md",
+            (
+                b"# Table\n\n"
+                b"| Name | Value |\n"
+                b"| --- | --- |\n"
+                b"| A | 1 |\n\n"
+                b"[Example](https://example.com)\n"
+            ),
+            content_type="text/markdown",
+        )
+        project = Project.objects.create(
+            title="Safe Markdown Elements Project",
+            short_description="Project with valid markdown features",
+            blog=True,
+            blog_url="safe-markdown-elements-project",
+            status="finished",
+            markdown_file=markdown_file,
+        )
+
+        response = self.client.get(reverse("blog_detail", args=[project.blog_url]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "<table>")
+        self.assertContains(response, '<a href="https://example.com">Example</a>', html=True)
+
     def test_blog_detail_includes_all_projects_for_sidebar(self):
         other_project = Project.objects.create(
             title="Sidebar Item Project",
@@ -157,6 +240,66 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("home"))
         delay_mock.assert_called_once_with(blog_slug=None)
+
+    def test_run_markdown_sync_task_redirects_to_safe_next_path(self):
+        User = get_user_model()
+        staff_user = User.objects.create_user(
+            username="staff-user-safe-next",
+            email="staff-safe-next@example.com",
+            password="secret",
+            is_staff=True,
+        )
+        self.client.force_login(staff_user)
+
+        with patch("main.views.sync_project_markdowns_task.delay") as delay_mock:
+            delay_mock.return_value.id = "task-123"
+            response = self.client.post(
+                reverse("run_markdown_sync_task"),
+                {"next": reverse("about")},
+            )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("about"))
+
+    def test_run_markdown_sync_task_rejects_external_next_url(self):
+        User = get_user_model()
+        staff_user = User.objects.create_user(
+            username="staff-user-external-next",
+            email="staff-external-next@example.com",
+            password="secret",
+            is_staff=True,
+        )
+        self.client.force_login(staff_user)
+
+        with patch("main.views.sync_project_markdowns_task.delay") as delay_mock:
+            delay_mock.return_value.id = "task-123"
+            response = self.client.post(
+                reverse("run_markdown_sync_task"),
+                {"next": "https://evil.example/phishing"},
+            )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("home"))
+
+    def test_run_markdown_sync_task_rejects_external_http_referer(self):
+        User = get_user_model()
+        staff_user = User.objects.create_user(
+            username="staff-user-external-referer",
+            email="staff-external-referer@example.com",
+            password="secret",
+            is_staff=True,
+        )
+        self.client.force_login(staff_user)
+
+        with patch("main.views.sync_project_markdowns_task.delay") as delay_mock:
+            delay_mock.return_value.id = "task-123"
+            response = self.client.post(
+                reverse("run_markdown_sync_task"),
+                HTTP_REFERER="https://evil.example/phishing",
+            )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("home"))
 
 
 class ErrorHandlersTest(TestCase):

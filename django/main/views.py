@@ -1,13 +1,48 @@
+import bleach
 import markdown
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from .markdown_sync import build_readme_url, get_repo_path
 from .models import Project, Tag
 from .tasks import sync_project_markdowns_task
+
+ALLOWED_MARKDOWN_TAGS = [
+    "a",
+    "blockquote",
+    "br",
+    "code",
+    "em",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "hr",
+    "img",
+    "li",
+    "ol",
+    "p",
+    "pre",
+    "strong",
+    "table",
+    "tbody",
+    "td",
+    "th",
+    "thead",
+    "tr",
+    "ul",
+]
+ALLOWED_MARKDOWN_ATTRIBUTES = {
+    "a": ["href", "title"],
+    "img": ["src", "alt", "title"],
+}
+ALLOWED_MARKDOWN_PROTOCOLS = ["http", "https", "mailto"]
 
 
 def handler404(request, exception):
@@ -79,14 +114,39 @@ def _load_project_markdown(project):
 
 
 def _render_markdown_to_html(markdown_content):
-    """Render markdown content to HTML for trusted local blog files."""
+    """Render markdown to safe HTML using an explicit allowlist."""
     if not markdown_content:
         return None
     markdown_content = markdown_content.lstrip("\ufeff")
-    return markdown.markdown(
+    markdown_html = markdown.markdown(
         markdown_content,
         extensions=["fenced_code", "tables"],
     )
+    return bleach.clean(
+        markdown_html,
+        tags=ALLOWED_MARKDOWN_TAGS,
+        attributes=ALLOWED_MARKDOWN_ATTRIBUTES,
+        protocols=ALLOWED_MARKDOWN_PROTOCOLS,
+        strip=True,
+    )
+
+
+def _get_safe_redirect_url(request):
+    allowed_hosts = {request.get_host()}
+    candidates = [
+        request.POST.get("next"),
+        request.META.get("HTTP_REFERER"),
+    ]
+
+    for candidate in candidates:
+        if candidate and url_has_allowed_host_and_scheme(
+            url=candidate,
+            allowed_hosts=allowed_hosts,
+            require_https=request.is_secure(),
+        ):
+            return candidate
+
+    return reverse("home")
 
 
 def blog_detail(request, blog_slug):
@@ -132,5 +192,4 @@ def run_markdown_sync_task(request):
                 f"Markdown sync task queued for all blog projects (task id: {async_result.id}).",
             )
 
-    next_url = request.POST.get("next") or request.META.get("HTTP_REFERER") or reverse("home")
-    return redirect(next_url)
+    return redirect(_get_safe_redirect_url(request))

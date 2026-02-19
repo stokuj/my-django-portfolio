@@ -29,8 +29,17 @@ RUN uv pip install --system --no-cache-dir .
 # 7. Make entrypoint script executable
 RUN chmod +x /app/django/entrypoints/wait-for-db.sh
 
-# 8. Set Python path
+# 8. Create non-root runtime user and writable runtime directories
+RUN groupadd --gid 10001 app && \
+    useradd --uid 10001 --gid 10001 --create-home --shell /usr/sbin/nologin app && \
+    mkdir -p /app/staticfiles /app/media /app/django/celerybeat-schedule && \
+    chown -R app:app /app /home/app
+
+# 9. Set Python path
 ENV PYTHONPATH="/app/django"
 
-# 9. Expose port
+# 10. Run as non-root user
+USER 10001:10001
+
+# 11. Expose port
 EXPOSE 8000

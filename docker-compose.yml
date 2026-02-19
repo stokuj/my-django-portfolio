@@ -23,6 +23,7 @@ services:
   web:
     build: .
     image: ghcr.io/stokuj/my-django-portfolio:latest
+    user: "10001:10001"
     env_file:
       - .env
     working_dir: /app/django
@@ -58,6 +59,7 @@ services:
   worker:
     build: .
     image: ghcr.io/stokuj/my-django-portfolio:latest
+    user: "10001:10001"
     restart: always
     env_file:
       - .env
@@ -90,6 +92,7 @@ services:
   beat:
     build: .
     image: ghcr.io/stokuj/my-django-portfolio:latest
+    user: "10001:10001"
     restart: always
     env_file:
       - .env
