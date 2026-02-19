@@ -1,5 +1,6 @@
 import datetime
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
@@ -67,7 +68,7 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "main/blog/detail.html")
 
-    def test_blog_detail_renders_even_without_markdown_content(self):
+    def test_blog_detail_renders_even_without_markdown_file(self):
         Project.objects.create(
             title="Missing Blog Template",
             short_description="A project with no matching template",
@@ -78,6 +79,25 @@ class ViewsTest(TestCase):
 
         response = self.client.get(reverse("blog_detail", args=["missing-template"]))
         self.assertEqual(response.status_code, 200)
+
+    def test_blog_detail_loads_markdown_from_uploaded_file(self):
+        markdown_file = SimpleUploadedFile(
+            "readme.md",
+            b"# Title\n\nSome text",
+            content_type="text/markdown",
+        )
+        project = Project.objects.create(
+            title="File Markdown Project",
+            short_description="Project with uploaded markdown file",
+            blog=True,
+            blog_url="file-markdown-project",
+            status="finished",
+            markdown_file=markdown_file,
+        )
+
+        response = self.client.get(reverse("blog_detail", args=[project.blog_url]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "<h1>Title</h1>", html=True)
 
     def test_blog_detail_includes_all_projects_for_sidebar(self):
         other_project = Project.objects.create(

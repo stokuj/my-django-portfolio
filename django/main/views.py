@@ -71,8 +71,20 @@ def projects(request):
 
 
 def _load_project_markdown(project):
-    """Load markdown content stored directly in the database."""
-    return project.markdown_content or None
+    """Load markdown content from uploaded markdown file."""
+    if not project.markdown_file:
+        return None
+
+    try:
+        project.markdown_file.open("rb")
+        return project.markdown_file.read().decode("utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None
+    finally:
+        try:
+            project.markdown_file.close()
+        except OSError:
+            pass
 
 
 def _render_markdown_to_html(markdown_content):
