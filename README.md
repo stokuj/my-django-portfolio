@@ -32,7 +32,7 @@ This will:
 Open `https://localhost`.
 
 For rootless Podman, privileged host ports (`80`/`443`) are not available by default.
-It's recomend to change ports then.
+It's recommended to change ports then.
 Open `https://localhost:{port}`.
 
 ## Local Setup
