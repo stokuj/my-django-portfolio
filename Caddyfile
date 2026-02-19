@@ -1,10 +1,14 @@
-# Redirect all HTTP traffic to HTTPS.
-:80 {
-    redir https://{host}{uri} permanent
+{
+    auto_https disable_redirects
 }
 
-#For production -> domain
-{$APP_DOMAIN} {
+# Redirect all HTTP traffic to HTTPS using configured host and port.
+:80 {
+    redir https://{$APP_DOMAIN}:{$CADDY_HTTPS_PORT}{uri} permanent
+}
+
+# For production -> domain
+https://{$APP_DOMAIN} {
  # Static files served directly by Caddy
  handle /static/* {
      root * /srv

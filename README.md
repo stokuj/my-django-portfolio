@@ -28,6 +28,10 @@ This will:
 
 Open `https://localhost`.
 
+For rootless Podman, privileged host ports (`80`/`443`) are not available by default.
+This project maps Caddy to non-privileged host ports out of the box (`8080` and `8443`),
+so open `https://localhost:8443`.
+
 ## Local Setup
 
 ### Prerequisites
@@ -130,6 +134,12 @@ These values are rendered in templates via a Django context processor, so you ca
 
 - Problem: Caddy failed with `server block without any key...`.
   Solution: set `APP_DOMAIN` in `.env` (for example `APP_DOMAIN=localhost`).
+
+- Problem: Caddy failed with `open /etc/caddy/Caddyfile: permission denied` on Fedora/SELinux.
+  Solution: use SELinux relabel option on bind mount: `./Caddyfile:/etc/caddy/Caddyfile:ro,Z` (already configured in `docker-compose.yml`).
+
+- Problem: `permission denied while trying to connect to the Docker daemon socket`.
+  Solution: run Docker commands with `sudo` or add your user to the `docker` group (`sudo usermod -aG docker $USER`) and re-login.
 
 - Problem: missing static files after deploy.
   Solution: run `docker-compose exec web python manage.py collectstatic`.
