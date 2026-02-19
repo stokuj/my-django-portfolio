@@ -49,10 +49,10 @@ services:
   caddy:
     image: caddy:2
     ports:
-      - "80:80"
-      - "443:443"
+      - "${CADDY_HTTP_PORT:-80}:80"
+      - "${CADDY_HTTPS_PORT:-443}:443"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro,Z
       # Mount the same shared volume to serve static files
       - staticfiles_volume:/srv/static
       # Mount the same shared volume to serve media files
@@ -61,6 +61,7 @@ services:
       - caddy_config:/config
     environment:
       - APP_DOMAIN=${APP_DOMAIN:-localhost}
+      - CADDY_HTTPS_PORT=${CADDY_HTTPS_PORT:-443}
     depends_on:
       - web
     networks:

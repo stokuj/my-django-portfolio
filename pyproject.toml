@@ -2,7 +2,7 @@
 name = "my-django-portfolio"
 version = "0.2.5"
 description = "My portfolio website, created using Django/TailwindCSS"
-requires-python = ">=3.13"
+requires-python = ">=3.13,<3.14"
 dependencies = [
     "asgiref==3.8.1",
     "django==5.1.7",
