@@ -58,10 +58,13 @@ services:
   worker:
     build: .
     image: ghcr.io/stokuj/my-django-portfolio:latest
+    restart: always
     env_file:
       - .env
     working_dir: /app/django
-    command: celery -A personal_portfolio worker --loglevel=info
+    command: >
+      sh -c "sleep ${WORKER_START_DELAY_SECONDS:-45} &&
+             celery -A personal_portfolio worker --loglevel=info"
     volumes:
       - media_volume:/app/media
     environment:
@@ -80,6 +83,7 @@ services:
     depends_on:
       - db
       - redis
+      - web
     networks:
       - app-network
 
