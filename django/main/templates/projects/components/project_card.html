@@ -11,7 +11,9 @@
             src="{{ project.thumbnail.url }}"
             alt="Thumbnail for {{ project.title }}"
             class="h-full w-full object-cover"
-            loading="lazy"
+            width="1600"
+            height="1000"
+            loading="{% if forloop.counter > 3 %}lazy{% else %}eager{% endif %}"
             decoding="async"
         />
         {% else %}
@@ -19,7 +21,9 @@
             src="{% static 'images/default_image.png' %}"
             alt="Default thumbnail for {{ project.title }}"
             class="h-full w-full object-cover"
-            loading="lazy"
+            width="1600"
+            height="1000"
+            loading="{% if forloop.counter > 3 %}lazy{% else %}eager{% endif %}"
             decoding="async"
         />
         {% endif %}
