@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const emptyState = document.getElementById("emptyState");
     const projectGrid = document.getElementById("projectGrid");
     const projectGridSkeleton = document.getElementById("projectGridSkeleton");
+    const filterResultsStatus = document.getElementById("filterResultsStatus");
 
     if (!searchInput || !clearButton || !emptyState || !projectGrid || !projectGridSkeleton) {
         return;
@@ -54,6 +55,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         emptyState.classList.toggle("hidden", visibleCount > 0);
+
+        if (filterResultsStatus) {
+            const label = visibleCount === 1 ? "project" : "projects";
+            filterResultsStatus.textContent = `${visibleCount} ${label} shown`;
+        }
     }
 
     searchInput.addEventListener("input", applyFiltersDebounced);

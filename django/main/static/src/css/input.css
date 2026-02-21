@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@source "../../../templates/**/*.html";
+@source "../**/*.js";
+
 @plugin "daisyui" {
   themes: dim2, fantasy3;
 }
@@ -139,7 +142,7 @@ html {
     name: "dim2";
     default: false;
     prefersdark: false;
-    color-scheme: "dark";
+    color-scheme: dark;
 
     /* Background layers with clearer contrast */
     --color-base-100: oklch(0.250 0.015 264);     /* main page background */
