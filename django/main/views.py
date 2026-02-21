@@ -65,11 +65,11 @@ ALLOWED_MARKDOWN_PROTOCOLS = ["http", "https", "mailto"]
 
 
 def handler404(request, exception):
-    return render(request, "main/errors/404.html", status=404)
+    return render(request, "errors/404.html", status=404)
 
 
 def handler500(request):
-    return render(request, "main/errors/500.html", status=500)
+    return render(request, "errors/500.html", status=500)
 
 
 def home(request):
@@ -96,7 +96,7 @@ def home(request):
         for status in status_order
     ]
 
-    return render(request, "main/home.html", {"timeline_sections": timeline_sections})
+    return render(request, "pages/home.html", {"timeline_sections": timeline_sections})
 
 
 def about(request):
@@ -113,7 +113,7 @@ def about(request):
         context["scheduled_jobs"] = _get_scheduled_jobs_overview()
         context["executed_tasks"] = _get_executed_tasks()
 
-    return render(request, "main/about.html", context)
+    return render(request, "pages/about.html", context)
 
 
 @require_GET
@@ -311,7 +311,7 @@ def projects(request):
 
     return render(
         request,
-        "main/projects.html",
+        "projects/index.html",
         {
             "projects": projects,
             "all_tags": all_tags,
@@ -382,7 +382,7 @@ def blog_detail(request, blog_slug):
 
     return render(
         request,
-        "main/blog/detail.html",
+        "projects/detail.html",
         {
             "project": project,
             "all_projects": all_projects,

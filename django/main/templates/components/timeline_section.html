@@ -4,7 +4,7 @@
     <div class="collapse-content">
         <ol class="space-y-4 text-sm">
             {% for project in section.projects %}
-                {% include "main/components/timeline_project_item.html" with project=project %}
+                {% include "components/timeline_project_item.html" with project=project %}
             {% empty %}
             <li class="rounded-box border border-base-300 bg-base-200 p-4 text-base-content/70">
                 No projects in this section yet.

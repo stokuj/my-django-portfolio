@@ -79,13 +79,13 @@ class ViewsTest(TestCase):
     def test_home_view(self):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "main/home.html")
+        self.assertTemplateUsed(response, "pages/home.html")
         self.assertIn("timeline_sections", response.context)
 
     def test_about_view(self):
         response = self.client.get(reverse("about"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "main/about.html")
+        self.assertTemplateUsed(response, "pages/about.html")
 
     def test_about_hides_heatmap_for_anonymous_when_not_configured(self):
         response = self.client.get(reverse("about"))
@@ -351,7 +351,7 @@ class ViewsTest(TestCase):
     def test_projects_view(self):
         response = self.client.get(reverse("projects"))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "main/projects.html")
+        self.assertTemplateUsed(response, "projects/index.html")
         self.assertIn("projects", response.context)
         self.assertIn("all_tags", response.context)
         self.assertContains(
@@ -383,7 +383,7 @@ class ViewsTest(TestCase):
         )
         response = self.client.get(reverse("blog_detail", args=["my-django-portfolio"]))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "main/blog/detail.html")
+        self.assertTemplateUsed(response, "projects/detail.html")
 
     def test_blog_detail_renders_even_without_markdown_file(self):
         Project.objects.create(

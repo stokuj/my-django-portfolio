@@ -23,11 +23,11 @@
 
             <!-- Sidebar cards - mobile only -->
             <div class="not-prose mt-6 space-y-4 2xl:hidden">
-                {% include "main/blog/components/blog_projects_sidebar.html" %}
-                {% include "main/blog/components/blog_sidebar_cards.html" %}
+                {% include "projects/components/blog_projects_sidebar.html" %}
+                {% include "projects/components/blog_sidebar_cards.html" %}
             </div>
 
-            {% include "main/components/project_footer.html" with repo_path=repo_path %}
+            {% include "components/project_footer.html" with repo_path=repo_path %}
         </div>
     </div>
 </div>
@@ -36,12 +36,12 @@
 {% block sidebar %}
 <aside class="hidden 2xl:block fixed left-4 top-1/2 w-60 -translate-y-1/2">
     <div class="max-h-[calc(100vh-8rem)] overflow-y-auto space-y-4 pr-1">
-        {% include "main/blog/components/blog_projects_sidebar.html" %}
+        {% include "projects/components/blog_projects_sidebar.html" %}
     </div>
 </aside>
 <aside class="hidden 2xl:block fixed right-4 top-1/2 w-60 -translate-y-1/2">
     <div class="max-h-[calc(100vh-8rem)] overflow-y-auto space-y-4 pr-1">
-        {% include "main/blog/components/blog_sidebar_cards.html" %}
+        {% include "projects/components/blog_sidebar_cards.html" %}
     </div>
 </aside>
 {% endblock sidebar %}
