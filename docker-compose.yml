@@ -31,7 +31,7 @@ services:
     command: >
       sh -c "python manage.py migrate &&
              python manage.py collectstatic --noinput &&
-             gunicorn personal_portfolio.wsgi:application --bind 0.0.0.0:8000"
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       # Mount the shared volume where static files will be collected
       - staticfiles_volume:/app/staticfiles
@@ -66,7 +66,7 @@ services:
     working_dir: /app/django
     command: >
       sh -c "sleep ${WORKER_START_DELAY_SECONDS:-45} &&
-             celery -A personal_portfolio worker --loglevel=info"
+             celery -A config worker --loglevel=info"
     volumes:
       - media_volume:/app/media
     environment:
@@ -97,7 +97,7 @@ services:
     env_file:
       - .env
     working_dir: /app/django
-    command: celery -A personal_portfolio beat --loglevel=info --schedule=/app/django/celerybeat-schedule/celerybeat-schedule.db
+    command: celery -A config beat --loglevel=info --schedule=/app/django/celerybeat-schedule/celerybeat-schedule.db
     volumes:
       - celerybeat_schedule:/app/django/celerybeat-schedule
     environment:

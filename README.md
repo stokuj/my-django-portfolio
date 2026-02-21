@@ -73,10 +73,10 @@ python django/manage.py collectstatic --noinput
 python django/manage.py runserver
 
 # Run Celery worker (second terminal)
-celery -A personal_portfolio worker --workdir=django --loglevel=info
+celery -A config worker --workdir=django --loglevel=info
 
 # Run Celery beat scheduler (third terminal)
-celery -A personal_portfolio beat --workdir=django --loglevel=info
+celery -A config beat --workdir=django --loglevel=info
 
 # Manual markdown sync from GitHub README links
 python django/manage.py sync_project_markdowns
@@ -91,7 +91,7 @@ MY-DJANGO-PORTFOLIO/
 |-- django/
 |   |-- entrypoints/
 |   |-- main/
-|   |-- personal_portfolio/
+|   |-- config/
 |   `-- manage.py
 |-- media/
 |-- staticfiles/
