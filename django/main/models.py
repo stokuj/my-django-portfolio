@@ -5,6 +5,7 @@ from django.db import models
 
 from .validators import validate_github_repo_url
 
+
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
@@ -15,9 +16,10 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+
 class Project(models.Model):
     title = models.CharField(max_length=200)
-    thumbnail = models.ImageField(upload_to='thumbnails/', blank=True, null=True)
+    thumbnail = models.ImageField(upload_to="thumbnails/", blank=True, null=True)
     markdown_file = models.FileField(
         upload_to="blog_markdown/",
         validators=[FileExtensionValidator(allowed_extensions=["md"])],
@@ -27,7 +29,7 @@ class Project(models.Model):
     tech_stack = models.JSONField(default=list, blank=True)
     tools_libraries = models.JSONField(default=list, blank=True)
     short_description = models.CharField(max_length=100)
-    date = models.DateField(default=datetime.date(2022, 5, 1))     
+    date = models.DateField(default=datetime.date(2022, 5, 1))
     blog = models.BooleanField(default=True)
     blog_url = models.SlugField(max_length=100, blank=True, null=True, default=None)
     github_url = models.URLField(
@@ -40,12 +42,16 @@ class Project(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
 
     STATUS_CHOICES = [
-        ('planned', 'Planned'),
-        ('ongoing', 'Ongoing'),
-        ('finished', 'Finished'),
+        ("planned", "Planned"),
+        ("ongoing", "Ongoing"),
+        ("finished", "Finished"),
     ]
 
-    status = models.CharField(max_length=10,choices=STATUS_CHOICES,default='planned',)
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default="planned",
+    )
 
     class Meta:
         constraints = [
@@ -58,6 +64,7 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+
 
 class PageView(models.Model):
     count = models.IntegerField(default=0)
@@ -83,7 +90,9 @@ class TaskExecutionStatus(models.Model):
     ]
 
     task_name = models.CharField(max_length=150, unique=True)
-    last_status = models.CharField(max_length=20, choices=STATUS_CHOICES, blank=True, default="")
+    last_status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, blank=True, default=""
+    )
     last_run_at = models.DateTimeField(blank=True, null=True)
     last_success_at = models.DateTimeField(blank=True, null=True)
     last_failure_at = models.DateTimeField(blank=True, null=True)
@@ -120,7 +129,9 @@ class PortfolioProfile(models.Model):
     )
     email = models.EmailField(blank=True, default="example@mail.com")
     github_url = models.URLField(blank=True, default="https://github.com/your-username")
-    linkedin_url = models.URLField(blank=True, default="https://www.linkedin.com/in/your-profile/")
+    linkedin_url = models.URLField(
+        blank=True, default="https://www.linkedin.com/in/your-profile/"
+    )
     is_active = models.BooleanField(default=True)
 
     class Meta:
@@ -134,3 +145,16 @@ class PortfolioProfile(models.Model):
 
     def __str__(self):
         return self.full_name
+
+
+class HeatmapSnapshot(models.Model):
+    key = models.CharField(max_length=40, unique=True, default="portfolio")
+    payload = models.JSONField(default=dict, blank=True)
+    username = models.CharField(max_length=255, blank=True, default="")
+    total = models.PositiveIntegerField(default=0)
+    weeks_count = models.PositiveIntegerField(default=0)
+    fetched_at = models.DateTimeField(blank=True, null=True)
+    last_error = models.TextField(blank=True, default="")
+
+    def __str__(self):
+        return f"HeatmapSnapshot<{self.key}>"

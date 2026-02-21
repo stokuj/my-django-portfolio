@@ -3,12 +3,14 @@ import shutil
 import tempfile
 from unittest.mock import patch
 
+from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken
+from django.contrib.sites.models import Site
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
 from django.test import Client, RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
-from main.models import PageView, Project, Tag
+from main.models import HeatmapSnapshot, PageView, Project, Tag
 from main.views import handler404, handler500
 
 
@@ -28,6 +30,7 @@ class ViewsTest(TestCase):
 
     def setUp(self):
         self.client = Client()
+        SocialApp.objects.filter(provider="github").delete()
         self.project = Project.objects.create(
             title="Test Project",
             short_description="A test project",
@@ -38,6 +41,32 @@ class ViewsTest(TestCase):
         self.tag = Tag.objects.create(name="python")
         self.project.tags.add(self.tag)
         PageView.objects.create(id=1, count=0)
+
+    def _create_github_token(self, user, token_value="gho_test_token"):
+        site = Site.objects.get_current()
+        social_app = SocialApp.objects.filter(provider="github").order_by("id").first()
+        if not social_app:
+            social_app = SocialApp.objects.create(
+                provider="github",
+                name="GitHub",
+                client_id="test-client-id",
+                secret="test-client-secret",
+                key="",
+            )
+        social_app.sites.add(site)
+
+        social_account = SocialAccount.objects.create(
+            user=user,
+            provider="github",
+            uid=f"github-{user.pk}",
+            extra_data={"login": user.username},
+        )
+
+        return SocialToken.objects.create(
+            app=social_app,
+            account=social_account,
+            token=token_value,
+        )
 
     def test_home_view(self):
         response = self.client.get(reverse("home"))
@@ -50,13 +79,205 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "main/about.html")
 
+    def test_about_hides_heatmap_for_anonymous_when_not_configured(self):
+        response = self.client.get(reverse("about"))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "GitHub Contributions")
+        self.assertNotContains(response, "Scheduled Jobs")
+
+    def test_about_shows_heatmap_for_admin_when_not_configured(self):
+        User = get_user_model()
+        admin_user = User.objects.create_user(
+            username="admin-no-token",
+            email="admin-no-token@example.com",
+            password="secret",
+            is_superuser=True,
+            is_staff=True,
+        )
+        self.client.force_login(admin_user)
+
+        response = self.client.get(reverse("about"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "GitHub Contributions")
+        self.assertContains(response, "Scheduled Jobs")
+        self.assertContains(response, "Sync Heatmap")
+        self.assertContains(response, "Sync Markdown")
+        self.assertNotContains(response, ">Logout<", html=False)
+        self.assertContains(
+            response, "Connect your GitHub account to enable the heatmap."
+        )
+        self.assertContains(response, "/accounts/3rdparty/")
+        self.assertNotContains(response, "/accounts/github/login/")
+
+    def test_about_disconnect_github_removes_admin_social_account(self):
+        User = get_user_model()
+        admin_user = User.objects.create_user(
+            username="admin-disconnect",
+            email="admin-disconnect@example.com",
+            password="secret",
+            is_superuser=True,
+            is_staff=True,
+        )
+        token = self._create_github_token(
+            admin_user, token_value="gho_disconnect_token"
+        )
+        self.client.force_login(admin_user)
+
+        response = self.client.post(reverse("about_heatmap_disconnect"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("about"))
+        self.assertFalse(SocialAccount.objects.filter(pk=token.account.pk).exists())
+        self.assertFalse(SocialToken.objects.filter(pk=token.pk).exists())
+
+    def test_about_disconnect_github_requires_login(self):
+        response = self.client.post(reverse("about_heatmap_disconnect"))
+        self.assertEqual(response.status_code, 302)
+
+    def test_accounts_3rdparty_redirects_staff_to_github_connect(self):
+        User = get_user_model()
+        admin_user = User.objects.create_user(
+            username="admin-connect",
+            email="admin-connect@example.com",
+            password="secret",
+            is_superuser=True,
+            is_staff=True,
+        )
+        self.client.force_login(admin_user)
+
+        response = self.client.get("/accounts/3rdparty/")
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/accounts/github/login/?process=connect")
+
+    def test_accounts_3rdparty_redirects_non_staff_to_home(self):
+        User = get_user_model()
+        regular_user = User.objects.create_user(
+            username="regular-user",
+            email="regular-user@example.com",
+            password="secret",
+            is_staff=False,
+        )
+        self.client.force_login(regular_user)
+
+        response = self.client.get("/accounts/3rdparty/")
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("home"))
+
+    @patch("main.views.refresh_portfolio_heatmap_cache_task.delay")
+    def test_run_heatmap_refresh_task_queues_job_for_staff(self, delay_mock):
+        User = get_user_model()
+        admin_user = User.objects.create_user(
+            username="admin-run-heatmap",
+            email="admin-run-heatmap@example.com",
+            password="secret",
+            is_superuser=True,
+            is_staff=True,
+        )
+        self.client.force_login(admin_user)
+        delay_mock.return_value.id = "task-123"
+
+        response = self.client.post(
+            reverse("run_heatmap_refresh_task"),
+            data={"next": reverse("about")},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("about"))
+        delay_mock.assert_called_once_with(schedule_next=True)
+
+    @patch("main.views.get_portfolio_github_token", return_value="gho_visible_token")
+    def test_about_shows_heatmap_for_anonymous_when_configured(self, _token_mock):
+        response = self.client.get(reverse("about"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "GitHub Contributions")
+
+    @patch("main.views.get_portfolio_github_token", return_value="gho_valid_token")
+    def test_about_heatmap_data_returns_public_admin_data(self, _token_mock):
+        HeatmapSnapshot.objects.create(
+            key="portfolio",
+            username="portfolio-admin",
+            total=12,
+            weeks_count=2,
+            payload={
+                "username": "portfolio-admin",
+                "total": 12,
+                "weeks": [{"days": []}, {"days": []}],
+            },
+        )
+
+        response = self.client.get(reverse("about_heatmap_data"))
+        payload = response.json()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(payload["username"], "portfolio-admin")
+        self.assertEqual(payload["total"], 12)
+        self.assertEqual(payload["last_30_days_total"], 0)
+        self.assertEqual(payload["weeks_count"], 2)
+
+    @patch("main.views.get_portfolio_github_token", return_value="gho_valid_token")
+    @patch("main.views.refresh_portfolio_heatmap_cache_task.apply_async")
+    @patch("main.views.fetch_heatmap_data")
+    def test_about_heatmap_data_fetches_sync_when_cache_missing(
+        self, fetch_mock, apply_async_mock, _token_mock
+    ):
+        fetch_mock.return_value = (
+            {
+                "username": "portfolio-admin",
+                "total": 21,
+                "weeks": [
+                    {
+                        "days": [
+                            {
+                                "date": datetime.date.today().isoformat(),
+                                "count": 3,
+                            },
+                            {
+                                "date": (
+                                    datetime.date.today() - datetime.timedelta(days=40)
+                                ).isoformat(),
+                                "count": 99,
+                            },
+                        ]
+                    }
+                ],
+            },
+            None,
+        )
+
+        response = self.client.get(reverse("about_heatmap_data"))
+        payload = response.json()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(payload["username"], "portfolio-admin")
+        self.assertEqual(payload["total"], 21)
+        self.assertEqual(payload["last_30_days_total"], 3)
+        self.assertEqual(payload["weeks_count"], 1)
+        fetch_mock.assert_called_once_with("gho_valid_token")
+        apply_async_mock.assert_called_once_with(
+            kwargs={"schedule_next": True},
+            countdown=3600,
+        )
+
+    def test_about_heatmap_data_shows_error_when_admin_github_token_missing(self):
+        response = self.client.get(reverse("about_heatmap_data"))
+        payload = response.json()
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(payload["error"], "Heatmap is not configured.")
+
     def test_projects_view(self):
         response = self.client.get(reverse("projects"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "main/projects.html")
         self.assertIn("projects", response.context)
         self.assertIn("all_tags", response.context)
-        self.assertContains(response, reverse("blog_detail", args=[self.project.blog_url]))
+        self.assertContains(
+            response, reverse("blog_detail", args=[self.project.blog_url])
+        )
 
     def test_projects_view_uses_detail_link_when_blog_slug_missing(self):
         no_slug_project = Project.objects.create(
@@ -182,7 +403,9 @@ class ViewsTest(TestCase):
         response = self.client.get(reverse("blog_detail", args=[project.blog_url]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "<table>")
-        self.assertContains(response, '<a href="https://example.com">Example</a>', html=True)
+        self.assertContains(
+            response, '<a href="https://example.com">Example</a>', html=True
+        )
 
     def test_blog_detail_includes_all_projects_for_sidebar(self):
         other_project = Project.objects.create(

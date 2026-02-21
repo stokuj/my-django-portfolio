@@ -66,5 +66,354 @@
             </p>
         </div>
     </section>
+
+    {% if heatmap_component_visible %}
+    <section class="mt-6 rounded-2xl border border-base-300 bg-gradient-to-br from-base-200 to-base-100 shadow-sm">
+        <div class="p-5 sm:p-6">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <h2 class="text-xl font-semibold text-primary">GitHub Contributions</h2>
+                    <p id="heatmap-status" class="mt-1 text-sm text-base-content/70">Loading heatmap data...</p>
+                </div>
+                <div class="badge badge-outline badge-sm">Live from FastAPI</div>
+            </div>
+
+            <div id="heatmap-error" class="alert alert-error mt-4 hidden">
+                <span id="heatmap-error-text"></span>
+            </div>
+
+            <div id="heatmap-actions" class="mt-4 hidden">
+                <a id="heatmap-action-link" href="/accounts/3rdparty/" class="btn btn-primary btn-sm">Login with GitHub</a>
+            </div>
+
+            <div id="heatmap-content" class="mt-4 hidden">
+                <div class="grid gap-3 sm:grid-cols-3">
+                    <article class="rounded-xl border border-base-300 bg-base-100 p-3">
+                        <p class="text-xs uppercase tracking-wide text-base-content/60">Username</p>
+                        <p id="heatmap-username" class="mt-1 text-lg font-semibold">-</p>
+                    </article>
+                    <article class="rounded-xl border border-base-300 bg-base-100 p-3">
+                        <p class="text-xs uppercase tracking-wide text-base-content/60">Contributions (last 12 months)</p>
+                        <p id="heatmap-total" class="mt-1 text-lg font-semibold">-</p>
+                    </article>
+                    <article class="rounded-xl border border-base-300 bg-base-100 p-3">
+                        <p class="text-xs uppercase tracking-wide text-base-content/60">Contributions (last 30 days)</p>
+                        <p id="heatmap-last30" class="mt-1 text-lg font-semibold">-</p>
+                    </article>
+                </div>
+
+                <div class="mt-4 rounded-xl border border-base-300 bg-base-100 p-3 sm:p-4">
+                    <div class="overflow-x-auto pb-1">
+                        <div class="inline-block min-w-max">
+                            <div class="flex">
+                                <div class="w-10"></div>
+                                <div id="heatmap-months" class="mb-2 flex items-center gap-1"></div>
+                            </div>
+                            <div class="flex">
+                                <div class="w-10"></div>
+                                <div id="heatmap-grid" class="inline-flex min-h-[92px] gap-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center justify-between text-xs text-base-content/65">
+                        <span>Less</span>
+                        <div class="flex items-center gap-1">
+                            <span class="h-3 w-3 rounded-sm border border-base-300 bg-base-200"></span>
+                            <span class="h-3 w-3 rounded-sm border border-base-300" style="background:#9be9a8"></span>
+                            <span class="h-3 w-3 rounded-sm border border-base-300" style="background:#40c463"></span>
+                            <span class="h-3 w-3 rounded-sm border border-base-300" style="background:#30a14e"></span>
+                            <span class="h-3 w-3 rounded-sm border border-base-300" style="background:#216e39"></span>
+                        </div>
+                        <span>More</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% if request.user.is_authenticated and request.user.is_staff and heatmap_connected_for_admin %}
+    <div class="mt-3 flex justify-end">
+        <form method="post" action="{% url 'about_heatmap_disconnect' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline btn-error">Disconnect GitHub</button>
+        </form>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {% if request.user.is_authenticated and request.user.is_staff %}
+    <section class="mt-6 rounded-2xl border border-base-300 bg-base-200 shadow-sm">
+        <div class="p-5 sm:p-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-semibold text-primary">Scheduled Jobs</h2>
+                <span class="badge badge-outline badge-sm">Admin</span>
+            </div>
+
+            <div class="mt-4 grid gap-3">
+                {% for job in scheduled_jobs %}
+                <article class="rounded-xl border border-base-300 bg-base-100 p-4">
+                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p class="font-semibold">{{ job.label }}</p>
+                            <p class="text-xs text-base-content/70">{{ job.task_name }}</p>
+                        </div>
+                        {% if job.status == 'success' %}
+                        <span class="badge badge-success badge-sm">success</span>
+                        {% elif job.status == 'partial_success' %}
+                        <span class="badge badge-warning badge-sm">partial_success</span>
+                        {% elif job.status == 'failure' %}
+                        <span class="badge badge-error badge-sm">failure</span>
+                        {% else %}
+                        <span class="badge badge-ghost badge-sm">never</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="mt-3 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
+                        <p><span class="font-semibold">Schedule:</span> {{ job.schedule_label }}</p>
+                        <p>
+                            <span class="font-semibold">Last run:</span>
+                            {% if job.last_run_at %}
+                            <time class="js-local-datetime" datetime="{{ job.last_run_at|date:'c' }}">{{ job.last_run_at|date:"Y-m-d H:i" }}</time>
+                            {% else %}
+                            never
+                            {% endif %}
+                        </p>
+                        <p>
+                            <span class="font-semibold">Next run:</span>
+                            <time class="js-local-datetime" datetime="{{ job.next_run_at|date:'c' }}">{{ job.next_run_at|date:"Y-m-d H:i" }}</time>
+                        </p>
+                        <p><span class="font-semibold">Totals:</span> {{ job.last_updated }}/{{ job.last_total }} ok, {{ job.last_failed }} failed</p>
+                    </div>
+
+                    {% if job.last_error %}
+                    <p class="mt-3 text-xs text-error break-all"><span class="font-semibold">Last error:</span> {{ job.last_error }}</p>
+                    {% endif %}
+                </article>
+                {% endfor %}
+            </div>
+
+            <p class="mt-4 text-xs text-base-content/70">Times are shown in your browser local timezone.</p>
+
+            <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
+                <form method="post" action="{% url 'run_heatmap_refresh_task' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" class="btn btn-sm btn-outline">Sync Heatmap</button>
+                </form>
+                <form method="post" action="{% url 'run_markdown_sync_task' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" class="btn btn-sm btn-outline">Sync Markdown</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    {% endif %}
 </div>
+
+{% if heatmap_component_visible %}
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+    const statusEl = document.getElementById("heatmap-status");
+    const errorEl = document.getElementById("heatmap-error");
+    const errorTextEl = document.getElementById("heatmap-error-text");
+    const actionsEl = document.getElementById("heatmap-actions");
+    const actionLinkEl = document.getElementById("heatmap-action-link");
+    const contentEl = document.getElementById("heatmap-content");
+    const gridEl = document.getElementById("heatmap-grid");
+    const monthsEl = document.getElementById("heatmap-months");
+
+    const isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
+    const heatmapEnabled = {{ heatmap_enabled|yesno:"true,false" }};
+
+    function showError(message) {
+        statusEl.classList.add("hidden");
+        contentEl.classList.add("hidden");
+        errorTextEl.textContent = message;
+        errorEl.classList.remove("hidden");
+    }
+
+    function showActionForCurrentUser() {
+        if (!isAuthenticated) {
+            return;
+        }
+
+        actionsEl.classList.remove("hidden");
+
+        actionLinkEl.textContent = "Connect GitHub";
+        actionLinkEl.href = "/accounts/3rdparty/";
+    }
+
+    if (!heatmapEnabled) {
+        statusEl.textContent = "Connect your GitHub account to enable the heatmap.";
+        if (isAuthenticated) {
+            showActionForCurrentUser();
+        }
+        return;
+    }
+
+    function contributionColor(count) {
+        if (!count || count <= 0) return "";
+        if (count < 3) return "#9be9a8";
+        if (count < 6) return "#40c463";
+        if (count < 9) return "#30a14e";
+        return "#216e39";
+    }
+
+    function normalizeDays(week) {
+        const days = Array.isArray(week && week.days) ? week.days.slice(0, 7) : [];
+        while (days.length < 7) {
+            days.push({ count: 0, date: null });
+        }
+        return days;
+    }
+
+    function parseDate(value) {
+        if (!value || typeof value !== "string") return null;
+        const normalized = value.includes("T") ? value : value + "T12:00:00";
+        const parsed = new Date(normalized);
+        return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function getWeekMonthIndex(week) {
+        const days = normalizeDays(week);
+        for (let i = 0; i < days.length; i += 1) {
+            const parsed = parseDate(days[i].date);
+            if (parsed) {
+                return parsed.getMonth();
+            }
+        }
+        return null;
+    }
+
+    function renderMonthLabels(weeks) {
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        monthsEl.innerHTML = "";
+
+        if (!weeks.length) {
+            return;
+        }
+
+        const segments = [];
+        weeks.forEach(function (week) {
+            const monthIndex = getWeekMonthIndex(week);
+            const safeMonthIndex = monthIndex === null ? -1 : monthIndex;
+            const last = segments[segments.length - 1];
+
+            if (!last || last.month !== safeMonthIndex) {
+                segments.push({ month: safeMonthIndex, weeks: 1 });
+            } else {
+                last.weeks += 1;
+            }
+        });
+
+        segments.forEach(function (segment) {
+            const label = document.createElement("div");
+            const widthPx = segment.weeks * 18 - 4;
+            label.style.width = widthPx + "px";
+            label.className = "text-[10px] leading-none text-base-content/65";
+            label.textContent = segment.month >= 0 ? monthNames[segment.month] : "";
+            monthsEl.appendChild(label);
+        });
+    }
+
+    function renderGrid(raw) {
+        const weeks = Array.isArray(raw && raw.weeks) ? raw.weeks : [];
+        gridEl.innerHTML = "";
+        renderMonthLabels(weeks);
+
+        if (!weeks.length) {
+            gridEl.innerHTML = '<p class="text-sm text-base-content/70">No weekly data available.</p>';
+            return;
+        }
+
+        weeks.forEach(function (week) {
+            const weekCol = document.createElement("div");
+            weekCol.className = "flex flex-col gap-1";
+
+            normalizeDays(week).forEach(function (day) {
+                const count = Number(day.count || day.contribution_count || 0);
+                const dayEl = document.createElement("div");
+                dayEl.className = "h-3.5 w-3.5 rounded-[3px] border border-base-300/70 bg-base-200";
+
+                const color = contributionColor(count);
+                if (color) {
+                    dayEl.style.background = color;
+                    dayEl.style.borderColor = color;
+                }
+
+                let dayLabel = "Unknown date";
+                const parsedDate = parseDate(day.date);
+                if (parsedDate) {
+                    dayLabel = new Intl.DateTimeFormat("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric"
+                    }).format(parsedDate);
+                }
+                dayEl.title = dayLabel + " - " + count + " contributions";
+                weekCol.appendChild(dayEl);
+            });
+
+            gridEl.appendChild(weekCol);
+        });
+    }
+
+    try {
+        const response = await fetch("{% url 'about_heatmap_data' %}", {
+            method: "GET",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            credentials: "same-origin"
+        });
+
+        const payload = await response.json();
+        if (!response.ok) {
+            showError(payload.error || "Heatmap service is temporarily unavailable.");
+            if (payload && payload.error && payload.error.includes("GitHub")) {
+                showActionForCurrentUser();
+            }
+            return;
+        }
+
+        document.getElementById("heatmap-username").textContent = payload.username || "-";
+        document.getElementById("heatmap-total").textContent = payload.total ?? "-";
+        document.getElementById("heatmap-last30").textContent = payload.last_30_days_total ?? 0;
+        renderGrid(payload.raw || {});
+
+        statusEl.classList.add("hidden");
+        errorEl.classList.add("hidden");
+        contentEl.classList.remove("hidden");
+    } catch (error) {
+        showError("Heatmap service is temporarily unavailable.");
+    }
+});
+</script>
+{% endif %}
+
+{% if request.user.is_authenticated and request.user.is_staff %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const formatter = new Intl.DateTimeFormat(undefined, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+
+    document.querySelectorAll(".js-local-datetime").forEach(function (el) {
+        const isoValue = el.getAttribute("datetime");
+        if (!isoValue) return;
+
+        const parsed = new Date(isoValue);
+        if (Number.isNaN(parsed.getTime())) return;
+
+        el.textContent = formatter.format(parsed);
+        el.title = parsed.toString();
+    });
+});
+</script>
+{% endif %}
 {% endblock content %}

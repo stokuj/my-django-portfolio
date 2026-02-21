@@ -27,6 +27,15 @@ class URLsTest(TestCase):
     def test_about_url(self):
         response = self.client.get("/about/")
         self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Login with GitHub")
+
+    def test_about_heatmap_data_is_public(self):
+        response = self.client.get("/about/heatmap-data/")
+        self.assertNotEqual(response.status_code, 302)
+
+    def test_about_heatmap_disconnect_requires_login(self):
+        response = self.client.post("/about/heatmap-disconnect/")
+        self.assertEqual(response.status_code, 302)
 
     def test_projects_url(self):
         response = self.client.get("/projects/")
@@ -36,3 +45,18 @@ class URLsTest(TestCase):
         response = self.client.post("/admin-tools/run-markdown-sync/")
         self.assertEqual(response.status_code, 302)
         self.assertIn("/admin/login/", response.url)
+
+    def test_run_heatmap_refresh_url_requires_staff(self):
+        response = self.client.post("/admin-tools/run-heatmap-refresh/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/admin/login/", response.url)
+
+    def test_accounts_login_redirects_to_3rdparty(self):
+        response = self.client.get("/accounts/login/")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/accounts/3rdparty/")
+
+    def test_accounts_3rdparty_redirects_anonymous_to_home(self):
+        response = self.client.get("/accounts/3rdparty/")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/home/")

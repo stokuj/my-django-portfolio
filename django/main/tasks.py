@@ -3,11 +3,18 @@ import logging
 from celery import shared_task
 from django.utils import timezone
 
+from .heatmap import (
+    fetch_heatmap_data,
+    get_portfolio_github_token,
+    update_snapshot_error,
+    update_snapshot_with_payload,
+)
 from .markdown_sync import sync_project_markdown
 from .models import Project, TaskExecutionStatus
 
 logger = logging.getLogger(__name__)
 SYNC_MARKDOWNS_TASK_NAME = "main.sync_project_markdowns_task"
+REFRESH_HEATMAP_TASK_NAME = "main.refresh_portfolio_heatmap_cache_task"
 
 
 @shared_task
@@ -17,7 +24,9 @@ def healthcheck_task():
 
 @shared_task
 def sync_project_markdowns_task(blog_slug=None):
-    status, _ = TaskExecutionStatus.objects.get_or_create(task_name=SYNC_MARKDOWNS_TASK_NAME)
+    status, _ = TaskExecutionStatus.objects.get_or_create(
+        task_name=SYNC_MARKDOWNS_TASK_NAME
+    )
     status.last_run_at = timezone.now()
 
     projects = Project.objects.filter(blog=True)
@@ -90,3 +99,94 @@ def sync_project_markdowns_task(blog_slug=None):
         "failed": failed_count,
         "results": results,
     }
+
+
+@shared_task
+def refresh_portfolio_heatmap_cache_task(schedule_next=False):
+    status, _ = TaskExecutionStatus.objects.get_or_create(
+        task_name=REFRESH_HEATMAP_TASK_NAME
+    )
+    status.last_run_at = timezone.now()
+
+    github_token = get_portfolio_github_token()
+    if not github_token:
+        message = "GitHub is not connected for portfolio heatmap."
+        update_snapshot_error(message)
+        status.last_status = TaskExecutionStatus.STATUS_FAILURE
+        status.last_failure_at = timezone.now()
+        status.last_total = 1
+        status.last_updated = 0
+        status.last_failed = 1
+        status.last_error = message
+        status.save(
+            update_fields=[
+                "last_status",
+                "last_run_at",
+                "last_failure_at",
+                "last_total",
+                "last_updated",
+                "last_failed",
+                "last_error",
+            ]
+        )
+        _maybe_schedule_next_refresh(schedule_next)
+        return {"ok": False, "error": message}
+
+    payload, error = fetch_heatmap_data(github_token)
+    if error:
+        update_snapshot_error(error)
+        status.last_status = TaskExecutionStatus.STATUS_FAILURE
+        status.last_failure_at = timezone.now()
+        status.last_total = 1
+        status.last_updated = 0
+        status.last_failed = 1
+        status.last_error = error
+        status.save(
+            update_fields=[
+                "last_status",
+                "last_run_at",
+                "last_failure_at",
+                "last_total",
+                "last_updated",
+                "last_failed",
+                "last_error",
+            ]
+        )
+        _maybe_schedule_next_refresh(schedule_next)
+        return {"ok": False, "error": error}
+
+    snapshot = update_snapshot_with_payload(payload)
+    status.last_status = TaskExecutionStatus.STATUS_SUCCESS
+    status.last_success_at = timezone.now()
+    status.last_total = 1
+    status.last_updated = 1
+    status.last_failed = 0
+    status.last_error = ""
+    status.save(
+        update_fields=[
+            "last_status",
+            "last_run_at",
+            "last_success_at",
+            "last_total",
+            "last_updated",
+            "last_failed",
+            "last_error",
+        ]
+    )
+    _maybe_schedule_next_refresh(schedule_next)
+    return {
+        "ok": True,
+        "username": snapshot.username,
+        "total": snapshot.total,
+        "weeks_count": snapshot.weeks_count,
+    }
+
+
+def _maybe_schedule_next_refresh(schedule_next):
+    if not schedule_next:
+        return
+
+    refresh_portfolio_heatmap_cache_task.apply_async(
+        kwargs={"schedule_next": True},
+        countdown=3600,
+    )

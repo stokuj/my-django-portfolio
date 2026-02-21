@@ -1,4 +1,4 @@
-﻿"""
+"""
 URL configuration for personal_portfolio project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -14,14 +14,29 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.urls import path, include
+from django.views.generic import RedirectView
 from django.conf import settings
 
+from main import views as main_views
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("", include("main.urls"))
+    path("admin/", admin.site.urls),
+    path(
+        "accounts/login/",
+        RedirectView.as_view(url="/accounts/3rdparty/", permanent=False),
+        name="account_login_redirect",
+    ),
+    path(
+        "accounts/3rdparty/",
+        main_views.accounts_3rdparty_redirect,
+        name="accounts_3rdparty_redirect",
+    ),
+    path("accounts/", include("allauth.urls")),
+    path("", include("main.urls")),
 ]
 
 # Serve media only in development.
@@ -29,5 +44,5 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Configure custom error handlers.
-handler404 = 'main.views.handler404'
-handler500 = 'main.views.handler500'
+handler404 = "main.views.handler404"
+handler500 = "main.views.handler500"
