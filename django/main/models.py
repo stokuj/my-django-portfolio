@@ -105,6 +105,27 @@ class TaskExecutionStatus(models.Model):
         return self.task_name
 
 
+class TaskExecutionLog(models.Model):
+    task_name = models.CharField(max_length=150, db_index=True)
+    last_status = models.CharField(
+        max_length=20,
+        choices=TaskExecutionStatus.STATUS_CHOICES,
+        blank=True,
+        default="",
+    )
+    last_run_at = models.DateTimeField(blank=True, null=True)
+    last_success_at = models.DateTimeField(blank=True, null=True)
+    last_failure_at = models.DateTimeField(blank=True, null=True)
+    last_total = models.PositiveIntegerField(default=0)
+    last_updated = models.PositiveIntegerField(default=0)
+    last_failed = models.PositiveIntegerField(default=0)
+    last_error = models.TextField(blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.task_name} @ {self.last_run_at}"
+
+
 class PortfolioProfile(models.Model):
     site_name = models.CharField(max_length=100, default="My Portfolio")
     full_name = models.CharField(max_length=120, default="John Doe")

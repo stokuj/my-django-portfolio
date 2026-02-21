@@ -4,7 +4,14 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
 
-from main.models import PageView, PortfolioProfile, Project, Tag, TaskExecutionStatus
+from main.models import (
+    PageView,
+    PortfolioProfile,
+    Project,
+    Tag,
+    TaskExecutionLog,
+    TaskExecutionStatus,
+)
 
 
 class TagModelTest(TestCase):
@@ -192,7 +199,9 @@ class PortfolioProfileModelTest(TestCase):
 
 class TaskExecutionStatusModelTest(TestCase):
     def test_task_execution_status_creation(self):
-        status = TaskExecutionStatus.objects.create(task_name="main.sync_project_markdowns_task")
+        status = TaskExecutionStatus.objects.create(
+            task_name="main.sync_project_markdowns_task"
+        )
 
         self.assertEqual(status.task_name, "main.sync_project_markdowns_task")
         self.assertEqual(status.last_status, "")
@@ -201,3 +210,20 @@ class TaskExecutionStatusModelTest(TestCase):
         self.assertEqual(status.last_failed, 0)
         self.assertEqual(status.last_error, "")
         self.assertEqual(str(status), "main.sync_project_markdowns_task")
+
+
+class TaskExecutionLogModelTest(TestCase):
+    def test_task_execution_log_creation(self):
+        log = TaskExecutionLog.objects.create(
+            task_name="main.sync_project_markdowns_task",
+            last_status=TaskExecutionStatus.STATUS_SUCCESS,
+            last_total=1,
+            last_updated=1,
+        )
+
+        self.assertEqual(log.task_name, "main.sync_project_markdowns_task")
+        self.assertEqual(log.last_status, TaskExecutionStatus.STATUS_SUCCESS)
+        self.assertEqual(log.last_total, 1)
+        self.assertEqual(log.last_updated, 1)
+        self.assertEqual(log.last_failed, 0)
+        self.assertEqual(log.last_error, "")

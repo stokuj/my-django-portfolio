@@ -1,10 +1,25 @@
 from django.contrib import admin
-from .models import PageView, PortfolioProfile, Project, Tag, TaskExecutionStatus
+from .models import (
+    PageView,
+    PortfolioProfile,
+    Project,
+    Tag,
+    TaskExecutionLog,
+    TaskExecutionStatus,
+)
 
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ("title", "status", "blog", "blog_url", "markdown_file", "tech_stack", "tools_libraries")
+    list_display = (
+        "title",
+        "status",
+        "blog",
+        "blog_url",
+        "markdown_file",
+        "tech_stack",
+        "tools_libraries",
+    )
     search_fields = ("title", "blog_url")
 
 
@@ -39,6 +54,32 @@ class TaskExecutionStatusAdmin(admin.ModelAdmin):
         "last_error",
     )
     search_fields = ("task_name",)
+
+
+@admin.register(TaskExecutionLog)
+class TaskExecutionLogAdmin(admin.ModelAdmin):
+    list_display = (
+        "task_name",
+        "last_status",
+        "last_total",
+        "last_updated",
+        "last_failed",
+        "last_run_at",
+        "created_at",
+    )
+    readonly_fields = (
+        "task_name",
+        "last_status",
+        "last_run_at",
+        "last_success_at",
+        "last_failure_at",
+        "last_total",
+        "last_updated",
+        "last_failed",
+        "last_error",
+        "created_at",
+    )
+    search_fields = ("task_name", "last_error")
 
 
 admin.site.register(Tag)

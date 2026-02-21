@@ -208,6 +208,66 @@
             </div>
         </div>
     </section>
+
+    <section class="mt-6 rounded-2xl border border-base-300 bg-base-200 shadow-sm">
+        <div class="p-5 sm:p-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-semibold text-primary">Executed Tasks</h2>
+                <span class="badge badge-outline badge-sm">Admin</span>
+            </div>
+
+            <div class="mt-4 grid max-h-96 gap-3 overflow-y-auto pr-1">
+                {% for task in executed_tasks %}
+                <article class="rounded-xl border border-base-300 bg-base-100 p-4">
+                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <p class="font-semibold break-all">{{ task.task_name }}</p>
+                        {% if task.last_status == 'success' %}
+                        <span class="badge badge-success badge-sm">success</span>
+                        {% elif task.last_status == 'partial_success' %}
+                        <span class="badge badge-warning badge-sm">partial_success</span>
+                        {% elif task.last_status == 'failure' %}
+                        <span class="badge badge-error badge-sm">failure</span>
+                        {% else %}
+                        <span class="badge badge-ghost badge-sm">unknown</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="mt-3 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
+                        <p>
+                            <span class="font-semibold">Last run:</span>
+                            <time class="js-local-datetime" datetime="{{ task.last_run_at|date:'c' }}">{{ task.last_run_at|date:"Y-m-d H:i" }}</time>
+                        </p>
+                        <p>
+                            <span class="font-semibold">Last success:</span>
+                            {% if task.last_success_at %}
+                            <time class="js-local-datetime" datetime="{{ task.last_success_at|date:'c' }}">{{ task.last_success_at|date:"Y-m-d H:i" }}</time>
+                            {% else %}
+                            -
+                            {% endif %}
+                        </p>
+                        <p>
+                            <span class="font-semibold">Last failure:</span>
+                            {% if task.last_failure_at %}
+                            <time class="js-local-datetime" datetime="{{ task.last_failure_at|date:'c' }}">{{ task.last_failure_at|date:"Y-m-d H:i" }}</time>
+                            {% else %}
+                            -
+                            {% endif %}
+                        </p>
+                        <p><span class="font-semibold">Totals:</span> {{ task.last_updated }}/{{ task.last_total }} ok, {{ task.last_failed }} failed</p>
+                    </div>
+
+                    {% if task.last_error %}
+                    <p class="mt-3 text-xs text-error break-all"><span class="font-semibold">Last error:</span> {{ task.last_error }}</p>
+                    {% endif %}
+                </article>
+                {% empty %}
+                <p class="rounded-xl border border-dashed border-base-300 bg-base-100 p-4 text-sm text-base-content/70">
+                    No executed tasks yet.
+                </p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
     {% endif %}
 </div>
 

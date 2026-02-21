@@ -9,8 +9,16 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
 from django.test import Client, RequestFactory, TestCase, override_settings
 from django.urls import reverse
+from django.utils import timezone
 
-from main.models import HeatmapSnapshot, PageView, Project, Tag
+from main.models import (
+    HeatmapSnapshot,
+    PageView,
+    Project,
+    Tag,
+    TaskExecutionLog,
+    TaskExecutionStatus,
+)
 from main.views import handler404, handler500
 
 
@@ -109,6 +117,77 @@ class ViewsTest(TestCase):
         )
         self.assertContains(response, "/accounts/3rdparty/")
         self.assertNotContains(response, "/accounts/github/login/")
+
+    def test_about_shows_executed_tasks_list_for_admin(self):
+        User = get_user_model()
+        admin_user = User.objects.create_user(
+            username="admin-tasks",
+            email="admin-tasks@example.com",
+            password="secret",
+            is_superuser=True,
+            is_staff=True,
+        )
+        self.client.force_login(admin_user)
+
+        older_time = timezone.now() - datetime.timedelta(hours=2)
+        newer_time = timezone.now() - datetime.timedelta(minutes=20)
+
+        TaskExecutionLog.objects.create(
+            task_name="main.older_task",
+            last_status=TaskExecutionStatus.STATUS_FAILURE,
+            last_run_at=older_time,
+            last_failed=1,
+            last_total=1,
+            last_error="older error",
+        )
+        TaskExecutionLog.objects.create(
+            task_name="main.newer_task",
+            last_status=TaskExecutionStatus.STATUS_SUCCESS,
+            last_run_at=newer_time,
+            last_updated=1,
+            last_total=1,
+        )
+
+        response = self.client.get(reverse("about"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Executed Tasks")
+        self.assertContains(response, "main.older_task")
+        self.assertContains(response, "main.newer_task")
+
+        content = response.content.decode()
+        self.assertLess(
+            content.find("main.newer_task"), content.find("main.older_task")
+        )
+
+    def test_about_shows_only_last_30_executed_tasks(self):
+        User = get_user_model()
+        admin_user = User.objects.create_user(
+            username="admin-tasks-limit",
+            email="admin-tasks-limit@example.com",
+            password="secret",
+            is_superuser=True,
+            is_staff=True,
+        )
+        self.client.force_login(admin_user)
+
+        now = timezone.now()
+        for idx in range(35):
+            TaskExecutionLog.objects.create(
+                task_name=f"main.task_{idx}",
+                last_status=TaskExecutionStatus.STATUS_SUCCESS,
+                last_run_at=now - datetime.timedelta(minutes=idx),
+                last_total=1,
+                last_updated=1,
+            )
+
+        response = self.client.get(reverse("about"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "main.task_0")
+        self.assertContains(response, "main.task_29")
+        self.assertNotContains(response, "main.task_30")
+        self.assertNotContains(response, "main.task_34")
 
     def test_about_disconnect_github_removes_admin_social_account(self):
         User = get_user_model()

@@ -10,7 +10,7 @@ from .heatmap import (
     update_snapshot_with_payload,
 )
 from .markdown_sync import sync_project_markdown
-from .models import Project, TaskExecutionStatus
+from .models import Project, TaskExecutionLog, TaskExecutionStatus
 
 logger = logging.getLogger(__name__)
 SYNC_MARKDOWNS_TASK_NAME = "main.sync_project_markdowns_task"
@@ -92,6 +92,7 @@ def sync_project_markdowns_task(blog_slug=None):
             "last_error",
         ]
     )
+    _log_task_execution(status)
 
     return {
         "total": len(results),
@@ -129,6 +130,7 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
                 "last_error",
             ]
         )
+        _log_task_execution(status)
         _maybe_schedule_next_refresh(schedule_next)
         return {"ok": False, "error": message}
 
@@ -152,6 +154,7 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
                 "last_error",
             ]
         )
+        _log_task_execution(status)
         _maybe_schedule_next_refresh(schedule_next)
         return {"ok": False, "error": error}
 
@@ -173,6 +176,7 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
             "last_error",
         ]
     )
+    _log_task_execution(status)
     _maybe_schedule_next_refresh(schedule_next)
     return {
         "ok": True,
@@ -189,4 +193,18 @@ def _maybe_schedule_next_refresh(schedule_next):
     refresh_portfolio_heatmap_cache_task.apply_async(
         kwargs={"schedule_next": True},
         countdown=3600,
+    )
+
+
+def _log_task_execution(status):
+    TaskExecutionLog.objects.create(
+        task_name=status.task_name,
+        last_status=status.last_status,
+        last_run_at=status.last_run_at,
+        last_success_at=status.last_success_at,
+        last_failure_at=status.last_failure_at,
+        last_total=status.last_total,
+        last_updated=status.last_updated,
+        last_failed=status.last_failed,
+        last_error=status.last_error,
     )

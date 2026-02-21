@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from main.models import Project, TaskExecutionStatus
+from main.models import Project, TaskExecutionLog, TaskExecutionStatus
 from main.tasks import SYNC_MARKDOWNS_TASK_NAME, sync_project_markdowns_task
 
 
@@ -18,11 +18,16 @@ class TaskStatusTrackingTests(TestCase):
 
         with patch(
             "main.tasks.sync_project_markdown",
-            return_value={"project_id": project.id, "slug": project.blog_url, "updated": True},
+            return_value={
+                "project_id": project.id,
+                "slug": project.blog_url,
+                "updated": True,
+            },
         ):
             result = sync_project_markdowns_task()
 
         status = TaskExecutionStatus.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
+        execution_log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
         self.assertEqual(result["failed"], 0)
         self.assertEqual(status.last_status, TaskExecutionStatus.STATUS_SUCCESS)
         self.assertEqual(status.last_total, 1)
@@ -32,6 +37,10 @@ class TaskStatusTrackingTests(TestCase):
         self.assertIsNotNone(status.last_success_at)
         self.assertIsNone(status.last_failure_at)
         self.assertEqual(status.last_error, "")
+        self.assertEqual(execution_log.last_status, TaskExecutionStatus.STATUS_SUCCESS)
+        self.assertEqual(execution_log.last_total, 1)
+        self.assertEqual(execution_log.last_updated, 1)
+        self.assertEqual(execution_log.last_failed, 0)
 
     def test_sync_task_updates_status_on_failure(self):
         Project.objects.create(
@@ -55,6 +64,7 @@ class TaskStatusTrackingTests(TestCase):
             result = sync_project_markdowns_task()
 
         status = TaskExecutionStatus.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
+        execution_log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
         self.assertEqual(result["failed"], 1)
         self.assertEqual(status.last_status, TaskExecutionStatus.STATUS_FAILURE)
         self.assertEqual(status.last_total, 1)
@@ -63,6 +73,8 @@ class TaskStatusTrackingTests(TestCase):
         self.assertIsNotNone(status.last_run_at)
         self.assertIsNotNone(status.last_failure_at)
         self.assertIn("task-failure: download_failed", status.last_error)
+        self.assertEqual(execution_log.last_status, TaskExecutionStatus.STATUS_FAILURE)
+        self.assertEqual(execution_log.last_failed, 1)
 
     def test_sync_task_updates_status_on_partial_success(self):
         first = Project.objects.create(
@@ -82,7 +94,11 @@ class TaskStatusTrackingTests(TestCase):
 
         def _sync_side_effect(project):
             if project.id == first.id:
-                return {"project_id": project.id, "slug": project.blog_url, "updated": True}
+                return {
+                    "project_id": project.id,
+                    "slug": project.blog_url,
+                    "updated": True,
+                }
             return {
                 "project_id": project.id,
                 "slug": project.blog_url,
@@ -94,8 +110,13 @@ class TaskStatusTrackingTests(TestCase):
             result = sync_project_markdowns_task()
 
         status = TaskExecutionStatus.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
+        execution_log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
         self.assertEqual(result["failed"], 1)
         self.assertEqual(status.last_status, TaskExecutionStatus.STATUS_PARTIAL_SUCCESS)
         self.assertEqual(status.last_total, 2)
         self.assertEqual(status.last_updated, 1)
         self.assertEqual(status.last_failed, 1)
+        self.assertEqual(
+            execution_log.last_status, TaskExecutionStatus.STATUS_PARTIAL_SUCCESS
+        )
+        self.assertEqual(execution_log.last_total, 2)

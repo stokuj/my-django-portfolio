@@ -22,7 +22,7 @@ from .heatmap import (
     update_snapshot_with_payload,
 )
 from .markdown_sync import build_readme_url, get_repo_path
-from .models import Project, Tag, TaskExecutionStatus
+from .models import Project, Tag, TaskExecutionLog, TaskExecutionStatus
 from .tasks import (
     REFRESH_HEATMAP_TASK_NAME,
     SYNC_MARKDOWNS_TASK_NAME,
@@ -111,6 +111,7 @@ def about(request):
 
     if is_admin_user:
         context["scheduled_jobs"] = _get_scheduled_jobs_overview()
+        context["executed_tasks"] = _get_executed_tasks()
 
     return render(request, "main/about.html", context)
 
@@ -296,6 +297,10 @@ def _get_scheduled_jobs_overview():
         )
 
     return jobs
+
+
+def _get_executed_tasks():
+    return TaskExecutionLog.objects.order_by("-last_run_at", "-id")[:30]
 
 
 def projects(request):
