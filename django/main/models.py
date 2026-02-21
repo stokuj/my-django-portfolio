@@ -6,6 +6,31 @@ from django.db import models
 from .validators import validate_github_repo_url
 
 
+def default_core_stack():
+    return [
+        "Python",
+        "Django",
+        "FastAPI",
+        "PostgreSQL",
+        "Redis",
+        "Docker",
+        "Celery",
+    ]
+
+
+def default_current_learning():
+    return ["Kubernetes", "GraphQL", "Advanced Docker"]
+
+
+def default_interests():
+    return [
+        "Machine Learning",
+        "Data Engineering",
+        "Backend Architecture",
+        "Automation",
+    ]
+
+
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
@@ -148,6 +173,16 @@ class PortfolioProfile(models.Model):
             "clean architecture, and practical data tooling."
         ),
     )
+    core_stack = models.JSONField(default=default_core_stack, blank=True)
+    current_learning = models.JSONField(default=default_current_learning, blank=True)
+    current_learning_summary = models.CharField(
+        max_length=255,
+        default=(
+            "I am expanding my stack to design more scalable systems and improve "
+            "deployment workflows."
+        ),
+    )
+    interests = models.JSONField(default=default_interests, blank=True)
     email = models.EmailField(blank=True, default="example@mail.com")
     github_url = models.URLField(blank=True, default="https://github.com/your-username")
     linkedin_url = models.URLField(

@@ -11,13 +11,9 @@
             <div class="card-body p-5">
                 <h2 class="card-title text-xl text-primary">Core Stack</h2>
                 <div class="mt-3 flex flex-wrap gap-2">
-                    <span class="badge badge-secondary p-3">Python</span>
-                    <span class="badge badge-secondary p-3">Django</span>
-                    <span class="badge badge-secondary p-3">FastAPI</span>
-                    <span class="badge badge-secondary p-3">PostgreSQL</span>
-                    <span class="badge badge-secondary p-3">Redis</span>
-                    <span class="badge badge-secondary p-3">Docker</span>
-                    <span class="badge badge-secondary p-3">Celery</span>
+                    {% for item in profile_core_stack %}
+                    <span class="badge badge-secondary p-3">{{ item }}</span>
+                    {% endfor %}
                 </div>
             </div>
         </article>
@@ -26,12 +22,12 @@
             <div class="card-body p-5">
                 <h2 class="card-title text-xl text-primary">Current Learning</h2>
                 <div class="mt-3 flex flex-wrap gap-2">
-                    <span class="badge badge-info p-3">Kubernetes</span>
-                    <span class="badge badge-info p-3">GraphQL</span>
-                    <span class="badge badge-info p-3">Advanced Docker</span>
+                    {% for item in profile_current_learning %}
+                    <span class="badge badge-info p-3">{{ item }}</span>
+                    {% endfor %}
                 </div>
                 <p class="mt-4 text-sm text-base-content/80 sm:text-base">
-                    I am expanding my stack to design more scalable systems and improve deployment workflows.
+                    {{ profile_current_learning_summary }}
                 </p>
             </div>
         </article>
@@ -40,10 +36,9 @@
             <div class="card-body p-5">
                 <h2 class="card-title text-xl text-primary">Interests</h2>
                 <div class="mt-3 flex flex-wrap gap-2">
-                    <span class="badge badge-warning p-3">Machine Learning</span>
-                    <span class="badge badge-warning p-3">Data Engineering</span>
-                    <span class="badge badge-warning p-3">Backend Architecture</span>
-                    <span class="badge badge-warning p-3">Automation</span>
+                    {% for item in profile_interests %}
+                    <span class="badge badge-warning p-3">{{ item }}</span>
+                    {% endfor %}
                 </div>
             </div>
         </article>

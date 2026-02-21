@@ -190,6 +190,35 @@ class PortfolioProfileModelTest(TestCase):
             profile.about_intro,
             "Junior Full-Stack and Data Science enthusiast focused on robust Django applications, clean architecture, and practical data tooling.",
         )
+        self.assertEqual(
+            profile.core_stack,
+            [
+                "Python",
+                "Django",
+                "FastAPI",
+                "PostgreSQL",
+                "Redis",
+                "Docker",
+                "Celery",
+            ],
+        )
+        self.assertEqual(
+            profile.current_learning,
+            ["Kubernetes", "GraphQL", "Advanced Docker"],
+        )
+        self.assertEqual(
+            profile.current_learning_summary,
+            "I am expanding my stack to design more scalable systems and improve deployment workflows.",
+        )
+        self.assertEqual(
+            profile.interests,
+            [
+                "Machine Learning",
+                "Data Engineering",
+                "Backend Architecture",
+                "Automation",
+            ],
+        )
         self.assertTrue(profile.is_active)
 
     def test_only_one_active_profile_is_allowed(self):

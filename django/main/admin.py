@@ -28,6 +28,36 @@ class PortfolioProfileAdmin(admin.ModelAdmin):
     list_display = ("full_name", "site_name", "email", "is_active")
     list_filter = ("is_active",)
     search_fields = ("full_name", "site_name", "email")
+    fieldsets = (
+        (
+            "Profile",
+            {
+                "fields": (
+                    "is_active",
+                    "site_name",
+                    "full_name",
+                    "role_line",
+                    "specialization_line",
+                    "home_intro",
+                    "about_intro",
+                    "email",
+                    "github_url",
+                    "linkedin_url",
+                )
+            },
+        ),
+        (
+            "About Page Lists",
+            {
+                "fields": (
+                    "core_stack",
+                    "current_learning",
+                    "current_learning_summary",
+                    "interests",
+                )
+            },
+        ),
+    )
 
 
 @admin.register(TaskExecutionStatus)

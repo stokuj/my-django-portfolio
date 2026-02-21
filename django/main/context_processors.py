@@ -37,6 +37,10 @@ def portfolio_profile(request):
         "profile_github_url": github_url,
         "profile_github_base": github_base,
         "profile_linkedin_url": linkedin_url,
+        "profile_core_stack": source.core_stack,
+        "profile_current_learning": source.current_learning,
+        "profile_current_learning_summary": source.current_learning_summary,
+        "profile_interests": source.interests,
     }
 
 
