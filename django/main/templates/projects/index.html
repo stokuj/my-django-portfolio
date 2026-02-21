@@ -3,15 +3,10 @@
 {% block content %}
 {% load static %}
 <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-    <section class="rounded-box border border-base-300 bg-base-200 bg-cover bg-center p-4 sm:p-6" style="background-image: url('{% static 'images/hero-bg2.png' %}')">
-        <header class="mb-6 rounded-box bg-base-100/85 p-4 sm:p-6">
-            <h1 class="text-2xl font-bold text-primary sm:text-3xl">Projects</h1>
-            <p class="mt-2 text-sm text-base-content/80 sm:text-base">
-                Explore selected work by technology and topic.
-            </p>
-        </header>
+    {% include "components/hero_section.html" with hero_background="images/hero-bg2.png" hero_overlay_class="bg-base-100/85" hero_content_template="components/hero/projects_content.html" %}
 
-        <div data-theme="fantasy3" class="mb-8 rounded-box bg-base-100/90 p-3 sm:p-4">
+    <section class="mt-6 rounded-box border border-base-300 bg-base-200 p-4 sm:p-6">
+        <div class="mb-8 rounded-box bg-base-100/90 p-5">
             <div class="mb-4">
                 <label for="searchInput" class="sr-only">Search projects</label>
                 <div class="relative w-full">

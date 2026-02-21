@@ -1,0 +1,10 @@
+<p class="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-primary">About Me</p>
+<h1 class="text-3xl font-bold sm:text-4xl">Hi, I am {{ profile_full_name }}</h1>
+<p class="mt-4 text-base text-base-content/80 sm:text-lg">
+    {{ profile_about_intro }}
+</p>
+<div class="mt-6 flex flex-col gap-3 sm:flex-row">
+    <a href="{% url 'projects' %}" class="btn btn-primary btn-sm w-full sm:w-auto ui-motion">See My Work</a>
+    <a href="{{ profile_email_href }}" class="btn btn-outline btn-sm w-full sm:w-auto ui-motion">Contact Me</a>
+    <a href="{{ profile_github_url }}" class="btn btn-outline btn-sm w-full sm:w-auto ui-motion" target="_blank" rel="noopener noreferrer">GitHub</a>
+</div>

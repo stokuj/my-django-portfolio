@@ -1,24 +1,10 @@
 ﻿{% extends "base.html" %}
-{% load static %}
 
 {% block page_name %}About{% endblock page_name %}
 {% block content %}
 
 <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-    <section class="rounded-box border border-base-300 bg-cover bg-center p-4 sm:p-6" style="background-image: url('{% static 'images/hero-bg2.png' %}')">
-        <div class="rounded-box bg-base-100/90 p-6 sm:p-8">
-            <p class="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-primary">About Me</p>
-            <h1 class="text-3xl font-bold sm:text-4xl">Hi, I am {{ profile_full_name }}</h1>
-            <p class="mt-4 text-base text-base-content/80 sm:text-lg">
-                {{ profile_about_intro }}
-            </p>
-            <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-                <a href="{% url 'projects' %}" class="btn btn-primary btn-sm w-full sm:w-auto ui-motion">See My Work</a>
-                <a href="{{ profile_email_href }}" class="btn btn-outline btn-sm w-full sm:w-auto ui-motion">Contact Me</a>
-                <a href="{{ profile_github_url }}" class="btn btn-outline btn-sm w-full sm:w-auto ui-motion" target="_blank" rel="noopener noreferrer">GitHub</a>
-            </div>
-        </div>
-    </section>
+    {% include "components/hero_section.html" with hero_background="images/hero-bg2.png" hero_overlay_class="bg-base-100/90" hero_content_template="components/hero/about_content.html" %}
 
     <section class="mt-6 grid gap-4 md:grid-cols-2">
         <article class="card border border-base-300 bg-base-200 shadow-sm">
@@ -52,7 +38,7 @@
     </section>
 
     <section class="mt-6 card border border-base-300 bg-base-200 shadow-sm">
-        <div class="card-body p-5 sm:p-6">
+        <div class="card-body p-5">
             <h2 class="card-title text-xl text-primary">Current Focus</h2>
             <div class="mt-3 flex flex-wrap gap-2">
                 <span class="badge badge-info p-3">Go</span>
@@ -69,7 +55,7 @@
 
     {% if heatmap_component_visible %}
     <section class="mt-6 rounded-2xl border border-base-300 bg-gradient-to-br from-base-200 to-base-100 shadow-sm">
-        <div class="p-5 sm:p-6">
+        <div class="p-4 sm:p-6">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                     <h2 class="text-xl font-semibold text-primary">GitHub Contributions</h2>
@@ -88,21 +74,21 @@
 
             <div id="heatmap-content" class="mt-4 hidden">
                 <div class="grid gap-3 sm:grid-cols-3">
-                    <article class="rounded-xl border border-base-300 bg-base-100 p-3">
+                    <article class="rounded-xl border border-base-300 bg-base-100 p-5">
                         <p class="text-xs uppercase tracking-wide text-base-content/60">Username</p>
                         <p id="heatmap-username" class="mt-1 text-lg font-semibold">-</p>
                     </article>
-                    <article class="rounded-xl border border-base-300 bg-base-100 p-3">
+                    <article class="rounded-xl border border-base-300 bg-base-100 p-5">
                         <p class="text-xs uppercase tracking-wide text-base-content/60">Contributions (last 12 months)</p>
                         <p id="heatmap-total" class="mt-1 text-lg font-semibold">-</p>
                     </article>
-                    <article class="rounded-xl border border-base-300 bg-base-100 p-3">
+                    <article class="rounded-xl border border-base-300 bg-base-100 p-5">
                         <p class="text-xs uppercase tracking-wide text-base-content/60">Contributions (last 30 days)</p>
                         <p id="heatmap-last30" class="mt-1 text-lg font-semibold">-</p>
                     </article>
                 </div>
 
-                <div class="mt-4 rounded-xl border border-base-300 bg-base-100 p-3 sm:p-4">
+                <div class="mt-4 rounded-xl border border-base-300 bg-base-100 p-5">
                     <div class="overflow-x-auto pb-1">
                         <div class="inline-block min-w-max">
                             <div class="flex">
@@ -143,7 +129,7 @@
 
     {% if request.user.is_authenticated and request.user.is_staff %}
     <section class="mt-6 rounded-2xl border border-base-300 bg-base-200 shadow-sm">
-        <div class="p-5 sm:p-6">
+        <div class="p-4 sm:p-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-semibold text-primary">Scheduled Jobs</h2>
                 <span class="badge badge-outline badge-sm">Admin</span>
@@ -151,7 +137,7 @@
 
             <div class="mt-4 grid gap-3">
                 {% for job in scheduled_jobs %}
-                <article class="rounded-xl border border-base-300 bg-base-100 p-4">
+                <article class="rounded-xl border border-base-300 bg-base-100 p-5">
                     <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <p class="font-semibold">{{ job.label }}</p>
@@ -210,7 +196,7 @@
     </section>
 
     <section class="mt-6 rounded-2xl border border-base-300 bg-base-200 shadow-sm">
-        <div class="p-5 sm:p-6">
+        <div class="p-4 sm:p-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-semibold text-primary">Executed Tasks</h2>
                 <span class="badge badge-outline badge-sm">Admin</span>
@@ -218,7 +204,7 @@
 
             <div class="mt-4 grid max-h-96 gap-3 overflow-y-auto pr-1">
                 {% for task in executed_tasks %}
-                <article class="rounded-xl border border-base-300 bg-base-100 p-4">
+                <article class="rounded-xl border border-base-300 bg-base-100 p-5">
                     <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <p class="font-semibold break-all">{{ task.task_name }}</p>
                         {% if task.last_status == 'success' %}
@@ -261,7 +247,7 @@
                     {% endif %}
                 </article>
                 {% empty %}
-                <p class="rounded-xl border border-dashed border-base-300 bg-base-100 p-4 text-sm text-base-content/70">
+                <p class="rounded-xl border border-dashed border-base-300 bg-base-100 p-5 text-sm text-base-content/70">
                     No executed tasks yet.
                 </p>
                 {% endfor %}

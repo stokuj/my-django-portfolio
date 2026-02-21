@@ -1,25 +1,12 @@
 ﻿{% extends "base.html" %}
-{% load static %}
 
 {% block content %}
 
 <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-    <section class="rounded-box border border-base-300 bg-cover bg-center p-4 sm:p-6" style="background-image: url('{% static 'images/hero-bg.png' %}')">
-        <div class="rounded-box bg-base-100/85 p-6 text-center sm:p-10">
-            <p class="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-primary">Portfolio</p>
-            <h1 class="font-bold text-base-content">I am {{ profile_full_name }}</h1>
-            <p class="mx-auto mt-3 max-w-2xl text-base text-base-content/80 sm:text-lg">
-                {{ profile_home_intro }}
-            </p>
-            <div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <a href="{% url 'projects' %}" class="btn btn-primary btn-sm w-full sm:w-auto ui-motion">View All Projects</a>
-                <a href="{% url 'about' %}" class="btn btn-outline btn-sm w-full sm:w-auto ui-motion">About Me</a>
-            </div>
-        </div>
-    </section>
+    {% include "components/hero_section.html" with hero_background="images/hero-bg.png" hero_overlay_class="bg-base-100/85 text-center" hero_content_template="components/hero/home_content.html" %}
 
     <section class="mt-6 rounded-box border border-base-300 bg-base-200 p-4 sm:p-6">
-        <header class="mb-4 rounded-box bg-base-100 p-4 sm:p-5">
+        <header class="mb-4 rounded-box bg-base-100 p-5">
             <h2 class="text-2xl font-bold text-primary">Project Timeline</h2>
             <p class="mt-2 text-sm text-base-content/75 sm:text-base">Latest entries appear first in every section.</p>
         </header>

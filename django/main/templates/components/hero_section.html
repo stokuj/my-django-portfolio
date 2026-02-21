@@ -1,0 +1,6 @@
+{% load static %}
+<section class="rounded-box border border-base-300 bg-base-200 bg-cover bg-center p-4 sm:p-6 {{ hero_section_class|default:'' }}" style="background-image: url('{% static hero_background %}')">
+    <div class="rounded-box {{ hero_overlay_class|default:'bg-base-100/85' }} p-5 {{ hero_inner_class|default:'' }}">
+        {% include hero_content_template %}
+    </div>
+</section>
