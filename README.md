@@ -1,6 +1,6 @@
 # My Django Portfolio
 
-My personal portfolio blog built with **Django**. It uses **Postgres** to store data, **Tailwind** for frontend styling, Docker for containerized deployment, and has asynchronous tasks with **Celery** + Redis. It also has optional integration with my other project **FastAPI** to get my GitHub contribution data. It uses GitHub Actions for **CI/CD** and is deployed on Digital Ocean droplet.
+My personal portfolio blog built with **Django**. It uses **Postgres** to store data, **Tailwind** for frontend styling, **Docker** for containerized deployment, and has asynchronous tasks with **Celery** + Redis. It also has optional integration with my other project **FastAPI** to get my GitHub contribution data. It uses GitHub Actions for **CI/CD** and is deployed on Digital Ocean droplet.
 
 ## Project Structure
 
@@ -42,7 +42,7 @@ my_django_portfolio/
 - Python 3.13, Django 5.1
 - PostgreSQL, Redis
 - Celery
-- Tailwind CSS v4, DaisyUI
+- Tailwind CSS v4 with DaisyUI
 - Gunicorn, Caddy
 - Docker Compose
 
@@ -102,7 +102,6 @@ Open `http://localhost:8000`.
 
 ## Documentation
 
-- Documentation index: [`docs/README.md`](docs/README.md)
 - Architecture details: [`docs/architecture.md`](docs/architecture.md)
 - Implementation details: [`docs/implementation.md`](docs/implementation.md)
 - Frontend diagram: [`docs/frontend.md`](docs/frontend.md)
