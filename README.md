@@ -1,7 +1,30 @@
 # My Django Portfolio
 
-My personal portfolio blog built with Django. It uses Postgres to store data, Tailwind for frontend styling, Docker for containerized deployment, and has asynchronous tasks with Celery + Redis. It also has optional integration with my other project FastAPI to get my GitHub contribution data.
+My personal portfolio blog built with Django. It uses Postgres to store data, Tailwind for frontend styling, Docker for containerized deployment, and has asynchronous tasks with Celery + Redis. It also has optional integration with my other project FastAPI to get my GitHub contribution data. It uses GitHub Actions for CI/CD and is deployed on Digital Ocean droplet.
 
+## Project Structure
+
+```text
+my_django_portfolio/
+|- django/
+|  |- config/                 # Project config
+|  |- entrypoints/            # Container startup scripts
+|  |- main/                   # Core app
+|  |  |- models.py            
+|  |  |- views.py             # Page/API views
+|  |  |- tasks.py             # Celery tasks
+|  |  |- templates/           # Django templates
+|  |  |- static/              # CSS/JS/images
+|  |  `- tests/               
+|  `- manage.py               
+|- docs/                      # Technical documentation
+|- Caddyfile
+|- docker-compose.yml
+|- Dockerfile
+|- package.json
+|- pyproject.toml
+`- README.md
+```
 
 ## Features
 
@@ -25,15 +48,11 @@ My personal portfolio blog built with Django. It uses Postgres to store data, Ta
 
 ## Quick Start (Docker)
 
-### Prerequisites
-
-- Docker
-- Docker Compose
-
 ### Run
 
 ```bash
-cp .env.example .env
+#check variables, use good secrets
+cp .env.example .env 
 docker compose up --build -d
 ```
 
@@ -51,8 +70,6 @@ docker compose down
 
 - Python 3.13+
 - PostgreSQL
-- Redis
-- [uv](https://github.com/astral-sh/uv)
 - Node.js + npm
 
 ### Setup
@@ -83,30 +100,6 @@ Open `http://localhost:8000`.
 
 ## Verification Commands
 
-```bash
-uv run python django/manage.py check
-uv run python django/manage.py makemigrations --check --dry-run
-uv run python django/manage.py test
-```
-
-## Project Structure
-
-```text
-my_django_portfolio/
-|- django/
-|  |- config/
-|  |- entrypoints/
-|  |- main/
-|  `- manage.py
-|- docs/
-|- Caddyfile
-|- docker-compose.yml
-|- Dockerfile
-|- package.json
-|- pyproject.toml
-`- README.md
-```
-
 ## Documentation
 
 - Documentation index: [`docs/README.md`](docs/README.md)
@@ -120,6 +113,10 @@ my_django_portfolio/
 - Docker socket permission error: add your user to the Docker group or run with elevated privileges.
 - CSS not updating: run `npm run build:css` and verify input/output paths in `package.json`.
 - SELinux bind mount issue with Caddyfile: use `:Z` relabel option (already configured in `docker-compose.yml`).
+- `502 Bad Gateway` after changing DB name: if you change `DOCKER_DB_NAME`, create that database in PostgreSQL first, otherwise `web` can stay in `wait-for-db`.
+- Markdown sync looks successful but files are not visible in app: ensure `worker` mounts `media_volume:/app/media`.
+- Permission errors on static/media/celerybeat files in Docker: app containers run as non-root (`10001:10001`), so existing volumes may need a one-time ownership fix (`chown`).
+- `UnicodeDecodeError` in templates/content: save text files as UTF-8.
 
 ## License
 
