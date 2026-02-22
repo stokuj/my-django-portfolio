@@ -48,6 +48,28 @@ my_django_portfolio/
 - Gunicorn, Caddy
 - Docker Compose
 
+## Showcase
+
+### Home page
+A hero banner with floating tech keywords in the background. Below it, a project timeline split into Planned, Ongoing, and Finished sections — each collapsible.
+<img width="2267" height="1645" alt="image" src="https://github.com/user-attachments/assets/6d4fbcaf-b200-47de-9982-abc8e5d10fc1" />
+
+### Projects page
+A filterable grid of projects. You can search by name or filter by technology tags like Django, Python, Docker, etc. Each card shows a project thumbnail, description, status badge, and a "View Project" button.
+<img width="2267" height="1334" alt="screencapture-localhost-projects-2026-02-22-15_13_50" src="https://github.com/user-attachments/assets/25a3085e-edf2-45aa-93b9-42c47f36e2f9" />
+
+### About page
+The main landing page showing a brief intro ("Hi, I am John Doe"), tech stack badges, current learning goals, and a live GitHub contributions heatmap pulled from a FastAPI backend.
+<img width="2267" height="1669" alt="image" src="https://github.com/user-attachments/assets/5e01c6d9-9e82-4745-8210-7076888c9722" />
+
+### Dark theme
+All backgrounds, text, and cards switch to dark colors. The accent color shifts to green.
+<img width="2267" height="1486" alt="image" src="https://github.com/user-attachments/assets/21b6ea0b-0625-4202-9176-3b4e24ed108b" />
+
+### About when logged as admin (page owner)
+The about page with extra admin controls visible — a "Disconnect GitHub" button, a Scheduled Jobs panel showing Celery tasks (heatmap refresh, markdown sync), and an Executed Tasks panel with task history and run timestamps.
+<img width="2267" height="2843" alt="image" src="https://github.com/user-attachments/assets/17c53ec4-56ae-4acb-8e3b-da50f7059f4c" />
+
 ## Quick Start (Docker)
 
 ### Run
