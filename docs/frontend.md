@@ -1,5 +1,13 @@
 # Frontend Diagram
 
+This diagram shows how the template layer is composed around the shared base layout and reusable UI components.
+
+Related docs:
+
+- [`README.md`](../README.md)
+- [`architecture.md`](architecture.md)
+- [`implementation.md`](implementation.md)
+
 ```mermaid
 flowchart TD
     Base["base.html"]
@@ -38,4 +46,3 @@ flowchart TD
     ServerError --> Base
     Blog --> Base
 ```
-
