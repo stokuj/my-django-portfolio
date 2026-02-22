@@ -1,6 +1,6 @@
 # My Django Portfolio
 
-My personal portfolio blog built with Django. It uses Postgres to store data, Tailwind for frontend styling, Docker for xyz and has asynchronus Tasks with. It also has optional integration with my other project FastAPI to get my github contriubution.
+My personal portfolio blog built with Django. It uses Postgres to store data, Tailwind for frontend styling, Docker for containerized deployment, and has asynchronous tasks with Celery + Redis. It also has optional integration with my other project FastAPI to get my GitHub contribution data.
 
 
 ## Features
@@ -12,6 +12,7 @@ My personal portfolio blog built with Django. It uses Postgres to store data, Ta
 - Visitor counter middleware and profile-driven site metadata
 - Background jobs with Celery worker + beat scheduler
 - Scheduled markdown synchronization (`main.tasks.sync_project_markdowns_task`)
+- Optional FastAPI heatmap integration (`/heatmap/me`) with cached snapshot storage
 
 ## Tech Stack
 

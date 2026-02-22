@@ -1,46 +1,101 @@
 # Implementation Details
 
+## Repository Layout
+
+- `django/config/`: Django project configuration (settings, URLs, WSGI/ASGI, Celery bootstrap).
+- `django/main/`: application code (models, views, tasks, templates, static assets).
+- `django/entrypoints/`: container startup scripts.
+- `docs/`: architecture and implementation documentation.
+- Root operational files: `docker-compose.yml`, `Dockerfile`, `Caddyfile`, `pyproject.toml`, `package.json`.
+
+## Backend Implementation
+
+### Configuration
+
+Main configuration is in `django/config/settings.py`.
+
+- Environment loading: `.env` values are parsed via `django-environ`.
+- Database: configured through `DB_*` variables.
+- Security: when `DJANGO_DEBUG` is false, secure cookies, SSL redirect, and HSTS are enabled.
+- Static and media paths are configured for shared Docker volumes.
+
+### Application Layer (`django/main`)
+
+#### Middleware and Shared Context
+
+- Visitor tracking middleware: `django/main/middleware.py`.
+- Shared template context: `django/main/context_processors.py`.
+
+### Asynchronous Jobs (Celery)
+
+Celery tasks are implemented in `django/main/tasks.py`.
+
+Key jobs:
+
+- `healthcheck_task`: worker health check.
+- `sync_project_markdowns_task`: synchronizes markdown from repository links.
+- `refresh_portfolio_heatmap_cache_task`: refreshes and caches heatmap data.
+
+Common implementation patterns:
+
+- Explicit error handling with safe user-facing messages.
+- Status persistence with `update_fields` for partial model updates.
+- Historical execution logging to `TaskExecutionLog`.
+
+### FastAPI Integration (Heatmap)
+
+FastAPI integration is implemented through `django/main/heatmap.py` and related views/tasks.
+
+- Endpoint contract: Django requests `{HEATMAP_API_BASE_URL}/heatmap/me`.
+- Authorization: GitHub OAuth token retrieved from django-allauth social account records.
+- Fetch path: `fetch_heatmap_data(github_token)` validates HTTP status and JSON payload shape.
+- Caching path: valid payloads are saved to `HeatmapSnapshot`.
+- Failure behavior: on timeout/network/service errors, Django stores an error message and can reuse the last valid snapshot.
+
+### Markdown Synchronization
+
+- Core sync logic: `django/main/markdown_sync.py`.
+- Trigger methods:
+  - scheduled via Celery beat,
+  - manual via management command.
+- Returned summary is stable and includes `total`, `updated`, `failed`, and per-project details.
+
 ## Frontend Implementation
 
 ### Styling Pipeline
 
-- Source CSS: `django/main/static/src/css/input.css`.
-- Build output: `django/main/static/css/style.css`.
-- Scripts in `package.json`:
+- Input CSS: `django/main/static/src/css/input.css`.
+- Output CSS: `django/main/static/css/style.css`.
+- NPM scripts:
   - `npm run build:css`
   - `npm run build:css:prod`
   - `npm run dev`
 
 ### Template Composition
 
-- Base layout: `base.html`.
-- Pages: `home/`, `about/`, and `projects/`
-- Each project in projects has separawe link with slug_url:
-- Page templates: home, projects, project detail, about, error templates, blog templates.
-- Reusable fragments in `components/`.
+- Shared layout: `base.html`.
+- Main page templates: home, projects, project detail, about, and error pages.
+- Reusable fragments: `components/` templates.
 
-For a structural view, see [`frontend.md`](frontend.md).
-
-## Backend Implementation
-TODO
+For the visual template map, see [`frontend.md`](frontend.md).
 
 ## Runtime and Deployment
 
 ### Docker Compose Services
 
-Defined in `docker-compose.yml`:
+Services are defined in `docker-compose.yml`:
 
-- `db`: PostgreSQL 13 with persistent volume.
-- `redis`: Redis 7 for Celery broker/backend.
-- `web`: Django app startup (`migrate`, `collectstatic`, Gunicorn).
-- `worker`: Celery worker process.
-- `beat`: Celery beat scheduler with persisted schedule file.
-- `caddy`: reverse proxy plus static/media file serving.
+- `db`: PostgreSQL.
+- `redis`: broker/result backend for Celery.
+- `web`: Django + Gunicorn.
+- `worker`: Celery worker.
+- `beat`: Celery beat scheduler.
+- `caddy`: reverse proxy and static/media file server.
 
 ### Caddy Integration
 
-- Caddy reads `Caddyfile` and routes traffic to Django.
-- Static and media volumes are mounted into Caddy for direct file serving.
+- Caddy proxies dynamic traffic to Django.
+- Static and media files are served directly from shared volumes.
 
 ## Development and Verification Workflow
 
@@ -53,7 +108,7 @@ npm install
 npm run build:css
 ```
 
-### Core checks
+### Core Checks
 
 ```bash
 uv run python django/manage.py check
@@ -61,11 +116,16 @@ uv run python django/manage.py makemigrations --check --dry-run
 uv run python django/manage.py test
 ```
 
-### Targeted test examples
+### Targeted Test Examples
 
 ```bash
 uv run python django/manage.py test main
 uv run python django/manage.py test main.tests.test_views
 uv run python django/manage.py test main.tests.test_views.ViewsTest.test_home_view
 ```
-ent flow).
+
+## Documentation Maintenance Guidelines
+
+- Keep commands aligned with actual scripts and runtime behavior.
+- Update architecture docs when adding services, queues, or external integrations.
+- Update this file whenever module structure, background jobs, or deployment flow changes.
