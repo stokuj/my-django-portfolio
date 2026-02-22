@@ -486,6 +486,36 @@ class ViewsTest(TestCase):
             response, '<a href="https://example.com">Example</a>', html=True
         )
 
+    def test_blog_detail_renders_inline_and_block_math_wrappers(self):
+        markdown_file = SimpleUploadedFile(
+            "math-readme.md",
+            (b"Inline math $a^2 + b^2 = c^2$\n\n$$\\int_0^1 x^2\\,dx = \\frac{1}{3}$$"),
+            content_type="text/markdown",
+        )
+        project = Project.objects.create(
+            title="Math Markdown Project",
+            short_description="Project with markdown math",
+            blog=True,
+            blog_url="math-markdown-project",
+            status="finished",
+            markdown_file=markdown_file,
+        )
+
+        response = self.client.get(reverse("blog_detail", args=[project.blog_url]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'class="arithmatex"')
+        self.assertContains(response, "\\int_0^1 x^2")
+
+    def test_blog_detail_includes_mathjax_assets(self):
+        response = self.client.get(reverse("blog_detail", args=[self.project.blog_url]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "mathjax-config.js")
+        self.assertContains(
+            response, "cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+        )
+
     def test_blog_detail_includes_all_projects_for_sidebar(self):
         other_project = Project.objects.create(
             title="Sidebar Item Project",

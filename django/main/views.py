@@ -35,6 +35,7 @@ ALLOWED_MARKDOWN_TAGS = [
     "blockquote",
     "br",
     "code",
+    "div",
     "em",
     "h1",
     "h2",
@@ -56,10 +57,13 @@ ALLOWED_MARKDOWN_TAGS = [
     "thead",
     "tr",
     "ul",
+    "span",
 ]
 ALLOWED_MARKDOWN_ATTRIBUTES = {
     "a": ["href", "title"],
+    "div": ["class"],
     "img": ["src", "alt", "title"],
+    "span": ["class"],
 }
 ALLOWED_MARKDOWN_PROTOCOLS = ["http", "https", "mailto"]
 
@@ -343,7 +347,12 @@ def _render_markdown_to_html(markdown_content):
     markdown_content = markdown_content.lstrip("\ufeff")
     markdown_html = markdown.markdown(
         markdown_content,
-        extensions=["fenced_code", "tables"],
+        extensions=["fenced_code", "tables", "pymdownx.arithmatex"],
+        extension_configs={
+            "pymdownx.arithmatex": {
+                "generic": True,
+            }
+        },
     )
     return bleach.clean(
         markdown_html,
