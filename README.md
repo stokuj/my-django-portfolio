@@ -1,6 +1,6 @@
 # My Django Portfolio
 
-My personal portfolio blog built with Django. It uses Postgres to store data, Tailwind for frontend styling, Docker for containerized deployment, and has asynchronous tasks with Celery + Redis. It also has optional integration with my other project FastAPI to get my GitHub contribution data. It uses GitHub Actions for CI/CD and is deployed on Digital Ocean droplet.
+My personal portfolio blog built with **Django**. It uses **Postgres** to store data, **Tailwind** for frontend styling, Docker for containerized deployment, and has asynchronous tasks with **Celery** + Redis. It also has optional integration with my other project **FastAPI** to get my GitHub contribution data. It uses GitHub Actions for **CI/CD** and is deployed on Digital Ocean droplet.
 
 ## Project Structure
 
