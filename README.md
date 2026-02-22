@@ -2,6 +2,8 @@
 
 My personal portfolio blog built with **Django**. It uses **Postgres** to store data, **Tailwind** for frontend styling, **Docker** for containerized deployment, and has asynchronous tasks with **Celery** + Redis. It also has optional integration with my other project **FastAPI** to get my GitHub contribution data. It uses GitHub Actions for **CI/CD** and is deployed on Digital Ocean droplet.
 
+The key feature is that the app pulls Markdown from GitHub **README.MD** files and shows it on blog pages, and Celery keeps this content updated in the background.
+
 ## Project Structure
 
 ```text
