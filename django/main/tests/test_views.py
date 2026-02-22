@@ -373,6 +373,21 @@ class ViewsTest(TestCase):
         self.assertContains(response, no_slug_project.title)
         self.assertNotContains(response, "/blog/None")
 
+    def test_projects_view_orders_projects_by_newest_date_first(self):
+        newest_project = Project.objects.create(
+            title="Newest Project",
+            short_description="Most recent project",
+            date=datetime.date(2024, 1, 1),
+            status="finished",
+            blog_url="newest-project",
+        )
+
+        response = self.client.get(reverse("projects"))
+
+        self.assertEqual(response.status_code, 200)
+        projects = list(response.context["projects"])
+        self.assertEqual(projects[0], newest_project)
+
     def test_blog_detail_renders_existing_template(self):
         Project.objects.create(
             title="Template Exists Blog Project",

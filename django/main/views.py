@@ -308,7 +308,7 @@ def _get_executed_tasks():
 
 
 def projects(request):
-    projects = Project.objects.all().prefetch_related("tags")  # Faster tag loading
+    projects = Project.objects.order_by("-date", "-id").prefetch_related("tags")
 
     # Pobieramy wszystkie unikalne tagi
     all_tags = Tag.objects.all().order_by("name")
