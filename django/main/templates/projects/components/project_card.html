@@ -5,14 +5,14 @@
     data-title="{{ project.title|lower }}"
     data-description="{{ project.short_description|lower }}"
 >
-    <figure class="aspect-[16/10] overflow-hidden rounded-t-box bg-base-200">
+    <figure class="aspect-[3/2] overflow-hidden rounded-t-box bg-base-200">
         {% if project.thumbnail %}
         <img
             src="{{ project.thumbnail.url }}"
             alt="Thumbnail for {{ project.title }}"
             class="h-full w-full object-cover"
-            width="1600"
-            height="1000"
+            width="480"
+            height="320"
             loading="{% if forloop.counter > 3 %}lazy{% else %}eager{% endif %}"
             decoding="async"
         />
@@ -21,8 +21,8 @@
             src="{% static 'images/default_image.png' %}"
             alt="Default thumbnail for {{ project.title }}"
             class="h-full w-full object-cover"
-            width="1600"
-            height="1000"
+            width="480"
+            height="320"
             loading="{% if forloop.counter > 3 %}lazy{% else %}eager{% endif %}"
             decoding="async"
         />
