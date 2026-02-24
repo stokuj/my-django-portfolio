@@ -132,7 +132,7 @@ Open `http://localhost:8000`.
 
 ## Troubleshooting
 
-- Caddy error `server block without any key`: set `APP_DOMAIN` in `.env` (for example, `APP_DOMAIN=localhost`).
+- Caddy TLS for `www` fails (`ERR_SSL_PROTOCOL_ERROR`): set both `APP_DOMAIN` and `APP_WWW_DOMAIN` in `.env` (for example, `APP_DOMAIN=krystianstasica.pl`, `APP_WWW_DOMAIN=www.krystianstasica.pl`).
 - Docker socket permission error: add your user to the Docker group or run with elevated privileges.
 - CSS not updating: run `npm run build:css` and verify input/output paths in `package.json`.
 - SELinux bind mount issue with Caddyfile: use `:Z` relabel option (already configured in `docker-compose.yml`).

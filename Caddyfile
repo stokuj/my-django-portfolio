@@ -7,7 +7,12 @@
     redir https://{$APP_DOMAIN}:{$CADDY_HTTPS_PORT}{uri} permanent
 }
 
-# For production -> domain
+# Redirect HTTPS www -> apex to keep one canonical URL.
+https://{$APP_WWW_DOMAIN} {
+    redir https://{$APP_DOMAIN}:{$CADDY_HTTPS_PORT}{uri} permanent
+}
+
+# Main app host (apex domain).
 https://{$APP_DOMAIN} {
  # Static files served directly by Caddy
  handle /static/* {

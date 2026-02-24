@@ -134,6 +134,7 @@ services:
       - caddy_config:/config
     environment:
       - APP_DOMAIN=${APP_DOMAIN:-localhost}
+      - APP_WWW_DOMAIN=${APP_WWW_DOMAIN:-www.localhost}
       - CADDY_HTTPS_PORT=${CADDY_HTTPS_PORT:-443}
     depends_on:
       - web
