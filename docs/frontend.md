@@ -1,6 +1,6 @@
 # Frontend Diagram
 
-This diagram shows how the template layer is composed around the shared base layout and reusable UI components.
+This diagram shows the current template composition around the shared layout, footer, and reusable components.
 
 Related docs:
 
@@ -8,41 +8,65 @@ Related docs:
 - [`architecture.md`](architecture.md)
 - [`implementation.md`](implementation.md)
 
+## Template structure
+
+- `base.html` is the root layout for all pages. It contains the navbar, global scripts, and the global footer.
+- Every page extends `base.html` and fills the main blocks (`content`, optional `sidebar`, optional `extra_scripts`).
+- In practice there are 3 main page types inside this structure:
+  1. static/content pages (`pages/home.html`, `pages/about.html`, error pages),
+  2. projects listing (`projects/index.html`),
+  3. project detail/blog page (`projects/detail.html`).
+- `projects/detail.html` is rendered per project entry from the database (`Project`), resolved by slug (`/blog/<slug>/`).
+
+
 ```mermaid
 flowchart TD
-    Base["base.html"]
+    Base["base.html\n(navbar + footer + global blocks)"]
     ThemeJS["static/js/theme-toggle.js"]
+    MobileJS["static/js/mobile-menu.js"]
     ProjectsJS["static/js/projects-filters.js"]
+    MathJax["MathJax scripts (detail page)"]
 
-    Home["main/home.html"]
-    Projects["main/projects.html"]
-    ProjectDetail["main/project_detail.html"]
-    About["main/about.html"]
-    NotFound["main/404.html"]
-    ServerError["main/500.html"]
-    Blog["main/blog/* (9 templates)"]
+    Home["pages/home.html"]
+    About["pages/about.html"]
+    Errors["errors/404.html + errors/500.html"]
+    ProjectsIndex["projects/index.html"]
+    ProjectDetail["projects/detail.html"]
+    ProjectDB["Project model (DB)"]
 
+    Hero["components/hero_section.html"]
     TimelineSection["components/timeline_section.html"]
     TimelineItem["components/timeline_project_item.html"]
-    ProjectCard["components/project_card.html"]
+    ProjectCard["projects/components/project_card.html"]
+    ProjectFooter["projects/components/project_footer.html"]
+    Sidebar["projects/components/blog_*_sidebar.html"]
     GithubIcon["components/icons/github_icon.html"]
     LinkedinIcon["components/icons/linkedin_icon.html"]
 
+    Home --> Base
+    About --> Base
+    Errors --> Base
+    ProjectsIndex --> Base
+    ProjectDetail --> Base
+
     Base --> ThemeJS
+    Base --> MobileJS
     Base --> GithubIcon
     Base --> LinkedinIcon
 
-    Home --> Base
+    Home --> Hero
     Home --> TimelineSection
     TimelineSection --> TimelineItem
 
-    Projects --> Base
-    Projects --> ProjectsJS
-    Projects --> ProjectCard
+    About --> Hero
 
-    ProjectDetail --> Base
-    About --> Base
-    NotFound --> Base
-    ServerError --> Base
-    Blog --> Base
+    ProjectsIndex --> Hero
+    ProjectsIndex --> ProjectCard
+    ProjectsIndex --> ProjectsJS
+
+    ProjectDB --> ProjectsIndex
+    ProjectDB --> ProjectDetail
+    ProjectDetail --> Sidebar
+    ProjectDetail --> ProjectFooter
+    ProjectDetail --> MathJax
 ```
