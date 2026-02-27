@@ -40,6 +40,94 @@ flowchart LR
 - `django/main/tasks.py`: asynchronous and scheduled task execution.
 - `django/main/markdown_sync.py` and `django/main/heatmap.py`: integration and domain helpers.
 
+# ERD (Django Models)
+
+```mermaid
+erDiagram
+    PAGEVIEW {
+        int id PK
+        int count
+    }
+
+    TASK_EXECUTION_STATUS {
+        int id PK
+        string task_name UK
+        string last_status
+        datetime last_run_at
+        datetime last_success_at
+        datetime last_failure_at
+        int last_total
+        int last_updated
+        int last_failed
+        text last_error
+    }
+
+    TASK_EXECUTION_LOG {
+        int id PK
+        string task_name
+        string last_status
+        datetime last_run_at
+        datetime last_success_at
+        datetime last_failure_at
+        int last_total
+        int last_updated
+        int last_failed
+        text last_error
+        datetime created_at
+    }
+
+    PORTFOLIO_PROFILE {
+        int id PK
+        string site_name
+        string full_name
+        string role_line
+        string specialization_line
+        string home_intro
+        string about_intro
+        json core_stack
+        json current_learning
+        string current_learning_summary
+        json interests
+        string email
+        string github_url
+        string linkedin_url
+        boolean is_active
+    }
+
+    HEATMAP_SNAPSHOT {
+        int id PK
+        string key UK
+        json payload
+        string username
+        int total
+        int weeks_count
+        datetime fetched_at
+        text last_error
+    }
+```
+```mermaid
+erDiagram
+    TAG {
+        int id PK
+        string name UK
+    }
+
+    PROJECT {
+        int id PK
+        string title
+        string thumbnail
+        string markdown_file
+        json tech_stack
+        json tools_libraries
+        string short_description
+        date date
+        boolean blog
+        string blog_url
+        string github_url
+        string status
+    }
+    PROJECT }o--o{ TAG : tags
+```
 ### Request Flow
 
 1. A request reaches Caddy.
