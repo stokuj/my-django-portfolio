@@ -69,14 +69,17 @@ ALLOWED_MARKDOWN_PROTOCOLS = ["http", "https", "mailto"]
 
 
 def handler404(request, exception):
+    """Render custom 404 error page."""
     return render(request, "errors/404.html", status=404)
 
 
 def handler500(request):
+    """Render custom 500 error page."""
     return render(request, "errors/500.html", status=500)
 
 
 def home(request):
+    """Render home page with projects grouped by status timeline."""
     projects = Project.objects.prefetch_related("tags").order_by("-date")
     status_labels = {
         "planned": "Planned",
@@ -104,6 +107,7 @@ def home(request):
 
 
 def about(request):
+    """Render about page with heatmap flags and admin task panels."""
     has_portfolio_token = get_portfolio_github_token() is not None
     is_admin_user = request.user.is_authenticated and request.user.is_staff
 
@@ -122,6 +126,7 @@ def about(request):
 
 @require_GET
 def accounts_3rdparty_redirect(request):
+    """Allow staff users to start GitHub social-account connect flow."""
     if not request.user.is_authenticated or not request.user.is_staff:
         messages.error(request, "GitHub connect is available only for admin users.")
         return redirect("home")
@@ -132,6 +137,7 @@ def accounts_3rdparty_redirect(request):
 @login_required
 @require_POST
 def about_heatmap_disconnect(request):
+    """Disconnect current staff user's GitHub account used for heatmap."""
     if not request.user.is_staff:
         messages.error(request, "Only admin can disconnect GitHub heatmap.")
         return redirect("about")
@@ -149,6 +155,7 @@ def about_heatmap_disconnect(request):
 
 @require_GET
 def about_heatmap_data(request):
+    """Return cached heatmap payload JSON, refreshing when cache is stale."""
     github_token = get_portfolio_github_token()
     if not github_token:
         return JsonResponse(
@@ -174,6 +181,7 @@ def about_heatmap_data(request):
 
 
 def _build_heatmap_snapshot_response(snapshot):
+    """Serialize snapshot model into heatmap API response payload."""
     last_30_days_total = _calculate_last_30_days_total(snapshot.payload)
 
     return JsonResponse(
@@ -191,6 +199,7 @@ def _build_heatmap_snapshot_response(snapshot):
 
 
 def _schedule_next_heatmap_refresh():
+    """Best-effort enqueue of next asynchronous heatmap refresh task."""
     try:
         refresh_portfolio_heatmap_cache_task.apply_async(
             kwargs={"schedule_next": True},
@@ -201,6 +210,7 @@ def _schedule_next_heatmap_refresh():
 
 
 def _is_current_admin_connected(request):
+    """Check whether current staff user matches configured portfolio account."""
     if not request.user.is_authenticated or not request.user.is_staff:
         return False
 
@@ -212,6 +222,7 @@ def _is_current_admin_connected(request):
 
 
 def _calculate_last_30_days_total(payload):
+    """Sum contribution counts from payload days within last 30 days."""
     weeks = payload.get("weeks") if isinstance(payload, dict) else None
     if not isinstance(weeks, list):
         return 0
@@ -251,6 +262,7 @@ def _calculate_last_30_days_total(payload):
 
 
 def _get_scheduled_jobs_overview():
+    """Build admin-facing summary for periodic markdown/heatmap tasks."""
     task_statuses = {
         item.task_name: item
         for item in TaskExecutionStatus.objects.filter(
@@ -304,10 +316,12 @@ def _get_scheduled_jobs_overview():
 
 
 def _get_executed_tasks():
+    """Return latest task execution log entries for admin panel."""
     return TaskExecutionLog.objects.order_by("-last_run_at", "-id")[:30]
 
 
 def projects(request):
+    """Render projects listing page with tag filters metadata."""
     projects = Project.objects.order_by("-date", "-id").prefetch_related("tags")
 
     # Pobieramy wszystkie unikalne tagi
@@ -364,6 +378,7 @@ def _render_markdown_to_html(markdown_content):
 
 
 def _get_safe_redirect_url(request):
+    """Resolve safe local redirect target from POST `next` or referrer."""
     allowed_hosts = {request.get_host()}
     candidates = [
         request.POST.get("next"),
@@ -382,6 +397,7 @@ def _get_safe_redirect_url(request):
 
 
 def blog_detail(request, blog_slug):
+    """Render single blog project with markdown content and navigation."""
     project = get_object_or_404(Project, blog=True, blog_url=blog_slug)
     markdown_content = _load_project_markdown(project)
     markdown_html = _render_markdown_to_html(markdown_content)
@@ -406,6 +422,7 @@ def blog_detail(request, blog_slug):
 @staff_member_required
 @require_POST
 def run_markdown_sync_task(request):
+    """Enqueue markdown sync Celery task for one slug or all projects."""
     blog_slug = (request.POST.get("blog_slug") or "").strip() or None
 
     try:
@@ -430,6 +447,7 @@ def run_markdown_sync_task(request):
 @staff_member_required
 @require_POST
 def run_heatmap_refresh_task(request):
+    """Enqueue immediate heatmap refresh task from admin tools."""
     try:
         async_result = refresh_portfolio_heatmap_cache_task.delay(schedule_next=True)
     except Exception:

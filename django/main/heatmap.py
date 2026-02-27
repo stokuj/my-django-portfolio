@@ -10,6 +10,11 @@ from .models import HeatmapSnapshot
 
 
 def get_portfolio_github_account():
+    """Return the GitHub social account used for portfolio heatmap sync.
+
+    Prefers the account matching `GITHUB_ALLOWED_LOGIN`; otherwise falls back
+    to the first superuser-linked GitHub account.
+    """
     github_accounts = SocialAccount.objects.select_related("user").filter(
         provider="github"
     )
@@ -28,6 +33,11 @@ def get_portfolio_github_account():
 
 
 def get_portfolio_github_token():
+    """Return OAuth token for the selected portfolio GitHub account.
+
+    Returns:
+        str | None: Non-empty token string if available, otherwise None.
+    """
     selected_account = get_portfolio_github_account()
     if not selected_account:
         return None
@@ -44,6 +54,14 @@ def get_portfolio_github_token():
 
 
 def fetch_heatmap_data(github_token):
+    """Fetch heatmap payload from external service for authenticated user.
+
+    Args:
+        github_token (str): GitHub OAuth bearer token.
+
+    Returns:
+        tuple[dict | None, str | None]: `(payload, error_message)` pair.
+    """
     heatmap_url = f"{settings.HEATMAP_API_BASE_URL.rstrip('/')}/heatmap/me"
 
     try:
@@ -75,11 +93,24 @@ def fetch_heatmap_data(github_token):
 
 
 def get_or_create_snapshot():
+    """Return persistent portfolio heatmap snapshot row.
+
+    Creates the row on first use with fixed key `portfolio`.
+    """
     snapshot, _ = HeatmapSnapshot.objects.get_or_create(key="portfolio")
     return snapshot
 
 
 def is_snapshot_stale(snapshot, ttl_minutes=None):
+    """Check whether cached snapshot is stale against configured TTL.
+
+    Args:
+        snapshot (HeatmapSnapshot): Snapshot model instance.
+        ttl_minutes (int | None): Optional TTL override in minutes.
+
+    Returns:
+        bool: True when snapshot should be refreshed.
+    """
     ttl = ttl_minutes or int(getattr(settings, "HEATMAP_CACHE_TTL_MINUTES", 60))
     if not snapshot.fetched_at:
         return True
@@ -89,6 +120,14 @@ def is_snapshot_stale(snapshot, ttl_minutes=None):
 
 
 def update_snapshot_with_payload(payload):
+    """Persist successful heatmap payload into snapshot fields.
+
+    Args:
+        payload (dict): Parsed response from heatmap service.
+
+    Returns:
+        HeatmapSnapshot: Updated snapshot instance.
+    """
     weeks = payload.get("weeks") or []
     snapshot = get_or_create_snapshot()
     snapshot.payload = payload
@@ -111,6 +150,14 @@ def update_snapshot_with_payload(payload):
 
 
 def update_snapshot_error(error_message):
+    """Persist latest heatmap sync error message on snapshot.
+
+    Args:
+        error_message (str): Human-readable error details.
+
+    Returns:
+        HeatmapSnapshot: Updated snapshot instance.
+    """
     snapshot = get_or_create_snapshot()
     snapshot.last_error = error_message
     snapshot.save(update_fields=["last_error"])

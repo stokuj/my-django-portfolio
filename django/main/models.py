@@ -6,7 +6,9 @@ from django.db import models
 from .validators import validate_github_repo_url
 
 
+# Default value
 def default_core_stack():
+    """Return default core technologies for the active portfolio profile."""
     return [
         "Python",
         "Django",
@@ -18,11 +20,15 @@ def default_core_stack():
     ]
 
 
+# Default value
 def default_current_learning():
+    """Return default topics currently being learned."""
     return ["Kubernetes", "GraphQL", "Advanced Docker"]
 
 
+# Default value
 def default_interests():
+    """Return default professional interests for the profile section."""
     return [
         "Machine Learning",
         "Data Engineering",
@@ -32,6 +38,8 @@ def default_interests():
 
 
 class Tag(models.Model):
+    """Technology/category label assigned to projects."""
+
     name = models.CharField(max_length=50, unique=True)
 
     def save(self, *args, **kwargs):
@@ -43,6 +51,8 @@ class Tag(models.Model):
 
 
 class Project(models.Model):
+    """Portfolio project with optional blog/README metadata."""
+
     title = models.CharField(max_length=200)
     thumbnail = models.ImageField(upload_to="thumbnails/", blank=True, null=True)
     markdown_file = models.FileField(
@@ -92,19 +102,20 @@ class Project(models.Model):
 
 
 class PageView(models.Model):
+    """Singleton-like global page view counter."""
+
     count = models.IntegerField(default=0)
 
     @classmethod
     def get_instance(cls):
-        """
-        Singleton pattern implementation.
-        Always returns the same instance of PageView.
-        """
+        """Return the single PageView row used as global counter."""
         instance, created = cls.objects.get_or_create(id=1)
         return instance
 
 
 class TaskExecutionStatus(models.Model):
+    """Latest execution status snapshot for a named background task."""
+
     STATUS_SUCCESS = "success"
     STATUS_PARTIAL_SUCCESS = "partial_success"
     STATUS_FAILURE = "failure"
@@ -131,6 +142,8 @@ class TaskExecutionStatus(models.Model):
 
 
 class TaskExecutionLog(models.Model):
+    """Historical log entry for a single background task execution."""
+
     task_name = models.CharField(max_length=150, db_index=True)
     last_status = models.CharField(
         max_length=20,
@@ -152,6 +165,8 @@ class TaskExecutionLog(models.Model):
 
 
 class PortfolioProfile(models.Model):
+    """Editable profile content rendered across portfolio pages."""
+
     site_name = models.CharField(max_length=100, default="My Portfolio")
     full_name = models.CharField(max_length=120, default="John Doe")
     role_line = models.CharField(
@@ -204,6 +219,8 @@ class PortfolioProfile(models.Model):
 
 
 class HeatmapSnapshot(models.Model):
+    """Cached heatmap payload and sync metadata for portfolio views."""
+
     key = models.CharField(max_length=40, unique=True, default="portfolio")
     payload = models.JSONField(default=dict, blank=True)
     username = models.CharField(max_length=255, blank=True, default="")

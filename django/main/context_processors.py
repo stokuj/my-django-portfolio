@@ -5,18 +5,34 @@ from .models import PageView, PortfolioProfile, Project
 
 
 def project_count(request):
-    # Zliczamy liczbę projektów w bazie danych
+    """Expose the total number of projects to all templates.
+
+    Returns:
+        dict: Context with `project_count` key.
+    """
     count = Project.objects.count()
     return {"project_count": count}
 
 
 def visitor_counter(request):
-    # Pobieramy globalny licznik odwiedzin
+    """Expose the global visit counter to all templates.
+
+    Returns:
+        dict: Context with `visitor_count` key.
+    """
     count = PageView.get_instance().count
     return {"visitor_count": count}
 
 
 def portfolio_profile(request):
+    """Expose active portfolio profile fields for shared template usage.
+
+    Uses the first active profile as a source. If no active profile exists,
+    returns values from an empty `PortfolioProfile` instance as fallbacks.
+
+    Returns:
+        dict: Context with profile details used across home/about templates.
+    """
     source = (
         PortfolioProfile.objects.filter(is_active=True).first() or PortfolioProfile()
     )
@@ -45,6 +61,11 @@ def portfolio_profile(request):
 
 
 def auth_state(request):
+    """Expose whether the authenticated user has GitHub social auth linked.
+
+    Returns:
+        dict: Context with `github_connected` boolean flag.
+    """
     github_connected = False
     user = getattr(request, "user", None)
 
