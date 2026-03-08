@@ -4,6 +4,9 @@ My personal portfolio blog built with **Django**. It uses **Postgres** to store 
 
 The key feature is that the app pulls Markdown from GitHub **README.MD** files and shows it on blog pages, and Celery keeps this content updated in the background.
 
+**My Django Portfolio** works with [github-heatmap](https://github.com/stokuj/github-heatmap)
+
+---
 ## Project Structure
 
 ```text
