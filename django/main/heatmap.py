@@ -3,93 +3,100 @@ import datetime
 from django.conf import settings
 from django.utils import timezone
 
-import requests
-from allauth.socialaccount.models import SocialAccount, SocialToken
-
+from .github_client import GitHubAuthError
+from .github_client import GitHubUpstreamError
+from .github_client import fetch_authenticated_user
+from .github_client import fetch_contribution_days
 from .models import HeatmapSnapshot
 
 
-def get_portfolio_github_account():
-    """Return the GitHub social account used for portfolio heatmap sync.
-
-    Prefers the account matching `GITHUB_ALLOWED_LOGIN`; otherwise falls back
-    to the first superuser-linked GitHub account.
-    """
-    github_accounts = SocialAccount.objects.select_related("user").filter(
-        provider="github"
-    )
-
-    allowed_login = (
-        (getattr(settings, "GITHUB_ALLOWED_LOGIN", "") or "").strip().lower()
-    )
-
-    if allowed_login:
-        for account in github_accounts:
-            account_login = (account.extra_data.get("login") or "").strip().lower()
-            if account_login == allowed_login:
-                return account
-
-    return github_accounts.filter(user__is_superuser=True).order_by("id").first()
+def get_configured_github_token():
+    """Return configured GitHub token for direct heatmap API requests."""
+    github_token = (getattr(settings, "GITHUB_HEATMAP_TOKEN", "") or "").strip()
+    return github_token or None
 
 
-def get_portfolio_github_token():
-    """Return OAuth token for the selected portfolio GitHub account.
-
-    Returns:
-        str | None: Non-empty token string if available, otherwise None.
-    """
-    selected_account = get_portfolio_github_account()
-    if not selected_account:
-        return None
-
-    social_token = (
-        SocialToken.objects.filter(account=selected_account)
-        .exclude(token="")
-        .order_by("id")
-        .first()
-    )
-    if not social_token:
-        return None
-    return social_token.token
+def contribution_level(count):
+    """Map daily contribution count to a heatmap level in range 0..4."""
+    if count <= 0:
+        return 0
+    if count <= 2:
+        return 1
+    if count <= 5:
+        return 2
+    if count <= 9:
+        return 3
+    return 4
 
 
-def fetch_heatmap_data(github_token):
-    """Fetch heatmap payload from external service for authenticated user.
+def build_weeks_payload(contribution_days):
+    """Group contribution days into week buckets and compute total count."""
+    grouped_weeks = {}
+    total = 0
+
+    for item in contribution_days:
+        raw_day = item.get("date")
+        raw_count = item.get("count")
+        if not isinstance(raw_day, str) or not isinstance(raw_count, int):
+            continue
+
+        try:
+            parsed_day = datetime.date.fromisoformat(raw_day)
+        except ValueError:
+            continue
+
+        weekday = (parsed_day.weekday() + 1) % 7
+        week_start = parsed_day - datetime.timedelta(days=weekday)
+        grouped_weeks.setdefault(week_start, []).append(
+            {
+                "date": parsed_day.isoformat(),
+                "weekday": weekday,
+                "count": raw_count,
+                "level": contribution_level(raw_count),
+            }
+        )
+        total += raw_count
+
+    weeks = []
+    for week_start in sorted(grouped_weeks):
+        days = sorted(grouped_weeks[week_start], key=lambda day: day["weekday"])
+        weeks.append({"week_start": week_start.isoformat(), "days": days})
+
+    return weeks, total
+
+
+def fetch_heatmap_data(github_token=None):
+    """Fetch normalized heatmap payload directly from GitHub APIs.
 
     Args:
-        github_token (str): GitHub OAuth bearer token.
+        github_token (str | None): Optional GitHub bearer token override.
 
     Returns:
         tuple[dict | None, str | None]: `(payload, error_message)` pair.
     """
-    heatmap_url = f"{settings.HEATMAP_API_BASE_URL.rstrip('/')}/heatmap/me"
+    token = github_token or get_configured_github_token()
+    if not token:
+        return None, "Heatmap is not configured."
 
     try:
-        response = requests.get(
-            heatmap_url,
-            headers={"Authorization": f"Bearer {github_token}"},
-            timeout=10,
-        )
-    except requests.Timeout:
-        return None, "Heatmap service is temporarily unavailable."
-    except requests.RequestException:
-        return None, "Heatmap service is temporarily unavailable."
+        github_user = fetch_authenticated_user(token)
+        raw_username = github_user.get("login")
+        if not isinstance(raw_username, str) or not raw_username:
+            raise GitHubUpstreamError("GitHub user response is invalid")
+        username = raw_username
 
-    if response.status_code == 401:
-        return None, "GitHub session expired. Please sign in again."
-
-    if response.status_code >= 400:
+        contribution_days = fetch_contribution_days(username, token)
+        weeks, total = build_weeks_payload(contribution_days)
+    except GitHubAuthError:
+        return None, "Configured GitHub token is invalid or expired."
+    except GitHubUpstreamError:
         return None, "Heatmap service is temporarily unavailable."
 
-    try:
-        payload = response.json()
-    except ValueError:
-        return None, "Heatmap service is temporarily unavailable."
-
-    if not isinstance(payload, dict):
-        return None, "Heatmap service is temporarily unavailable."
-
-    return payload, None
+    return {
+        "username": username,
+        "total": total,
+        "weeks": weeks,
+    }, None
 
 
 def get_or_create_snapshot():

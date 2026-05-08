@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from .heatmap import (
     fetch_heatmap_data,
-    get_portfolio_github_token,
+    get_configured_github_token,
     update_snapshot_error,
     update_snapshot_with_payload,
 )
@@ -63,9 +63,11 @@ def sync_project_markdowns_task(blog_slug=None):
     if failed_count == 0:
         status.last_status = TaskExecutionStatus.STATUS_SUCCESS
         status.last_success_at = timezone.now()
+        status.last_failure_at = None
         status.last_error = ""
     elif updated_count > 0:
         status.last_status = TaskExecutionStatus.STATUS_PARTIAL_SUCCESS
+        status.last_success_at = None
         status.last_failure_at = timezone.now()
         failed_results = [item for item in results if not item.get("updated")]
         status.last_error = "; ".join(
@@ -75,6 +77,7 @@ def sync_project_markdowns_task(blog_slug=None):
     else:
         failed_results = [item for item in results if not item.get("updated")]
         status.last_status = TaskExecutionStatus.STATUS_FAILURE
+        status.last_success_at = None
         status.last_failure_at = timezone.now()
         status.last_error = "; ".join(
             f"{item.get('slug')}: {item.get('reason', 'unknown_error')}"
@@ -109,11 +112,11 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
     )
     status.last_run_at = timezone.now()
 
-    github_token = get_portfolio_github_token()
-    if not github_token:
-        message = "GitHub is not connected for portfolio heatmap."
+    if not get_configured_github_token():
+        message = "Heatmap is not configured."
         update_snapshot_error(message)
         status.last_status = TaskExecutionStatus.STATUS_FAILURE
+        status.last_success_at = None
         status.last_failure_at = timezone.now()
         status.last_total = 1
         status.last_updated = 0
@@ -123,6 +126,7 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
             update_fields=[
                 "last_status",
                 "last_run_at",
+                "last_success_at",
                 "last_failure_at",
                 "last_total",
                 "last_updated",
@@ -134,10 +138,11 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
         _maybe_schedule_next_refresh(schedule_next)
         return {"ok": False, "error": message}
 
-    payload, error = fetch_heatmap_data(github_token)
+    payload, error = fetch_heatmap_data()
     if error:
         update_snapshot_error(error)
         status.last_status = TaskExecutionStatus.STATUS_FAILURE
+        status.last_success_at = None
         status.last_failure_at = timezone.now()
         status.last_total = 1
         status.last_updated = 0
@@ -147,6 +152,7 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
             update_fields=[
                 "last_status",
                 "last_run_at",
+                "last_success_at",
                 "last_failure_at",
                 "last_total",
                 "last_updated",
@@ -161,6 +167,7 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
     snapshot = update_snapshot_with_payload(payload)
     status.last_status = TaskExecutionStatus.STATUS_SUCCESS
     status.last_success_at = timezone.now()
+    status.last_failure_at = None
     status.last_total = 1
     status.last_updated = 1
     status.last_failed = 0
@@ -170,6 +177,7 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
             "last_status",
             "last_run_at",
             "last_success_at",
+            "last_failure_at",
             "last_total",
             "last_updated",
             "last_failed",

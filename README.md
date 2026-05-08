@@ -1,10 +1,8 @@
 # My Django Portfolio
 
-My personal portfolio blog built with **Django**. It uses **Postgres** to store data, **Tailwind** for frontend styling, **Docker** for containerized deployment, and has asynchronous tasks with **Celery** + Redis. It also has optional integration with my other project **FastAPI** to get my GitHub contribution data. It uses GitHub Actions for **CI/CD** and is deployed on Digital Ocean droplet.
+My personal portfolio blog built with **Django**. It uses **Postgres** to store data, **Tailwind** for frontend styling, **Docker** for containerized deployment, and has asynchronous tasks with **Celery** + Redis. It fetches GitHub contribution data directly from the GitHub API and uses GitHub Actions for **CI/CD**.
 
 The key feature is that the app pulls Markdown from GitHub **README.MD** files and shows it on blog pages, and Celery keeps this content updated in the background.
-
-**My Django Portfolio** works with [github-heatmap](https://github.com/stokuj/github-heatmap)
 
 ---
 ## Project Structure
@@ -40,7 +38,7 @@ my_django_portfolio/
 - Visitor counter middleware and profile-driven site metadata
 - Background jobs with Celery worker + beat scheduler
 - Scheduled markdown synchronization (`main.tasks.sync_project_markdowns_task`)
-- Optional FastAPI heatmap integration (`/heatmap/me`) with cached snapshot storage
+- GitHub contribution heatmap data endpoint (`/about/heatmap-data/`) with cached snapshot storage
 
 ## Tech Stack
 
@@ -62,7 +60,7 @@ A filterable grid of projects. You can search by name or filter by technology ta
 <img width="2267" height="1334" alt="screencapture-localhost-projects-2026-02-22-15_13_50" src="https://github.com/user-attachments/assets/25a3085e-edf2-45aa-93b9-42c47f36e2f9" />
 
 ### About page
-The main landing page showing a brief intro ("Hi, I am John Doe"), tech stack badges, current learning goals, and a live GitHub contributions heatmap pulled from a FastAPI backend.
+The main landing page showing a brief intro ("Hi, I am John Doe"), tech stack badges, current learning goals, and a live GitHub contributions heatmap fetched directly by Django from GitHub.
 <img width="2267" height="1669" alt="image" src="https://github.com/user-attachments/assets/5e01c6d9-9e82-4745-8210-7076888c9722" />
 
 ### Dark theme
@@ -70,7 +68,7 @@ All backgrounds, text, and cards switch to dark colors. The accent color shifts 
 <img width="2267" height="1486" alt="image" src="https://github.com/user-attachments/assets/21b6ea0b-0625-4202-9176-3b4e24ed108b" />
 
 ### About when logged as admin (page owner)
-The about page with extra admin controls visible — a "Disconnect GitHub" button, a Scheduled Jobs panel showing Celery tasks (heatmap refresh, markdown sync), and an Executed Tasks panel with task history and run timestamps.
+The about page with extra admin controls visible, including a Scheduled Jobs panel showing Celery tasks (heatmap refresh, markdown sync) and an Executed Tasks panel with task history and run timestamps.
 <img width="2267" height="2843" alt="image" src="https://github.com/user-attachments/assets/17c53ec4-56ae-4acb-8e3b-da50f7059f4c" />
 
 ## Quick Start (Docker)
@@ -97,6 +95,7 @@ docker compose down
 
 - Python 3.13+
 - PostgreSQL
+- Redis (required for Celery worker/beat)
 - Node.js + npm
 
 ### Setup
@@ -126,6 +125,18 @@ uv run celery -A config beat --workdir=django --loglevel=info
 Open `http://localhost:8000`.
 
 ## Verification Commands
+
+```bash
+SECRET_KEY=test DJANGO_DEBUG=True uv run python django/manage.py check
+SECRET_KEY=test DJANGO_DEBUG=True uv run python django/manage.py makemigrations --check --dry-run
+SECRET_KEY=test DJANGO_DEBUG=True uv run python django/manage.py test main -v 2
+```
+
+## Heatmap Configuration
+
+- Set `GITHUB_HEATMAP_TOKEN` in `.env` to enable the portfolio heatmap.
+- Django fetches the configured token owner and contribution calendar directly from GitHub and caches the normalized payload in `HeatmapSnapshot`.
+- GitHub login/auth integration is not part of this project.
 
 ## Documentation
 

@@ -42,22 +42,23 @@ Common implementation patterns:
 - Status persistence with `update_fields` for partial model updates.
 - Historical execution logging to `TaskExecutionLog`.
 
-### FastAPI Integration (Heatmap)
+### Direct GitHub Heatmap Integration
 
-FastAPI integration is implemented through `django/main/heatmap.py` and related views/tasks.
+Heatmap integration is implemented through `django/main/heatmap.py`, `django/main/github_client.py`, and related views/tasks.
 
-- Endpoint contract: Django requests `{HEATMAP_API_BASE_URL}/heatmap/me`.
-- Authorization: GitHub OAuth token retrieved from django-allauth social account records.
-- Fetch path: `fetch_heatmap_data(github_token)` validates HTTP status and JSON payload shape.
-- Caching path: valid payloads are saved to `HeatmapSnapshot`.
-- Failure behavior: on timeout/network/service errors, Django stores an error message and can reuse the last valid snapshot.
+- Configuration: Django reads `GITHUB_HEATMAP_TOKEN` from `.env`.
+- Authorization: the same configured GitHub bearer token is used for all heatmap fetches.
+- Fetch path: `fetch_heatmap_data(github_token=None)` resolves the token owner through GitHub REST and then fetches contribution days through GitHub GraphQL.
+- Caching path: valid payloads are normalized and saved to `HeatmapSnapshot`.
+- Failure behavior: on token/network/upstream errors, Django stores an error message and can reuse the last valid snapshot.
+- Scope note: GitHub login and social auth are not part of the runtime anymore.
 
 ### Markdown Synchronization
 
 - Core sync logic: `django/main/markdown_sync.py`.
 - Trigger methods:
   - scheduled via Celery beat,
-  - manual via management command.
+  - manual via the staff-only POST route behind the About page admin tools (`run_markdown_sync_task`).
 - Returned summary is stable and includes `total`, `updated`, `failed`, and per-project details.
 
 ## Frontend Implementation
@@ -111,9 +112,9 @@ npm run build:css
 ### Core Checks
 
 ```bash
-uv run python django/manage.py check
-uv run python django/manage.py makemigrations --check --dry-run
-uv run python django/manage.py test
+SECRET_KEY=test DJANGO_DEBUG=True uv run python django/manage.py check
+SECRET_KEY=test DJANGO_DEBUG=True uv run python django/manage.py makemigrations --check --dry-run
+SECRET_KEY=test DJANGO_DEBUG=True uv run python django/manage.py test main -v 2
 ```
 
 ### Targeted Test Examples

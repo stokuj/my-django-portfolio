@@ -18,24 +18,10 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.urls import path, include
-from django.views.generic import RedirectView
 from django.conf import settings
-
-from main import views as main_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path(
-        "accounts/login/",
-        RedirectView.as_view(url="/accounts/3rdparty/", permanent=False),
-        name="account_login_redirect",
-    ),
-    path(
-        "accounts/3rdparty/",
-        main_views.accounts_3rdparty_redirect,
-        name="accounts_3rdparty_redirect",
-    ),
-    path("accounts/", include("allauth.urls")),
     path("", include("main.urls")),
 ]
 

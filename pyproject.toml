@@ -8,7 +8,6 @@ dependencies = [
     "bleach==6.2.0",
     "celery[redis]==5.4.0",
     "django==5.1.15",
-    "django-allauth==65.13.0",
     "django-environ==0.12.0",
     "gunicorn==23.0.0",
     "markdown==3.8.2",

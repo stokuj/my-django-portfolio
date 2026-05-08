@@ -52,14 +52,10 @@
                     <h2 class="text-xl font-semibold text-primary">GitHub Contributions</h2>
                     <p id="heatmap-minimal-status" class="mt-1 text-sm text-base-content/70">Loading heatmap data...</p>
                 </div>
-                <div class="badge badge-outline badge-sm">Live from FastAPI</div>
             </div>
 
             <div id="heatmap-minimal-error" class="alert alert-error mt-4 hidden">
                 <span id="heatmap-minimal-error-text"></span>
-            </div>
-            <div id="heatmap-minimal-actions" class="mt-4 hidden">
-                <a id="heatmap-minimal-action-link" href="/accounts/3rdparty/" class="btn btn-primary btn-sm">Login with GitHub</a>
             </div>
             <div id="heatmap-minimal-content" class="mt-4 hidden">
                 <div class="grid gap-3 sm:grid-cols-3">
@@ -102,15 +98,6 @@
             </div>
         </div>
     </section>
-
-    {% if request.user.is_authenticated and request.user.is_staff and heatmap_connected_for_admin %}
-    <div class="mt-3 flex justify-end">
-        <form method="post" action="{% url 'about_heatmap_disconnect' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-outline btn-error">Disconnect GitHub</button>
-        </form>
-    </div>
-    {% endif %}
     {% endif %}
 
     {% if request.user.is_authenticated and request.user.is_staff %}
@@ -260,8 +247,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             statusEl: document.getElementById(config.prefix + "-status"),
             errorEl: document.getElementById(config.prefix + "-error"),
             errorTextEl: document.getElementById(config.prefix + "-error-text"),
-            actionsEl: document.getElementById(config.prefix + "-actions"),
-            actionLinkEl: document.getElementById(config.prefix + "-action-link"),
             contentEl: document.getElementById(config.prefix + "-content"),
             gridEl: document.getElementById(config.prefix + "-grid"),
             monthsEl: document.getElementById(config.prefix + "-months"),
@@ -274,8 +259,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             variant.statusEl
             && variant.errorEl
             && variant.errorTextEl
-            && variant.actionsEl
-            && variant.actionLinkEl
             && variant.contentEl
             && variant.gridEl
             && variant.monthsEl
@@ -289,7 +272,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         return;
     }
 
-    const isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
     const heatmapEnabled = {{ heatmap_enabled|yesno:"true,false" }};
 
     function showError(variant, message) {
@@ -299,22 +281,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         variant.errorEl.classList.remove("hidden");
     }
 
-    function showActionForCurrentUser(variant) {
-        if (!isAuthenticated) {
-            return;
-        }
-
-        variant.actionsEl.classList.remove("hidden");
-        variant.actionLinkEl.textContent = "Connect GitHub";
-        variant.actionLinkEl.href = "/accounts/3rdparty/";
-    }
-
     if (!heatmapEnabled) {
         variants.forEach(function (variant) {
-            variant.statusEl.textContent = "Connect your GitHub account to enable the heatmap.";
-            if (isAuthenticated) {
-                showActionForCurrentUser(variant);
-            }
+            variant.statusEl.textContent = "Heatmap is disabled until GITHUB_HEATMAP_TOKEN is configured.";
         });
         return;
     }
@@ -450,11 +419,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             variants.forEach(function (variant) {
                 showError(variant, payload.error || "Heatmap service is temporarily unavailable.");
             });
-            if (payload && payload.error && payload.error.includes("GitHub")) {
-                variants.forEach(function (variant) {
-                    showActionForCurrentUser(variant);
-                });
-            }
             return;
         }
 
