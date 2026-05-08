@@ -16,12 +16,17 @@ dependencies = [
     "psycopg2-binary==2.9.10",
     "pymdown-extensions==10.16.1",
     "requests==2.32.5",
+    "ruff==0.11.10",
     "sqlparse==0.5.4",
     "tzdata==2025.2",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "ruff==0.11.10",
+]
+
 [tool.uv]
-# UV-specific configuration
 pip = { upgrade = true }
 
 [tool.setuptools]
@@ -29,3 +34,10 @@ packages = ["main", "config"]
 
 [tool.setuptools.package-dir]
 "" = "django"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

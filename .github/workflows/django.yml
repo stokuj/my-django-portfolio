@@ -36,26 +36,13 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install uv
-        uv pip install --system .
+        uv sync
 
     - name: Create .env file
       run: |
         echo "SECRET_KEY=django-insecure-test-key-for-ci" > .env
         echo "DJANGO_DEBUG=True" >> .env
-        echo "ALLOWED_HOSTS=localhost,127.0.0.1" >> .env  
+        echo "ALLOWED_HOSTS=localhost,127.0.0.1" >> .env
 
-    - name: Run Tests
-      working-directory: django
-      run: |
-        python manage.py test
-
-    - name: Check migrations and apply
-      working-directory: django
-      run: |
-        python manage.py makemigrations --check --dry-run
-        python manage.py migrate
-
-    - name: Check for syntax errors
-      working-directory: django
-      run: |
-        python -m compileall .
+    - name: Run Verification
+      run: make verify
