@@ -33,6 +33,9 @@ jobs:
         pip install uv
         uv sync --extra dev
 
+    - name: Install Node dependencies
+      run: npm ci
+
     - name: Create .env file
       run: |
         echo "SECRET_KEY=django-insecure-test-key-for-ci" > .env
