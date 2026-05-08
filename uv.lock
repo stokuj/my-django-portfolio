@@ -246,7 +246,6 @@ dependencies = [
     { name = "psycopg2-binary" },
     { name = "pymdown-extensions" },
     { name = "requests" },
-    { name = "ruff" },
     { name = "sqlparse" },
     { name = "tzdata" },
 ]
@@ -270,7 +269,6 @@ requires-dist = [
     { name = "psycopg2-binary", specifier = "==2.9.10" },
     { name = "pymdown-extensions", specifier = "==10.16.1" },
     { name = "requests", specifier = "==2.32.5" },
-    { name = "ruff", specifier = "==0.11.10" },
     { name = "ruff", marker = "extra == 'dev'", specifier = "==0.11.10" },
     { name = "sqlparse", specifier = "==0.5.4" },
     { name = "tzdata", specifier = "==2025.2" },
