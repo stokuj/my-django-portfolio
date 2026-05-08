@@ -47,12 +47,17 @@ def load_rows(project_name: str) -> list[dict[str, str]]:
         "--format",
         "{{json .}}",
     ]
-    result = subprocess.run(command, check=True, capture_output=True, text=True)
+    result = subprocess.run(
+        command, check=True, capture_output=True, text=True, timeout=10
+    )
     rows: list[dict[str, str]] = []
     for line in result.stdout.splitlines():
         if not line.strip():
             continue
-        parsed = json.loads(line)
+        try:
+            parsed = json.loads(line)
+        except json.JSONDecodeError:
+            continue
         rows.append(
             {
                 "name": parsed.get("Names", ""),
@@ -73,6 +78,9 @@ def main() -> int:
         rows = load_rows(args.project_name)
     except subprocess.CalledProcessError as exc:
         print(exc.stderr.strip() or "docker ps failed", file=sys.stderr)
+        return 1
+    except subprocess.TimeoutExpired:
+        print("docker ps timed out", file=sys.stderr)
         return 1
 
     print(build_status_table(rows))
