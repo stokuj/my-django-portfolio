@@ -22,8 +22,10 @@ my_django_portfolio/
 |  `- manage.py               
 |- docs/                      # Technical documentation
 |- Caddyfile
-|- docker-compose.yml
+|- docker-compose.dev.yml
+|- docker-compose.prod.yml
 |- Dockerfile
+|- Makefile
 |- package.json
 |- pyproject.toml
 `- README.md
@@ -73,21 +75,27 @@ The about page with extra admin controls visible, including a Scheduled Jobs pan
 
 ## Quick Start (Docker)
 
-### Run
+### Development
 
 ```bash
-#check variables, use good secrets
-cp .env.example .env 
-docker compose up --build -d
+make dev-up
+make dev-status
+make dev-down
 ```
 
-Open `https://localhost`.
+Open `http://localhost:8000`.
 
-Stop services:
+`make dev-up` creates `.env` from `.env.example` when needed.
+
+### Production
 
 ```bash
-docker compose down
+make prod-up
+make prod-status
+make prod-down
 ```
+
+`make prod-up` requires an existing `.env` file and fails if it is missing.
 
 ## Local Development
 
@@ -127,9 +135,7 @@ Open `http://localhost:8000`.
 ## Verification Commands
 
 ```bash
-SECRET_KEY=test DJANGO_DEBUG=True uv run python django/manage.py check
-SECRET_KEY=test DJANGO_DEBUG=True uv run python django/manage.py makemigrations --check --dry-run
-SECRET_KEY=test DJANGO_DEBUG=True uv run python django/manage.py test main -v 2
+make verify
 ```
 
 ## Heatmap Configuration
@@ -149,7 +155,7 @@ SECRET_KEY=test DJANGO_DEBUG=True uv run python django/manage.py test main -v 2
 - Caddy TLS for `www` fails (`ERR_SSL_PROTOCOL_ERROR`): set both `APP_DOMAIN` and `APP_WWW_DOMAIN` in `.env` (for example, `APP_DOMAIN=krystianstasica.pl`, `APP_WWW_DOMAIN=www.krystianstasica.pl`).
 - Docker socket permission error: add your user to the Docker group or run with elevated privileges.
 - CSS not updating: run `npm run build:css` and verify input/output paths in `package.json`.
-- SELinux bind mount issue with Caddyfile: use `:Z` relabel option (already configured in `docker-compose.yml`).
+- SELinux bind mount issue with Caddyfile: use `:Z` relabel option (already configured in `docker-compose.prod.yml`).
 - `502 Bad Gateway` after changing DB name: if you change `DOCKER_DB_NAME`, create that database in PostgreSQL first, otherwise `web` can stay in `wait-for-db`.
 - Markdown sync looks successful but files are not visible in app: ensure `worker` mounts `media_volume:/app/media`.
 - Permission errors on static/media/celerybeat files in Docker: app containers run as non-root (`10001:10001`), so existing volumes may need a one-time ownership fix (`chown`).

@@ -6,7 +6,7 @@
 - `django/main/`: application code (models, views, tasks, templates, static assets).
 - `django/entrypoints/`: container startup scripts.
 - `docs/`: architecture and implementation documentation.
-- Root operational files: `docker-compose.yml`, `Dockerfile`, `Caddyfile`, `pyproject.toml`, `package.json`.
+- Root operational files: `docker-compose.dev.yml`, `docker-compose.prod.yml`, `Dockerfile`, `Caddyfile`, `Makefile`, `pyproject.toml`, `package.json`.
 
 ## Backend Implementation
 
@@ -84,7 +84,7 @@ For the visual template map, see [`frontend.md`](frontend.md).
 
 ### Docker Compose Services
 
-Services are defined in `docker-compose.yml`:
+Services are defined in `docker-compose.prod.yml`:
 
 - `db`: PostgreSQL.
 - `redis`: broker/result backend for Celery.
@@ -98,23 +98,24 @@ Services are defined in `docker-compose.yml`:
 - Caddy proxies dynamic traffic to Django.
 - Static and media files are served directly from shared volumes.
 
+### Development Compose Services
+
+Local development uses `docker-compose.dev.yml` with `db`, `redis`, `web`, `worker`, and `beat`. It does not include Caddy; Django is exposed directly on port `8000` via `runserver`.
+
 ## Development and Verification Workflow
 
 ### Setup
 
 ```bash
-cp .env.example .env
-uv sync
+uv sync --extra dev
 npm install
-npm run build:css
+make dev-up
 ```
 
 ### Core Checks
 
 ```bash
-SECRET_KEY=test DJANGO_DEBUG=True uv run python django/manage.py check
-SECRET_KEY=test DJANGO_DEBUG=True uv run python django/manage.py makemigrations --check --dry-run
-SECRET_KEY=test DJANGO_DEBUG=True uv run python django/manage.py test main -v 2
+make verify
 ```
 
 ### Targeted Test Examples
