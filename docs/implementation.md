@@ -84,7 +84,7 @@ For the visual template map, see [`frontend.md`](frontend.md).
 
 ### Docker Compose Services
 
-Services are defined in `docker-compose.prod.yml`:
+Production services are defined in `docker-compose.prod.yml`:
 
 - `db`: PostgreSQL.
 - `redis`: broker/result backend for Celery.
@@ -102,6 +102,8 @@ Services are defined in `docker-compose.prod.yml`:
 
 Local development uses `docker-compose.dev.yml` with `db`, `redis`, `web`, `worker`, and `beat`. It does not include Caddy; Django is exposed directly on port `8000` via `runserver`.
 
+The new development workflow runs the full application stack in Docker containers. The non-Docker local development commands from earlier versions are preserved in the `README.md` for reference.
+
 ## Development and Verification Workflow
 
 ### Setup
@@ -111,6 +113,8 @@ uv sync --extra dev
 npm install
 make dev-up
 ```
+
+`make dev-up` creates `.env` from `.env.example` automatically when the file does not exist.
 
 ### Core Checks
 
