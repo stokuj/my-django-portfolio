@@ -21,6 +21,21 @@ class EnsureEnvTests(unittest.TestCase):
             self.assertTrue(created)
             self.assertEqual(env.read_text(encoding="utf-8"), "SECRET_KEY=test\n")
 
+    def test_dev_mode_noop_when_env_exists(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            example = root / ".env.example"
+            env = root / ".env"
+            example.write_text("SECRET_KEY=dummy\n", encoding="utf-8")
+            env.write_text("SECRET_KEY=existing\n", encoding="utf-8")
+
+            created = ensure_env(
+                env_path=env, example_path=example, create_if_missing=True
+            )
+
+            self.assertFalse(created)
+            self.assertEqual(env.read_text(encoding="utf-8"), "SECRET_KEY=existing\n")
+
     def test_prod_mode_fails_when_env_missing(self):
         with TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -28,7 +43,7 @@ class EnsureEnvTests(unittest.TestCase):
             env = root / ".env"
             example.write_text("SECRET_KEY=test\n", encoding="utf-8")
 
-            with self.assertRaises(FileNotFoundError):
+            with self.assertRaisesRegex(FileNotFoundError, "Missing env file"):
                 ensure_env(env_path=env, example_path=example, create_if_missing=False)
 
     def test_dev_mode_fails_when_example_missing(self):
@@ -37,7 +52,7 @@ class EnsureEnvTests(unittest.TestCase):
             example = root / ".env.example"
             env = root / ".env"
 
-            with self.assertRaises(FileNotFoundError):
+            with self.assertRaisesRegex(FileNotFoundError, "Missing example env file"):
                 ensure_env(env_path=env, example_path=example, create_if_missing=True)
 
 
@@ -54,11 +69,36 @@ class ComposeStatusTests(unittest.TestCase):
 
         table = build_status_table(rows)
 
-        self.assertIn("NAME", table)
-        self.assertIn("STATUS", table)
-        self.assertIn("IMAGE", table)
-        self.assertIn("PORTS", table)
-        self.assertIn("portfolio-web-1", table)
+        expected = (
+            "NAME             STATUS         IMAGE                    PORTS                   \n"
+            "portfolio-web-1  Up 10 seconds  my-django-portfolio:dev  127.0.0.1:8000->8000/tcp"
+        )
+        self.assertEqual(table, expected)
+
+    def test_build_status_table_multiple_rows(self):
+        rows = [
+            {
+                "name": "web",
+                "status": "Up",
+                "image": "img:dev",
+                "ports": "8000/tcp",
+            },
+            {
+                "name": "db-server",
+                "status": "Up 2 hours",
+                "image": "postgres:15",
+                "ports": "5432/tcp",
+            },
+        ]
+
+        table = build_status_table(rows)
+
+        expected = (
+            "NAME       STATUS      IMAGE        PORTS   \n"
+            "web        Up          img:dev      8000/tcp\n"
+            "db-server  Up 2 hours  postgres:15  5432/tcp"
+        )
+        self.assertEqual(table, expected)
 
     def test_build_status_table_handles_empty_rows(self):
         table = build_status_table([])
