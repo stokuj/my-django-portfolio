@@ -49,14 +49,9 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.sites",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.github",
 ]
 
 MIDDLEWARE = [
@@ -66,7 +61,6 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -85,7 +79,6 @@ TEMPLATES = [
                 "main.context_processors.visitor_counter",
                 "main.context_processors.project_count",
                 "main.context_processors.portfolio_profile",
-                "main.context_processors.auth_state",
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
@@ -169,41 +162,14 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, "staticfiles")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-SITE_ID = env.int("SITE_ID", default=1)
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-SOCIALACCOUNT_STORE_TOKENS = True
-SOCIALACCOUNT_ADAPTER = "main.auth_adapters.GitHubAdminOnlySocialAccountAdapter"
-SOCIALACCOUNT_AUTO_SIGNUP = False
-SOCIALACCOUNT_LOGIN_ON_GET = True
-SOCIALACCOUNT_PROVIDERS = {
-    "github": {
-        "SCOPE": ["read:user", "user:email"],
-        "AUTH_PARAMS": {"allow_signup": "true"},
-    }
-}
-
-github_client_id = env("GITHUB_CLIENT_ID", default="").strip()
-github_client_secret = env("GITHUB_CLIENT_SECRET", default="").strip()
-
-if github_client_id and github_client_secret:
-    SOCIALACCOUNT_PROVIDERS["github"]["APP"] = {
-        "client_id": github_client_id,
-        "secret": github_client_secret,
-        "key": "",
-    }
-
-GITHUB_ALLOWED_LOGIN = env("GITHUB_ALLOWED_LOGIN", default="").strip()
-GITHUB_ALLOWED_EMAIL = env("GITHUB_ALLOWED_EMAIL", default="").strip().lower()
-HEATMAP_API_BASE_URL = env(
-    "HEATMAP_API_BASE_URL", default="http://127.0.0.1:8000"
-).strip()
+GITHUB_HEATMAP_TOKEN = env("GITHUB_HEATMAP_TOKEN", default="").strip()
 HEATMAP_CACHE_TTL_MINUTES = env.int("HEATMAP_CACHE_TTL_MINUTES", default=60)
 
 #####
@@ -246,6 +212,11 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULE = {
+    "refresh-portfolio-heatmap-hourly": {
+        "task": "main.tasks.refresh_portfolio_heatmap_cache_task",
+        "schedule": crontab(minute=0),
+        "kwargs": {"schedule_next": False},
+    },
     "sync-project-markdowns-hourly": {
         "task": "main.tasks.sync_project_markdowns_task",
         "schedule": crontab(hour="*/2", minute=0),

@@ -176,19 +176,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-allauth"
-version = "65.13.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "asgiref" },
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/7c/05/36b9de6d0109948717ee0fa8076d5b57396bc838d5239f5b44b7d4c29fb0/django_allauth-65.13.0.tar.gz", hash = "sha256:7d7b7e7ad603eb3864c142f051e2cce7be2f9a9c6945a51172ec83d48c6c843b", size = 1987616, upload-time = "2025-10-31T10:20:03.954Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/17/f2fd703781aeeb6d314059408df77360f09625cc3ce85f264b104443108c/django_allauth-65.13.0-py3-none-any.whl", hash = "sha256:119c0cf1cc2e0d1a0fe2f13588f30951d64989256084de2d60f13ab9308f9fa0", size = 1787213, upload-time = "2025-10-31T10:20:00.587Z" },
-]
-
-[[package]]
 name = "django-environ"
 version = "0.12.0"
 source = { registry = "https://pypi.org/simple" }
@@ -251,7 +238,6 @@ dependencies = [
     { name = "bleach" },
     { name = "celery", extra = ["redis"] },
     { name = "django" },
-    { name = "django-allauth" },
     { name = "django-environ" },
     { name = "gunicorn" },
     { name = "markdown" },
@@ -270,7 +256,6 @@ requires-dist = [
     { name = "bleach", specifier = "==6.2.0" },
     { name = "celery", extras = ["redis"], specifier = "==5.4.0" },
     { name = "django", specifier = "==5.1.15" },
-    { name = "django-allauth", specifier = "==65.13.0" },
     { name = "django-environ", specifier = "==0.12.0" },
     { name = "gunicorn", specifier = "==23.0.0" },
     { name = "markdown", specifier = "==3.8.2" },

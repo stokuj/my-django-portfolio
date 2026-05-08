@@ -3,20 +3,17 @@ import markdown
 from datetime import date, timedelta
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_GET, require_POST
-from allauth.socialaccount.models import SocialAccount, SocialToken
 
 from .heatmap import (
     fetch_heatmap_data,
+    get_configured_github_token,
     get_or_create_snapshot,
-    get_portfolio_github_account,
-    get_portfolio_github_token,
     is_snapshot_stale,
     update_snapshot_error,
     update_snapshot_with_payload,
@@ -108,13 +105,12 @@ def home(request):
 
 def about(request):
     """Render about page with heatmap flags and admin task panels."""
-    has_portfolio_token = get_portfolio_github_token() is not None
+    has_portfolio_token = get_configured_github_token() is not None
     is_admin_user = request.user.is_authenticated and request.user.is_staff
 
     context = {
-        "heatmap_component_visible": has_portfolio_token or is_admin_user,
+        "heatmap_component_visible": True,
         "heatmap_enabled": has_portfolio_token,
-        "heatmap_connected_for_admin": _is_current_admin_connected(request),
     }
 
     if is_admin_user:
@@ -125,39 +121,9 @@ def about(request):
 
 
 @require_GET
-def accounts_3rdparty_redirect(request):
-    """Allow staff users to start GitHub social-account connect flow."""
-    if not request.user.is_authenticated or not request.user.is_staff:
-        messages.error(request, "GitHub connect is available only for admin users.")
-        return redirect("home")
-
-    return redirect("/accounts/github/login/?process=connect")
-
-
-@login_required
-@require_POST
-def about_heatmap_disconnect(request):
-    """Disconnect current staff user's GitHub account used for heatmap."""
-    if not request.user.is_staff:
-        messages.error(request, "Only admin can disconnect GitHub heatmap.")
-        return redirect("about")
-
-    account = SocialAccount.objects.filter(user=request.user, provider="github").first()
-    if not account:
-        messages.info(request, "GitHub account is already disconnected.")
-        return redirect("about")
-
-    SocialToken.objects.filter(account=account).delete()
-    account.delete()
-    messages.success(request, "GitHub heatmap has been disconnected.")
-    return redirect("about")
-
-
-@require_GET
 def about_heatmap_data(request):
     """Return cached heatmap payload JSON, refreshing when cache is stale."""
-    github_token = get_portfolio_github_token()
-    if not github_token:
+    if not get_configured_github_token():
         return JsonResponse(
             {"error": "Heatmap is not configured."},
             status=404,
@@ -166,7 +132,7 @@ def about_heatmap_data(request):
     snapshot = get_or_create_snapshot()
 
     if not snapshot.payload or is_snapshot_stale(snapshot):
-        payload, error = fetch_heatmap_data(github_token)
+        payload, error = fetch_heatmap_data()
 
         if error:
             update_snapshot_error(error)
@@ -175,7 +141,6 @@ def about_heatmap_data(request):
             return JsonResponse({"error": error}, status=503)
 
         snapshot = update_snapshot_with_payload(payload)
-        _schedule_next_heatmap_refresh()
 
     return _build_heatmap_snapshot_response(snapshot)
 
@@ -202,23 +167,11 @@ def _schedule_next_heatmap_refresh():
     """Best-effort enqueue of next asynchronous heatmap refresh task."""
     try:
         refresh_portfolio_heatmap_cache_task.apply_async(
-            kwargs={"schedule_next": True},
+            kwargs={"schedule_next": False},
             countdown=3600,
         )
     except Exception:
         return
-
-
-def _is_current_admin_connected(request):
-    """Check whether current staff user matches configured portfolio account."""
-    if not request.user.is_authenticated or not request.user.is_staff:
-        return False
-
-    portfolio_account = get_portfolio_github_account()
-    if not portfolio_account:
-        return False
-
-    return portfolio_account.user_id == request.user.id
 
 
 def _calculate_last_30_days_total(payload):
@@ -273,7 +226,7 @@ def _get_scheduled_jobs_overview():
     jobs_config = [
         {
             "task_name": REFRESH_HEATMAP_TASK_NAME,
-            "label": "Heatmap Refresh (FastAPI)",
+            "label": "Heatmap Refresh",
             "schedule_label": "Every 60 minutes",
             "interval_minutes": 60,
         },
@@ -449,7 +402,7 @@ def run_markdown_sync_task(request):
 def run_heatmap_refresh_task(request):
     """Enqueue immediate heatmap refresh task from admin tools."""
     try:
-        async_result = refresh_portfolio_heatmap_cache_task.delay(schedule_next=True)
+        async_result = refresh_portfolio_heatmap_cache_task.delay(schedule_next=False)
     except Exception:
         messages.error(request, "Failed to enqueue heatmap refresh task.")
     else:

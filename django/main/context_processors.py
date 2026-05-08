@@ -1,6 +1,3 @@
-# main/context_processors.py
-from allauth.socialaccount.models import SocialAccount
-
 from .models import PageView, PortfolioProfile, Project
 
 
@@ -57,24 +54,4 @@ def portfolio_profile(request):
         "profile_current_learning": source.current_learning,
         "profile_current_learning_summary": source.current_learning_summary,
         "profile_interests": source.interests,
-    }
-
-
-def auth_state(request):
-    """Expose whether the authenticated user has GitHub social auth linked.
-
-    Returns:
-        dict: Context with `github_connected` boolean flag.
-    """
-    github_connected = False
-    user = getattr(request, "user", None)
-
-    if user and user.is_authenticated:
-        github_connected = SocialAccount.objects.filter(
-            user=user,
-            provider="github",
-        ).exists()
-
-    return {
-        "github_connected": github_connected,
     }
