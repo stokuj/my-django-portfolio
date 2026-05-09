@@ -1,0 +1,132 @@
+services:
+  db:
+    image: postgres:13
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DOCKER_DB_NAME}
+      POSTGRES_USER: ${DOCKER_DB_USER}
+      POSTGRES_PASSWORD: ${DOCKER_DB_PASSWORD}
+    ports:
+      - "127.0.0.1:15432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  web:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    image: my-django-portfolio:dev
+    user: "10001:10001"
+    env_file:
+      - ../.env
+    working_dir: /app/django
+    entrypoint: ["sh", "/app/django/entrypoints/wait-for-db.sh"]
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - media_dev_volume:/app/media
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - DB_ENGINE=${DOCKER_DB_ENGINE}
+      - DB_NAME=${DOCKER_DB_NAME}
+      - DB_USER=${DOCKER_DB_USER}
+      - DB_PASSWORD=${DOCKER_DB_PASSWORD}
+      - DB_HOST=${DOCKER_DB_HOST}
+      - DB_PORT=${DOCKER_DB_PORT}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+    depends_on:
+      - db
+      - redis
+    networks:
+      - app-network
+
+  worker:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    image: my-django-portfolio:dev
+    user: "10001:10001"
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    working_dir: /app/django
+    command: >
+      sh -c "sleep ${WORKER_START_DELAY_SECONDS:-45} &&
+             celery -A config worker --loglevel=info"
+    volumes:
+      - media_dev_volume:/app/media
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - DB_ENGINE=${DOCKER_DB_ENGINE}
+      - DB_NAME=${DOCKER_DB_NAME}
+      - DB_USER=${DOCKER_DB_USER}
+      - DB_PASSWORD=${DOCKER_DB_PASSWORD}
+      - DB_HOST=${DOCKER_DB_HOST}
+      - DB_PORT=${DOCKER_DB_PORT}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+    depends_on:
+      - db
+      - redis
+      - web
+    networks:
+      - app-network
+
+  beat:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    image: my-django-portfolio:dev
+    user: "10001:10001"
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    working_dir: /app/django
+    command: celery -A config beat --loglevel=info --schedule=/app/django/celerybeat-schedule/celerybeat-schedule.db
+    volumes:
+      - celerybeat_dev_schedule:/app/django/celerybeat-schedule
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - DB_ENGINE=${DOCKER_DB_ENGINE}
+      - DB_NAME=${DOCKER_DB_NAME}
+      - DB_USER=${DOCKER_DB_USER}
+      - DB_PASSWORD=${DOCKER_DB_PASSWORD}
+      - DB_HOST=${DOCKER_DB_HOST}
+      - DB_PORT=${DOCKER_DB_PORT}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+    depends_on:
+      - db
+      - redis
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_dev_data:
+  media_dev_volume:
+  celerybeat_dev_schedule:

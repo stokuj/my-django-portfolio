@@ -21,11 +21,13 @@ services:
       - app-network
 
   web:
-    build: .
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
     image: ghcr.io/stokuj/my-django-portfolio:latest
     user: "10001:10001"
     env_file:
-      - .env
+      - ../.env
     working_dir: /app/django
     entrypoint: ["sh", "/app/django/entrypoints/wait-for-db.sh"]
     command: >
@@ -57,12 +59,14 @@ services:
       - app-network
 
   worker:
-    build: .
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
     image: ghcr.io/stokuj/my-django-portfolio:latest
     user: "10001:10001"
     restart: always
     env_file:
-      - .env
+      - ../.env
     working_dir: /app/django
     command: >
       sh -c "sleep ${WORKER_START_DELAY_SECONDS:-45} &&
@@ -90,12 +94,14 @@ services:
       - app-network
 
   beat:
-    build: .
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
     image: ghcr.io/stokuj/my-django-portfolio:latest
     user: "10001:10001"
     restart: always
     env_file:
-      - .env
+      - ../.env
     working_dir: /app/django
     command: celery -A config beat --loglevel=info --schedule=/app/django/celerybeat-schedule/celerybeat-schedule.db
     volumes:
