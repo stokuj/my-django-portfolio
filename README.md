@@ -110,7 +110,7 @@ make prod-down
 
 ```bash
 cp .env.example .env
-uv sync
+uv sync --extra dev
 npm install
 npm run build:css
 ```
@@ -137,6 +137,8 @@ Open `http://localhost:8000`.
 ```bash
 make verify
 ```
+
+`make verify` expects the dev dependencies installed through `uv sync --extra dev`.
 
 ## Heatmap Configuration
 
