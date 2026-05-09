@@ -2,8 +2,8 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from scripts.compose_status import build_status_table
-from scripts.ensure_env import ensure_env
+from infra.scripts.compose_status import build_status_table
+from infra.scripts.ensure_env import ensure_env
 
 
 class EnsureEnvTests(unittest.TestCase):
@@ -14,9 +14,7 @@ class EnsureEnvTests(unittest.TestCase):
             env = root / ".env"
             example.write_text("SECRET_KEY=test\n", encoding="utf-8")
 
-            created = ensure_env(
-                env_path=env, example_path=example, create_if_missing=True
-            )
+            created = ensure_env(env_path=env, example_path=example, create_if_missing=True)
 
             self.assertTrue(created)
             self.assertEqual(env.read_text(encoding="utf-8"), "SECRET_KEY=test\n")
@@ -29,9 +27,7 @@ class EnsureEnvTests(unittest.TestCase):
             example.write_text("SECRET_KEY=dummy\n", encoding="utf-8")
             env.write_text("SECRET_KEY=existing\n", encoding="utf-8")
 
-            created = ensure_env(
-                env_path=env, example_path=example, create_if_missing=True
-            )
+            created = ensure_env(env_path=env, example_path=example, create_if_missing=True)
 
             self.assertFalse(created)
             self.assertEqual(env.read_text(encoding="utf-8"), "SECRET_KEY=existing\n")

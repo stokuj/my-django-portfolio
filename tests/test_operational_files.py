@@ -9,13 +9,13 @@ class OperationalFileTests(unittest.TestCase):
         self.assertTrue((ROOT / "Makefile").exists())
 
     def test_dev_compose_exists(self):
-        self.assertTrue((ROOT / "docker-compose.dev.yml").exists())
+        self.assertTrue((ROOT / "infra/docker-compose.dev.yml").exists())
 
     def test_prod_compose_exists(self):
-        self.assertTrue((ROOT / "docker-compose.prod.yml").exists())
+        self.assertTrue((ROOT / "infra/docker-compose.prod.yml").exists())
 
     def test_dev_compose_does_not_define_caddy(self):
-        content = (ROOT / "docker-compose.dev.yml").read_text(encoding="utf-8")
+        content = (ROOT / "infra/docker-compose.dev.yml").read_text(encoding="utf-8")
         self.assertNotIn("\n  caddy:\n", content)
 
     def test_makefile_declares_required_targets(self):
@@ -33,8 +33,8 @@ class OperationalFileTests(unittest.TestCase):
 
     def test_makefile_uses_helper_scripts(self):
         content = (ROOT / "Makefile").read_text(encoding="utf-8")
-        self.assertIn("python scripts/ensure_env.py", content)
-        self.assertIn("python scripts/compose_status.py", content)
+        self.assertIn("python infra/scripts/ensure_env.py", content)
+        self.assertIn("python infra/scripts/compose_status.py", content)
 
 
 if __name__ == "__main__":

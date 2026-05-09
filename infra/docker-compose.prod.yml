@@ -21,11 +21,13 @@ services:
       - app-network
 
   web:
-    build: .
+    build:
+      context: ..
+      dockerfile: Dockerfile
     image: ghcr.io/stokuj/my-django-portfolio:latest
     user: "10001:10001"
     env_file:
-      - .env
+      - ../.env
     working_dir: /app/django
     entrypoint: ["sh", "/app/django/entrypoints/wait-for-db.sh"]
     command: >

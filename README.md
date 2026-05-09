@@ -21,10 +21,12 @@ my_django_portfolio/
 |  |  `- tests/               
 |  `- manage.py               
 |- docs/                      # Technical documentation
-|- Caddyfile
-|- docker-compose.dev.yml
-|- docker-compose.prod.yml
-|- Dockerfile
+|- infra/
+|  |- Caddyfile
+|  |- docker-compose.dev.yml
+|  |- docker-compose.prod.yml
+|  |- Dockerfile
+|  `- scripts/            # .env and status helper scripts
 |- Makefile
 |- package.json
 |- pyproject.toml

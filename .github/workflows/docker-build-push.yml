@@ -74,10 +74,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build images with Docker Compose
-        run: docker compose -f docker-compose.prod.yml build web
+        run: docker compose -f infra/docker-compose.prod.yml build web
 
       - name: Push images to GitHub Container Registry
-        run: docker compose -f docker-compose.prod.yml push web
+        run: docker compose -f infra/docker-compose.prod.yml push web
 
   deploy:
     name: Deploy to DigitalOcean Droplet
@@ -104,8 +104,8 @@ jobs:
 
             export IMAGE_NAME=ghcr.io/${{ github.repository }}
 
-            docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d --remove-orphans --force-recreate
+            docker compose -f infra/docker-compose.prod.yml pull
+            docker compose -f infra/docker-compose.prod.yml up -d --remove-orphans --force-recreate
 
             docker image prune -f
 
