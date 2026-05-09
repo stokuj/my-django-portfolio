@@ -13,12 +13,22 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - app-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   redis:
     image: redis:7-alpine
     restart: always
     networks:
       - app-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   web:
     build:
@@ -57,6 +67,11 @@ services:
       - redis
     networks:
       - app-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   worker:
     build:
@@ -92,6 +107,11 @@ services:
       - web
     networks:
       - app-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   beat:
     build:
@@ -124,6 +144,11 @@ services:
       - redis
     networks:
       - app-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   caddy:
     image: caddy:2
@@ -146,6 +171,11 @@ services:
       - web
     networks:
       - app-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   app-network:
