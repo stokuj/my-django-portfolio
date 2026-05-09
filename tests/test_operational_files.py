@@ -67,6 +67,33 @@ class OperationalFileTests(unittest.TestCase):
         content = (ROOT / "Makefile").read_text(encoding="utf-8")
         self.assertIn("-p my_django_portfolio", content)
 
+    def test_prod_compose_all_services_have_logging(self):
+        content = (ROOT / "infra/docker-compose.prod.yml").read_text(encoding="utf-8")
+        self.assertEqual(content.count("    logging:"), 6)
+
+    def test_prod_compose_logging_has_rotation(self):
+        content = (ROOT / "infra/docker-compose.prod.yml").read_text(encoding="utf-8")
+        self.assertIn('max-size: "10m"', content)
+        self.assertIn('max-file: "3"', content)
+
+    def test_deploy_script_has_down_before_up(self):
+        content = (ROOT / ".github/workflows/docker-build-push.yml").read_text(encoding="utf-8")
+        self.assertIn("down --remove-orphans", content)
+
+    def test_deploy_script_has_builder_prune(self):
+        content = (ROOT / ".github/workflows/docker-build-push.yml").read_text(encoding="utf-8")
+        self.assertIn("docker builder prune -af", content)
+
+    def test_deploy_script_has_image_prune_all(self):
+        content = (ROOT / ".github/workflows/docker-build-push.yml").read_text(encoding="utf-8")
+        self.assertIn("docker image prune -af", content)
+
+    def test_deploy_script_prune_runs_after_up(self):
+        content = (ROOT / ".github/workflows/docker-build-push.yml").read_text(encoding="utf-8")
+        up_index = content.index("up -d --force-recreate")
+        prune_index = content.index("docker image prune -af")
+        self.assertGreater(prune_index, up_index)
+
 
 if __name__ == "__main__":
     unittest.main()
