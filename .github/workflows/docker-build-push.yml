@@ -104,7 +104,7 @@ jobs:
 
             export IMAGE_NAME=ghcr.io/${{ github.repository }}
 
-            docker compose --env-file .env -f infra/docker-compose.prod.yml pull
-            docker compose --env-file .env -f infra/docker-compose.prod.yml up -d --remove-orphans --force-recreate
+            docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml pull
+            docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml up -d --remove-orphans --force-recreate
 
             docker image prune -f

@@ -1,7 +1,7 @@
 .PHONY: dev-up dev-down dev-status prod-up prod-down prod-status verify
 
 DEV_COMPOSE := docker compose --env-file .env -p my-django-portfolio-dev -f infra/docker-compose.dev.yml
-PROD_COMPOSE := docker compose --env-file .env -p my-django-portfolio-prod -f infra/docker-compose.prod.yml
+PROD_COMPOSE := docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml
 
 dev-up:
 	uv run python infra/scripts/ensure_env.py dev
@@ -14,14 +14,16 @@ dev-status:
 	uv run python infra/scripts/compose_status.py my-django-portfolio-dev
 
 prod-up:
-	uv run python infra/scripts/ensure_env.py prod
-	$(PROD_COMPOSE) up --build -d
+	@test -f .env || { echo "Error: .env file is missing. Create it first."; exit 1; }
+	$(PROD_COMPOSE) up -d
 
 prod-down:
 	$(PROD_COMPOSE) down
 
 prod-status:
-	uv run python infra/scripts/compose_status.py my-django-portfolio-prod
+	@docker ps -a \
+		--filter "label=com.docker.compose.project=my_django_portfolio" \
+		--format "table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}"
 
 verify:
 	npm run build:css:prod
