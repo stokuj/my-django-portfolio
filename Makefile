@@ -1,7 +1,7 @@
 .PHONY: dev-up dev-down dev-status prod-up prod-down prod-status verify
 
-DEV_COMPOSE := docker compose -p my-django-portfolio-dev -f infra/docker-compose.dev.yml
-PROD_COMPOSE := docker compose -p my-django-portfolio-prod -f infra/docker-compose.prod.yml
+DEV_COMPOSE := docker compose --env-file .env -p my-django-portfolio-dev -f infra/docker-compose.dev.yml
+PROD_COMPOSE := docker compose --env-file .env -p my-django-portfolio-prod -f infra/docker-compose.prod.yml
 
 dev-up:
 	uv run python infra/scripts/ensure_env.py dev

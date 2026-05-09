@@ -36,6 +36,25 @@ class OperationalFileTests(unittest.TestCase):
         self.assertIn("python infra/scripts/ensure_env.py", content)
         self.assertIn("python infra/scripts/compose_status.py", content)
 
+    def test_makefile_passes_root_env_file_to_compose(self):
+        content = (ROOT / "Makefile").read_text(encoding="utf-8")
+        self.assertIn("docker compose --env-file .env -p my-django-portfolio-dev", content)
+        self.assertIn("docker compose --env-file .env -p my-django-portfolio-prod", content)
+
+    def test_dev_compose_uses_root_context_and_infra_dockerfile(self):
+        content = (ROOT / "infra/docker-compose.dev.yml").read_text(encoding="utf-8")
+        self.assertIn("context: ..", content)
+        self.assertIn("dockerfile: infra/Dockerfile", content)
+
+    def test_prod_compose_uses_root_context_and_infra_dockerfile(self):
+        content = (ROOT / "infra/docker-compose.prod.yml").read_text(encoding="utf-8")
+        self.assertEqual(content.count("context: .."), 3)
+        self.assertEqual(content.count("dockerfile: infra/Dockerfile"), 3)
+
+    def test_prod_compose_uses_root_env_file_for_all_app_services(self):
+        content = (ROOT / "infra/docker-compose.prod.yml").read_text(encoding="utf-8")
+        self.assertEqual(content.count("- ../.env"), 3)
+
 
 if __name__ == "__main__":
     unittest.main()
