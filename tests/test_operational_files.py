@@ -39,7 +39,7 @@ class OperationalFileTests(unittest.TestCase):
     def test_makefile_passes_root_env_file_to_compose(self):
         content = (ROOT / "Makefile").read_text(encoding="utf-8")
         self.assertIn("docker compose --env-file .env -p my-django-portfolio-dev", content)
-        self.assertIn("docker compose --env-file .env -p my-django-portfolio-prod", content)
+        self.assertIn("docker compose --env-file .env -p my_django_portfolio", content)
 
     def test_dev_compose_uses_root_context_and_infra_dockerfile(self):
         content = (ROOT / "infra/docker-compose.dev.yml").read_text(encoding="utf-8")
@@ -54,6 +54,18 @@ class OperationalFileTests(unittest.TestCase):
     def test_prod_compose_uses_root_env_file_for_all_app_services(self):
         content = (ROOT / "infra/docker-compose.prod.yml").read_text(encoding="utf-8")
         self.assertEqual(content.count("- ../.env"), 3)
+
+    def test_prod_up_uses_shell_env_guard(self):
+        content = (ROOT / "Makefile").read_text(encoding="utf-8")
+        self.assertIn("test -f .env", content)
+
+    def test_prod_status_uses_docker_ps_not_python(self):
+        content = (ROOT / "Makefile").read_text(encoding="utf-8")
+        self.assertIn("docker ps", content)
+
+    def test_makefile_uses_original_prod_project_name(self):
+        content = (ROOT / "Makefile").read_text(encoding="utf-8")
+        self.assertIn("-p my_django_portfolio", content)
 
 
 if __name__ == "__main__":
