@@ -1,6 +1,6 @@
-from pathlib import Path
 import argparse
 import sys
+from pathlib import Path
 
 
 def ensure_env(env_path: Path, example_path: Path, create_if_missing: bool) -> bool:

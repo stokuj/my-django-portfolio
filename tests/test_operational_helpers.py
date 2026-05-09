@@ -1,6 +1,6 @@
+import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
-import unittest
 
 from scripts.compose_status import build_status_table
 from scripts.ensure_env import ensure_env
