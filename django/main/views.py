@@ -239,14 +239,15 @@ def _calculate_last_30_days_total(payload):
 
 def _get_disk_info():
     usage = shutil.disk_usage("/")
-    free_gb = round(usage.free / (1024 ** 3), 1)
+    free_raw_gb = usage.free / (1024 ** 3)
+    free_gb = round(free_raw_gb, 1)
     used_gb = round(usage.used / (1024 ** 3), 1)
     total_gb = round(usage.total / (1024 ** 3), 1)
     free_pct = round((usage.free / usage.total) * 100, 1)
 
-    if free_gb < DISK_CRITICAL_GB:
+    if free_raw_gb < DISK_CRITICAL_GB:
         level = "critical"
-    elif free_gb < DISK_WARNING_GB:
+    elif free_raw_gb < DISK_WARNING_GB:
         level = "warning"
     else:
         level = "ok"
