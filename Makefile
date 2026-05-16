@@ -6,6 +6,11 @@ PROD_COMPOSE := docker compose --env-file .env -p my_django_portfolio -f infra/d
 dev-up:
 	uv run python infra/scripts/ensure_env.py dev
 	$(DEV_COMPOSE) up --build -d
+	@echo ""
+	@echo "  Frontend:  http://localhost:8000"
+	@echo "  Admin:     http://localhost:8000/admin"
+	@echo "  DB:        localhost:15432"
+	@echo ""
 
 dev-down:
 	$(DEV_COMPOSE) down
