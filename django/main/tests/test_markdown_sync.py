@@ -1,6 +1,9 @@
 import datetime
 import shutil
 import tempfile
+from unittest.mock import MagicMock, patch
+
+import requests
 
 from django.core.files.base import ContentFile
 from django.test import TestCase, override_settings
@@ -9,28 +12,18 @@ from main.markdown_sync import sync_project_markdown
 from main.models import PortfolioProfile, Project
 
 
-class _DummyResponse:
-    def __init__(self, payload, status=200):
-        self._payload = payload
-        self.status = status
-        self._cursor = 0
-        self.headers = {}
-
-    def read(self, size=-1):
-        if size is None or size < 0:
-            size = len(self._payload) - self._cursor
-        if self._cursor >= len(self._payload):
-            return b""
-        start = self._cursor
-        end = min(start + size, len(self._payload))
-        self._cursor = end
-        return self._payload[start:end]
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        return False
+def _make_mock_response(content: bytes, status_code: int = 200) -> MagicMock:
+    resp = MagicMock()
+    resp.status_code = status_code
+    resp.content = content
+    resp.headers = {}
+    if status_code >= 400:
+        resp.raise_for_status.side_effect = requests.exceptions.HTTPError(
+            response=resp
+        )
+    else:
+        resp.raise_for_status.return_value = None
+    return resp
 
 
 class MarkdownSyncTests(TestCase):
@@ -64,15 +57,18 @@ class MarkdownSyncTests(TestCase):
         )
         project.markdown_file.save("sync-success.md", ContentFile(b"# Old"), save=True)
 
-        def opener(request, timeout=20):
-            return _DummyResponse(b"# New Content\n\nUpdated.")
-
-        result = sync_project_markdown(project, opener=opener)
+        with patch(
+            "main.markdown_sync.requests.get",
+            return_value=_make_mock_response(b"# New Content\n\nUpdated."),
+        ):
+            result = sync_project_markdown(project)
 
         self.assertTrue(result["updated"])
         project.refresh_from_db()
         project.markdown_file.open("rb")
-        self.assertEqual(project.markdown_file.read().decode("utf-8"), "# New Content\n\nUpdated.")
+        self.assertEqual(
+            project.markdown_file.read().decode("utf-8"), "# New Content\n\nUpdated."
+        )
         project.markdown_file.close()
 
     def test_sync_project_markdown_keeps_old_file_on_failure(self):
@@ -88,10 +84,11 @@ class MarkdownSyncTests(TestCase):
         project.markdown_file.save("sync-failure.md", ContentFile(b"# Old"), save=True)
         old_name = project.markdown_file.name
 
-        def opener(request, timeout=20):
-            raise OSError("network down")
-
-        result = sync_project_markdown(project, opener=opener)
+        with patch(
+            "main.markdown_sync.requests.get",
+            side_effect=requests.exceptions.ConnectionError("network down"),
+        ):
+            result = sync_project_markdown(project)
 
         self.assertFalse(result["updated"])
         project.refresh_from_db()
@@ -114,10 +111,11 @@ class MarkdownSyncTests(TestCase):
         old_name = project.markdown_file.name
         oversized_payload = b"a" * (10 * 1024 * 1024 + 1)
 
-        def opener(request, timeout=20):
-            return _DummyResponse(oversized_payload)
-
-        result = sync_project_markdown(project, opener=opener)
+        with patch(
+            "main.markdown_sync.requests.get",
+            return_value=_make_mock_response(oversized_payload),
+        ):
+            result = sync_project_markdown(project)
 
         self.assertFalse(result["updated"])
         self.assertEqual(result["reason"], "download_failed")

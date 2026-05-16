@@ -1,5 +1,6 @@
 import bleach
 import markdown
+import shutil
 from datetime import date, timedelta
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
@@ -21,6 +22,8 @@ from .heatmap import (
 from .markdown_sync import build_readme_url, get_repo_path
 from .models import Project, Tag, TaskExecutionLog, TaskExecutionStatus
 from .tasks import (
+    DISK_CRITICAL_GB,
+    DISK_WARNING_GB,
     REFRESH_HEATMAP_TASK_NAME,
     SYNC_MARKDOWNS_TASK_NAME,
     refresh_portfolio_heatmap_cache_task,
@@ -63,6 +66,25 @@ ALLOWED_MARKDOWN_ATTRIBUTES = {
     "span": ["class"],
 }
 ALLOWED_MARKDOWN_PROTOCOLS = ["http", "https", "mailto"]
+
+_GITHUB_IMG_PREFIXES = (
+    "https://github.com/",
+    "https://raw.githubusercontent.com/",
+    "https://camo.githubusercontent.com/",
+)
+
+
+def _clean_attributes(tag, name, value):
+    # First check if the attribute is in the allowlist for this tag
+    allowed_attrs = ALLOWED_MARKDOWN_ATTRIBUTES.get(tag, [])
+    if name not in allowed_attrs:
+        return False
+
+    # Special handling for img src: only allow GitHub domains
+    if tag == "img" and name == "src":
+        return any(value.startswith(p) for p in _GITHUB_IMG_PREFIXES)
+
+    return True
 
 
 def handler404(request, exception):
@@ -116,6 +138,7 @@ def about(request):
     if is_admin_user:
         context["scheduled_jobs"] = _get_scheduled_jobs_overview()
         context["executed_tasks"] = _get_executed_tasks()
+        context["disk_info"] = _get_disk_info()
 
     return render(request, "pages/about.html", context)
 
@@ -212,6 +235,30 @@ def _calculate_last_30_days_total(payload):
                 continue
 
     return total
+
+
+def _get_disk_info():
+    usage = shutil.disk_usage("/")
+    free_raw_gb = usage.free / (1024 ** 3)
+    free_gb = round(free_raw_gb, 1)
+    used_gb = round(usage.used / (1024 ** 3), 1)
+    total_gb = round(usage.total / (1024 ** 3), 1)
+    free_pct = round((usage.free / usage.total) * 100, 1)
+
+    if free_raw_gb < DISK_CRITICAL_GB:
+        level = "critical"
+    elif free_raw_gb < DISK_WARNING_GB:
+        level = "warning"
+    else:
+        level = "ok"
+
+    return {
+        "free_gb": free_gb,
+        "used_gb": used_gb,
+        "total_gb": total_gb,
+        "free_pct": free_pct,
+        "level": level,
+    }
 
 
 def _get_scheduled_jobs_overview():
@@ -324,7 +371,7 @@ def _render_markdown_to_html(markdown_content):
     return bleach.clean(
         markdown_html,
         tags=ALLOWED_MARKDOWN_TAGS,
-        attributes=ALLOWED_MARKDOWN_ATTRIBUTES,
+        attributes=_clean_attributes,
         protocols=ALLOWED_MARKDOWN_PROTOCOLS,
         strip=True,
     )

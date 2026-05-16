@@ -12,13 +12,8 @@ def project_count(request):
 
 
 def visitor_counter(request):
-    """Expose the global visit counter to all templates.
-
-    Returns:
-        dict: Context with `visitor_count` key.
-    """
-    count = PageView.get_instance().count
-    return {"visitor_count": count}
+    instance = PageView.objects.filter(id=1).first()
+    return {"visitor_count": instance.count if instance else 0}
 
 
 def portfolio_profile(request):

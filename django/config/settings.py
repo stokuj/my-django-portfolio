@@ -178,7 +178,6 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, "media")
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB limit for file uploads
 
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # Commented out as we're using Caddy for static files
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"  # Using default Django storage
 
 LOGGING = {
@@ -211,6 +210,7 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_TASK_IGNORE_RESULT = True
 CELERY_BEAT_SCHEDULE = {
     "refresh-portfolio-heatmap-hourly": {
         "task": "main.tasks.refresh_portfolio_heatmap_cache_task",
@@ -220,5 +220,9 @@ CELERY_BEAT_SCHEDULE = {
     "sync-project-markdowns-hourly": {
         "task": "main.tasks.sync_project_markdowns_task",
         "schedule": crontab(hour="*/2", minute=0),
+    },
+    "check-disk-usage-daily": {
+        "task": "main.tasks.check_disk_usage_task",
+        "schedule": crontab(hour=6, minute=0),
     },
 }

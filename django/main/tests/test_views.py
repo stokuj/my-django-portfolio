@@ -10,6 +10,7 @@ from django.test import Client, RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
+from django.core.files.base import ContentFile
 from main.models import (
     HeatmapSnapshot,
     PageView,
@@ -218,6 +219,7 @@ class ViewsTest(TestCase):
             username="portfolio-admin",
             total=12,
             weeks_count=2,
+            fetched_at=timezone.now(),
             payload={
                 "username": "portfolio-admin",
                 "total": 12,
@@ -300,7 +302,8 @@ class ViewsTest(TestCase):
         self.assertEqual(payload["total"], 9)
         fetch_mock.assert_called_once_with()
 
-    def test_about_heatmap_data_shows_error_when_admin_github_token_missing(self):
+    @patch("main.views.get_configured_github_token", return_value=None)
+    def test_about_heatmap_data_shows_error_when_admin_github_token_missing(self, _token_mock):
         response = self.client.get(reverse("about_heatmap_data"))
         payload = response.json()
 
@@ -413,7 +416,7 @@ class ViewsTest(TestCase):
     def test_blog_detail_sanitizes_unsafe_image_attributes(self):
         markdown_file = SimpleUploadedFile(
             "unsafe-image-readme.md",
-            b"<img src='x' alt='preview' onerror='alert(1)'>",
+            b"<img src='https://raw.githubusercontent.com/user/repo/img.png' alt='preview' onerror='alert(1)'>",
             content_type="text/markdown",
         )
         project = Project.objects.create(
@@ -428,7 +431,7 @@ class ViewsTest(TestCase):
         response = self.client.get(reverse("blog_detail", args=[project.blog_url]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "<img")
-        self.assertContains(response, 'src="x"')
+        self.assertContains(response, 'src="https://raw.githubusercontent.com/user/repo/img.png"')
         self.assertContains(response, 'alt="preview"')
         self.assertNotContains(response, "onerror")
 
@@ -606,6 +609,42 @@ class ViewsTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("home"))
+
+    def test_blog_detail_strips_external_img_src(self):
+        project = Project.objects.create(
+            title="Img Test",
+            short_description="img",
+            date=datetime.date(2024, 1, 1),
+            blog=True,
+            blog_url="img-test-slug",
+            status="finished",
+        )
+        external_md = b'# Test\n\n![tracker](https://evil.com/pixel.gif)\n\n![github](https://raw.githubusercontent.com/user/repo/main/img.png)\n'
+        project.markdown_file.save("img-test-slug.md", ContentFile(external_md), save=True)
+
+        response = self.client.get(reverse("blog_detail", args=["img-test-slug"]))
+
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode()
+        self.assertNotIn("evil.com", content)
+        self.assertIn("raw.githubusercontent.com", content)
+
+    def test_about_shows_disk_info_for_staff(self):
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        staff = User.objects.create_user("diskstaff", password="pass", is_staff=True)
+        self.client.force_login(staff)
+
+        response = self.client.get(reverse("about"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("disk_info", response.context)
+        disk = response.context["disk_info"]
+        self.assertIn("free_gb", disk)
+        self.assertIn("used_gb", disk)
+        self.assertIn("total_gb", disk)
+        self.assertIn("level", disk)
+        self.assertIn(disk["level"], ("ok", "warning", "critical"))
 
 
 class ErrorHandlersTest(TestCase):
