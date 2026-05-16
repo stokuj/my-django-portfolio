@@ -104,6 +104,30 @@
     <section class="mt-6 rounded-2xl border border-base-300 bg-base-200 shadow-sm">
         <div class="p-4 sm:p-6">
             <div class="flex items-center justify-between">
+                <h2 class="text-xl font-semibold text-primary">Disk Usage</h2>
+                <span class="badge badge-outline badge-sm">Admin</span>
+            </div>
+            <div class="mt-4 grid gap-3 sm:grid-cols-3">
+                <article class="rounded-xl border border-base-300 bg-base-100 p-4">
+                    <p class="text-xs font-medium uppercase tracking-wide text-base-content/80">Free</p>
+                    <p class="mt-1 text-lg font-semibold {% if disk_info.level == 'critical' %}text-error{% elif disk_info.level == 'warning' %}text-warning{% else %}text-success{% endif %}">
+                        {{ disk_info.free_gb }} GB ({{ disk_info.free_pct }}%)
+                    </p>
+                </article>
+                <article class="rounded-xl border border-base-300 bg-base-100 p-4">
+                    <p class="text-xs font-medium uppercase tracking-wide text-base-content/80">Used</p>
+                    <p class="mt-1 text-lg font-semibold">{{ disk_info.used_gb }} GB</p>
+                </article>
+                <article class="rounded-xl border border-base-300 bg-base-100 p-4">
+                    <p class="text-xs font-medium uppercase tracking-wide text-base-content/80">Total</p>
+                    <p class="mt-1 text-lg font-semibold">{{ disk_info.total_gb }} GB</p>
+                </article>
+            </div>
+        </div>
+    </section>
+    <section class="mt-6 rounded-2xl border border-base-300 bg-base-200 shadow-sm">
+        <div class="p-4 sm:p-6">
+            <div class="flex items-center justify-between">
                 <h2 class="text-xl font-semibold text-primary">Scheduled Jobs</h2>
                 <span class="badge badge-outline badge-sm">Admin</span>
             </div>

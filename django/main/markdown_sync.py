@@ -1,8 +1,7 @@
 import logging
+import requests
 from pathlib import Path
-from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
-from urllib.request import Request, urlopen
 
 from django.core.files.base import ContentFile
 
@@ -97,38 +96,35 @@ def build_markdown_candidate_urls(project):
     return deduped
 
 
-def _download_markdown(url, timeout=20, opener=urlopen):
-    request = Request(url, headers={"User-Agent": "my-django-portfolio-markdown-sync/1.0"})
-    with opener(request, timeout=timeout) as response:
-        status = getattr(response, "status", 200)
-        if status != 200:
-            raise HTTPError(url, status, "Non-200 response", None, None)
-        content_length = None
-        if hasattr(response, "getheader"):
-            content_length = response.getheader("Content-Length")
-        elif getattr(response, "headers", None) is not None:
-            content_length = response.headers.get("Content-Length")
+def _download_markdown(url, timeout=20):
+    try:
+        response = requests.get(
+            url,
+            headers={"User-Agent": "my-django-portfolio-markdown-sync/1.0"},
+            timeout=timeout,
+        )
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        raise
+    except requests.exceptions.RequestException as exc:
+        raise OSError(str(exc)) from exc
 
-        if content_length is not None:
-            try:
-                parsed_length = int(content_length)
-            except (TypeError, ValueError):
-                parsed_length = None
+    content_length = response.headers.get("Content-Length")
+    if content_length is not None:
+        try:
+            parsed_length = int(content_length)
+        except (TypeError, ValueError):
+            parsed_length = None
+        if parsed_length is not None and parsed_length > MAX_MARKDOWN_SIZE_BYTES:
+            raise ValueError(
+                f"Downloaded markdown exceeds size limit ({MAX_MARKDOWN_SIZE_BYTES} bytes)"
+            )
 
-            if parsed_length is not None and parsed_length > MAX_MARKDOWN_SIZE_BYTES:
-                raise ValueError(f"Downloaded markdown exceeds size limit ({MAX_MARKDOWN_SIZE_BYTES} bytes)")
-
-        chunks = []
-        total_size = 0
-        while True:
-            chunk = response.read(64 * 1024)
-            if not chunk:
-                break
-            total_size += len(chunk)
-            if total_size > MAX_MARKDOWN_SIZE_BYTES:
-                raise ValueError(f"Downloaded markdown exceeds size limit ({MAX_MARKDOWN_SIZE_BYTES} bytes)")
-            chunks.append(chunk)
-        raw_bytes = b"".join(chunks)
+    raw_bytes = response.content
+    if len(raw_bytes) > MAX_MARKDOWN_SIZE_BYTES:
+        raise ValueError(
+            f"Downloaded markdown exceeds size limit ({MAX_MARKDOWN_SIZE_BYTES} bytes)"
+        )
 
     text = raw_bytes.decode("utf-8-sig")
     if text.lstrip().lower().startswith("<!doctype html") or text.lstrip().lower().startswith("<html"):
@@ -136,7 +132,7 @@ def _download_markdown(url, timeout=20, opener=urlopen):
     return text
 
 
-def sync_project_markdown(project, timeout=20, opener=urlopen):
+def sync_project_markdown(project, timeout=20):
     candidate_urls = build_markdown_candidate_urls(project)
     if not candidate_urls:
         return {
@@ -152,10 +148,11 @@ def sync_project_markdown(project, timeout=20, opener=urlopen):
 
     for url in candidate_urls:
         try:
-            markdown_text = _download_markdown(url, timeout=timeout, opener=opener)
+            markdown_text = _download_markdown(url, timeout=timeout)
             source_url = url
             break
-        except (HTTPError, URLError, UnicodeDecodeError, ValueError, OSError) as exc:
+        except (requests.exceptions.HTTPError, requests.exceptions.RequestException,
+                UnicodeDecodeError, ValueError, OSError) as exc:
             last_error = str(exc)
             logger.warning("Markdown sync failed for %s from %s: %s", project.blog_url, url, exc)
 
@@ -171,13 +168,9 @@ def sync_project_markdown(project, timeout=20, opener=urlopen):
     old_name = project.markdown_file.name if project.markdown_file else ""
     target_basename = Path(old_name).name if old_name else f"{project.blog_url or f'project-{project.id}'}.md"
 
-    storage = project.markdown_file.storage
     project.markdown_file.save(target_basename, ContentFile(markdown_text.encode("utf-8")), save=False)
     project.save(update_fields=["markdown_file"])
     new_name = project.markdown_file.name
-
-    if old_name and old_name != new_name and storage.exists(old_name):
-        storage.delete(old_name)
 
     return {
         "project_id": project.id,

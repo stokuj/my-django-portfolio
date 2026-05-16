@@ -1,8 +1,11 @@
 import datetime
+import shutil
+import tempfile
 
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
 from django.db import IntegrityError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from main.models import (
     PageView,
@@ -256,3 +259,51 @@ class TaskExecutionLogModelTest(TestCase):
         self.assertEqual(log.last_updated, 1)
         self.assertEqual(log.last_failed, 0)
         self.assertEqual(log.last_error, "")
+
+
+class ProjectMediaCleanupTests(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._media_root = tempfile.mkdtemp(prefix="project-media-tests-")
+        cls._override = override_settings(MEDIA_ROOT=cls._media_root)
+        cls._override.enable()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._override.disable()
+        shutil.rmtree(cls._media_root, ignore_errors=True)
+        super().tearDownClass()
+
+    def _make_project_with_thumbnail(self):
+        from main.models import Project
+        project = Project.objects.create(
+            title="Media Test",
+            short_description="test",
+            date=datetime.date(2025, 1, 1),
+            status="finished",
+        )
+        project.thumbnail.save("thumb.png", ContentFile(b"fake-png"), save=True)
+        return project
+
+    def test_thumbnail_deleted_when_project_deleted(self):
+        from main.models import Project
+        project = self._make_project_with_thumbnail()
+        storage = project.thumbnail.storage
+        thumb_name = project.thumbnail.name
+        self.assertTrue(storage.exists(thumb_name))
+
+        project.delete()
+
+        self.assertFalse(storage.exists(thumb_name))
+
+    def test_old_thumbnail_deleted_when_replaced(self):
+        from main.models import Project
+        project = self._make_project_with_thumbnail()
+        storage = project.thumbnail.storage
+        old_name = project.thumbnail.name
+        self.assertTrue(storage.exists(old_name))
+
+        project.thumbnail.save("thumb_new.png", ContentFile(b"new-fake-png"), save=True)
+
+        self.assertFalse(storage.exists(old_name))

@@ -1,5 +1,5 @@
 # 1. Build Tailwind CSS artifact
-FROM node:20-slim AS css-builder
+FROM node:22-slim AS css-builder
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci

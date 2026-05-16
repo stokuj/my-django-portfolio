@@ -2,6 +2,8 @@ import datetime
 
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from django.db.models.signals import post_delete, pre_save
+from django.dispatch import receiver
 
 from .validators import validate_github_repo_url
 
@@ -231,3 +233,30 @@ class HeatmapSnapshot(models.Model):
 
     def __str__(self):
         return f"HeatmapSnapshot<{self.key}>"
+
+
+def _delete_file_field(field):
+    if field and field.name:
+        storage = field.storage
+        if storage.exists(field.name):
+            storage.delete(field.name)
+
+
+@receiver(post_delete, sender=Project)
+def _project_post_delete(sender, instance, **kwargs):
+    _delete_file_field(instance.thumbnail)
+    _delete_file_field(instance.markdown_file)
+
+
+@receiver(pre_save, sender=Project)
+def _project_pre_save(sender, instance, **kwargs):
+    if not instance.pk:
+        return
+    try:
+        old = Project.objects.get(pk=instance.pk)
+    except Project.DoesNotExist:
+        return
+    if old.thumbnail and old.thumbnail != instance.thumbnail:
+        _delete_file_field(old.thumbnail)
+    if old.markdown_file and old.markdown_file != instance.markdown_file:
+        _delete_file_field(old.markdown_file)
