@@ -83,7 +83,7 @@ Baseline: `make verify` (after Phase 1 it runs both test suites).
 - [x] F-015: Add `if: github.ref == 'refs/heads/main'` to build-and-push.
 - [x] F-035: Pin `mathjax@3.2.2/es5/tex-mml-chtml.js` with `integrity="sha384-..."` and `crossorigin="anonymous"`, and update test_views.py:493.
 - [x] F-027 + F-073: In mathjax-config.js add `loader: {load: ['ui/safe']}`, `tex: {inlineMath: [["\\(","\\)"]], displayMath: [["\\[","\\]"]], processEscapes: true, processEnvironments: true}`, and `options: {ignoreHtmlClass: ".*|", processHtmlClass: "arithmatex"}`.
-- [ ] F-090: In `_clean_attributes` (views.py:77) add `if name == "class": return value == "arithmatex"`, plus a test that strips an overlay class.
+- [x] F-090: In `_clean_attributes` (views.py:77) add `if name == "class": return value == "arithmatex"`, plus a test that strips an overlay class.
 - [ ] F-042: Add a SimpleTestCase with subTest that calls `_render_markdown_to_html` on `[x](javascript:alert(1))`, `<a onclick=x style=y>`, `<iframe>`, and `<img src="https://github.com.evil.tld/a.png">`, and asserts the dangerous tokens are gone.
 - [ ] F-044: Caddy: add `header X-Content-Type-Options nosniff` for /static and /media, and `header /media/* Content-Security-Policy "default-src 'none'; sandbox"`. Check that thumbnails still render.
 - [ ] F-108: Add `request_body { max_size 10MB }` to the Caddy app block, and fix the comment at settings.py:179.

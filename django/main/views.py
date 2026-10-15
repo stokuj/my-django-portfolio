@@ -79,6 +79,10 @@ def _clean_attributes(tag, name, value):
     if name not in allowed_attrs:
         return False
 
+    # Only the class pymdownx.arithmatex emits; blocks page-styling overlays
+    if name == "class":
+        return value == "arithmatex"
+
     # Special handling for img src: only allow GitHub domains
     if tag == "img" and name == "src":
         return any(value.startswith(p) for p in _GITHUB_IMG_PREFIXES)

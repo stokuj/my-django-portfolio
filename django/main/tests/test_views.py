@@ -8,7 +8,13 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import Client, RequestFactory, TestCase, override_settings
+from django.test import (
+    Client,
+    RequestFactory,
+    SimpleTestCase,
+    TestCase,
+    override_settings,
+)
 from django.urls import reverse
 from django.utils import timezone
 
@@ -20,7 +26,7 @@ from main.models import (
     TaskExecutionLog,
     TaskExecutionStatus,
 )
-from main.views import handler404, handler500
+from main.views import _render_markdown_to_html, handler404, handler500
 
 
 @override_settings(GITHUB_HEATMAP_TOKEN="")
@@ -655,3 +661,13 @@ class ErrorHandlersTest(TestCase):
         response = handler500(request)
         self.assertEqual(response.status_code, 500)
         self.assertIn("Server Error", response.content.decode())
+
+
+class MarkdownSanitizerTest(SimpleTestCase):
+    def test_class_attribute_allows_only_arithmatex(self):
+        html = _render_markdown_to_html(
+            '<div class="fixed inset-0 z-50">overlay</div>\n\n$x^2$'
+        )
+
+        self.assertNotIn("fixed inset-0", html)
+        self.assertIn('class="arithmatex"', html)
