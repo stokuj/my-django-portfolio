@@ -91,7 +91,7 @@ Baseline: `make verify` (after Phase 1 it runs both test suites).
 - [x] F-102: Dockerfile:17 becomes `apt-get install -y --no-install-recommends postgresql-client`.
 - [x] F-103: Skipped (Q9: the owner uses an SSH tunnel to 127.0.0.1:15432).
 - [x] F-104: Delete the top-level `networks` block and the per-service `networks` keys in prod compose.
-- [ ] F-118: Return False from `has_add_permission` and `has_change_permission` in the TaskExecutionStatus and TaskExecutionLog admins. Keep delete.
+- [x] F-118: Return False from `has_add_permission` and `has_change_permission` in the TaskExecutionStatus and TaskExecutionLog admins. Keep delete.
 
 **End of phase: report what changed and the verification output.**
 
