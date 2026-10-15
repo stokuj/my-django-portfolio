@@ -20,10 +20,10 @@ make dev-down
 ### Running tests
 ```bash
 # Django app tests (requires env vars for settings)
-SECRET_KEY=test DJANGO_DEBUG=True ALLOWED_HOSTS=localhost,127.0.0.1 uv run python django/manage.py test main
+SECRET_KEY=test DJANGO_DEBUG=True ALLOWED_HOSTS=localhost,127.0.0.1 DB_ENGINE=django.db.backends.sqlite3 uv run python django/manage.py test main
 
 # Run a single test module
-SECRET_KEY=test DJANGO_DEBUG=True ALLOWED_HOSTS=localhost,127.0.0.1 uv run python django/manage.py test main.tests.test_views
+SECRET_KEY=test DJANGO_DEBUG=True ALLOWED_HOSTS=localhost,127.0.0.1 DB_ENGINE=django.db.backends.sqlite3 uv run python django/manage.py test main.tests.test_views
 
 # Operational/infra tests (no env vars needed)
 uv run python -m unittest discover -s tests -t .
