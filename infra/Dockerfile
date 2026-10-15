@@ -33,7 +33,7 @@ RUN chmod +x /app/django/entrypoints/wait-for-db.sh
 RUN groupadd --gid 10001 app && \
     useradd --uid 10001 --gid 10001 --create-home --shell /usr/sbin/nologin app && \
     mkdir -p /app/staticfiles /app/media /app/django/celerybeat-schedule && \
-    chown -R app:app /app /home/app
+    chown -R app:app /app/staticfiles /app/media /app/django/celerybeat-schedule /home/app
 
 # 9. Set Python path
 ENV PYTHONPATH="/app/django"
