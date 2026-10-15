@@ -94,6 +94,11 @@ class OperationalFileTests(unittest.TestCase):
         prune_index = content.index("docker image prune -af")
         self.assertGreater(prune_index, up_index)
 
+    def test_deploy_script_runs_deploy_check_before_down(self):
+        content = (ROOT / ".github/workflows/docker-build-push.yml").read_text(encoding="utf-8")
+        check_index = content.index("check --deploy --fail-level WARNING")
+        self.assertLess(check_index, content.index("down --remove-orphans"))
+
 
 if __name__ == "__main__":
     unittest.main()

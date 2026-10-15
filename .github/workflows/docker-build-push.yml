@@ -109,6 +109,7 @@ jobs:
             export IMAGE_NAME=ghcr.io/${{ github.repository }}
 
             docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml pull
+            docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml run --rm --no-deps --entrypoint "" web python manage.py check --deploy --fail-level WARNING
             docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml down --remove-orphans
             docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml up -d --force-recreate
 
