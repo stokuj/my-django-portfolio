@@ -671,3 +671,16 @@ class MarkdownSanitizerTest(SimpleTestCase):
 
         self.assertNotIn("fixed inset-0", html)
         self.assertIn('class="arithmatex"', html)
+
+    def test_dangerous_markdown_is_stripped(self):
+        cases = [
+            ("[x](javascript:alert(1))", ["javascript:"]),
+            ("<a onclick=x style=y>link</a>", ["onclick", "style"]),
+            ('<iframe src="https://example.com"></iframe>', ["<iframe"]),
+            ('<img src="https://github.com.evil.tld/a.png">', ["evil.tld"]),
+        ]
+        for markdown_source, forbidden in cases:
+            with self.subTest(markdown_source=markdown_source):
+                html = _render_markdown_to_html(markdown_source)
+                for token in forbidden:
+                    self.assertNotIn(token, html)
