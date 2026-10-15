@@ -287,7 +287,6 @@ class ProjectMediaCleanupTests(TestCase):
         return project
 
     def test_thumbnail_deleted_when_project_deleted(self):
-        from main.models import Project
         project = self._make_project_with_thumbnail()
         storage = project.thumbnail.storage
         thumb_name = project.thumbnail.name
@@ -298,7 +297,6 @@ class ProjectMediaCleanupTests(TestCase):
         self.assertFalse(storage.exists(thumb_name))
 
     def test_old_thumbnail_deleted_when_replaced(self):
-        from main.models import Project
         project = self._make_project_with_thumbnail()
         storage = project.thumbnail.storage
         old_name = project.thumbnail.name

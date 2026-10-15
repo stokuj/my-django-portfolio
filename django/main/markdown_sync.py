@@ -1,8 +1,8 @@
 import logging
-import requests
 from pathlib import Path
 from urllib.parse import urlparse
 
+import requests
 from django.core.files.base import ContentFile
 
 from .models import PortfolioProfile

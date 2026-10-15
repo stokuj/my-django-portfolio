@@ -4,13 +4,13 @@ import tempfile
 from unittest.mock import patch
 
 from django.conf import settings
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from django.core.files.base import ContentFile
 from main.models import (
     HeatmapSnapshot,
     PageView,

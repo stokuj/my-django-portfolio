@@ -1,5 +1,4 @@
 import collections
-import shutil
 from unittest.mock import patch
 
 from django.test import TestCase

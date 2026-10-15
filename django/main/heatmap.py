@@ -3,10 +3,12 @@ import datetime
 from django.conf import settings
 from django.utils import timezone
 
-from .github_client import GitHubAuthError
-from .github_client import GitHubUpstreamError
-from .github_client import fetch_authenticated_user
-from .github_client import fetch_contribution_days
+from .github_client import (
+    GitHubAuthError,
+    GitHubUpstreamError,
+    fetch_authenticated_user,
+    fetch_contribution_days,
+)
 from .models import HeatmapSnapshot
 
 

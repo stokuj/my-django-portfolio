@@ -4,7 +4,6 @@ import tempfile
 from unittest.mock import MagicMock, patch
 
 import requests
-
 from django.core.files.base import ContentFile
 from django.test import TestCase, override_settings
 

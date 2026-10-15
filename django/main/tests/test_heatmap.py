@@ -1,17 +1,15 @@
-from unittest.mock import Mock
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import requests
-from django.test import SimpleTestCase
-from django.test import override_settings
+from django.test import SimpleTestCase, override_settings
 
-from main.github_client import GitHubAuthError
-from main.github_client import GitHubUpstreamError
-from main.github_client import fetch_authenticated_user
-from main.github_client import fetch_contribution_days
-from main.heatmap import build_weeks_payload
-from main.heatmap import contribution_level
-from main.heatmap import fetch_heatmap_data
+from main.github_client import (
+    GitHubAuthError,
+    GitHubUpstreamError,
+    fetch_authenticated_user,
+    fetch_contribution_days,
+)
+from main.heatmap import build_weeks_payload, contribution_level, fetch_heatmap_data
 
 
 class GitHubClientTests(SimpleTestCase):
