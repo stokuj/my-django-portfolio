@@ -1,22 +1,17 @@
-# F-056 - Long-lived GHCR PAT pasted into the remote script (reproduce lens)
+# F-056 (reproduce): Long-lived GHCR PAT pasted into the remote script
 
-**Verdict:** PARTIALLY CONFIRMED. The code matches; most of the claimed impact does not hold up.
+**Verdict:** CONFIRMED (partly overstated)
 **Confidence:** high
 **Adjusted severity:** low
 
-## What holds
-- `.github/workflows/docker-build-push.yml:103`: `echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin` sits inside the `appleboy/ssh-action@v1.0.3` `script:` block (lines 89-112), so the secret is expanded into the script text before it is sent.
-- The PAT's scope and lifetime are not visible from the repo. `GHCR_PAT` is used only on line 103.
-
-## What does not hold
-- **"Breaks on quotes":** GitHub PATs (`ghp_...`, `github_pat_...`) contain only `[A-Za-z0-9_]`, so a quote cannot appear and the line cannot break. The secret is also not attacker-controlled, because the job runs only on push to main/master or on workflow_dispatch (lines 3-6, 86). That rules out script injection.
-- **"Sent as part of the script":** the proposed `envs:` fix does not change this. `appleboy/ssh-action` (drone-ssh) applies `envs` by prepending `export VAR='value'` lines to the same script it sends over SSH, so the token still travels inside the script. The real gain is shell-safe quoting, which matters little for a PAT charset. Either way the token stays on the server: `docker login` writes it to `~/.docker/config.json` on the droplet in base64 (effectively plaintext).
-- GitHub log masking applies to the expanded secret, so it does not leak into the Actions log.
+## Reasoning
+- `.github/workflows/docker-build-push.yml:103`: `echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin` sits inside the `script:` of `appleboy/ssh-action@v1.0.3` (`:90`, `:96`). Actions substitutes the secret before the step runs, so the plaintext token is part of the script sent over SSH and run by the remote shell. Confirmed.
+- This is the only use of `GHCR_PAT` in the repo. Its scope and lifetime cannot be seen from the repo; "long-lived" is an assumption.
+- Overstated: "breaks on quotes". GitHub PATs (`ghp_`/`github_pat_` plus `[A-Za-z0-9_]`) never contain quotes or `$`, so the quoting does not break in practice. Only a malformed secret would break it.
+- Not reachable by an attacker: the step runs only on push to main/master (`:86`), there is no untrusted input in the script, and the runner masks the secret in logs. The only exposure is on the droplet itself. While the script runs, the shell command line can be read by root and the same user, and `docker login` stores the token in `~/.docker/config.json` anyway. So the risk is low.
+- Proposed fix is weak: in appleboy/ssh-action (drone-ssh), `envs:` works by adding `export VAR="value"` lines to the front of the same remote script. Moving the token to `envs:` does not keep it out of the script text. It only fixes quoting, which is not a real problem here.
 
 ## Better proposal
-The real risk is a long-lived credential stored on the droplet, not how it is passed. Pick one:
-1. Make the GHCR package public and remove line 103 (no credential at all), or
-2. Use a short-lived token: add `permissions: { contents: read, packages: read }` to the `deploy` job (it has no `permissions` block today; see lines 82-87), log in with `${{ secrets.GITHUB_TOKEN }}` / `${{ github.actor }}`, and run `docker logout ghcr.io` after `pull` (line 107). Then nothing long-lived is sent or left on disk. Moving to `envs:` is optional.
-3. If the PAT stays, it should be a fine-grained or classic PAT with only `read:packages` and an expiry. That has to be checked in GitHub settings, not in the repo.
-
-Effort: S.
+- Drop the PAT: in the deploy job, set `permissions: { contents: read, packages: read }` and pass `${{ secrets.GITHUB_TOKEN }}` with `-u ${{ github.actor }}`. The token expires when the job ends, and the pull at `:107` runs inside the job. Then delete the `GHCR_PAT`/`GHCR_USERNAME` secrets. Another option is to make the GHCR package public and remove the login.
+- If the PAT stays, make it a fine-grained or classic token with only `read:packages` and an expiry date.
+- Effort: S.

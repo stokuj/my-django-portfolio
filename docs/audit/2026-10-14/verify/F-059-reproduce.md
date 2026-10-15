@@ -1,14 +1,15 @@
-# F-059: ALLOWED_HOSTS / CSRF_TRUSTED_ORIGINS entries are not stripped (reproduce lens)
+# F-059 (reproduce): ALLOWED_HOSTS / CSRF_TRUSTED_ORIGINS entries are not stripped
 
-**Verdict:** CONFIRMED
+**Verdict:** CONFIRMED (latent)
 **Confidence:** high
-**Adjusted severity:** low (unchanged)
+**Adjusted severity:** low
 
 ## Reasoning
-- `django/config/settings.py:43` `ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", ...)` and `:107` `CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", ...)`. Neither strips the entries.
-- Reproduced with the installed django-environ 0.12.0: `Env().list('X')` with `X='a.com, www.a.com'` returns `['a.com', ' www.a.com']`.
-- Reproduced with Django: `validate_host('www.a.com', ['a.com', ' www.a.com'])` returns `False`, so the host gets a 400 (DisallowedHost). A CSRF origin with a leading space would also never match.
-- It fails closed, so there is no security impact. The bug is latent: every value in the repo has no spaces (`.env.example:8-9`, `Makefile:36-38`, `.github/workflows/*.yml`), and compose passes `${ALLOWED_HOSTS}` through unchanged (`infra/docker-compose.prod.yml:55-56`). It would only show up if someone hand-edits the prod `.env` with spaces.
+- `django/config/settings.py:43` has `ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", ...)`, and `django/config/settings.py:107` has `CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])`. The line numbers in the finding are correct.
+- Reproduced with django-environ 0.12.0 (the installed version): `X='a.com, www.a.com'` gives `env.list('X')` = `['a.com', ' www.a.com']`. The leading space is kept.
+- Django compares hosts and origins exactly, so `' www.a.com'` never matches. The request gets a 400 (DisallowedHost), or the CSRF origin check fails (403). This fails closed, so there is no security impact.
+- Every config example uses commas with no spaces: `.env.example:8-9`, `.github/workflows/docker-build-push.yml:19,50-51`, `.github/workflows/django.yml:43`, and `Makefile:36-38`. The local `.env` also has no `, ` in these variables. So nothing is broken today. The problem only shows up if someone adds spaces by hand.
 
 ## Better proposal
-The proposal works as written: `[h.strip() for h in env.list(...)]` on lines 43 and 107. A cheaper alternative is a one-line note in `.env.example` that says "comma-separated, no spaces".
+The proposed one-line fix is fine. A variant that also drops empty entries (for example from a trailing comma):
+`[h.strip() for h in env.list("ALLOWED_HOSTS", default=[...]) if h.strip()]`. Do the same at line 107. Effort S.

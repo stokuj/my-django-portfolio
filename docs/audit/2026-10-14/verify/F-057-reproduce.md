@@ -1,24 +1,15 @@
-# F-057 — .gitignore is the full GitHub Python template
+# F-057 — .gitignore is the full GitHub Python template (reproduce lens)
 
-**Verdict:** CONFIRMED (reproduce lens)
+**Verdict:** CONFIRMED
 **Confidence:** high
-**Adjusted severity:** low (unchanged)
+**Adjusted severity:** low
 
 ## Reasoning
-- `.gitignore` is 180 lines (`wc -l`). Lines 6-165 are the stock GitHub Python template:
-  PyInstaller (`.gitignore:34-38`), Flask (`:69`), Scrapy (`:73`), Sphinx (`:76`),
-  pdm (`:109-115`), PEP 582 (`:117-118`), SageMath (`:124-125`), Spyder/Rope/mkdocs/Pyre/pytype/Cython (`:136-158`).
-- Project-specific entries are only at `.gitignore:1-2` and `:166-180`.
-- Extra detail not in the finding: `/django/main/content` is duplicated at `.gitignore:178-179`.
-- No functional harm today: `git ls-files -ci --exclude-standard` returns nothing (no tracked file is shadowed by a template rule).
-  Impact is pure noise, so "low / simplification" is correct.
-
-## Caveats for the proposal
-Some template lines ARE relevant and must survive a trim:
-- `celerybeat-schedule`, `celerybeat.pid` (`:121-122`) — Celery beat runs in this project.
-- `__pycache__/`, `*.py[cod]` (`:7-8`), `.venv` / `.env` (`:128-129`), `.pytest_cache/` (`:56`), `.coverage*` (`:48-49`), `.mypy_cache/`.
-- `git status --ignored` currently shows: `.claude/settings.local.json`, `.env`, `.idea/`, `.ruff_cache/` (self-ignored via its own .gitignore), `.venv/`, `__pycache__/` dirs, `django/main/static/css/`, `node_modules/`.
+- `.gitignore` is 180 lines (`wc -l`).
+- Template sections irrelevant to this repo are present: PyInstaller (`.gitignore:34`), Flask (`:69`), Scrapy (`:73-74`), Sphinx (`:76`), pdm (`:109-115`), PEP 582 (`:117`), SageMath (`:124-125`), Spyder/Rope/mkdocs/Pyre/pytype/Cython (`:139-162`).
+- Project-specific entries are only a handful: `node_modules/` and `style.css` (`:1-2`), `.env` (`:128`), Celery beat files (`:121-122`), and the custom tail `:166-180` (`/.idea`, `/media/`, `/staticfiles`, `.env.dev`, `.claude/settings.local.json`, etc.).
+- Extra observation: `/django/main/content` is duplicated (`:178-179`).
+- No functional bug; purely readability/noise. Low severity is correct.
 
 ## Better proposal
-Trim to ~25 lines (project block + __pycache__, *.py[cod], .venv, .env, .env.dev, .pytest_cache, .coverage*, htmlcov, .mypy_cache, celerybeat-schedule/pid, dist/build/*.egg-info, IDE/OS lines), drop the duplicate `/django/main/content`.
-Verify: diff `git status --ignored --porcelain` and `git ls-files -ci --exclude-standard` before/after. Effort S. Purely cosmetic; skip if no one is touching the file.
+Keep the cut, but do not hand-pick from memory: keep Python basics (`__pycache__/`, `*.py[cod]`, `.venv`, caches for ruff/pytest/mypy/coverage), `.env*`, Celery beat files, and the whole custom tail (`:166-180`), dropping the duplicate line. Verify with `git status --ignored --porcelain` before/after; the ignored set must be identical on a dev checkout.
