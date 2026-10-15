@@ -5,6 +5,8 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
+permissions: {}
+
 env:
   # The name for the Docker image, built from the repository name
   IMAGE_NAME: ghcr.io/${{ github.repository }}
@@ -12,6 +14,9 @@ env:
 jobs:
   verify:
     uses: ./.github/workflows/django.yml
+    # A called workflow cannot request more than the caller grants.
+    permissions:
+      contents: read
 
   build-and-push:
     name: Build and Push Image
