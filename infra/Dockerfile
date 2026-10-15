@@ -14,7 +14,7 @@ WORKDIR /app
 
 # 4. Install system dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc libpq-dev postgresql-client && \
+    apt-get install -y --no-install-recommends postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
 # 5. Copy backend sources and generated CSS

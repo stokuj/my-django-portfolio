@@ -88,7 +88,7 @@ Baseline: `make verify` (after Phase 1 it runs both test suites).
 - [x] F-044: Caddy: add `header X-Content-Type-Options nosniff` for /static and /media, and `header /media/* Content-Security-Policy "default-src 'none'; sandbox"`. Check that thumbnails still render.
 - [x] F-108: Add `request_body { max_size 10MB }` to the Caddy app block, and fix the comment at settings.py:179.
 - [x] F-046: Dockerfile:33-36 chown applies only to `/app/staticfiles /app/media /app/django/celerybeat-schedule /home/app`. Check that collectstatic and beat start in `make dev-up`.
-- [ ] F-102: Dockerfile:17 becomes `apt-get install -y --no-install-recommends postgresql-client`.
+- [x] F-102: Dockerfile:17 becomes `apt-get install -y --no-install-recommends postgresql-client`.
 - [x] F-103: Skipped (Q9: the owner uses an SSH tunnel to 127.0.0.1:15432).
 - [ ] F-104: Delete the top-level `networks` block and the per-service `networks` keys in prod compose.
 - [ ] F-118: Return False from `has_add_permission` and `has_change_permission` in the TaskExecutionStatus and TaskExecutionLog admins. Keep delete.
