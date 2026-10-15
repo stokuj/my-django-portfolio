@@ -90,7 +90,7 @@ Baseline: `make verify` (after Phase 1 it runs both test suites).
 - [x] F-046: Dockerfile:33-36 chown applies only to `/app/staticfiles /app/media /app/django/celerybeat-schedule /home/app`. Check that collectstatic and beat start in `make dev-up`.
 - [x] F-102: Dockerfile:17 becomes `apt-get install -y --no-install-recommends postgresql-client`.
 - [x] F-103: Skipped (Q9: the owner uses an SSH tunnel to 127.0.0.1:15432).
-- [ ] F-104: Delete the top-level `networks` block and the per-service `networks` keys in prod compose.
+- [x] F-104: Delete the top-level `networks` block and the per-service `networks` keys in prod compose.
 - [ ] F-118: Return False from `has_add_permission` and `has_change_permission` in the TaskExecutionStatus and TaskExecutionLog admins. Keep delete.
 
 **End of phase: report what changed and the verification output.**
