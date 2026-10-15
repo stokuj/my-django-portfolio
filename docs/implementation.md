@@ -108,6 +108,7 @@ Local development uses `infra/docker-compose.dev.yml` with `db`, `redis`, `web`,
 Owner steps that need the server or GitHub secrets. Do them before the first deploy unless noted.
 
 - [ ] Set `ADMIN_BASIC_USER` and `ADMIN_BASIC_HASH` in the server `.env` (hash from `docker run --rm caddy:2 caddy hash-password`, single-quoted). Without them Caddy will not start.
+- [ ] Add the `SERVER_SSH_FINGERPRINT` GitHub secret: the SHA256 value from `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub | awk '{print $2}'`, run on the droplet (not via `ssh-keyscan`). Update it if the droplet or its host key changes.
 
 ## Development and Verification Workflow
 
