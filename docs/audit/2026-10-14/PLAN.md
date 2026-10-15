@@ -78,7 +78,7 @@ Baseline: `make verify` (after Phase 1 it runs both test suites).
 - [x] F-021: Leave the HSTS settings unchanged. In docker-build-push.yml, after `pull` and before `down`, add `docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml run --rm --no-deps --entrypoint "" web python manage.py check --deploy --fail-level WARNING`. Run `manage.py check --deploy --fail-level WARNING` locally with prod-like env (DEBUG off, a real-looking SECRET_KEY); it must pass with no silenced checks.
 - [x] F-060: Skipped (Q7: HSTS stays as is).
 - [x] F-017: Add `fingerprint: ${{ secrets.SERVER_SSH_FINGERPRINT }}` to the ssh-action `with:`. Add "add the SERVER_SSH_FINGERPRINT secret (SHA256 from `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` on the droplet)" to the first-deploy checklist.
-- [ ] F-056: Give the deploy job `permissions: {contents: read, packages: read}`. In the script, log in with `${{ secrets.GITHUB_TOKEN }}` / `${{ github.actor }}`. Add "delete the GHCR_PAT and GHCR_USERNAME secrets after the first successful deploy" to the first-deploy checklist.
+- [x] F-056: Give the deploy job `permissions: {contents: read, packages: read}`. In the script, log in with `${{ secrets.GITHUB_TOKEN }}` / `${{ github.actor }}`. Add "delete the GHCR_PAT and GHCR_USERNAME secrets after the first successful deploy" to the first-deploy checklist.
 - [ ] F-012: Add top-level `permissions: {contents: read}` to django.yml and top-level `permissions: {}` to docker-build-push.yml. Job-level overrides stay.
 - [ ] F-015: Add `if: github.ref == 'refs/heads/main'` to build-and-push.
 - [ ] F-035: Pin `mathjax@3.2.2/es5/tex-mml-chtml.js` with `integrity="sha384-..."` and `crossorigin="anonymous"`, and update test_views.py:493.
