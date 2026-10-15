@@ -28,7 +28,7 @@ Baseline: `make verify` (after Phase 1 it runs both test suites).
 - **Verify:** `make verify`. Expect `Ran 122 tests ... OK` and ruff clean. Also `uv run ruff check .`.
 - **Risk:** low. Tests that broke silently may now surface; fix them in this phase.
 
-- [ ] F-002: `Makefile:38` becomes `SECRET_KEY=test DJANGO_DEBUG=True ALLOWED_HOSTS=localhost,127.0.0.1 DB_ENGINE=django.db.backends.sqlite3 uv run python django/manage.py test main tests`. Fix any app test that fails.
+- [x] F-002: `Makefile:38` becomes `SECRET_KEY=test DJANGO_DEBUG=True ALLOWED_HOSTS=localhost,127.0.0.1 DB_ENGINE=django.db.backends.sqlite3 uv run python django/manage.py test main tests`. Fix any app test that fails.
 - [ ] F-038: Put `@override_settings(GITHUB_HEATMAP_TOKEN="")` on ViewsTest and URLsTest, assert `response.context["heatmap_enabled"]`, and change `test_urls.py:35-37` to `assertEqual(status, 404)`. This stops tests reading .env or calling GitHub.
 - [ ] F-020: Add `extend-exclude = ["django/main/migrations"]` under `[tool.ruff]` and change `Makefile:39` to `uv run ruff check .`. Commit A: `ruff check . --fix`. Commit B: fix the E501 lines by hand, and check the unused `second` variables (test_tasks.py:98,200) before deleting them.
 - [ ] F-016: Add `workflow_call:` to the `on:` block of django.yml. In docker-build-push.yml add `verify: uses: ./.github/workflows/django.yml` and put `needs: verify` on build-and-push.
