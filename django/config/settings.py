@@ -179,7 +179,8 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, "media")
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB limit for file uploads
 
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"  # Using default Django storage
+# Using default Django storage
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 LOGGING = {
     "version": 1,

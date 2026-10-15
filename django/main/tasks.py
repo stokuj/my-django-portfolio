@@ -212,7 +212,9 @@ def check_disk_usage_task():
         status.last_status = TaskExecutionStatus.STATUS_FAILURE
         status.last_updated = 0
         status.last_failed = 1
-        status.last_error = f"CRITICAL: {free_gb:.1f} GB free (below {DISK_CRITICAL_GB} GB threshold)"
+        status.last_error = (
+            f"CRITICAL: {free_gb:.1f} GB free (below {DISK_CRITICAL_GB} GB threshold)"
+        )
         status.last_success_at = None
         status.last_failure_at = timezone.now()
     elif free_gb < DISK_WARNING_GB:

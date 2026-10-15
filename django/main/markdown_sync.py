@@ -127,7 +127,7 @@ def _download_markdown(url, timeout=20):
         )
 
     text = raw_bytes.decode("utf-8-sig")
-    if text.lstrip().lower().startswith("<!doctype html") or text.lstrip().lower().startswith("<html"):
+    if text.lstrip().lower().startswith(("<!doctype html", "<html")):
         raise ValueError("Downloaded content is HTML, expected Markdown")
     return text
 
@@ -166,9 +166,13 @@ def sync_project_markdown(project, timeout=20):
         }
 
     old_name = project.markdown_file.name if project.markdown_file else ""
-    target_basename = Path(old_name).name if old_name else f"{project.blog_url or f'project-{project.id}'}.md"
+    target_basename = (
+        Path(old_name).name if old_name else f"{project.blog_url or f'project-{project.id}'}.md"
+    )
 
-    project.markdown_file.save(target_basename, ContentFile(markdown_text.encode("utf-8")), save=False)
+    project.markdown_file.save(
+        target_basename, ContentFile(markdown_text.encode("utf-8")), save=False
+    )
     project.save(update_fields=["markdown_file"])
     new_name = project.markdown_file.name
 

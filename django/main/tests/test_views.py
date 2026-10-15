@@ -417,7 +417,8 @@ class ViewsTest(TestCase):
     def test_blog_detail_sanitizes_unsafe_image_attributes(self):
         markdown_file = SimpleUploadedFile(
             "unsafe-image-readme.md",
-            b"<img src='https://raw.githubusercontent.com/user/repo/img.png' alt='preview' onerror='alert(1)'>",
+            b"<img src='https://raw.githubusercontent.com/user/repo/img.png' alt='preview' "
+            b"onerror='alert(1)'>",
             content_type="text/markdown",
         )
         project = Project.objects.create(

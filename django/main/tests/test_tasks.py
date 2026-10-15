@@ -94,7 +94,7 @@ class TaskStatusTrackingTests(TestCase):
             blog_url="task-partial-1",
             status="finished",
         )
-        second = Project.objects.create(
+        Project.objects.create(
             title="Task Partial 2",
             short_description="sync task",
             blog=True,
@@ -196,7 +196,7 @@ class TaskStatusTrackingTests(TestCase):
             blog_url="task-partial-transition-1",
             status="finished",
         )
-        second = Project.objects.create(
+        Project.objects.create(
             title="Task Partial Transition 2",
             short_description="sync task",
             blog=True,

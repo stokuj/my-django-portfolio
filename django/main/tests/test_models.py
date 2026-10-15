@@ -187,11 +187,13 @@ class PortfolioProfileModelTest(TestCase):
         self.assertEqual(profile.full_name, "John Doe")
         self.assertEqual(
             profile.home_intro,
-            "Junior Programmer and Data Science Enthusiast building practical web and analytics projects.",
+            "Junior Programmer and Data Science Enthusiast building practical web "
+            "and analytics projects.",
         )
         self.assertEqual(
             profile.about_intro,
-            "Junior Full-Stack and Data Science enthusiast focused on robust Django applications, clean architecture, and practical data tooling.",
+            "Junior Full-Stack and Data Science enthusiast focused on robust Django "
+            "applications, clean architecture, and practical data tooling.",
         )
         self.assertEqual(
             profile.core_stack,
@@ -211,7 +213,8 @@ class PortfolioProfileModelTest(TestCase):
         )
         self.assertEqual(
             profile.current_learning_summary,
-            "I am expanding my stack to design more scalable systems and improve deployment workflows.",
+            "I am expanding my stack to design more scalable systems and improve "
+            "deployment workflows.",
         )
         self.assertEqual(
             profile.interests,
