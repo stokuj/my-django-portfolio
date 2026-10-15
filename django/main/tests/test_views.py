@@ -22,6 +22,7 @@ from main.models import (
 from main.views import handler404, handler500
 
 
+@override_settings(GITHUB_HEATMAP_TOKEN="")
 class ViewsTest(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -78,7 +79,7 @@ class ViewsTest(TestCase):
         response = self.client.get(reverse("about"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "GitHub Contributions")
-        self.assertContains(response, "GITHUB_HEATMAP_TOKEN")
+        self.assertFalse(response.context["heatmap_enabled"])
         self.assertNotContains(response, "Scheduled Jobs")
         self.assertNotContains(response, "Heatmap Refresh (FastAPI)")
 
@@ -100,7 +101,7 @@ class ViewsTest(TestCase):
         self.assertContains(response, "Scheduled Jobs")
         self.assertContains(response, "Sync Heatmap")
         self.assertContains(response, "Sync Markdown")
-        self.assertContains(response, "GITHUB_HEATMAP_TOKEN")
+        self.assertFalse(response.context["heatmap_enabled"])
         self.assertNotContains(response, "Connect your GitHub account")
         self.assertNotContains(response, "/accounts/3rdparty/")
         self.assertNotContains(response, "/accounts/github/login/")
