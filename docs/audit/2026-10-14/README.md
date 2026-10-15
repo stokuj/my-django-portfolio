@@ -18,4 +18,4 @@ Confirmed severities: 0 critical, 3 high, 23 medium, 103 low.
 
 Confirmed findings by category: security 21, bug 16, simplification 18, frontend 18, ops 12, tests 11, docs 11, ci 6, library 6, performance 6, architecture 4.
 
-The execution checklist is at [`docs/superpowers/plans/2026-10-14-audit-and-upgrades.md`](../../superpowers/plans/2026-10-14-audit-and-upgrades.md) and has 12 phases.
+The execution checklist is at [`PLAN.md`](PLAN.md) and has 12 phases. Owner decisions are in [`DECISIONS.md`](DECISIONS.md).

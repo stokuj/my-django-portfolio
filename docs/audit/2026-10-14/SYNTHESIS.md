@@ -4,7 +4,7 @@
 Severity after verification: 0 critical, 3 high, 23 medium, 103 low.
 
 Each row: severity as adjusted by the verifiers, location, the problem in one line, the chosen fix (the smallest correct one from the verifier alternatives), and effort (S < 30 min, M < half day, L more).
-Execution order and branches are in `docs/superpowers/plans/2026-10-14-audit-and-upgrades.md`.
+Execution order and branches are in `docs/audit/2026-10-14/PLAN.md` (owner decisions: `DECISIONS.md`).
 
 ## Top 5
 
