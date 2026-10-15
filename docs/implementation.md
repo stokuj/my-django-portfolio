@@ -103,8 +103,6 @@ Production services are defined in `infra/docker-compose.prod.yml`:
 
 Local development uses `infra/docker-compose.dev.yml` with `db`, `redis`, `web`, `worker`, and `beat`. It does not include Caddy; Django is exposed directly on port `8000` via `runserver`.
 
-The new development workflow runs the full application stack in Docker containers. The non-Docker local development commands from earlier versions are preserved in the `README.md` for reference.
-
 ## Development and Verification Workflow
 
 ### Setup

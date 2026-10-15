@@ -32,7 +32,7 @@ Baseline: `make verify` (after Phase 1 it runs both test suites).
 - [x] F-038: Put `@override_settings(GITHUB_HEATMAP_TOKEN="")` on ViewsTest and URLsTest, assert `response.context["heatmap_enabled"]`, and change `test_urls.py:35-37` to `assertEqual(status, 404)`. This stops tests reading .env or calling GitHub.
 - [x] F-020: Add `extend-exclude = ["django/main/migrations"]` under `[tool.ruff]` and change `Makefile:39` to `uv run ruff check .`. Commit A: `ruff check . --fix`. Commit B: fix the E501 lines by hand, and check the unused `second` variables (test_tasks.py:98,200) before deleting them.
 - [x] F-016: Add `workflow_call:` to the `on:` block of django.yml. In docker-build-push.yml add `verify: uses: ./.github/workflows/django.yml` and put `needs: verify` on build-and-push.
-- [ ] F-019: Update CLAUDE.md. :23 becomes `manage.py test main` with the env vars, :29 becomes `uv run python -m unittest discover -s tests -t .`, the Linting command becomes `uv run ruff check .`, and :93 says `django.yml` runs `make verify` on push/PR to main. Also remove the transitional sentence in docs/implementation.md:106.
+- [x] F-019: Update CLAUDE.md. :23 becomes `manage.py test main` with the env vars, :29 becomes `uv run python -m unittest discover -s tests -t .`, the Linting command becomes `uv run ruff check .`, and :93 says `django.yml` runs `make verify` on push/PR to main. Also remove the transitional sentence in docs/implementation.md:106.
 - [ ] F-115: Change `README.md:143` to "`make verify` expects `uv sync --extra dev` and `npm install` (it builds CSS first)."
 
 **End of phase: report what changed and the verification output.**
