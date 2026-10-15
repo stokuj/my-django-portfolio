@@ -103,6 +103,14 @@ Production services are defined in `infra/docker-compose.prod.yml`:
 
 Local development uses `infra/docker-compose.dev.yml` with `db`, `redis`, `web`, `worker`, and `beat`. It does not include Caddy; Django is exposed directly on port `8000` via `runserver`.
 
+## First-deploy checklist (new droplet)
+
+Owner steps that need the server or GitHub secrets. Do them before the first deploy unless noted.
+
+- [ ] Set `ADMIN_BASIC_USER` and `ADMIN_BASIC_HASH` in the server `.env` (hash from `docker run --rm caddy:2 caddy hash-password`, single-quoted). Without them Caddy will not start.
+- [ ] Add the `SERVER_SSH_FINGERPRINT` GitHub secret: the SHA256 value from `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub | awk '{print $2}'`, run on the droplet (not via `ssh-keyscan`). Update it if the droplet or its host key changes.
+- [ ] After the first successful deploy (GHCR login now uses the job's `GITHUB_TOKEN`), delete the `GHCR_PAT` and `GHCR_USERNAME` GitHub secrets.
+
 ## Development and Verification Workflow
 
 ### Setup

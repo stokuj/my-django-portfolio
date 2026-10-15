@@ -86,6 +86,12 @@ class TaskExecutionStatusAdmin(admin.ModelAdmin):
     )
     search_fields = ("task_name",)
 
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
 
 @admin.register(TaskExecutionLog)
 class TaskExecutionLogAdmin(admin.ModelAdmin):
@@ -111,6 +117,12 @@ class TaskExecutionLogAdmin(admin.ModelAdmin):
         "created_at",
     )
     search_fields = ("task_name", "last_error")
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
 
 
 admin.site.register(Tag)

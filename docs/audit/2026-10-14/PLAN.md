@@ -73,25 +73,25 @@ Baseline: `make verify` (after Phase 1 it runs both test suites).
 
 ### Tasks
 
-- [ ] F-005: In `about_heatmap_data`, never fetch inline. Serve the snapshot. If it is stale or has no payload, `if cache.add("heatmap-refresh-lock", 1, 300): try: refresh_portfolio_heatmap_cache_task.delay() except Exception: pass` (add a `# ponytail: per-process LocMem lock, use Redis cache if workers > 1 process` comment). Return 503 only when there is no payload. Tests: rewrite test_views.py:241 and :281; add "no payload gives 503 + enqueue" and "5 stale GETs give 0 fetches, 1 enqueue"; add `cache.clear()` in setUp.
-- [ ] F-109: In the Caddyfile apex block, before reverse_proxy, add `basic_auth /admin* { {$ADMIN_BASIC_USER} {$ADMIN_BASIC_HASH} }`. Add both vars to `.env.example` (with a comment pointing to `caddy hash-password`) and pass them to the caddy service env in prod compose. Add "set ADMIN_BASIC_USER/ADMIN_BASIC_HASH in the server .env" to the first-deploy checklist.
-- [ ] F-021: Leave the HSTS settings unchanged. In docker-build-push.yml, after `pull` and before `down`, add `docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml run --rm --no-deps --entrypoint "" web python manage.py check --deploy --fail-level WARNING`. Run `manage.py check --deploy --fail-level WARNING` locally with prod-like env (DEBUG off, a real-looking SECRET_KEY); it must pass with no silenced checks.
+- [x] F-005: In `about_heatmap_data`, never fetch inline. Serve the snapshot. If it is stale or has no payload, `if cache.add("heatmap-refresh-lock", 1, 300): try: refresh_portfolio_heatmap_cache_task.delay() except Exception: pass` (add a `# ponytail: per-process LocMem lock, use Redis cache if workers > 1 process` comment). Return 503 only when there is no payload. Tests: rewrite test_views.py:241 and :281; add "no payload gives 503 + enqueue" and "5 stale GETs give 0 fetches, 1 enqueue"; add `cache.clear()` in setUp.
+- [x] F-109: In the Caddyfile apex block, before reverse_proxy, add `basic_auth /admin* { {$ADMIN_BASIC_USER} {$ADMIN_BASIC_HASH} }`. Add both vars to `.env.example` (with a comment pointing to `caddy hash-password`) and pass them to the caddy service env in prod compose. Add "set ADMIN_BASIC_USER/ADMIN_BASIC_HASH in the server .env" to the first-deploy checklist.
+- [x] F-021: Leave the HSTS settings unchanged. In docker-build-push.yml, after `pull` and before `down`, add `docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml run --rm --no-deps --entrypoint "" web python manage.py check --deploy --fail-level WARNING`. Run `manage.py check --deploy --fail-level WARNING` locally with prod-like env (DEBUG off, a real-looking SECRET_KEY); it must pass with no silenced checks.
 - [x] F-060: Skipped (Q7: HSTS stays as is).
-- [ ] F-017: Add `fingerprint: ${{ secrets.SERVER_SSH_FINGERPRINT }}` to the ssh-action `with:`. Add "add the SERVER_SSH_FINGERPRINT secret (SHA256 from `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` on the droplet)" to the first-deploy checklist.
-- [ ] F-056: Give the deploy job `permissions: {contents: read, packages: read}`. In the script, log in with `${{ secrets.GITHUB_TOKEN }}` / `${{ github.actor }}`. Add "delete the GHCR_PAT and GHCR_USERNAME secrets after the first successful deploy" to the first-deploy checklist.
-- [ ] F-012: Add top-level `permissions: {contents: read}` to django.yml and top-level `permissions: {}` to docker-build-push.yml. Job-level overrides stay.
-- [ ] F-015: Add `if: github.ref == 'refs/heads/main'` to build-and-push.
-- [ ] F-035: Pin `mathjax@3.2.2/es5/tex-mml-chtml.js` with `integrity="sha384-..."` and `crossorigin="anonymous"`, and update test_views.py:493.
-- [ ] F-027 + F-073: In mathjax-config.js add `loader: {load: ['ui/safe']}`, `tex: {inlineMath: [["\\(","\\)"]], displayMath: [["\\[","\\]"]], processEscapes: true, processEnvironments: true}`, and `options: {ignoreHtmlClass: ".*|", processHtmlClass: "arithmatex"}`.
-- [ ] F-090: In `_clean_attributes` (views.py:77) add `if name == "class": return value == "arithmatex"`, plus a test that strips an overlay class.
-- [ ] F-042: Add a SimpleTestCase with subTest that calls `_render_markdown_to_html` on `[x](javascript:alert(1))`, `<a onclick=x style=y>`, `<iframe>`, and `<img src="https://github.com.evil.tld/a.png">`, and asserts the dangerous tokens are gone.
-- [ ] F-044: Caddy: add `header X-Content-Type-Options nosniff` for /static and /media, and `header /media/* Content-Security-Policy "default-src 'none'; sandbox"`. Check that thumbnails still render.
-- [ ] F-108: Add `request_body { max_size 10MB }` to the Caddy app block, and fix the comment at settings.py:179.
-- [ ] F-046: Dockerfile:33-36 chown applies only to `/app/staticfiles /app/media /app/django/celerybeat-schedule /home/app`. Check that collectstatic and beat start in `make dev-up`.
-- [ ] F-102: Dockerfile:17 becomes `apt-get install -y --no-install-recommends postgresql-client`.
+- [x] F-017: Add `fingerprint: ${{ secrets.SERVER_SSH_FINGERPRINT }}` to the ssh-action `with:`. Add "add the SERVER_SSH_FINGERPRINT secret (SHA256 from `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` on the droplet)" to the first-deploy checklist.
+- [x] F-056: Give the deploy job `permissions: {contents: read, packages: read}`. In the script, log in with `${{ secrets.GITHUB_TOKEN }}` / `${{ github.actor }}`. Add "delete the GHCR_PAT and GHCR_USERNAME secrets after the first successful deploy" to the first-deploy checklist.
+- [x] F-012: Add top-level `permissions: {contents: read}` to django.yml and top-level `permissions: {}` to docker-build-push.yml. Job-level overrides stay.
+- [x] F-015: Add `if: github.ref == 'refs/heads/main'` to build-and-push.
+- [x] F-035: Pin `mathjax@3.2.2/es5/tex-mml-chtml.js` with `integrity="sha384-..."` and `crossorigin="anonymous"`, and update test_views.py:493.
+- [x] F-027 + F-073: In mathjax-config.js add `loader: {load: ['ui/safe']}`, `tex: {inlineMath: [["\\(","\\)"]], displayMath: [["\\[","\\]"]], processEscapes: true, processEnvironments: true}`, and `options: {ignoreHtmlClass: ".*|", processHtmlClass: "arithmatex"}`.
+- [x] F-090: In `_clean_attributes` (views.py:77) add `if name == "class": return value == "arithmatex"`, plus a test that strips an overlay class.
+- [x] F-042: Add a SimpleTestCase with subTest that calls `_render_markdown_to_html` on `[x](javascript:alert(1))`, `<a onclick=x style=y>`, `<iframe>`, and `<img src="https://github.com.evil.tld/a.png">`, and asserts the dangerous tokens are gone.
+- [x] F-044: Caddy: add `header X-Content-Type-Options nosniff` for /static and /media, and `header /media/* Content-Security-Policy "default-src 'none'; sandbox"`. Check that thumbnails still render.
+- [x] F-108: Add `request_body { max_size 10MB }` to the Caddy app block, and fix the comment at settings.py:179.
+- [x] F-046: Dockerfile:33-36 chown applies only to `/app/staticfiles /app/media /app/django/celerybeat-schedule /home/app`. Check that collectstatic and beat start in `make dev-up`.
+- [x] F-102: Dockerfile:17 becomes `apt-get install -y --no-install-recommends postgresql-client`.
 - [x] F-103: Skipped (Q9: the owner uses an SSH tunnel to 127.0.0.1:15432).
-- [ ] F-104: Delete the top-level `networks` block and the per-service `networks` keys in prod compose.
-- [ ] F-118: Return False from `has_add_permission` and `has_change_permission` in the TaskExecutionStatus and TaskExecutionLog admins. Keep delete.
+- [x] F-104: Delete the top-level `networks` block and the per-service `networks` keys in prod compose.
+- [x] F-118: Return False from `has_add_permission` and `has_change_permission` in the TaskExecutionStatus and TaskExecutionLog admins. Keep delete.
 
 **End of phase: report what changed and the verification output.**
 

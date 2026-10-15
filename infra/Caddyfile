@@ -14,15 +14,29 @@ https://{$APP_WWW_DOMAIN} {
 
 # Main app host (apex domain).
 https://{$APP_DOMAIN} {
+ request_body {
+     max_size 10MB
+ }
+
  # Static files served directly by Caddy
  handle /static/* {
      root * /srv
+     header X-Content-Type-Options nosniff
      file_server
  }
 
  handle /media/* {
      root * /srv
+     header {
+         X-Content-Type-Options nosniff
+         Content-Security-Policy "default-src 'none'; sandbox"
+     }
      file_server
+ }
+
+ # Second credential in front of Django admin (blocks brute force and PBKDF2 CPU cost)
+ basic_auth /admin* {
+     {$ADMIN_BASIC_USER} {$ADMIN_BASIC_HASH}
  }
 
  # Django app

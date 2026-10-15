@@ -11,8 +11,6 @@ services:
       - "127.0.0.1:15432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app-network
     logging:
       driver: json-file
       options:
@@ -22,8 +20,6 @@ services:
   redis:
     image: redis:7-alpine
     restart: always
-    networks:
-      - app-network
     logging:
       driver: json-file
       options:
@@ -65,8 +61,6 @@ services:
     depends_on:
       - db
       - redis
-    networks:
-      - app-network
     logging:
       driver: json-file
       options:
@@ -105,8 +99,6 @@ services:
       - db
       - redis
       - web
-    networks:
-      - app-network
     logging:
       driver: json-file
       options:
@@ -142,8 +134,6 @@ services:
     depends_on:
       - db
       - redis
-    networks:
-      - app-network
     logging:
       driver: json-file
       options:
@@ -167,19 +157,15 @@ services:
       - APP_DOMAIN=${APP_DOMAIN:-localhost}
       - APP_WWW_DOMAIN=${APP_WWW_DOMAIN:-www.localhost}
       - CADDY_HTTPS_PORT=${CADDY_HTTPS_PORT:-443}
+      - ADMIN_BASIC_USER=${ADMIN_BASIC_USER}
+      - ADMIN_BASIC_HASH=${ADMIN_BASIC_HASH}
     depends_on:
       - web
-    networks:
-      - app-network
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
-
-networks:
-  app-network:
-    driver: bridge
 
 # Define the named volumes that will be shared between containers
 volumes:

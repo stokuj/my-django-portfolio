@@ -5,6 +5,7 @@ import bleach
 import markdown
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.cache import cache
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -13,12 +14,9 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_GET, require_POST
 
 from .heatmap import (
-    fetch_heatmap_data,
     get_configured_github_token,
     get_or_create_snapshot,
     is_snapshot_stale,
-    update_snapshot_error,
-    update_snapshot_with_payload,
 )
 from .markdown_sync import build_readme_url, get_repo_path
 from .models import Project, Tag, TaskExecutionLog, TaskExecutionStatus
@@ -80,6 +78,10 @@ def _clean_attributes(tag, name, value):
     allowed_attrs = ALLOWED_MARKDOWN_ATTRIBUTES.get(tag, [])
     if name not in allowed_attrs:
         return False
+
+    # Only the class pymdownx.arithmatex emits; blocks page-styling overlays
+    if name == "class":
+        return value == "arithmatex"
 
     # Special handling for img src: only allow GitHub domains
     if tag == "img" and name == "src":
@@ -146,7 +148,7 @@ def about(request):
 
 @require_GET
 def about_heatmap_data(request):
-    """Return cached heatmap payload JSON, refreshing when cache is stale."""
+    """Return cached heatmap payload JSON; enqueue a refresh when stale."""
     if not get_configured_github_token():
         return JsonResponse(
             {"error": "Heatmap is not configured."},
@@ -156,15 +158,18 @@ def about_heatmap_data(request):
     snapshot = get_or_create_snapshot()
 
     if not snapshot.payload or is_snapshot_stale(snapshot):
-        payload, error = fetch_heatmap_data()
+        # ponytail: per-process LocMem lock, use Redis cache if workers > 1 process
+        if cache.add("heatmap-refresh-lock", 1, 300):
+            try:
+                refresh_portfolio_heatmap_cache_task.delay()
+            except Exception:
+                pass
 
-        if error:
-            update_snapshot_error(error)
-            if snapshot.payload:
-                return _build_heatmap_snapshot_response(snapshot)
-            return JsonResponse({"error": error}, status=503)
-
-        snapshot = update_snapshot_with_payload(payload)
+    if not snapshot.payload:
+        return JsonResponse(
+            {"error": "Heatmap data is not available yet. Try again in a minute."},
+            status=503,
+        )
 
     return _build_heatmap_snapshot_response(snapshot)
 

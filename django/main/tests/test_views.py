@@ -5,9 +5,16 @@ from unittest.mock import patch
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import Client, RequestFactory, TestCase, override_settings
+from django.test import (
+    Client,
+    RequestFactory,
+    SimpleTestCase,
+    TestCase,
+    override_settings,
+)
 from django.urls import reverse
 from django.utils import timezone
 
@@ -19,7 +26,7 @@ from main.models import (
     TaskExecutionLog,
     TaskExecutionStatus,
 )
-from main.views import handler404, handler500
+from main.views import _render_markdown_to_html, handler404, handler500
 
 
 @override_settings(GITHUB_HEATMAP_TOKEN="")
@@ -38,6 +45,7 @@ class ViewsTest(TestCase):
         super().tearDownClass()
 
     def setUp(self):
+        cache.clear()
         self.client = Client()
         self.project = Project.objects.create(
             title="Test Project",
@@ -238,56 +246,40 @@ class ViewsTest(TestCase):
         self.assertEqual(payload["weeks_count"], 2)
 
     @patch("main.views.get_configured_github_token", return_value="gho_valid_token")
-    @patch("main.views.refresh_portfolio_heatmap_cache_task.apply_async")
-    @patch("main.views.fetch_heatmap_data")
-    def test_about_heatmap_data_fetches_sync_when_cache_missing(
-        self, fetch_mock, apply_async_mock, _token_mock
+    @patch("main.views.refresh_portfolio_heatmap_cache_task.delay")
+    @patch("main.heatmap.fetch_heatmap_data")
+    def test_about_heatmap_data_without_payload_returns_503_and_enqueues(
+        self, fetch_mock, delay_mock, _token_mock
     ):
-        fetch_mock.return_value = (
-            {
-                "username": "portfolio-admin",
-                "total": 21,
-                "weeks": [
-                    {
-                        "days": [
-                            {
-                                "date": datetime.date.today().isoformat(),
-                                "count": 3,
-                            },
-                            {
-                                "date": (
-                                    datetime.date.today() - datetime.timedelta(days=40)
-                                ).isoformat(),
-                                "count": 99,
-                            },
-                        ]
-                    }
-                ],
-            },
-            None,
-        )
-
         response = self.client.get(reverse("about_heatmap_data"))
-        payload = response.json()
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(payload["username"], "portfolio-admin")
-        self.assertEqual(payload["total"], 21)
-        self.assertEqual(payload["last_30_days_total"], 3)
-        self.assertEqual(payload["weeks_count"], 1)
-        fetch_mock.assert_called_once_with()
-        apply_async_mock.assert_not_called()
+        self.assertEqual(response.status_code, 503)
+        self.assertIn("error", response.json())
+        fetch_mock.assert_not_called()
+        delay_mock.assert_called_once_with()
 
     @patch("main.views.get_configured_github_token", return_value="gho_valid_token")
-    @patch("main.views.fetch_heatmap_data", return_value=(None, "upstream failure"))
-    def test_about_heatmap_data_serves_cached_snapshot_when_refresh_fails(
-        self, fetch_mock, _token_mock
+    @patch(
+        "main.views.refresh_portfolio_heatmap_cache_task.delay",
+        side_effect=ConnectionError("broker down"),
+    )
+    def test_about_heatmap_data_survives_enqueue_failure(self, _delay_mock, _token_mock):
+        response = self.client.get(reverse("about_heatmap_data"))
+
+        self.assertEqual(response.status_code, 503)
+
+    @patch("main.views.get_configured_github_token", return_value="gho_valid_token")
+    @patch("main.views.refresh_portfolio_heatmap_cache_task.delay")
+    @patch("main.heatmap.fetch_heatmap_data")
+    def test_about_heatmap_data_serves_stale_snapshot_and_enqueues_once(
+        self, fetch_mock, delay_mock, _token_mock
     ):
         HeatmapSnapshot.objects.create(
             key="portfolio",
             username="portfolio-admin",
             total=9,
             weeks_count=1,
+            fetched_at=timezone.now() - datetime.timedelta(days=1),
             payload={
                 "username": "portfolio-admin",
                 "total": 9,
@@ -295,13 +287,13 @@ class ViewsTest(TestCase):
             },
         )
 
-        response = self.client.get(reverse("about_heatmap_data"))
-        payload = response.json()
+        for _ in range(5):
+            response = self.client.get(reverse("about_heatmap_data"))
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json()["total"], 9)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(payload["username"], "portfolio-admin")
-        self.assertEqual(payload["total"], 9)
-        fetch_mock.assert_called_once_with()
+        fetch_mock.assert_not_called()
+        delay_mock.assert_called_once_with()
 
     @patch("main.views.get_configured_github_token", return_value=None)
     def test_about_heatmap_data_shows_error_when_admin_github_token_missing(self, _token_mock):
@@ -492,8 +484,13 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "mathjax-config.js")
         self.assertContains(
-            response, "cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+            response, "cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
         )
+        self.assertContains(
+            response,
+            'integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"',
+        )
+        self.assertContains(response, 'crossorigin="anonymous"')
 
     def test_blog_detail_includes_all_projects_for_sidebar(self):
         other_project = Project.objects.create(
@@ -664,3 +661,26 @@ class ErrorHandlersTest(TestCase):
         response = handler500(request)
         self.assertEqual(response.status_code, 500)
         self.assertIn("Server Error", response.content.decode())
+
+
+class MarkdownSanitizerTest(SimpleTestCase):
+    def test_class_attribute_allows_only_arithmatex(self):
+        html = _render_markdown_to_html(
+            '<div class="fixed inset-0 z-50">overlay</div>\n\n$x^2$'
+        )
+
+        self.assertNotIn("fixed inset-0", html)
+        self.assertIn('class="arithmatex"', html)
+
+    def test_dangerous_markdown_is_stripped(self):
+        cases = [
+            ("[x](javascript:alert(1))", ["javascript:"]),
+            ("<a onclick=x style=y>link</a>", ["onclick", "style"]),
+            ('<iframe src="https://example.com"></iframe>', ["<iframe"]),
+            ('<img src="https://github.com.evil.tld/a.png">', ["evil.tld"]),
+        ]
+        for markdown_source, forbidden in cases:
+            with self.subTest(markdown_source=markdown_source):
+                html = _render_markdown_to_html(markdown_source)
+                for token in forbidden:
+                    self.assertNotIn(token, html)
