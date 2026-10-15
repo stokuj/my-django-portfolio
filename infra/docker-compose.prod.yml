@@ -167,6 +167,8 @@ services:
       - APP_DOMAIN=${APP_DOMAIN:-localhost}
       - APP_WWW_DOMAIN=${APP_WWW_DOMAIN:-www.localhost}
       - CADDY_HTTPS_PORT=${CADDY_HTTPS_PORT:-443}
+      - ADMIN_BASIC_USER=${ADMIN_BASIC_USER}
+      - ADMIN_BASIC_HASH=${ADMIN_BASIC_HASH}
     depends_on:
       - web
     networks:
