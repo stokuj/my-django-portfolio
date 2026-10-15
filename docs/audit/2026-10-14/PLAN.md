@@ -80,7 +80,7 @@ Baseline: `make verify` (after Phase 1 it runs both test suites).
 - [x] F-017: Add `fingerprint: ${{ secrets.SERVER_SSH_FINGERPRINT }}` to the ssh-action `with:`. Add "add the SERVER_SSH_FINGERPRINT secret (SHA256 from `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` on the droplet)" to the first-deploy checklist.
 - [x] F-056: Give the deploy job `permissions: {contents: read, packages: read}`. In the script, log in with `${{ secrets.GITHUB_TOKEN }}` / `${{ github.actor }}`. Add "delete the GHCR_PAT and GHCR_USERNAME secrets after the first successful deploy" to the first-deploy checklist.
 - [x] F-012: Add top-level `permissions: {contents: read}` to django.yml and top-level `permissions: {}` to docker-build-push.yml. Job-level overrides stay.
-- [ ] F-015: Add `if: github.ref == 'refs/heads/main'` to build-and-push.
+- [x] F-015: Add `if: github.ref == 'refs/heads/main'` to build-and-push.
 - [ ] F-035: Pin `mathjax@3.2.2/es5/tex-mml-chtml.js` with `integrity="sha384-..."` and `crossorigin="anonymous"`, and update test_views.py:493.
 - [ ] F-027 + F-073: In mathjax-config.js add `loader: {load: ['ui/safe']}`, `tex: {inlineMath: [["\\(","\\)"]], displayMath: [["\\[","\\]"]], processEscapes: true, processEnvironments: true}`, and `options: {ignoreHtmlClass: ".*|", processHtmlClass: "arithmatex"}`.
 - [ ] F-090: In `_clean_attributes` (views.py:77) add `if name == "class": return value == "arithmatex"`, plus a test that strips an overlay class.
