@@ -10,8 +10,12 @@ env:
   IMAGE_NAME: ghcr.io/${{ github.repository }}
 
 jobs:
+  verify:
+    uses: ./.github/workflows/django.yml
+
   build-and-push:
     name: Build and Push Image
+    needs: verify
     runs-on: ubuntu-latest
     env:
       SECRET_KEY: ci-build-placeholder-secret
