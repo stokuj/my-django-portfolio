@@ -140,7 +140,7 @@ Open `http://localhost:8000`.
 make verify
 ```
 
-`make verify` expects the dev dependencies installed through `uv sync --extra dev`.
+`make verify` expects `uv sync --extra dev` and `npm install` (it builds CSS first).
 
 ## Heatmap Configuration
 

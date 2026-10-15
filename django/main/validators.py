@@ -17,7 +17,9 @@ def validate_github_repo_url(value):
         raise ValidationError("GitHub repository URL must use github.com domain.")
 
     if parsed.params or parsed.query or parsed.fragment:
-        raise ValidationError("GitHub repository URL must not include query parameters or fragments.")
+        raise ValidationError(
+            "GitHub repository URL must not include query parameters or fragments."
+        )
 
     path_parts = [part for part in parsed.path.split("/") if part]
     if len(path_parts) != 2:

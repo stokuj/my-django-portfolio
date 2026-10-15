@@ -1,10 +1,11 @@
 import datetime
 
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 
 from main.models import PageView, Project
 
 
+@override_settings(GITHUB_HEATMAP_TOKEN="")
 class URLsTest(TestCase):
     def setUp(self):
         self.client = Client()
@@ -28,13 +29,13 @@ class URLsTest(TestCase):
         response = self.client.get("/about/")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "GitHub Contributions")
-        self.assertContains(response, "GITHUB_HEATMAP_TOKEN")
+        self.assertFalse(response.context["heatmap_enabled"])
         self.assertNotContains(response, "Login with GitHub")
         self.assertNotContains(response, "Live from FastAPI")
 
     def test_about_heatmap_data_is_public(self):
         response = self.client.get("/about/heatmap-data/")
-        self.assertNotEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 404)
 
     def test_about_heatmap_disconnect_route_is_removed(self):
         response = self.client.post("/about/heatmap-disconnect/")

@@ -20,18 +20,18 @@ make dev-down
 ### Running tests
 ```bash
 # Django app tests (requires env vars for settings)
-SECRET_KEY=test DJANGO_DEBUG=True ALLOWED_HOSTS=localhost,127.0.0.1 uv run python django/manage.py test
+SECRET_KEY=test DJANGO_DEBUG=True ALLOWED_HOSTS=localhost,127.0.0.1 DB_ENGINE=django.db.backends.sqlite3 uv run python django/manage.py test main
 
 # Run a single test module
-SECRET_KEY=test DJANGO_DEBUG=True ALLOWED_HOSTS=localhost,127.0.0.1 uv run python django/manage.py test main.tests.test_views
+SECRET_KEY=test DJANGO_DEBUG=True ALLOWED_HOSTS=localhost,127.0.0.1 DB_ENGINE=django.db.backends.sqlite3 uv run python django/manage.py test main.tests.test_views
 
 # Operational/infra tests (no env vars needed)
-uv run python -m pytest tests/
+uv run python -m unittest discover -s tests -t .
 ```
 
 ### Linting
 ```bash
-uv run ruff check infra/scripts tests
+uv run ruff check .
 ```
 
 ### CSS build
@@ -90,4 +90,4 @@ Defined in `django/config/settings.py` (`CELERY_BEAT_SCHEDULE`):
 - `tests/` — operational tests for infra scripts and compose file invariants (no Django required)
 
 ### CI/CD
-Two GitHub Actions workflows: `django-ci.yml` runs `make verify` on PRs to main; `docker-build-push.yml` builds and pushes to GHCR then deploys to DigitalOcean via SSH on merge to main.
+Two GitHub Actions workflows: `django.yml` runs `make verify` on push and PR to main; `docker-build-push.yml` runs on push to main, calls `django.yml` first, then builds and pushes to GHCR and deploys to DigitalOcean via SSH.

@@ -1,6 +1,5 @@
 from collections.abc import Mapping
-from datetime import date
-from datetime import timedelta
+from datetime import date, timedelta
 
 import requests
 

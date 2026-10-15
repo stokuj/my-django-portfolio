@@ -38,6 +38,8 @@ packages = ["main", "config"]
 [tool.ruff]
 line-length = 100
 target-version = "py313"
+extend-exclude = ["django/main/migrations"]
+src = ["django"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]

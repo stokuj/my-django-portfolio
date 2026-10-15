@@ -187,11 +187,13 @@ class PortfolioProfileModelTest(TestCase):
         self.assertEqual(profile.full_name, "John Doe")
         self.assertEqual(
             profile.home_intro,
-            "Junior Programmer and Data Science Enthusiast building practical web and analytics projects.",
+            "Junior Programmer and Data Science Enthusiast building practical web "
+            "and analytics projects.",
         )
         self.assertEqual(
             profile.about_intro,
-            "Junior Full-Stack and Data Science enthusiast focused on robust Django applications, clean architecture, and practical data tooling.",
+            "Junior Full-Stack and Data Science enthusiast focused on robust Django "
+            "applications, clean architecture, and practical data tooling.",
         )
         self.assertEqual(
             profile.core_stack,
@@ -211,7 +213,8 @@ class PortfolioProfileModelTest(TestCase):
         )
         self.assertEqual(
             profile.current_learning_summary,
-            "I am expanding my stack to design more scalable systems and improve deployment workflows.",
+            "I am expanding my stack to design more scalable systems and improve "
+            "deployment workflows.",
         )
         self.assertEqual(
             profile.interests,
@@ -287,7 +290,6 @@ class ProjectMediaCleanupTests(TestCase):
         return project
 
     def test_thumbnail_deleted_when_project_deleted(self):
-        from main.models import Project
         project = self._make_project_with_thumbnail()
         storage = project.thumbnail.storage
         thumb_name = project.thumbnail.name
@@ -298,7 +300,6 @@ class ProjectMediaCleanupTests(TestCase):
         self.assertFalse(storage.exists(thumb_name))
 
     def test_old_thumbnail_deleted_when_replaced(self):
-        from main.models import Project
         project = self._make_project_with_thumbnail()
         storage = project.thumbnail.storage
         old_name = project.thumbnail.name

@@ -181,7 +181,10 @@ class PortfolioProfile(models.Model):
     )
     home_intro = models.CharField(
         max_length=255,
-        default="Junior Programmer and Data Science Enthusiast building practical web and analytics projects.",
+        default=(
+            "Junior Programmer and Data Science Enthusiast building practical web "
+            "and analytics projects."
+        ),
     )
     about_intro = models.CharField(
         max_length=255,

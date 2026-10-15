@@ -4,13 +4,13 @@ import tempfile
 from unittest.mock import patch
 
 from django.conf import settings
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from django.core.files.base import ContentFile
 from main.models import (
     HeatmapSnapshot,
     PageView,
@@ -22,6 +22,7 @@ from main.models import (
 from main.views import handler404, handler500
 
 
+@override_settings(GITHUB_HEATMAP_TOKEN="")
 class ViewsTest(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -78,7 +79,7 @@ class ViewsTest(TestCase):
         response = self.client.get(reverse("about"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "GitHub Contributions")
-        self.assertContains(response, "GITHUB_HEATMAP_TOKEN")
+        self.assertFalse(response.context["heatmap_enabled"])
         self.assertNotContains(response, "Scheduled Jobs")
         self.assertNotContains(response, "Heatmap Refresh (FastAPI)")
 
@@ -100,7 +101,7 @@ class ViewsTest(TestCase):
         self.assertContains(response, "Scheduled Jobs")
         self.assertContains(response, "Sync Heatmap")
         self.assertContains(response, "Sync Markdown")
-        self.assertContains(response, "GITHUB_HEATMAP_TOKEN")
+        self.assertFalse(response.context["heatmap_enabled"])
         self.assertNotContains(response, "Connect your GitHub account")
         self.assertNotContains(response, "/accounts/3rdparty/")
         self.assertNotContains(response, "/accounts/github/login/")
@@ -416,7 +417,8 @@ class ViewsTest(TestCase):
     def test_blog_detail_sanitizes_unsafe_image_attributes(self):
         markdown_file = SimpleUploadedFile(
             "unsafe-image-readme.md",
-            b"<img src='https://raw.githubusercontent.com/user/repo/img.png' alt='preview' onerror='alert(1)'>",
+            b"<img src='https://raw.githubusercontent.com/user/repo/img.png' alt='preview' "
+            b"onerror='alert(1)'>",
             content_type="text/markdown",
         )
         project = Project.objects.create(
