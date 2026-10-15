@@ -478,8 +478,13 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "mathjax-config.js")
         self.assertContains(
-            response, "cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+            response, "cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
         )
+        self.assertContains(
+            response,
+            'integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"',
+        )
+        self.assertContains(response, 'crossorigin="anonymous"')
 
     def test_blog_detail_includes_all_projects_for_sidebar(self):
         other_project = Project.objects.create(
