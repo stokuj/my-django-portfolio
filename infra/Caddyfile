@@ -14,6 +14,10 @@ https://{$APP_WWW_DOMAIN} {
 
 # Main app host (apex domain).
 https://{$APP_DOMAIN} {
+ request_body {
+     max_size 10MB
+ }
+
  # Static files served directly by Caddy
  handle /static/* {
      root * /srv

@@ -177,7 +177,8 @@ HEATMAP_CACHE_TTL_MINUTES = env.int("HEATMAP_CACHE_TTL_MINUTES", default=60)
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, "media")
-DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB limit for file uploads
+# 5 MB cap on non-file request data; Caddy caps whole request bodies at 10 MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
 # Using default Django storage
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
