@@ -27,6 +27,8 @@ https://{$APP_DOMAIN} {
 		file_server
 	}
 
+	redir /favicon.ico /static/images/favicon.svg
+
 	# Second credential in front of Django admin (blocks brute force and PBKDF2 CPU cost)
 	basic_auth /admin* {
 		{$ADMIN_BASIC_USER} {$ADMIN_BASIC_HASH}
