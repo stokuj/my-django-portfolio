@@ -93,14 +93,7 @@ def _clean_attributes(tag, name, value):
 def home(request):
     """Render home page with projects grouped by status timeline."""
     projects = Project.objects.prefetch_related("tags").order_by("-date")
-    status_labels = {
-        "planned": "Planned",
-        "ongoing": "Ongoing",
-        "finished": "Finished",
-    }
-    status_order = ["planned", "ongoing", "finished"]
-
-    projects_by_status = {status: [] for status in status_order}
+    projects_by_status = {status: [] for status, _ in Project.STATUS_CHOICES}
     for project in projects:
         if project.status in projects_by_status:
             projects_by_status[project.status].append(project)
@@ -108,11 +101,11 @@ def home(request):
     timeline_sections = [
         {
             "status": status,
-            "title": status_labels[status],
+            "title": label,
             "checked": status == "finished",
             "projects": projects_by_status[status],
         }
-        for status in status_order
+        for status, label in Project.STATUS_CHOICES
     ]
 
     return render(request, "pages/home.html", {"timeline_sections": timeline_sections})
