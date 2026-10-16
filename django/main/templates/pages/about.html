@@ -44,7 +44,6 @@
         </article>
     </section>
 
-    {% if heatmap_component_visible %}
     <section class="mt-6 rounded-2xl border border-base-300 bg-gradient-to-br from-base-200 to-base-100 shadow-sm">
         <div class="p-4 sm:p-6">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -98,7 +97,6 @@
             </div>
         </div>
     </section>
-    {% endif %}
 
     {% if request.user.is_authenticated and request.user.is_staff %}
     <section class="mt-6 rounded-2xl border border-base-300 bg-base-200 shadow-sm">
@@ -254,7 +252,6 @@
     {% endif %}
 </div>
 
-{% if heatmap_component_visible %}
 <script>
 document.addEventListener("DOMContentLoaded", async function () {
     const variantConfigs = [
@@ -462,7 +459,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 });
 </script>
-{% endif %}
 
 {% if request.user.is_authenticated and request.user.is_staff %}
 <script>

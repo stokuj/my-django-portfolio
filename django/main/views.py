@@ -116,7 +116,6 @@ def about(request):
     is_admin_user = request.user.is_authenticated and request.user.is_staff
 
     context = {
-        "heatmap_component_visible": True,
         "heatmap_enabled": has_portfolio_token,
     }
 
@@ -285,22 +284,16 @@ def _load_project_markdown(project):
         return None
 
     try:
-        project.markdown_file.open("rb")
-        return project.markdown_file.read().decode("utf-8")
+        with project.markdown_file.open("rb") as f:
+            return f.read().decode("utf-8-sig")
     except (OSError, UnicodeDecodeError):
         return None
-    finally:
-        try:
-            project.markdown_file.close()
-        except OSError:
-            pass
 
 
 def _render_markdown_to_html(markdown_content):
     """Render markdown to safe HTML using an explicit allowlist."""
     if not markdown_content:
         return None
-    markdown_content = markdown_content.lstrip("\ufeff")
     markdown_html = markdown.markdown(
         markdown_content,
         extensions=["fenced_code", "tables", "pymdownx.arithmatex"],
@@ -353,7 +346,6 @@ def blog_detail(request, blog_slug):
         {
             "project": project,
             "all_projects": all_projects,
-            "blog_markdown_content": markdown_content,
             "blog_markdown_html": markdown_html,
             "repo_path": repo_path,
             "readme_url": readme_url,
