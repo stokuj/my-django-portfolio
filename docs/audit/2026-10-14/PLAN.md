@@ -280,7 +280,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-126: Delete the `{% elif project.github_url %}` branch (timeline_project_item.html:13-14).
 - [x] F-125: `<time datetime="{{ project.date|date:'Y-m' }}">`.
 - [x] F-123: Add `target="_blank" rel="noopener noreferrer"` to the header social links (base.html:63, :72).
-- [ ] F-117: ProjectAdmin: `list_display` (title, status, blog, blog_url, date), `list_filter` (status, blog, tags), `filter_horizontal = ("tags",)`. TaskExecutionLogAdmin: `list_filter` (task_name, last_status) and `date_hierarchy = "created_at"`.
+- [x] F-117: ProjectAdmin: `list_display` (title, status, blog, blog_url, date), `list_filter` (status, blog, tags), `filter_horizontal = ("tags",)`. TaskExecutionLogAdmin: `list_filter` (task_name, last_status) and `date_hierarchy = "created_at"`.
 - [ ] F-116: Add `django.contrib.sitemaps`, a blog-project sitemap and a static-pages sitemap, a `sitemap.xml` route and a Sitemap line in the F-132 robots.txt.
 
 **End of phase: report what changed and the verification output.**

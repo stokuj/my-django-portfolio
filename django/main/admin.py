@@ -11,15 +11,9 @@ from .models import (
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = (
-        "title",
-        "status",
-        "blog",
-        "blog_url",
-        "markdown_file",
-        "tech_stack",
-        "tools_libraries",
-    )
+    list_display = ("title", "status", "blog", "blog_url", "date")
+    list_filter = ("status", "blog", "tags")
+    filter_horizontal = ("tags",)
     search_fields = ("title", "blog_url")
 
 
@@ -81,6 +75,8 @@ class TaskExecutionLogAdmin(admin.ModelAdmin):
         "last_error",
         "created_at",
     )
+    list_filter = ("task_name", "last_status")
+    date_hierarchy = "created_at"
     search_fields = ("task_name", "last_error")
 
     def has_add_permission(self, request):

@@ -852,3 +852,19 @@ class PageViewAdminTests(TestCase):
         self.assertEqual(delete.status_code, 403)
         self.assertEqual(change.status_code, 200)
         self.assertNotContains(change, 'name="count"')
+
+    def test_project_and_task_log_changelists_render_filters(self):
+        User = get_user_model()
+        self.client.force_login(
+            User.objects.create_superuser(username="root", password="secret")
+        )
+        Project.objects.create(title="Admin Project", short_description="x")
+        TaskExecutionLog.objects.create(task_name="main.tasks.sync", last_status="success")
+
+        projects = self.client.get(reverse("admin:main_project_changelist"))
+        logs = self.client.get(reverse("admin:main_taskexecutionlog_changelist"))
+
+        self.assertEqual(projects.status_code, 200)
+        self.assertContains(projects, "By status")
+        self.assertEqual(logs.status_code, 200)
+        self.assertContains(logs, "By last status")
