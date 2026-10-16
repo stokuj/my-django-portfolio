@@ -29,7 +29,7 @@ flowchart TD
 
     Home["pages/home.html"]
     About["pages/about.html"]
-    Errors["errors/404.html + errors/500.html"]
+    Errors["404.html + 500.html"]
     ProjectsIndex["projects/index.html"]
     ProjectDetail["projects/detail.html"]
     ProjectDB["Project model (DB)"]

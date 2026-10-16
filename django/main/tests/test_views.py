@@ -17,6 +17,7 @@ from django.test import (
 )
 from django.urls import reverse
 from django.utils import timezone
+from django.views import defaults
 
 from main.models import (
     HeatmapSnapshot,
@@ -26,7 +27,7 @@ from main.models import (
     TaskExecutionLog,
     TaskExecutionStatus,
 )
-from main.views import _render_markdown_to_html, handler404, handler500
+from main.views import _render_markdown_to_html
 
 
 @override_settings(GITHUB_HEATMAP_TOKEN="")
@@ -654,17 +655,17 @@ class ErrorHandlersTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
 
-    def test_handler404_returns_custom_template(self):
+    def test_default_404_view_uses_custom_template(self):
         request = self.factory.get("/non-existent/")
-        response = handler404(request, Exception("not found"))
+        response = defaults.page_not_found(request, Exception("not found"))
         self.assertEqual(response.status_code, 404)
         self.assertIn("Page Not Found", response.content.decode())
 
-    def test_handler500_returns_custom_template(self):
+    def test_default_500_view_uses_custom_template(self):
         request = self.factory.get("/error/")
-        response = handler500(request)
+        response = defaults.server_error(request)
         self.assertEqual(response.status_code, 500)
-        self.assertIn("Server Error", response.content.decode())
+        self.assertIn("Sorry, something went wrong on our end", response.content.decode())
 
 
 class MarkdownSanitizerTest(SimpleTestCase):
