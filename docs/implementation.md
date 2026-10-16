@@ -110,7 +110,7 @@ Local development uses `infra/docker-compose.dev.yml` with `db`, `redis`, `web`,
 
 ### CI and deploy
 
-- `.github/workflows/django.yml` runs `make verify` and validates the prod compose file on push and PR to `main`.
+- `.github/workflows/django.yml` runs `make verify` and validates the prod compose file on push and PR to `main` and `dev`.
 - `.github/workflows/docker-build-push.yml` runs on push to `main` (one deploy at a time via a concurrency group): it calls `django.yml`, builds the `web` image and pushes it as `:<sha>` and `:latest`, then deploys over SSH with the host fingerprint verified.
 - On the server the deploy checks out the commit (detached), logs in to GHCR with the job's `GITHUB_TOKEN`, pulls `IMAGE_TAG=<sha>`, logs out, runs `check --deploy --fail-level WARNING`, takes a pre-deploy `pg_dump` (see below), runs `up -d --remove-orphans --wait` and prunes Docker images and build cache.
 - Dependabot opens monthly grouped minor/patch updates for actions, Docker, uv and npm.
