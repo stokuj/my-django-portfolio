@@ -28,6 +28,11 @@ https://{$APP_DOMAIN} {
 	}
 
 	redir /favicon.ico /static/images/favicon.svg
+	respond /robots.txt <<TXT
+		User-agent: *
+		Disallow: /admin/
+
+		TXT 200
 
 	# Second credential in front of Django admin (blocks brute force and PBKDF2 CPU cost)
 	basic_auth /admin* {

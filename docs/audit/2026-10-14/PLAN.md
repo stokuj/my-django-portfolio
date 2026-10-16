@@ -275,7 +275,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-110: In base.html add `<meta name="description" content="{% block meta_description %}{{ profile_home_intro }}{% endblock %}">`, overridden in about (profile_about_intro) and detail (project.short_description).
 - [x] F-121: Add og:title (own `og_title` block), og:description, og:type, og:url (`request.build_absolute_uri`), an absolute og:image (thumbnail or default image) and `twitter:card`. Override them on detail.
 - [x] F-122: Add `static/images/favicon.svg` and `<link rel="icon" type="image/svg+xml">`, plus Caddy `redir /favicon.ico /static/images/favicon.svg`.
-- [ ] F-132: Caddy `respond /robots.txt "User-agent: *\nDisallow: /admin/\n" 200`, before reverse_proxy.
+- [x] F-132: Caddy `respond /robots.txt "User-agent: *\nDisallow: /admin/\n" 200`, before reverse_proxy.
 - [ ] F-124: In the context processor return `''` instead of `'#'` (lines 31, 32, 34, 44). Guard the links with `{% if %}` in about_content.html, base.html and project_footer.html:6.
 - [ ] F-126: Delete the `{% elif project.github_url %}` branch (timeline_project_item.html:13-14).
 - [ ] F-125: `<time datetime="{{ project.date|date:'Y-m' }}">`.
