@@ -245,7 +245,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 
 - [x] F-031: Test that `sync_project_markdown` raising RuntimeError for 1 of 2 projects gives PARTIAL_SUCCESS with `task_exception`, and that the heatmap fetch returning `(None, "boom")` gives FAILURE, a log row and `snapshot.last_error`. Skip the blog_slug test (removed in F-076).
 - [x] F-037: Using the existing `_make_mock_response`, test a 404 on the first candidate URL with a 200 on the second, and an HTML body giving download_failed with the old file kept. (The Content-Length block is already gone via F-070.)
-- [ ] F-039: Patch `main.views.shutil.disk_usage` (fake as in test_tasks.py:342-347): 0.96 GB free gives `critical`, 1.96 GB gives `warning`.
+- [x] F-039: Patch `main.views.shutil.disk_usage` (fake as in test_tasks.py:342-347): 0.96 GB free gives `critical`, 1.96 GB gives `warning`.
 - [ ] F-066: Turn the 401 test into a subTest over 401 -> GitHubAuthError, 403 -> GitHubAuthError, 500 -> GitHubUpstreamError, and add one test for the "temporarily unavailable" mapping (adapted to the F-023 client).
 - [ ] F-087: Copy the 2 thumbnail cleanup tests for `markdown_file`, and extend test_views.py:622 with camo.githubusercontent.com and github.com images that must remain.
 - [ ] F-088: Remove the negative assertNotContains checks on removed UI (test_views.py:83,104-109,211-213; test_urls.py:32-33), rename `test_task_3_*` to descriptive names, and assert exact status codes.

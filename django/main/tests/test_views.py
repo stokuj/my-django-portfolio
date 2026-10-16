@@ -1,3 +1,4 @@
+import collections
 import datetime
 import shutil
 import tempfile
@@ -679,21 +680,25 @@ class ViewsTest(TestCase):
         self.assertIn("raw.githubusercontent.com", content)
 
     def test_about_shows_disk_info_for_staff(self):
-        from django.contrib.auth import get_user_model
         User = get_user_model()
         staff = User.objects.create_user("diskstaff", password="pass", is_staff=True)
         self.client.force_login(staff)
+        gb = 1024 ** 3
+        DiskUsage = collections.namedtuple("DiskUsage", ["total", "used", "free"])
 
-        response = self.client.get(reverse("about"))
+        # Level uses unrounded free space: 0.96 and 1.96 would round up past the thresholds.
+        for free_gb, level in ((0.96, "critical"), (1.96, "warning")):
+            with self.subTest(free_gb=free_gb):
+                usage = DiskUsage(
+                    total=10 * gb, used=int((10 - free_gb) * gb), free=int(free_gb * gb)
+                )
+                with patch("main.views.shutil.disk_usage", return_value=usage):
+                    response = self.client.get(reverse("about"))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("disk_info", response.context)
-        disk = response.context["disk_info"]
-        self.assertIn("free_gb", disk)
-        self.assertIn("used_gb", disk)
-        self.assertIn("total_gb", disk)
-        self.assertIn("level", disk)
-        self.assertIn(disk["level"], ("ok", "warning", "critical"))
+                self.assertEqual(response.status_code, 200)
+                disk = response.context["disk_info"]
+                self.assertEqual(disk["level"], level)
+                self.assertEqual(disk["total_gb"], 10.0)
 
 
 class ErrorHandlersTest(TestCase):
