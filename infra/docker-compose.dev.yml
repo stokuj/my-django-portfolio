@@ -10,6 +10,10 @@ services:
       - "127.0.0.1:15432:5432"
     volumes:
       - postgres18_dev_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      retries: 12
     networks:
       - app-network
 
@@ -28,7 +32,6 @@ services:
     env_file:
       - ../.env
     working_dir: /app/django
-    entrypoint: ["sh", "/app/django/entrypoints/wait-for-db.sh"]
     command: >
       sh -c "python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
@@ -45,8 +48,10 @@ services:
       - DB_PORT=${DOCKER_DB_PORT}
       - CELERY_BROKER_URL=redis://redis:6379/0
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       - app-network
 
@@ -60,9 +65,7 @@ services:
     env_file:
       - ../.env
     working_dir: /app/django
-    command: >
-      sh -c "sleep ${WORKER_START_DELAY_SECONDS:-45} &&
-             celery -A config worker --loglevel=info"
+    command: celery -A config worker --loglevel=info
     volumes:
       - media_dev_volume:/app/media
     environment:
@@ -74,9 +77,12 @@ services:
       - DB_PORT=${DOCKER_DB_PORT}
       - CELERY_BROKER_URL=redis://redis:6379/0
     depends_on:
-      - db
-      - redis
-      - web
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      web:
+        condition: service_started
     networks:
       - app-network
 
@@ -102,8 +108,10 @@ services:
       - DB_PORT=${DOCKER_DB_PORT}
       - CELERY_BROKER_URL=redis://redis:6379/0
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       - app-network
 

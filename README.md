@@ -11,7 +11,6 @@ The key feature is that the app pulls Markdown from GitHub **README.MD** files a
 my_django_portfolio/
 |- django/
 |  |- config/                 # Project config
-|  |- entrypoints/            # Container startup scripts
 |  |- main/                   # Core app
 |  |  |- models.py            
 |  |  |- views.py             # Page/API views
@@ -160,7 +159,7 @@ make verify
 - Docker socket permission error: add your user to the Docker group or run with elevated privileges.
 - CSS not updating: run `npm run build:css` and verify input/output paths in `package.json`.
 - SELinux bind mount issue with Caddyfile: use `:Z` relabel option (already configured in `docker-compose.prod.yml`).
-- `502 Bad Gateway` after changing DB name: if you change `DOCKER_DB_NAME`, create that database in PostgreSQL first, otherwise `web` can stay in `wait-for-db`.
+- `502 Bad Gateway` after changing DB name: if you change `DOCKER_DB_NAME`, create that database in PostgreSQL first, otherwise `migrate` fails and `web` does not start.
 - Markdown sync looks successful but files are not visible in app: ensure `worker` mounts `media_volume:/app/media`.
 - Permission errors on static/media/celerybeat files in Docker: app containers run as non-root (`10001:10001`), so existing volumes may need a one-time ownership fix (`chown`).
 - `UnicodeDecodeError` in templates/content: save text files as UTF-8.

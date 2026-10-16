@@ -4,7 +4,6 @@
 
 - `django/config/`: Django project configuration (settings, URLs, WSGI/ASGI, Celery bootstrap).
 - `django/main/`: application code (models, views, tasks, templates, static assets).
-- `django/entrypoints/`: container startup scripts.
 - `docs/`: architecture and implementation documentation.
 - `infra/`: infrastructure files (`docker-compose.dev.yml`, `docker-compose.prod.yml`, `Dockerfile`, `Caddyfile`, `scripts/`).
 - Root operational files: `Makefile`, `pyproject.toml`, `package.json`.
