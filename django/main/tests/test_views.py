@@ -545,6 +545,12 @@ class ViewsTest(TestCase):
         )
         self.assertContains(response, 'crossorigin="anonymous"')
 
+    def test_blog_detail_sidebar_marks_current_project(self):
+        response = self.client.get(reverse("blog_detail", args=[self.project.blog_url]))
+        # The sidebar renders twice (mobile and desktop); the nav has no current link here.
+        self.assertContains(response, 'aria-current="page"', count=2)
+        self.assertContains(response, 'active" aria-current="page">')
+
     def test_blog_detail_includes_all_projects_for_sidebar(self):
         other_project = Project.objects.create(
             title="Sidebar Item Project",
