@@ -731,3 +731,21 @@ class MarkdownSanitizerTest(SimpleTestCase):
                 html = _render_markdown_to_html(markdown_source)
                 for token in forbidden:
                     self.assertNotIn(token, html)
+
+
+class PageViewAdminTests(TestCase):
+    def test_pageview_admin_blocks_add_and_delete(self):
+        User = get_user_model()
+        self.client.force_login(
+            User.objects.create_superuser(username="root", password="secret")
+        )
+        PageView.get_instance()
+
+        add = self.client.get(reverse("admin:main_pageview_add"))
+        delete = self.client.get(reverse("admin:main_pageview_delete", args=[1]))
+        change = self.client.get(reverse("admin:main_pageview_change", args=[1]))
+
+        self.assertEqual(add.status_code, 403)
+        self.assertEqual(delete.status_code, 403)
+        self.assertEqual(change.status_code, 200)
+        self.assertNotContains(change, 'name="count"')

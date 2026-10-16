@@ -90,5 +90,15 @@ class TaskExecutionLogAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(PageView)
+class PageViewAdmin(admin.ModelAdmin):
+    readonly_fields = ("count",)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 admin.site.register(Tag)
-admin.site.register(PageView)
