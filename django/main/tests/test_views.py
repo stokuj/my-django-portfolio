@@ -24,6 +24,7 @@ from django.views import defaults
 from main.models import (
     HeatmapSnapshot,
     PageView,
+    PortfolioProfile,
     Project,
     Tag,
     TaskExecutionLog,
@@ -73,6 +74,20 @@ class ViewsTest(TestCase):
             response,
             'class="btn btn-ghost text-xl ui-motion" aria-current="page">About me</a>',
         )
+
+    def test_pages_have_meta_description(self):
+        profile = PortfolioProfile.get_active()
+        cases = [
+            (reverse("home"), profile.home_intro),
+            (reverse("about"), profile.about_intro),
+            (reverse("blog_detail", args=[self.project.blog_url]), "A test project"),
+        ]
+        for url, description in cases:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertContains(
+                    response, f'<meta name="description" content="{description}">', html=True
+                )
 
     def test_settings_drop_sites_framework_and_heatmap_api_base_url(self):
         self.assertNotIn("django.contrib.sites", settings.INSTALLED_APPS)
