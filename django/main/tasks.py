@@ -6,7 +6,6 @@ from django.utils import timezone
 
 from .heatmap import (
     fetch_heatmap_data,
-    get_configured_github_token,
     update_snapshot_error,
     update_snapshot_with_payload,
 )
@@ -58,43 +57,19 @@ def sync_project_markdowns_task():
         results.append(result)
 
     failed_count = len(results) - updated_count
-    status.last_total = len(results)
-    status.last_updated = updated_count
-    status.last_failed = failed_count
+    failed_results = [item for item in results if not item.get("updated")]
+    last_error = "; ".join(
+        f"{item.get('slug')}: {item.get('reason', 'unknown_error')}"
+        for item in failed_results[:5]
+    )
 
     if failed_count == 0:
-        status.last_status = TaskExecutionStatus.STATUS_SUCCESS
-        status.last_success_at = timezone.now()
-        status.last_error = ""
+        state = TaskExecutionStatus.STATUS_SUCCESS
     elif updated_count > 0:
-        status.last_status = TaskExecutionStatus.STATUS_PARTIAL_SUCCESS
-        status.last_failure_at = timezone.now()
-        failed_results = [item for item in results if not item.get("updated")]
-        status.last_error = "; ".join(
-            f"{item.get('slug')}: {item.get('reason', 'unknown_error')}"
-            for item in failed_results[:5]
-        )
+        state = TaskExecutionStatus.STATUS_PARTIAL_SUCCESS
     else:
-        failed_results = [item for item in results if not item.get("updated")]
-        status.last_status = TaskExecutionStatus.STATUS_FAILURE
-        status.last_failure_at = timezone.now()
-        status.last_error = "; ".join(
-            f"{item.get('slug')}: {item.get('reason', 'unknown_error')}"
-            for item in failed_results[:5]
-        )
-    status.save(
-        update_fields=[
-            "last_status",
-            "last_run_at",
-            "last_success_at",
-            "last_failure_at",
-            "last_total",
-            "last_updated",
-            "last_failed",
-            "last_error",
-        ]
-    )
-    _log_task_execution(status)
+        state = TaskExecutionStatus.STATUS_FAILURE
+    _finish(status, state, len(results), updated_count, last_error)
 
     return {
         "total": len(results),
@@ -111,74 +86,14 @@ def refresh_portfolio_heatmap_cache_task():
     )
     status.last_run_at = timezone.now()
 
-    if not get_configured_github_token():
-        message = "Heatmap is not configured."
-        update_snapshot_error(message)
-        status.last_status = TaskExecutionStatus.STATUS_FAILURE
-        status.last_failure_at = timezone.now()
-        status.last_total = 1
-        status.last_updated = 0
-        status.last_failed = 1
-        status.last_error = message
-        status.save(
-            update_fields=[
-                "last_status",
-                "last_run_at",
-                "last_success_at",
-                "last_failure_at",
-                "last_total",
-                "last_updated",
-                "last_failed",
-                "last_error",
-            ]
-        )
-        _log_task_execution(status)
-        return {"ok": False, "error": message}
-
     payload, error = fetch_heatmap_data()
     if error:
         update_snapshot_error(error)
-        status.last_status = TaskExecutionStatus.STATUS_FAILURE
-        status.last_failure_at = timezone.now()
-        status.last_total = 1
-        status.last_updated = 0
-        status.last_failed = 1
-        status.last_error = error
-        status.save(
-            update_fields=[
-                "last_status",
-                "last_run_at",
-                "last_success_at",
-                "last_failure_at",
-                "last_total",
-                "last_updated",
-                "last_failed",
-                "last_error",
-            ]
-        )
-        _log_task_execution(status)
+        _finish(status, TaskExecutionStatus.STATUS_FAILURE, 1, 0, error)
         return {"ok": False, "error": error}
 
     snapshot = update_snapshot_with_payload(payload)
-    status.last_status = TaskExecutionStatus.STATUS_SUCCESS
-    status.last_success_at = timezone.now()
-    status.last_total = 1
-    status.last_updated = 1
-    status.last_failed = 0
-    status.last_error = ""
-    status.save(
-        update_fields=[
-            "last_status",
-            "last_run_at",
-            "last_success_at",
-            "last_failure_at",
-            "last_total",
-            "last_updated",
-            "last_failed",
-            "last_error",
-        ]
-    )
-    _log_task_execution(status)
+    _finish(status, TaskExecutionStatus.STATUS_SUCCESS, 1, 1)
     return {
         "ok": True,
         "username": snapshot.username,
@@ -194,32 +109,41 @@ def check_disk_usage_task():
 
     status, _ = TaskExecutionStatus.objects.get_or_create(task_name=DISK_USAGE_TASK_NAME)
     status.last_run_at = timezone.now()
-    status.last_total = 1
 
     if free_gb < DISK_CRITICAL_GB:
         logger.critical("DISK CRITICAL: only %.1f GB free on /", free_gb)
-        status.last_status = TaskExecutionStatus.STATUS_FAILURE
-        status.last_updated = 0
-        status.last_failed = 1
-        status.last_error = (
-            f"CRITICAL: {free_gb:.1f} GB free (below {DISK_CRITICAL_GB} GB threshold)"
+        _finish(
+            status,
+            TaskExecutionStatus.STATUS_FAILURE,
+            1,
+            0,
+            f"CRITICAL: {free_gb:.1f} GB free (below {DISK_CRITICAL_GB} GB threshold)",
         )
-        status.last_failure_at = timezone.now()
     elif free_gb < DISK_WARNING_GB:
         logger.warning("DISK WARNING: only %.1f GB free on /", free_gb)
-        status.last_status = TaskExecutionStatus.STATUS_PARTIAL_SUCCESS
-        status.last_updated = 0
-        status.last_failed = 1
-        status.last_error = f"WARNING: {free_gb:.1f} GB free (below {DISK_WARNING_GB} GB threshold)"
-        status.last_failure_at = timezone.now()
+        _finish(
+            status,
+            TaskExecutionStatus.STATUS_PARTIAL_SUCCESS,
+            1,
+            0,
+            f"WARNING: {free_gb:.1f} GB free (below {DISK_WARNING_GB} GB threshold)",
+        )
     else:
         logger.info("DISK OK: %.1f GB free on /", free_gb)
-        status.last_status = TaskExecutionStatus.STATUS_SUCCESS
-        status.last_updated = 1
-        status.last_failed = 0
-        status.last_error = ""
-        status.last_success_at = timezone.now()
+        _finish(status, TaskExecutionStatus.STATUS_SUCCESS, 1, 1)
 
+
+def _finish(status, state, total, updated, error=""):
+    """Record a finished run on the status row and append a log entry."""
+    status.last_status = state
+    if state == TaskExecutionStatus.STATUS_SUCCESS:
+        status.last_success_at = timezone.now()
+    else:
+        status.last_failure_at = timezone.now()
+    status.last_total = total
+    status.last_updated = updated
+    status.last_failed = total - updated
+    status.last_error = error
     status.save(
         update_fields=[
             "last_status",
