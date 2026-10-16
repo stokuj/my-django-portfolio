@@ -1,6 +1,5 @@
 from collections.abc import Mapping
-from datetime import date
-from datetime import timedelta
+from datetime import date, timedelta
 
 import requests
 
@@ -11,6 +10,14 @@ class GitHubAuthError(Exception):
 
 class GitHubUpstreamError(Exception):
     """Raised when GitHub requests fail for non-auth reasons."""
+
+
+_AUTH_ERROR_SUBSTRINGS = (
+    "resource not accessible",
+    "forbidden",
+    "unauthorized",
+    "bad credentials",
+)
 
 
 def _graphql_errors_indicate_auth_failure(errors):
@@ -25,14 +32,7 @@ def _graphql_errors_indicate_auth_failure(errors):
 
         if error_type in {"forbidden", "unauthorized"}:
             return True
-
-        if "resource not accessible" in message:
-            return True
-        if "forbidden" in message:
-            return True
-        if "unauthorized" in message:
-            return True
-        if "bad credentials" in message:
+        if any(text in message for text in _AUTH_ERROR_SUBSTRINGS):
             return True
 
     return False
@@ -46,49 +46,27 @@ def _default_headers(token):
     }
 
 
-def fetch_authenticated_user(token):
-    """Fetch basic profile data for the token owner from GitHub REST API."""
-    try:
-        response = requests.get(
-            "https://api.github.com/user",
-            headers=_default_headers(token),
-            timeout=15,
-        )
-    except (requests.Timeout, requests.RequestException) as exc:
-        raise GitHubUpstreamError from exc
-
-    if response.status_code in {401, 403}:
-        raise GitHubAuthError
-    if response.status_code >= 400:
-        raise GitHubUpstreamError
-
-    try:
-        payload = response.json()
-    except ValueError as exc:
-        raise GitHubUpstreamError("GitHub user response is invalid") from exc
-    if not isinstance(payload, Mapping):
-        raise GitHubUpstreamError("GitHub user response is invalid")
-
-    raw_id = payload.get("id")
-    raw_login = payload.get("login")
-    if not isinstance(raw_id, int) or not isinstance(raw_login, str) or not raw_login:
-        raise GitHubUpstreamError("GitHub user response is missing required fields")
-
-    return {"id": raw_id, "login": raw_login}
+def _raise_if_rate_limited(response):
+    # GitHub answers rate limits with 403 too; do not report them as a bad token.
+    if response.status_code == 403 and (
+        response.headers.get("X-RateLimit-Remaining") == "0" or "Retry-After" in response.headers
+    ):
+        raise GitHubUpstreamError("GitHub rate limit exceeded")
 
 
-def fetch_contribution_days(
-    username,
-    token,
-    graphql_url="https://api.github.com/graphql",
-):
-    """Fetch one-year contribution days for a user from GitHub GraphQL API."""
+def fetch_contribution_days(token):
+    """Fetch the token owner's login and one-year contribution days via GraphQL.
+
+    Returns:
+        tuple[str, list[dict]]: `(login, days)`, each day as `{"date", "count"}`.
+    """
     to_day = date.today()
     from_day = to_day - timedelta(days=364)
 
     query = """
-    query($login: String!, $from: DateTime!, $to: DateTime!) {
-      user(login: $login) {
+    query($from: DateTime!, $to: DateTime!) {
+      viewer {
+        login
         contributionsCollection(from: $from, to: $to) {
           contributionCalendar {
             weeks {
@@ -105,11 +83,10 @@ def fetch_contribution_days(
 
     try:
         response = requests.post(
-            graphql_url,
+            "https://api.github.com/graphql",
             json={
                 "query": query,
                 "variables": {
-                    "login": username,
                     "from": f"{from_day.isoformat()}T00:00:00Z",
                     "to": f"{to_day.isoformat()}T23:59:59Z",
                 },
@@ -120,9 +97,10 @@ def fetch_contribution_days(
             },
             timeout=20,
         )
-    except (requests.Timeout, requests.RequestException) as exc:
+    except requests.RequestException as exc:
         raise GitHubUpstreamError from exc
 
+    _raise_if_rate_limited(response)
     if response.status_code in {401, 403}:
         raise GitHubAuthError
     if response.status_code >= 400:
@@ -140,39 +118,14 @@ def fetch_contribution_days(
             raise GitHubAuthError
         raise GitHubUpstreamError("GitHub GraphQL returned errors")
 
-    data = payload.get("data")
-    if not isinstance(data, Mapping):
-        raise GitHubUpstreamError("GitHub GraphQL data is missing")
-
-    user = data.get("user")
-    if not isinstance(user, Mapping):
-        raise GitHubUpstreamError("GitHub user not found")
-
-    collection = user.get("contributionsCollection")
-    if not isinstance(collection, Mapping):
-        raise GitHubUpstreamError("GitHub contributionsCollection is missing")
-
-    calendar = collection.get("contributionCalendar")
-    if not isinstance(calendar, Mapping):
-        raise GitHubUpstreamError("GitHub contributionCalendar is missing")
-
-    weeks = calendar.get("weeks")
-    if not isinstance(weeks, list):
-        raise GitHubUpstreamError("GitHub contribution weeks are missing")
-
-    days = []
-    for week in weeks:
-        if not isinstance(week, Mapping):
-            continue
-        contribution_days = week.get("contributionDays")
-        if not isinstance(contribution_days, list):
-            continue
-        for item in contribution_days:
-            if not isinstance(item, Mapping):
-                continue
-            raw_date = item.get("date")
-            raw_count = item.get("contributionCount")
-            if isinstance(raw_date, str) and isinstance(raw_count, int):
-                days.append({"date": raw_date, "count": raw_count})
-
-    return days
+    try:
+        viewer = payload["data"]["viewer"]
+        weeks = viewer["contributionsCollection"]["contributionCalendar"]["weeks"]
+        days = [
+            {"date": day["date"], "count": day["contributionCount"]}
+            for week in weeks
+            for day in week["contributionDays"]
+        ]
+        return viewer["login"], days
+    except (KeyError, TypeError) as exc:
+        raise GitHubUpstreamError("GitHub GraphQL response is malformed") from exc

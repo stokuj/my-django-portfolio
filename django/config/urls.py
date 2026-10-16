@@ -15,20 +15,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.contrib import admin
-from django.conf.urls.static import static
-from django.urls import path, include
 from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
+from django.urls import include, path
+
+from main.sitemaps import BlogSitemap, StaticPagesSitemap
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path(
+        "sitemap.xml",
+        sitemap,
+        {"sitemaps": {"pages": StaticPagesSitemap, "blog": BlogSitemap}},
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
     path("", include("main.urls")),
 ]
 
 # Serve media only in development.
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-# Configure custom error handlers.
-handler404 = "main.views.handler404"
-handler500 = "main.views.handler500"

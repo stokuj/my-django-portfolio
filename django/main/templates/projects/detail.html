@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block page_name %}{{ project.title }}{% endblock page_name %}
+{% block title %}{{ project.title }}{% endblock title %}
+{% block meta_description %}{{ project.short_description }}{% endblock meta_description %}
+{% block og_title %}{{ project.title }}{% endblock og_title %}
+{% block og_description %}{{ project.short_description }}{% endblock og_description %}
+{% block og_image %}{% if project.thumbnail %}{{ request.scheme }}://{{ request.get_host }}{{ project.thumbnail.url }}{% else %}{{ block.super }}{% endif %}{% endblock og_image %}
 
 {% block content %}
 <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -11,9 +15,11 @@
                 {% if blog_markdown_html %}
                 <div class="md-sheet">
                     <div class="flex justify-end">
+                        {% if readme_url %}
                         <div class="md-pill">
                             <a class="ml-1 underline" href="{{ readme_url }}" target="_blank" rel="noopener noreferrer">README.md</a>
                         </div>
+                        {% endif %}
                     </div>
                     <article class="md-article">{{ blog_markdown_html|safe }}</article>
                 </div>
@@ -23,12 +29,12 @@
             </section>
 
             <!-- Sidebar cards - mobile only -->
-            <div class="not-prose mt-6 space-y-4 2xl:hidden">
+            <div class="mt-6 space-y-4 2xl:hidden">
                 {% include "projects/components/blog_projects_sidebar.html" %}
                 {% include "projects/components/blog_sidebar_cards.html" %}
             </div>
 
-            {% include "projects/components/project_footer.html" with repo_path=repo_path %}
+            {% include "projects/components/project_footer.html" %}
         </div>
     </div>
 </div>
@@ -49,5 +55,5 @@
 
 {% block extra_scripts %}
 <script src="{% static 'js/mathjax-config.js' %}"></script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei" crossorigin="anonymous" id="MathJax-script" async></script>
 {% endblock extra_scripts %}

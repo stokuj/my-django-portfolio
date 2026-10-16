@@ -1,6 +1,5 @@
-<div class="collapse collapse-plus border border-base-300 bg-base-100">
-    <input type="radio" name="timeline-accordion" {% if section.checked %}checked{% endif %} />
-    <div class="collapse-title text-lg font-semibold text-primary">{{ section.title }}</div>
+<details class="collapse collapse-plus border border-base-300 bg-base-100" name="timeline-accordion" {% if section.checked %}open{% endif %}>
+    <summary class="collapse-title text-lg font-semibold text-primary">{{ section.title }}</summary>
     <div class="collapse-content">
         <ol class="space-y-4 text-sm">
             {% for project in section.projects %}
@@ -12,4 +11,4 @@
             {% endfor %}
         </ol>
     </div>
-</div>
+</details>

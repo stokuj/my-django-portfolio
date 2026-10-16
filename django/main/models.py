@@ -1,11 +1,11 @@
 import datetime
 
 from django.core.validators import FileExtensionValidator
-from django.db import models
+from django.db import models, transaction
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 
-from .validators import validate_github_repo_url
+from .validators import validate_github_repo_url, validate_str_list, validate_utf8_file
 
 
 # Default value
@@ -44,6 +44,10 @@ class Tag(models.Model):
 
     name = models.CharField(max_length=50, unique=True)
 
+    def clean(self):
+        # Uppercase before validate_unique so the admin reports duplicates instead of a 500.
+        self.name = self.name.upper()
+
     def save(self, *args, **kwargs):
         self.name = self.name.upper()  # Zamiana na wielkie litery przed zapisem
         super().save(*args, **kwargs)
@@ -59,12 +63,13 @@ class Project(models.Model):
     thumbnail = models.ImageField(upload_to="thumbnails/", blank=True, null=True)
     markdown_file = models.FileField(
         upload_to="blog_markdown/",
-        validators=[FileExtensionValidator(allowed_extensions=["md"])],
+        validators=[FileExtensionValidator(allowed_extensions=["md"]), validate_utf8_file],
         blank=True,
         null=True,
+        help_text="Replaced by the GitHub README on sync when Blog is on.",
     )
-    tech_stack = models.JSONField(default=list, blank=True)
-    tools_libraries = models.JSONField(default=list, blank=True)
+    tech_stack = models.JSONField(default=list, blank=True, validators=[validate_str_list])
+    tools_libraries = models.JSONField(default=list, blank=True, validators=[validate_str_list])
     short_description = models.CharField(max_length=100)
     date = models.DateField(default=datetime.date(2022, 5, 1))
     blog = models.BooleanField(default=True)
@@ -115,8 +120,8 @@ class PageView(models.Model):
         return instance
 
 
-class TaskExecutionStatus(models.Model):
-    """Latest execution status snapshot for a named background task."""
+class TaskExecutionLog(models.Model):
+    """Log entry for one background task run; the newest row per task is its status."""
 
     STATUS_SUCCESS = "success"
     STATUS_PARTIAL_SUCCESS = "partial_success"
@@ -127,35 +132,14 @@ class TaskExecutionStatus(models.Model):
         (STATUS_FAILURE, "Failure"),
     ]
 
-    task_name = models.CharField(max_length=150, unique=True)
-    last_status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, blank=True, default=""
-    )
-    last_run_at = models.DateTimeField(blank=True, null=True)
-    last_success_at = models.DateTimeField(blank=True, null=True)
-    last_failure_at = models.DateTimeField(blank=True, null=True)
-    last_total = models.PositiveIntegerField(default=0)
-    last_updated = models.PositiveIntegerField(default=0)
-    last_failed = models.PositiveIntegerField(default=0)
-    last_error = models.TextField(blank=True, default="")
-
-    def __str__(self):
-        return self.task_name
-
-
-class TaskExecutionLog(models.Model):
-    """Historical log entry for a single background task execution."""
-
     task_name = models.CharField(max_length=150, db_index=True)
     last_status = models.CharField(
         max_length=20,
-        choices=TaskExecutionStatus.STATUS_CHOICES,
+        choices=STATUS_CHOICES,
         blank=True,
         default="",
     )
     last_run_at = models.DateTimeField(blank=True, null=True)
-    last_success_at = models.DateTimeField(blank=True, null=True)
-    last_failure_at = models.DateTimeField(blank=True, null=True)
     last_total = models.PositiveIntegerField(default=0)
     last_updated = models.PositiveIntegerField(default=0)
     last_failed = models.PositiveIntegerField(default=0)
@@ -181,7 +165,10 @@ class PortfolioProfile(models.Model):
     )
     home_intro = models.CharField(
         max_length=255,
-        default="Junior Programmer and Data Science Enthusiast building practical web and analytics projects.",
+        default=(
+            "Junior Programmer and Data Science Enthusiast building practical web "
+            "and analytics projects."
+        ),
     )
     about_intro = models.CharField(
         max_length=255,
@@ -219,6 +206,11 @@ class PortfolioProfile(models.Model):
     def __str__(self):
         return self.full_name
 
+    @classmethod
+    def get_active(cls):
+        """Return the active profile, or an unsaved default one."""
+        return cls.objects.filter(is_active=True).first() or cls()
+
 
 class HeatmapSnapshot(models.Model):
     """Cached heatmap payload and sync metadata for portfolio views."""
@@ -237,9 +229,9 @@ class HeatmapSnapshot(models.Model):
 
 def _delete_file_field(field):
     if field and field.name:
-        storage = field.storage
-        if storage.exists(field.name):
-            storage.delete(field.name)
+        name, storage = field.name, field.storage
+        # Delete only after commit, so a rolled-back save or delete keeps the file.
+        transaction.on_commit(lambda: storage.exists(name) and storage.delete(name))
 
 
 @receiver(post_delete, sender=Project)

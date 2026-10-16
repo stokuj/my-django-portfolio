@@ -1,15 +1,15 @@
 import datetime
+import os
 import shutil
 import tempfile
 from unittest.mock import MagicMock, patch
 
 import requests
-
 from django.core.files.base import ContentFile
 from django.test import TestCase, override_settings
 
 from main.markdown_sync import sync_project_markdown
-from main.models import PortfolioProfile, Project
+from main.models import Project
 
 
 def _make_mock_response(content: bytes, status_code: int = 200) -> MagicMock:
@@ -40,11 +40,6 @@ class MarkdownSyncTests(TestCase):
         shutil.rmtree(cls._media_root, ignore_errors=True)
         super().tearDownClass()
 
-    def setUp(self):
-        profile = PortfolioProfile.objects.get(is_active=True)
-        profile.github_url = "https://github.com/test-user"
-        profile.save(update_fields=["github_url"])
-
     def test_sync_project_markdown_replaces_file_on_success(self):
         project = Project.objects.create(
             title="Sync Success",
@@ -70,6 +65,57 @@ class MarkdownSyncTests(TestCase):
             project.markdown_file.read().decode("utf-8"), "# New Content\n\nUpdated."
         )
         project.markdown_file.close()
+
+    def test_sync_project_markdown_keeps_file_name_across_changed_syncs(self):
+        project = Project.objects.create(
+            title="Sync Stable Name",
+            short_description="sync test",
+            date=datetime.date(2025, 1, 1),
+            blog=True,
+            blog_url="sync-stable-name",
+            github_url="https://github.com/example/sync-stable-name",
+            status="finished",
+        )
+        project.markdown_file.save("sync-stable-name.md", ContentFile(b"# Old"), save=True)
+        name = project.markdown_file.name
+
+        for body in (b"# First", b"# Second"):
+            with patch(
+                "main.markdown_sync.requests.get",
+                return_value=_make_mock_response(body),
+            ):
+                result = sync_project_markdown(project)
+            self.assertTrue(result["updated"])
+            project.refresh_from_db()
+            self.assertEqual(project.markdown_file.name, name)
+            with project.markdown_file.open("rb") as fh:
+                self.assertEqual(fh.read(), body)
+
+    def test_sync_project_markdown_skips_write_when_content_unchanged(self):
+        project = Project.objects.create(
+            title="Sync Unchanged",
+            short_description="sync test",
+            date=datetime.date(2025, 1, 1),
+            blog=True,
+            blog_url="sync-unchanged",
+            github_url="https://github.com/example/sync-unchanged",
+            status="finished",
+        )
+        project.markdown_file.save("sync-unchanged.md", ContentFile(b"# Same"), save=True)
+        name = project.markdown_file.name
+        path = project.markdown_file.path
+        os.utime(path, (1_000_000_000, 1_000_000_000))
+
+        with patch(
+            "main.markdown_sync.requests.get",
+            return_value=_make_mock_response(b"# Same"),
+        ):
+            result = sync_project_markdown(project)
+
+        self.assertTrue(result["updated"])
+        project.refresh_from_db()
+        self.assertEqual(project.markdown_file.name, name)
+        self.assertEqual(os.path.getmtime(path), 1_000_000_000)
 
     def test_sync_project_markdown_keeps_old_file_on_failure(self):
         project = Project.objects.create(
@@ -126,3 +172,60 @@ class MarkdownSyncTests(TestCase):
         project.markdown_file.open("rb")
         self.assertEqual(project.markdown_file.read().decode("utf-8"), "# Old")
         project.markdown_file.close()
+
+    def test_sync_project_markdown_falls_back_to_master_on_404(self):
+        project = Project.objects.create(
+            title="Sync Fallback",
+            short_description="sync test",
+            date=datetime.date(2025, 1, 1),
+            blog=True,
+            blog_url="sync-fallback",
+            github_url="https://github.com/example/sync-fallback",
+            status="finished",
+        )
+
+        with patch(
+            "main.markdown_sync.requests.get",
+            side_effect=[
+                _make_mock_response(b"Not Found", status_code=404),
+                _make_mock_response(b"# From master"),
+            ],
+        ) as get_mock:
+            result = sync_project_markdown(project)
+
+        self.assertTrue(result["updated"])
+        self.assertEqual(
+            result["source_url"],
+            "https://raw.githubusercontent.com/example/sync-fallback/master/README.md",
+        )
+        self.assertEqual(get_mock.call_count, 2)
+        project.refresh_from_db()
+        with project.markdown_file.open("rb") as fh:
+            self.assertEqual(fh.read(), b"# From master")
+
+    def test_sync_project_markdown_rejects_html_body(self):
+        project = Project.objects.create(
+            title="Sync Html",
+            short_description="sync test",
+            date=datetime.date(2025, 1, 1),
+            blog=True,
+            blog_url="sync-html",
+            github_url="https://github.com/example/sync-html",
+            status="finished",
+        )
+        project.markdown_file.save("sync-html.md", ContentFile(b"# Old"), save=True)
+        old_name = project.markdown_file.name
+
+        with patch(
+            "main.markdown_sync.requests.get",
+            return_value=_make_mock_response(b"<!DOCTYPE html><html><body>Login</body></html>"),
+        ):
+            result = sync_project_markdown(project)
+
+        self.assertFalse(result["updated"])
+        self.assertEqual(result["reason"], "download_failed")
+        self.assertIn("HTML", result["error"])
+        project.refresh_from_db()
+        self.assertEqual(project.markdown_file.name, old_name)
+        with project.markdown_file.open("rb") as fh:
+            self.assertEqual(fh.read(), b"# Old")

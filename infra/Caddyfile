@@ -1,30 +1,47 @@
 {
-    auto_https disable_redirects
+	auto_https disable_redirects
 }
 
 # Redirect all HTTP traffic to HTTPS using configured host and port.
 :80 {
-    redir https://{$APP_DOMAIN}:{$CADDY_HTTPS_PORT}{uri} permanent
+	redir https://{$APP_DOMAIN}:{$CADDY_HTTPS_PORT}{uri} permanent
 }
 
 # Redirect HTTPS www -> apex to keep one canonical URL.
 https://{$APP_WWW_DOMAIN} {
-    redir https://{$APP_DOMAIN}:{$CADDY_HTTPS_PORT}{uri} permanent
+	redir https://{$APP_DOMAIN}:{$CADDY_HTTPS_PORT}{uri} permanent
 }
 
 # Main app host (apex domain).
 https://{$APP_DOMAIN} {
- # Static files served directly by Caddy
- handle /static/* {
-     root * /srv
-     file_server
- }
+	request_body {
+		max_size 10MB
+	}
 
- handle /media/* {
-     root * /srv
-     file_server
- }
+	encode zstd gzip
 
- # Django app
- reverse_proxy web:8000
+	# Static and media files served directly by Caddy
+	@files path /static/* /media/*
+	handle @files {
+		root * /srv
+		header X-Content-Type-Options nosniff
+		header /media/* Content-Security-Policy "default-src 'none'; sandbox"
+		file_server
+	}
+
+	redir /favicon.ico /static/images/favicon.svg
+	respond /robots.txt <<TXT
+		User-agent: *
+		Disallow: /admin/
+		Sitemap: https://{$APP_DOMAIN}/sitemap.xml
+
+		TXT 200
+
+	# Second credential in front of Django admin (blocks brute force and PBKDF2 CPU cost)
+	basic_auth /admin* {
+		{$ADMIN_BASIC_USER} {$ADMIN_BASIC_HASH}
+	}
+
+	# Django app
+	reverse_proxy web:8000
 }

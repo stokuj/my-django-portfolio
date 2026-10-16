@@ -3,9 +3,11 @@
         <p class="md:text-left">Educational project</p>
         <p class="font-medium">MIT License</p>
         <p class="md:text-right">
-            <a href="{{ profile_github_base }}/{{ repo_path }}" target="_blank" rel="noopener noreferrer" class="link link-hover">
+            {% if project.github_url %}
+            <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="link link-hover">
                 Source code on GitHub
             </a>
+            {% endif %}
         </p>
     </div>
 </footer>

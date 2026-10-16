@@ -4,30 +4,24 @@ version = "0.2.5"
 description = "My portfolio website, created using Django/TailwindCSS"
 requires-python = ">=3.13,<3.14"
 dependencies = [
-    "asgiref==3.8.1",
-    "bleach==6.2.0",
-    "celery[redis]==5.4.0",
-    "django==5.1.15",
-    "django-environ==0.12.0",
-    "gunicorn==23.0.0",
-    "markdown==3.8.2",
-    "packaging==25.0",
-    "pillow==12.2.0",
-    "psycopg2-binary==2.9.10",
-    "pymdown-extensions==10.16.1",
-    "pyjwt==2.12.0",
-    "requests==2.33.0",
-    "sqlparse==0.5.4",
-    "tzdata==2025.2",
+    "bleach==6.4.0",
+    "celery[redis]==5.6.3",
+    "django==6.1.2",
+    "django-environ==0.14.0",
+    "gunicorn==26.2.0",
+    "markdown==3.11.1",
+    "pillow==12.3.0",
+    "psycopg[binary]==3.3.6",
+    "pymdown-extensions==12.3",
+    "pyjwt>=2.15.0",
+    "requests==2.34.2",
+    "sqlparse>=0.6.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "ruff==0.11.10",
+    "ruff==0.17.1",
 ]
-
-[tool.uv]
-pip = { upgrade = true }
 
 [tool.setuptools]
 packages = ["main", "config"]
@@ -38,6 +32,8 @@ packages = ["main", "config"]
 [tool.ruff]
 line-length = 100
 target-version = "py313"
+extend-exclude = ["django/main/migrations"]
+src = ["django"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]

@@ -10,22 +10,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-from pathlib import Path
 import os
-from celery.schedules import crontab
+from pathlib import Path
+
 import environ
+from celery.schedules import crontab
 from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = BASE_DIR.parent
 
-# load .env
-env = environ.Env(
-    # ustaw domyślne typy i wartości
-    DEBUG=(bool, False)
-)
-# wskazujemy ścieżkę do .env
+# load .env from the project root
+env = environ.Env()
 env.read_env(PROJECT_ROOT / ".env")
 
 # Quick-start development settings - unsuitable for production
@@ -40,7 +37,9 @@ if not SECRET_KEY:
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
 
 # Allowed hosts from .env
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
+ALLOWED_HOSTS = [
+    h.strip() for h in env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"]) if h.strip()
+]
 
 # Application definition
 
@@ -52,6 +51,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sitemaps",
 ]
 
 MIDDLEWARE = [
@@ -70,9 +70,6 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            BASE_DIR / "templates/",
-        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -104,7 +101,9 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+CSRF_TRUSTED_ORIGINS = [
+    h.strip() for h in env.list("CSRF_TRUSTED_ORIGINS", default=[]) if h.strip()
+]
 
 DATABASES = {
     "default": {
@@ -114,11 +113,10 @@ DATABASES = {
         "PASSWORD": env("DB_PASSWORD", default=""),
         "HOST": env("DB_HOST", default=""),
         "PORT": env("DB_PORT", default=""),
+        "CONN_MAX_AGE": 60,
+        "CONN_HEALTH_CHECKS": True,
     }
 }
-# print(ALLOWED_HOSTS)
-# for key, value in DATABASES['default'].items():
-#     print(f"{key}: {value}")
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -165,10 +163,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-]
-
 GITHUB_HEATMAP_TOKEN = env("GITHUB_HEATMAP_TOKEN", default="").strip()
 HEATMAP_CACHE_TTL_MINUTES = env.int("HEATMAP_CACHE_TTL_MINUTES", default=60)
 
@@ -176,9 +170,8 @@ HEATMAP_CACHE_TTL_MINUTES = env.int("HEATMAP_CACHE_TTL_MINUTES", default=60)
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, "media")
-DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB limit for file uploads
-
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"  # Using default Django storage
+# 5 MB cap on non-file request data; Caddy caps whole request bodies at 10 MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
 LOGGING = {
     "version": 1,
@@ -204,20 +197,17 @@ CELERY_BROKER_URL = env(
     "CELERY_BROKER_URL",
     default="redis://localhost:6379/0" if DEBUG else "redis://redis:6379/0",
 )
-CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default=CELERY_BROKER_URL)
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TASK_IGNORE_RESULT = True
+CELERY_TASK_TIME_LIMIT = 600
+CELERY_TASK_SOFT_TIME_LIMIT = 540
 CELERY_BEAT_SCHEDULE = {
     "refresh-portfolio-heatmap-hourly": {
         "task": "main.tasks.refresh_portfolio_heatmap_cache_task",
         "schedule": crontab(minute=0),
-        "kwargs": {"schedule_next": False},
     },
-    "sync-project-markdowns-hourly": {
+    "sync-project-markdowns-every-2h": {
         "task": "main.tasks.sync_project_markdowns_task",
         "schedule": crontab(hour="*/2", minute=0),
     },

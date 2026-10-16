@@ -1,25 +1,19 @@
 from django.contrib import admin
+
 from .models import (
     PageView,
     PortfolioProfile,
     Project,
     Tag,
     TaskExecutionLog,
-    TaskExecutionStatus,
 )
 
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = (
-        "title",
-        "status",
-        "blog",
-        "blog_url",
-        "markdown_file",
-        "tech_stack",
-        "tools_libraries",
-    )
+    list_display = ("title", "status", "blog", "blog_url", "date")
+    list_filter = ("status", "blog", "tags")
+    filter_horizontal = ("tags",)
     search_fields = ("title", "blog_url")
 
 
@@ -60,32 +54,6 @@ class PortfolioProfileAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(TaskExecutionStatus)
-class TaskExecutionStatusAdmin(admin.ModelAdmin):
-    list_display = (
-        "task_name",
-        "last_status",
-        "last_total",
-        "last_updated",
-        "last_failed",
-        "last_run_at",
-        "last_success_at",
-        "last_failure_at",
-    )
-    readonly_fields = (
-        "task_name",
-        "last_status",
-        "last_run_at",
-        "last_success_at",
-        "last_failure_at",
-        "last_total",
-        "last_updated",
-        "last_failed",
-        "last_error",
-    )
-    search_fields = ("task_name",)
-
-
 @admin.register(TaskExecutionLog)
 class TaskExecutionLogAdmin(admin.ModelAdmin):
     list_display = (
@@ -101,16 +69,32 @@ class TaskExecutionLogAdmin(admin.ModelAdmin):
         "task_name",
         "last_status",
         "last_run_at",
-        "last_success_at",
-        "last_failure_at",
         "last_total",
         "last_updated",
         "last_failed",
         "last_error",
         "created_at",
     )
+    list_filter = ("task_name", "last_status")
+    date_hierarchy = "created_at"
     search_fields = ("task_name", "last_error")
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(PageView)
+class PageViewAdmin(admin.ModelAdmin):
+    readonly_fields = ("count",)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 admin.site.register(Tag)
-admin.site.register(PageView)
