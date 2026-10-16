@@ -344,6 +344,6 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-114: Change "Python 3.13+" to "Python 3.13" at README.md:106.
 - [x] F-043: Done before Phase 1 (R5): `docs/superpowers/` removed, this plan moved to `docs/audit/2026-10-14/PLAN.md`.
 - [x] Q21: `git rm -r docs/audit/2026-10-14/find docs/audit/2026-10-14/verify`; keep `SYNTHESIS.md`, `completeness.md`, `README.md`, `DECISIONS.md` and this plan. Drop the `verify/` pointer at the top of this file.
-- [ ] Final sweep: update CLAUDE.md, README.md and the docs for every structural change made in Phases 1-11 (Makefile targets, removed scripts, healthchecks, deploy steps).
+- [x] Final sweep: update CLAUDE.md, README.md and the docs for every structural change made in Phases 1-11 (Makefile targets, removed scripts, healthchecks, deploy steps).
 
 **STOP: final report.**
