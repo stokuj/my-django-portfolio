@@ -299,7 +299,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-048: Add a `pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB}` healthcheck on db (both compose files, interval 5s, retries 12), with `db: {condition: service_healthy}` for web, worker and beat. Delete the `entrypoint:` lines, `wait-for-db.sh`, Dockerfile:29-30 and `postgresql-client`, and drop the worker `sleep 45` and `WORKER_START_DELAY_SECONDS` (`.env.example:47`).
 - [x] F-009: Gunicorn command `--workers 1 --threads 4 --timeout 60 --access-logfile -` (prod.yml:46) (A8).
 - [x] F-024: VisitorCountMiddleware checks `request.COOKIES.get("has_visited")` and sets it on the response with `set_cookie(..., max_age=settings.SESSION_COOKIE_AGE, secure=settings.SESSION_COOKIE_SECURE, httponly=True, samesite="Lax")` instead of the session. Run test_middleware.py.
-- [ ] F-062: `CELERY_TASK_TIME_LIMIT = 600` and `CELERY_TASK_SOFT_TIME_LIMIT = 540` in settings.
+- [x] F-062: `CELERY_TASK_TIME_LIMIT = 600` and `CELERY_TASK_SOFT_TIME_LIMIT = 540` in settings.
 - [ ] F-078: In `_log_task_execution`, after the create, `TaskExecutionLog.objects.filter(created_at__lt=timezone.now() - timedelta(days=90)).delete()`.
 - [ ] F-010: DO droplet backups are in the bootstrap runbook (3i). Agent: add a restore note to docs/implementation.md and a pre-deploy `pg_dump -Fc` to `~/backups/pre-deploy-$(date +%F-%H%M).dump` plus `find ~/backups -mtime +14 -delete` in the deploy script before `up`.
 - [ ] F-032: The DO disk alert is in the bootstrap runbook (3i). Agent: note in docs/implementation.md that disk alerting lives in DO Monitoring.
