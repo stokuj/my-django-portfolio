@@ -270,7 +270,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-075: Render `aria-pressed` in the template (true on All, false on tags) and set it in the loop at projects-filters.js:76.
 - [x] F-080: Add `aria-current="page"` via `request.resolver_match.url_name` on the 6 nav links and `aria-hidden="true"` on the SVG at :167. Delete the duplicate footer link at :158.
 - [x] F-083: In timeline_section.html use `<details class="collapse ..." name="timeline-accordion" {% if section.checked %}open{% endif %}>` with `<summary class="collapse-title">`.
-- [ ] F-085: The heatmap grid gets `role="img"` and an aria-label summary set in renderGrid. Add `aria-hidden` on the month row, drop the per-cell aria-label (keep title), and add `role="alert"` on the error box.
+- [x] F-085: The heatmap grid gets `role="img"` and an aria-label summary set in renderGrid. Add `aria-hidden` on the month row, drop the per-cell aria-label (keep title), and add `role="alert"` on the error box.
 - [ ] F-127: Add `{% if sidebar_project.id == project.id %}aria-current="page"{% endif %}` at blog_projects_sidebar.html:8.
 - [ ] F-110: In base.html add `<meta name="description" content="{% block meta_description %}{{ profile_home_intro }}{% endblock %}">`, overridden in about (profile_about_intro) and detail (project.short_description).
 - [ ] F-121: Add og:title (own `og_title` block), og:description, og:type, og:url (`request.build_absolute_uri`), an absolute og:image (thumbnail or default image) and `twitter:card`. Override them on detail.
