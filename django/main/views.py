@@ -182,17 +182,6 @@ def _build_heatmap_snapshot_response(snapshot):
     )
 
 
-def _schedule_next_heatmap_refresh():
-    """Best-effort enqueue of next asynchronous heatmap refresh task."""
-    try:
-        refresh_portfolio_heatmap_cache_task.apply_async(
-            kwargs={"schedule_next": False},
-            countdown=3600,
-        )
-    except Exception:
-        return
-
-
 def _calculate_last_30_days_total(payload):
     """Sum contribution counts from payload days within last 30 days."""
     weeks = payload.get("weeks") if isinstance(payload, dict) else None
@@ -437,7 +426,7 @@ def run_markdown_sync_task(request):
 def run_heatmap_refresh_task(request):
     """Enqueue immediate heatmap refresh task from admin tools."""
     try:
-        async_result = refresh_portfolio_heatmap_cache_task.delay(schedule_next=False)
+        async_result = refresh_portfolio_heatmap_cache_task.delay()
     except Exception:
         messages.error(request, "Failed to enqueue heatmap refresh task.")
     else:

@@ -77,7 +77,7 @@ class ViewsTest(TestCase):
             schedule["task"],
             "main.tasks.refresh_portfolio_heatmap_cache_task",
         )
-        self.assertEqual(schedule["kwargs"], {"schedule_next": False})
+        self.assertNotIn("kwargs", schedule)
 
     def test_about_view(self):
         response = self.client.get(reverse("about"))
@@ -210,7 +210,7 @@ class ViewsTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("about"))
-        delay_mock.assert_called_once_with(schedule_next=False)
+        delay_mock.assert_called_once_with()
 
     @patch("main.views.get_configured_github_token", return_value="gho_visible_token")
     def test_about_shows_heatmap_for_anonymous_when_configured(self, _token_mock):

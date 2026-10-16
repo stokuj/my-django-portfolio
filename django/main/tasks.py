@@ -105,7 +105,7 @@ def sync_project_markdowns_task():
 
 
 @shared_task(ignore_result=True)
-def refresh_portfolio_heatmap_cache_task(schedule_next=False):
+def refresh_portfolio_heatmap_cache_task():
     status, _ = TaskExecutionStatus.objects.get_or_create(
         task_name=REFRESH_HEATMAP_TASK_NAME
     )
@@ -133,7 +133,6 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
             ]
         )
         _log_task_execution(status)
-        _maybe_schedule_next_refresh(schedule_next)
         return {"ok": False, "error": message}
 
     payload, error = fetch_heatmap_data()
@@ -158,7 +157,6 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
             ]
         )
         _log_task_execution(status)
-        _maybe_schedule_next_refresh(schedule_next)
         return {"ok": False, "error": error}
 
     snapshot = update_snapshot_with_payload(payload)
@@ -181,7 +179,6 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
         ]
     )
     _log_task_execution(status)
-    _maybe_schedule_next_refresh(schedule_next)
     return {
         "ok": True,
         "username": snapshot.username,
@@ -236,16 +233,6 @@ def check_disk_usage_task():
         ]
     )
     _log_task_execution(status)
-
-
-def _maybe_schedule_next_refresh(schedule_next):
-    if not schedule_next:
-        return
-
-    refresh_portfolio_heatmap_cache_task.apply_async(
-        kwargs={"schedule_next": True},
-        countdown=3600,
-    )
 
 
 def _log_task_execution(status):
