@@ -24,8 +24,7 @@ my_django_portfolio/
 |  |- Caddyfile
 |  |- docker-compose.dev.yml
 |  |- docker-compose.prod.yml
-|  |- Dockerfile
-|  `- scripts/            # .env and status helper scripts
+|  `- Dockerfile
 |- Makefile
 |- package.json
 |- pyproject.toml
@@ -38,16 +37,17 @@ my_django_portfolio/
 - Blog routing by slug (`/blog/<slug>/`)
 - Tag and status-based project organization
 - Responsive UI built with Tailwind CSS + DaisyUI
-- Visitor counter middleware and profile-driven site metadata
+- Visitor counter middleware (once per browser, via a cookie) and profile-driven site metadata
+- SEO: meta description, Open Graph/Twitter tags, `robots.txt` and `sitemap.xml`
 - Background jobs with Celery worker + beat scheduler
-- Scheduled markdown synchronization (`main.tasks.sync_project_markdowns_task`)
-- GitHub contribution heatmap data endpoint (`/about/heatmap-data/`) with cached snapshot storage
+- Scheduled jobs: markdown sync (`main.tasks.sync_project_markdowns_task`) every 2 hours, heatmap refresh every hour, disk usage check daily
+- GitHub contribution heatmap data endpoint (`/about/heatmap-data/`) that serves the stored snapshot and refreshes it in the background
 
 ## Tech Stack
 
-- Python 3.13, Django 5.1
-- PostgreSQL, Redis
-- Celery
+- Python 3.13, Django 6.1
+- PostgreSQL 18, Redis
+- Celery 5.6
 - Tailwind CSS v4 with DaisyUI
 - Gunicorn, Caddy
 - Docker Compose
@@ -71,7 +71,7 @@ All backgrounds, text, and cards switch to dark colors. The accent color shifts 
 <img width="2267" height="1486" alt="image" src="https://github.com/user-attachments/assets/21b6ea0b-0625-4202-9176-3b4e24ed108b" />
 
 ### About when logged as admin (page owner)
-The about page with extra admin controls visible, including a Scheduled Jobs panel showing Celery tasks (heatmap refresh, markdown sync) and an Executed Tasks panel with task history and run timestamps.
+The about page with extra admin controls visible, including a Scheduled Jobs panel showing Celery tasks (heatmap refresh, markdown sync, disk usage check) and an Executed Tasks panel with task history and run timestamps.
 <img width="2267" height="2843" alt="image" src="https://github.com/user-attachments/assets/17c53ec4-56ae-4acb-8e3b-da50f7059f4c" />
 
 ## Quick Start (Docker)
