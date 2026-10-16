@@ -27,6 +27,11 @@ class TagModelTest(TestCase):
         tag = Tag.objects.create(name="django")
         self.assertEqual(tag.name, "DJANGO")
 
+    def test_full_clean_rejects_case_only_duplicate(self):
+        Tag.objects.create(name="python")
+        with self.assertRaises(ValidationError):
+            Tag(name="Python").full_clean()
+
 
 class ProjectModelTest(TestCase):
     def setUp(self):

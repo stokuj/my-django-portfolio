@@ -44,6 +44,10 @@ class Tag(models.Model):
 
     name = models.CharField(max_length=50, unique=True)
 
+    def clean(self):
+        # Uppercase before validate_unique so the admin reports duplicates instead of a 500.
+        self.name = self.name.upper()
+
     def save(self, *args, **kwargs):
         self.name = self.name.upper()  # Zamiana na wielkie litery przed zapisem
         super().save(*args, **kwargs)
