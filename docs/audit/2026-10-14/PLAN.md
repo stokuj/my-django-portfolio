@@ -12,7 +12,7 @@
 - **Never touch `.env`** (do not read, edit, copy or create it). `.env.example` may be edited where a task says so.
 - Branches are created from `dev` (`git switch dev && git switch -c <branch>`). Do not push, merge, approve or open PRs unless the owner asks. Never touch `main`.
 - **[OWNER]** tasks need the server, the DigitalOcean console or GitHub secrets. The agent prepares the instructions and does not execute them.
-- **Production is off** (old droplet archived, a new one comes later). Server-side [OWNER] steps go into the first-deploy checklist in `docs/implementation.md`, not into a wait. Do not open `dev → main` PRs until the new droplet exists.
+- **Production is off** (old droplet archived, a new one comes later). Server-side [OWNER] steps go into the "New droplet bootstrap" list in `docs/implementation.md` (it absorbed the first-deploy checklist in 3i), not into a wait. Do not open `dev → main` PRs until the new droplet exists.
 - When a task changes compose files, the Makefile or workflows, update `tests/test_operational_files.py` in the same commit (its string-count tests break easily; see F-053).
 - Priority note: the three high findings are F-002 (Phase 1), F-004 and F-008 (Phase 4). Each is S effort. F-004 and F-008 stay in Phase 4.
 
@@ -136,7 +136,7 @@ Files: `infra/Dockerfile`, `pyproject.toml`
 ### 3i. PostgreSQL 18 on a fresh database (`chore/deps-postgres-18`), risk medium
 No data migration (R2): the new database starts empty on dev and on the new droplet; the owner re-enters projects, tags, profile and thumbnails in admin, and heatmap and blog markdown refill from GitHub.
 - [x] F-007: Use `image: postgres:18` in both compose files. Mount the data volume at `/var/lib/postgresql` (the postgres:18 image moved PGDATA). Use new volume names (`postgres18_data`, `postgres18_dev_data`) so the old PG13 volumes stay untouched; never run `docker volume rm`. Check with `make dev-up` that db starts and `migrate` runs on the empty volume.
-- [ ] F-007 (runbook): Write a "New droplet bootstrap" section in `docs/implementation.md`: create the droplet with DO backups on, add the DO Monitoring alert (disk > 85%, email), install Docker, clone the repo, write the server `.env` (incl. ADMIN_BASIC_USER/HASH), set the GitHub secrets (SERVER_HOST, SERVER_USER, SSH_PRIVATE_KEY, SERVER_SSH_FINGERPRINT), run the first deploy, `createsuperuser`, re-enter content in admin, trigger both sync jobs from /about, then delete GHCR_PAT. Merge in the first-deploy checklist items from Phases 2 and 10.
+- [x] F-007 (runbook): Write a "New droplet bootstrap" section in `docs/implementation.md`: create the droplet with DO backups on, add the DO Monitoring alert (disk > 85%, email), install Docker, clone the repo, write the server `.env` (incl. ADMIN_BASIC_USER/HASH), set the GitHub secrets (SERVER_HOST, SERVER_USER, SSH_PRIVATE_KEY, SERVER_SSH_FINGERPRINT), run the first deploy, `createsuperuser`, re-enter content in admin, trigger both sync jobs from /about, then delete GHCR_PAT. Merge in the first-deploy checklist items from Phases 2 and 10.
 
 ### 3j. Django 6.1 (`chore/deps-django-6.1`), risk medium, after 3i
 - [ ] F-011: Pin `django==6.1.2` (or the latest 6.1.x on PyPI) and run `uv lock --upgrade-package django`. Read the 6.0 and 6.1 release notes for removals. Run `make verify` and also run the suite against Postgres 18 locally (`DB_ENGINE=django.db.backends.postgresql` via dev compose), because CI uses SQLite. Then run `manage.py check --deploy`.
