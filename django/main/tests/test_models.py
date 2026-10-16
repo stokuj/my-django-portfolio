@@ -4,6 +4,7 @@ import tempfile
 
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError
 from django.test import TestCase, override_settings
 
@@ -177,6 +178,26 @@ class ProjectModelTest(TestCase):
         )
 
         project.full_clean()
+
+    def test_full_clean_rejects_non_utf8_markdown_and_non_string_lists(self):
+        project = Project(
+            title="Bad Content Project",
+            short_description="Project with invalid file and lists",
+            blog=True,
+            blog_url="bad-content-project",
+            markdown_file=SimpleUploadedFile("readme.md", b"\xff\xfe bad"),
+            tech_stack="Python",
+            tools_libraries=["pytest", 3],
+            status="planned",
+        )
+
+        with self.assertRaises(ValidationError) as ctx:
+            project.full_clean()
+
+        self.assertEqual(
+            set(ctx.exception.message_dict),
+            {"markdown_file", "tech_stack", "tools_libraries"},
+        )
 
 
 class PageViewModelTest(TestCase):
