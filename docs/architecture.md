@@ -3,7 +3,7 @@
 ## System Overview
 
 The application is a Django-based portfolio/blog platform with asynchronous background processing.
-Core runtime services are orchestrated with Docker Compose:
+In production (`infra/docker-compose.prod.yml`), the runtime services are orchestrated with Docker Compose:
 
 - `web`: Django app served by Gunicorn.
 - `db`: PostgreSQL database.
@@ -11,6 +11,8 @@ Core runtime services are orchestrated with Docker Compose:
 - `worker`: Celery worker for asynchronous jobs.
 - `beat`: Celery beat scheduler for periodic jobs.
 - `caddy`: reverse proxy and static/media serving.
+
+Dev compose (`infra/docker-compose.dev.yml`) has no Caddy; `web` runs `runserver`, published on `127.0.0.1:8000`.
 
 The heatmap feature is implemented inside Django and fetches GitHub data directly.
 

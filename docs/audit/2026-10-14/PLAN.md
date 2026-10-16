@@ -338,7 +338,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 
 - [x] F-098 + F-130: Delete `healthcheck_task`, its test (test_tasks.py:337-338 and the import at :14) and implementation.md:36. Document all 3 beat entries (heatmap hourly, markdown every 2h, disk daily 06:00) in implementation.md, architecture.md:146 and the CLAUDE.md beat schedule.
 - [x] F-063: Rename the beat key to `sync-project-markdowns-every-2h` (settings.py:220).
-- [ ] F-129: In architecture.md:6, say "In production (infra/docker-compose.prod.yml)" and add one line on dev compose (no Caddy, runserver on 127.0.0.1:8000).
+- [x] F-129: In architecture.md:6, say "In production (infra/docker-compose.prod.yml)" and add one line on dev compose (no Caddy, runserver on 127.0.0.1:8000).
 - [ ] F-131: In the frontend.md diagram, add Errors --> Hero, list both blog sidebar partials, and add a `HeroContent["components/hero/*_content.html"]` node.
 - [ ] F-113: Drop "The main landing page" at README.md:67.
 - [ ] F-114: Change "Python 3.13+" to "Python 3.13" at README.md:106.
