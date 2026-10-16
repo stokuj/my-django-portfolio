@@ -139,7 +139,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-007 (runbook): Write a "New droplet bootstrap" section in `docs/implementation.md`: create the droplet with DO backups on, add the DO Monitoring alert (disk > 85%, email), install Docker, clone the repo, write the server `.env` (incl. ADMIN_BASIC_USER/HASH), set the GitHub secrets (SERVER_HOST, SERVER_USER, SSH_PRIVATE_KEY, SERVER_SSH_FINGERPRINT), run the first deploy, `createsuperuser`, re-enter content in admin, trigger both sync jobs from /about, then delete GHCR_PAT. Merge in the first-deploy checklist items from Phases 2 and 10.
 
 ### 3j. Django 6.1 (`chore/deps-django-6.1`), risk medium, after 3i
-- [ ] F-011: Pin `django==6.1.2` (or the latest 6.1.x on PyPI) and run `uv lock --upgrade-package django`. Read the 6.0 and 6.1 release notes for removals. Run `make verify` and also run the suite against Postgres 18 locally (`DB_ENGINE=django.db.backends.postgresql` via dev compose), because CI uses SQLite. Then run `manage.py check --deploy`.
+- [x] F-011: Pin `django==6.1.2` (or the latest 6.1.x on PyPI) and run `uv lock --upgrade-package django`. Read the 6.0 and 6.1 release notes for removals. Run `make verify` and also run the suite against Postgres 18 locally (`DB_ENGINE=django.db.backends.postgresql` via dev compose), because CI uses SQLite. Then run `manage.py check --deploy`.
 
 **End of phase: one report for all sub-steps.**
 
