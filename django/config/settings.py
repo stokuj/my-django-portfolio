@@ -41,7 +41,9 @@ if not SECRET_KEY:
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
 
 # Allowed hosts from .env
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
+ALLOWED_HOSTS = [
+    h.strip() for h in env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"]) if h.strip()
+]
 
 # Application definition
 
@@ -105,7 +107,9 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+CSRF_TRUSTED_ORIGINS = [
+    h.strip() for h in env.list("CSRF_TRUSTED_ORIGINS", default=[]) if h.strip()
+]
 
 DATABASES = {
     "default": {
