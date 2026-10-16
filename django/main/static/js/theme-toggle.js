@@ -4,9 +4,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const themeColorMeta = document.querySelector('meta[name="theme-color"]');
     const defaultTheme = "fantasy3";
     const allowedThemes = new Set(["fantasy3", "dim2"]);
-    const legacyThemeMap = { fantasy2: "fantasy3" };
-    const savedThemeRaw = localStorage.getItem("theme");
-    const savedTheme = legacyThemeMap[savedThemeRaw] || savedThemeRaw;
+
+    // Storage can throw (blocked cookies, private mode); the theme then lasts for the session only.
+    const saveTheme = (theme) => {
+        try {
+            localStorage.setItem("theme", theme);
+        } catch (e) {}
+    };
+    let savedTheme = null;
+    try {
+        savedTheme = localStorage.getItem("theme");
+    } catch (e) {}
 
     const updateThemeColor = () => {
         if (!themeColorMeta) {
@@ -25,12 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (ctl && ctl.value === savedTheme) {
             ctl.checked = true;
         }
-        if (savedThemeRaw !== savedTheme) {
-            localStorage.setItem("theme", savedTheme);
-        }
     } else {
         root.setAttribute("data-theme", defaultTheme);
-        localStorage.setItem("theme", defaultTheme);
+        saveTheme(defaultTheme);
         updateThemeColor();
     }
 
@@ -41,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctl.addEventListener("change", (event) => {
         const theme = event.target.checked ? event.target.value : defaultTheme;
         root.setAttribute("data-theme", theme);
-        localStorage.setItem("theme", theme);
+        saveTheme(theme);
         updateThemeColor();
     });
 });

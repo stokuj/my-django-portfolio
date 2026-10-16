@@ -264,7 +264,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - **Verify:** `make verify`; `make dev-up` and check /, /projects/, /about and a blog page in light and dark themes and at 375px; Caddy validate.
 - **Risk:** low.
 
-- [ ] F-028: Add an inline head script in base.html before the stylesheet: `try{var t=localStorage.getItem("theme");if(t==="dim2")document.documentElement.dataset.theme=t}catch(e){}`. Wrap the storage calls in theme-toggle.js in try/catch and delete `legacyThemeMap`.
+- [x] F-028: Add an inline head script in base.html before the stylesheet: `try{var t=localStorage.getItem("theme");if(t==="dim2")document.documentElement.dataset.theme=t}catch(e){}`. Wrap the storage calls in theme-toggle.js in try/catch and delete `legacyThemeMap`.
 - [ ] F-036: Delete the skeleton (index.html:40-60) and `hidden` (:62). In projects-filters.js delete :8, :89-90 and the skeleton and grid parts of the :11 guard.
 - [ ] F-074: Remove the debounce wrappers and call `applyFilters` directly on input and at :69 and :84.
 - [ ] F-075: Render `aria-pressed` in the template (true on All, false on tags) and set it in the loop at projects-filters.js:76.

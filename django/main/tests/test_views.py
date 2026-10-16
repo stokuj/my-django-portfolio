@@ -444,7 +444,7 @@ class ViewsTest(TestCase):
         response = self.client.get(reverse("blog_detail", args=[project.blog_url]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "<h1>Title</h1>", html=True)
-        self.assertNotContains(response, "<script>")
+        self.assertNotIn("<script", response.context["blog_markdown_html"])
 
     def test_blog_detail_sanitizes_unsafe_image_attributes(self):
         markdown_file = SimpleUploadedFile(
