@@ -309,7 +309,7 @@ def projects(request):
     """Render projects listing page with tag filters metadata."""
     projects = Project.objects.order_by("-date", "-id").prefetch_related("tags")
 
-    # Pobieramy wszystkie unikalne tagi
+    # All tags, for the filter bar
     all_tags = Tag.objects.all().order_by("name")
 
     return render(

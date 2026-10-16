@@ -21,12 +21,8 @@ from django.core.exceptions import ImproperlyConfigured
 BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = BASE_DIR.parent
 
-# load .env
-env = environ.Env(
-    # ustaw domyślne typy i wartości
-    DEBUG=(bool, False)
-)
-# wskazujemy ścieżkę do .env
+# load .env from the project root
+env = environ.Env()
 env.read_env(PROJECT_ROOT / ".env")
 
 # Quick-start development settings - unsuitable for production
@@ -73,9 +69,6 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            BASE_DIR / "templates/",
-        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -121,9 +114,6 @@ DATABASES = {
         "PORT": env("DB_PORT", default=""),
     }
 }
-# print(ALLOWED_HOSTS)
-# for key, value in DATABASES['default'].items():
-#     print(f"{key}: {value}")
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -170,10 +160,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-]
-
 GITHUB_HEATMAP_TOKEN = env("GITHUB_HEATMAP_TOKEN", default="").strip()
 HEATMAP_CACHE_TTL_MINUTES = env.int("HEATMAP_CACHE_TTL_MINUTES", default=60)
 
@@ -183,9 +169,6 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, "media")
 # 5 MB cap on non-file request data; Caddy caps whole request bodies at 10 MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
-
-# Using default Django storage
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 LOGGING = {
     "version": 1,
@@ -211,10 +194,6 @@ CELERY_BROKER_URL = env(
     "CELERY_BROKER_URL",
     default="redis://localhost:6379/0" if DEBUG else "redis://redis:6379/0",
 )
-CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default=CELERY_BROKER_URL)
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TASK_IGNORE_RESULT = True

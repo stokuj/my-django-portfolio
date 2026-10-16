@@ -141,7 +141,7 @@ erDiagram
 
 Celery is used for jobs that should not block HTTP requests.
 
-- Broker/backend: Redis (`CELERY_BROKER_URL`, `CELERY_RESULT_BACKEND`).
+- Broker: Redis (`CELERY_BROKER_URL`); task results are not stored.
 - Periodic schedule: `CELERY_BEAT_SCHEDULE` in `django/config/settings.py`.
 - Notable periodic job: `main.tasks.sync_project_markdowns_task`.
 - Task observability: `TaskExecutionStatus` and `TaskExecutionLog` store latest and historical run metadata.
