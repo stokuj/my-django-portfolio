@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:13
+    image: postgres:18
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${DOCKER_DB_NAME}
@@ -9,7 +9,7 @@ services:
     ports:
       - "127.0.0.1:15432:5432"
     volumes:
-      - postgres_dev_data:/var/lib/postgresql/data
+      - postgres18_dev_data:/var/lib/postgresql
     networks:
       - app-network
 
@@ -127,6 +127,6 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_dev_data:
+  postgres18_dev_data:
   media_dev_volume:
   celerybeat_dev_schedule:

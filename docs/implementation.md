@@ -87,7 +87,7 @@ For the visual template map, see [`frontend.md`](frontend.md).
 
 Production services are defined in `infra/docker-compose.prod.yml`:
 
-- `db`: PostgreSQL.
+- `db`: PostgreSQL 18 (volume `postgres18_data` mounted at `/var/lib/postgresql`).
 - `redis`: broker/result backend for Celery.
 - `web`: Django + Gunicorn.
 - `worker`: Celery worker.
@@ -103,13 +103,25 @@ Production services are defined in `infra/docker-compose.prod.yml`:
 
 Local development uses `infra/docker-compose.dev.yml` with `db`, `redis`, `web`, `worker`, and `beat`. It does not include Caddy; Django is exposed directly on port `8000` via `runserver`.
 
-## First-deploy checklist (new droplet)
+## New droplet bootstrap
 
-Owner steps that need the server or GitHub secrets. Do them before the first deploy unless noted.
+Owner steps, in order, for the new droplet. They need the server, the DigitalOcean console or GitHub secrets. Nothing is migrated from the archived droplet: PostgreSQL 18 starts on an empty `postgres18_data` volume, content is re-entered in admin, and heatmap and blog markdown refill from GitHub.
 
-- [ ] Set `ADMIN_BASIC_USER` and `ADMIN_BASIC_HASH` in the server `.env` (hash from `docker run --rm caddy:2 caddy hash-password`, single-quoted). Without them Caddy will not start.
-- [ ] Add the `SERVER_SSH_FINGERPRINT` GitHub secret: the SHA256 value from `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub | awk '{print $2}'`, run on the droplet (not via `ssh-keyscan`). Update it if the droplet or its host key changes.
-- [ ] After the first successful deploy (GHCR login now uses the job's `GITHUB_TOKEN`), delete the `GHCR_PAT` and `GHCR_USERNAME` GitHub secrets.
+1. [ ] Create the droplet with DigitalOcean backups enabled.
+2. [ ] Add a DigitalOcean Monitoring alert: disk usage above 85%, notify by email.
+3. [ ] Install Docker Engine with the Compose plugin and let `SERVER_USER` run `docker`.
+4. [ ] Clone the repository to `~/my_django_portfolio` (the deploy job runs from there).
+5. [ ] Write the server `.env` from `.env.example`: `DJANGO_DEBUG=False`, a long random `SECRET_KEY`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, `APP_DOMAIN`/`APP_WWW_DOMAIN`, new `DOCKER_DB_*` credentials, `GITHUB_HEATMAP_TOKEN` and the `PORTFOLIO_*` values.
+6. [ ] Set `ADMIN_BASIC_USER` and `ADMIN_BASIC_HASH` in the server `.env` (hash from `docker run --rm caddy:2 caddy hash-password`, single-quoted). Without them Caddy will not start.
+7. [ ] Set the GitHub secrets `SERVER_HOST`, `SERVER_USER` and `SSH_PRIVATE_KEY`.
+8. [ ] Add the `SERVER_SSH_FINGERPRINT` GitHub secret: the SHA256 value from `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub | awk '{print $2}'`, run on the droplet (not via `ssh-keyscan`). Update it if the droplet or its host key changes.
+9. [ ] Run the first deploy: merge the `dev → main` PR. The `db` service initialises an empty PostgreSQL 18 database and `web` runs `migrate`.
+10. [ ] Create the admin account: `docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml exec web python manage.py createsuperuser`.
+11. [ ] Re-enter projects, tags, the portfolio profile and thumbnails in admin.
+12. [ ] Log in and trigger both sync jobs on `/about` ("Sync Heatmap" and "Sync Markdown").
+13. [ ] After the first successful deploy (GHCR login uses the job's `GITHUB_TOKEN`), delete the `GHCR_PAT` and `GHCR_USERNAME` GitHub secrets.
+
+Phase 10 of the 2026-10-14 audit adds its owner steps to this list.
 
 ## Development and Verification Workflow
 
