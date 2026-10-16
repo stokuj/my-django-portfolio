@@ -243,7 +243,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - **Verify:** `make verify` (the new tests fail when the guarded line is reverted; spot-check one).
 - **Risk:** low.
 
-- [ ] F-031: Test that `sync_project_markdown` raising RuntimeError for 1 of 2 projects gives PARTIAL_SUCCESS with `task_exception`, and that the heatmap fetch returning `(None, "boom")` gives FAILURE, a log row and `snapshot.last_error`. Skip the blog_slug test (removed in F-076).
+- [x] F-031: Test that `sync_project_markdown` raising RuntimeError for 1 of 2 projects gives PARTIAL_SUCCESS with `task_exception`, and that the heatmap fetch returning `(None, "boom")` gives FAILURE, a log row and `snapshot.last_error`. Skip the blog_slug test (removed in F-076).
 - [ ] F-037: Using the existing `_make_mock_response`, test a 404 on the first candidate URL with a 200 on the second, and an HTML body giving download_failed with the old file kept. (The Content-Length block is already gone via F-070.)
 - [ ] F-039: Patch `main.views.shutil.disk_usage` (fake as in test_tasks.py:342-347): 0.96 GB free gives `critical`, 1.96 GB gives `warning`.
 - [ ] F-066: Turn the 401 test into a subTest over 401 -> GitHubAuthError, 403 -> GitHubAuthError, 500 -> GitHubUpstreamError, and add one test for the "temporarily unavailable" mapping (adapted to the F-023 client).
