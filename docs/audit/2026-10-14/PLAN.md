@@ -153,7 +153,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - **Verify:** `make verify`, plus a manual check of the mobile menu in Playwright WebKit or on an iPhone, and visual checks of the headings and titles.
 - **Risk:** low to medium (F-003 and F-040 change runtime paths).
 
-- [ ] F-008: Add `restart: always` to `web` and `caddy` in prod compose. Optionally assert `count("    restart: always") == 6` in test_operational_files.py.
+- [x] F-008: Add `restart: always` to `web` and `caddy` in prod compose. Optionally assert `count("    restart: always") == 6` in test_operational_files.py.
 - [ ] F-004 + F-079: In mobile-menu.js:10, toggle `dropdown-open` on `button.parentElement` instead of `hidden`. Remove `hidden` from base.html:42. In the Escape handler, return early unless `aria-expanded === "true"`. Change `lg:hidden` to `md:hidden` at base.html:25.
 - [ ] F-029: Wrap input.css:9-17 in `@layer base { }`.
 - [ ] F-034 + F-111: Rename the `page_name` block to `title` in about.html:3 and detail.html:4. In base.html:8 use `{% block title %}{{ site_name|default:"My Portfolio" }}{% endblock %}`. projects/index.html gets `Projects | {{ site_name|default:"My Portfolio" }}`. Add one test on the detail page `<title>`.
