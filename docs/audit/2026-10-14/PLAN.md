@@ -249,7 +249,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-066: Turn the 401 test into a subTest over 401 -> GitHubAuthError, 403 -> GitHubAuthError, 500 -> GitHubUpstreamError, and add one test for the "temporarily unavailable" mapping (adapted to the F-023 client).
 - [x] F-087: Copy the 2 thumbnail cleanup tests for `markdown_file`, and extend test_views.py:622 with camo.githubusercontent.com and github.com images that must remain.
 - [x] F-088: Remove the negative assertNotContains checks on removed UI (test_views.py:83,104-109,211-213; test_urls.py:32-33), rename `test_task_3_*` to descriptive names, and assert exact status codes.
-- [ ] F-097: Test that `delay` raising gives a 302 and an error message for both admin-tool views.
+- [x] F-097: Test that `delay` raising gives a 302 and an error message for both admin-tool views.
 - [ ] F-053: Trim test_operational_files.py to the #55/#57 ordering checks. In the django.yml job add `cp .env.example .env && docker compose -f infra/docker-compose.prod.yml config -q` (this runs on the CI runner only, never locally).
 
 **End of phase: report what changed and the verification output.**

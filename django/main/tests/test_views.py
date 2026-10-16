@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.messages import get_messages
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -650,6 +651,26 @@ class ViewsTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("home"))
+
+    def test_admin_tool_views_report_enqueue_failure(self):
+        User = get_user_model()
+        self.client.force_login(
+            User.objects.create_user(username="staff-enqueue-fail", password="x", is_staff=True)
+        )
+        cases = (
+            ("run_markdown_sync_task", "main.views.sync_project_markdowns_task.delay",
+             "Failed to enqueue markdown sync task."),
+            ("run_heatmap_refresh_task", "main.views.refresh_portfolio_heatmap_cache_task.delay",
+             "Failed to enqueue heatmap refresh task."),
+        )
+        for url_name, delay_path, error in cases:
+            with self.subTest(url_name=url_name):
+                with patch(delay_path, side_effect=ConnectionError("broker down")):
+                    response = self.client.post(reverse(url_name), {"next": reverse("about")})
+
+                self.assertEqual(response.status_code, 302)
+                self.assertEqual(response.url, reverse("about"))
+                self.assertIn(error, [str(m) for m in get_messages(response.wsgi_request)])
 
     def test_blog_detail_strips_external_img_src(self):
         project = Project.objects.create(
