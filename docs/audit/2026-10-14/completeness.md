@@ -1,5 +1,7 @@
 # Completeness review (2026-10-14 audit)
 
+`find/` and `verify/` were deleted after Phase 12 (Q21); they are in git history up to commit `c664fdf`.
+
 Scope: `git ls-files` at HEAD (dev), minus lockfiles, migrations, images and built CSS, compared against the 107 merged findings and the 20 lens reports in `find/`.
 
 ## Assessment
