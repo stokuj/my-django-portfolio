@@ -207,7 +207,7 @@ CELERY_BEAT_SCHEDULE = {
         "task": "main.tasks.refresh_portfolio_heatmap_cache_task",
         "schedule": crontab(minute=0),
     },
-    "sync-project-markdowns-hourly": {
+    "sync-project-markdowns-every-2h": {
         "task": "main.tasks.sync_project_markdowns_task",
         "schedule": crontab(hour="*/2", minute=0),
     },

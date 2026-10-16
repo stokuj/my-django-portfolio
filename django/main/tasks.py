@@ -32,11 +32,6 @@ def disk_level(free_gb):
 
 
 @shared_task(ignore_result=True)
-def healthcheck_task():
-    return "ok"
-
-
-@shared_task(ignore_result=True)
 def sync_project_markdowns_task():
     started_at = timezone.now()
 

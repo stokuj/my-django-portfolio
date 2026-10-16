@@ -3,7 +3,7 @@
 ## System Overview
 
 The application is a Django-based portfolio/blog platform with asynchronous background processing.
-Core runtime services are orchestrated with Docker Compose:
+In production (`infra/docker-compose.prod.yml`), the runtime services are orchestrated with Docker Compose:
 
 - `web`: Django app served by Gunicorn.
 - `db`: PostgreSQL database.
@@ -11,6 +11,8 @@ Core runtime services are orchestrated with Docker Compose:
 - `worker`: Celery worker for asynchronous jobs.
 - `beat`: Celery beat scheduler for periodic jobs.
 - `caddy`: reverse proxy and static/media serving.
+
+Dev compose (`infra/docker-compose.dev.yml`) has no Caddy; `web` runs `runserver`, published on `127.0.0.1:8000`.
 
 The heatmap feature is implemented inside Django and fetches GitHub data directly.
 
@@ -25,7 +27,7 @@ flowchart LR
     R --> WK[Celery Worker]
     B[Celery Beat] --> R
     WK --> P
-    W --> G[GitHub GraphQL API]
+    WK --> G[GitHub GraphQL API + raw README files]
     C --> S[(Static Files)]
     C --> M[(Media Files)]
 ```
@@ -35,7 +37,7 @@ flowchart LR
 ### Django Layering
 
 - `django/config/`: project configuration (`settings.py`, `urls.py`, `celery.py`).
-- `django/main/models.py`: domain entities, including projects and task execution status/logging.
+- `django/main/models.py`: domain entities, including projects and task execution logging (`TaskExecutionLog`).
 - `django/main/views.py`: request handling and template rendering.
 - `django/main/tasks.py`: asynchronous and scheduled task execution.
 - `django/main/markdown_sync.py` and `django/main/heatmap.py`: integration and domain helpers.
@@ -128,7 +130,7 @@ Celery is used for jobs that should not block HTTP requests.
 
 - Broker: Redis (`CELERY_BROKER_URL`); task results are not stored.
 - Periodic schedule: `CELERY_BEAT_SCHEDULE` in `django/config/settings.py`.
-- Notable periodic job: `main.tasks.sync_project_markdowns_task`.
+- Periodic jobs: heatmap refresh every hour, markdown sync every 2 hours, disk usage check daily at 06:00.
 - Task observability: each run appends a `TaskExecutionLog` row; the newest row per task is its current status.
 
 ## Direct GitHub Heatmap Integration
@@ -139,6 +141,7 @@ The project fetches GitHub contribution heatmap data directly from Django.
 - Django sends one GitHub GraphQL `viewer` query for the token owner's login and contribution days.
 - Data is normalized and persisted in `HeatmapSnapshot`.
 - On token or upstream errors, Django returns safe fallback messages and keeps the last valid snapshot.
+- The `/about/heatmap-data/` endpoint serves the stored snapshot and enqueues a refresh when it is stale; only the Celery worker calls GitHub.
 
 ### Async Flow Diagram
 
@@ -171,7 +174,8 @@ sequenceDiagram
 
 - Environment variables are loaded from `.env` via `django-environ`.
 - `SECRET_KEY` is required; startup fails if missing.
-- In non-debug mode, secure cookie and HTTPS settings are enabled.
+- In non-debug mode, secure cookie and HTTPS settings are enabled; the deploy fails if `check --deploy --fail-level WARNING` reports anything.
+- In production Caddy adds `basic_auth` in front of `/admin*`.
 - Allowed hosts and CSRF trusted origins are controlled by env vars.
 
 ## Extensibility Notes
