@@ -102,6 +102,22 @@ Production services are defined in `infra/docker-compose.prod.yml`:
 
 Local development uses `infra/docker-compose.dev.yml` with `db`, `redis`, `web`, `worker`, and `beat`. It does not include Caddy; Django is exposed directly on port `8000` via `runserver`.
 
+### Backups and restore
+
+- DigitalOcean droplet backups cover the whole disk, including the Docker volumes (database and media).
+- Every deploy dumps the database before `up` (which runs `migrate`): `pg_dump -Fc` inside the `db` container, written to `~/backups/pre-deploy-YYYY-MM-DD-HHMM.dump` on the server. Dumps older than 14 days are deleted. The first deploy has no dump because `db` is not running yet.
+- Restore a dump on the server (stop the app services so nothing writes meanwhile):
+
+```bash
+cd ~/my_django_portfolio
+C="docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml"
+$C stop web worker beat
+$C exec -T db sh -c 'pg_restore --clean --if-exists -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < ~/backups/pre-deploy-YYYY-MM-DD-HHMM.dump
+$C start web worker beat
+```
+
+- If the dump is a rollback from a bad release, start the previous image instead of the current one: `IMAGE_TAG=<previous sha> $C up -d --wait`.
+
 ## New droplet bootstrap
 
 Owner steps, in order, for the new droplet. They need the server, the DigitalOcean console or GitHub secrets. Nothing is migrated from the archived droplet: PostgreSQL 18 starts on an empty `postgres18_data` volume, content is re-entered in admin, and heatmap and blog markdown refill from GitHub.

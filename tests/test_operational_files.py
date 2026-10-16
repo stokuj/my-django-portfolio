@@ -6,7 +6,7 @@ DEPLOY_WORKFLOW = ROOT / ".github/workflows/docker-build-push.yml"
 
 
 class DeployScriptOrderTests(unittest.TestCase):
-    """Ordering of the deploy script steps (#55, #57, F-021, F-001)."""
+    """Ordering of the deploy script steps (#55, #57, F-021, F-001, F-010)."""
 
     def setUp(self):
         self.content = DEPLOY_WORKFLOW.read_text(encoding="utf-8")
@@ -19,6 +19,10 @@ class DeployScriptOrderTests(unittest.TestCase):
     def test_deploy_script_runs_deploy_check_before_up(self):
         check_index = self.content.index("check --deploy --fail-level WARNING")
         self.assertLess(check_index, self.content.index("up -d --remove-orphans --wait"))
+
+    def test_deploy_script_dumps_db_before_up(self):
+        dump_index = self.content.index("pg_dump -Fc")
+        self.assertLess(dump_index, self.content.index("up -d --remove-orphans --wait"))
 
 
 if __name__ == "__main__":
