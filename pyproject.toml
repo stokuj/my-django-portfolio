@@ -11,7 +11,7 @@ dependencies = [
     "gunicorn==26.2.0",
     "markdown==3.11.1",
     "pillow==12.3.0",
-    "psycopg2-binary==2.9.10",
+    "psycopg[binary]==3.3.6",
     "pymdown-extensions==12.3",
     "pyjwt>=2.15.0",
     "requests==2.34.2",

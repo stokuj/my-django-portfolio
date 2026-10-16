@@ -228,8 +228,8 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - **Verify:** `make verify`; `make dev-up` and load /, /about and a blog page against Postgres; `npm run build:css:prod`.
 - **Risk:** low.
 
-- [ ] F-107: Replace `psycopg2-binary` with `psycopg[binary]==<latest, checked on PyPI>` (the ENGINE stays the same), then `uv lock`.
-- [ ] F-105: `npm uninstall @catppuccin/daisyui`, then `npm run build:css:prod`.
+- [x] F-107: Replace `psycopg2-binary` with `psycopg[binary]==<latest, checked on PyPI>` (the ENGINE stays the same), then `uv lock`.
+- [x] F-105: `npm uninstall @catppuccin/daisyui`, then `npm run build:css:prod`.
 
 **End of phase: report what changed and the verification output.**
 
