@@ -11,25 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     let activeTag = "all";
-    let searchDebounceTimer = null;
-
-    function applyFiltersDebounced() {
-        if (searchDebounceTimer) {
-            clearTimeout(searchDebounceTimer);
-        }
-        searchDebounceTimer = setTimeout(() => {
-            applyFilters();
-            searchDebounceTimer = null;
-        }, 150);
-    }
-
-    function applyFiltersImmediate() {
-        if (searchDebounceTimer) {
-            clearTimeout(searchDebounceTimer);
-            searchDebounceTimer = null;
-        }
-        applyFilters();
-    }
 
     function applyFilters() {
         const searchTerm = searchInput.value.trim().toLowerCase();
@@ -60,11 +41,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    searchInput.addEventListener("input", applyFiltersDebounced);
+    searchInput.addEventListener("input", applyFilters);
     clearButton.addEventListener("click", () => {
         searchInput.value = "";
         searchInput.focus();
-        applyFiltersImmediate();
+        applyFilters();
     });
 
     tagButtons.forEach((button) => {
@@ -79,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
             button.classList.remove("btn-outline");
             button.classList.add("btn-primary");
 
-            applyFiltersImmediate();
+            applyFilters();
         });
     });
 
