@@ -119,6 +119,44 @@ class ViewsTest(TestCase):
         self.assertNotContains(response, "Heatmap Refresh (FastAPI)")
         self.assertContains(response, "Heatmap Refresh")
 
+    def test_about_scheduled_jobs_follow_beat_schedule(self):
+        User = get_user_model()
+        admin_user = User.objects.create_user(
+            username="admin-jobs", password="secret", is_staff=True
+        )
+        self.client.force_login(admin_user)
+        last_run = timezone.now() - datetime.timedelta(minutes=5)
+        TaskExecutionStatus.objects.create(
+            task_name="main.check_disk_usage_task",
+            last_status=TaskExecutionStatus.STATUS_SUCCESS,
+            last_run_at=last_run,
+        )
+
+        before = timezone.now()
+        response = self.client.get(reverse("about"))
+
+        jobs = {job["task_name"]: job for job in response.context["scheduled_jobs"]}
+        self.assertEqual(
+            set(jobs),
+            {
+                "main.refresh_portfolio_heatmap_cache_task",
+                "main.sync_project_markdowns_task",
+                "main.check_disk_usage_task",
+            },
+        )
+        disk = jobs["main.check_disk_usage_task"]
+        self.assertEqual(disk["label"], "Disk Usage Check")
+        self.assertEqual(disk["status"], "success")
+        self.assertEqual(disk["last_run_at"], last_run)
+        self.assertEqual(jobs["main.sync_project_markdowns_task"]["status"], "never")
+        for job in jobs.values():
+            # Crontab entries fire on the hour, within the next day.
+            self.assertGreater(job["next_run_at"], before)
+            self.assertLessEqual(
+                job["next_run_at"], before + datetime.timedelta(days=1)
+            )
+            self.assertEqual(job["next_run_at"].minute, 0)
+
     def test_about_shows_executed_tasks_list_for_admin(self):
         User = get_user_model()
         admin_user = User.objects.create_user(

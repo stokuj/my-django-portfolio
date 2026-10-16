@@ -211,7 +211,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - **Verify:** `make verify`; `makemigrations --check` passes after the new migration; check the admin jobs panel on /about as staff in `make dev-up`.
 - **Risk:** medium (a schema migration in F-072, a data migration in F-069).
 
-- [ ] F-041: The jobs panel iterates `settings.CELERY_BEAT_SCHEDULE` with a `{task_name: label}` dict (including the disk task). Next run is `now + entry["schedule"].remaining_estimate(now)`, with the beat path `main.tasks.X` mapped to `main.X`. Delete `interval_minutes`.
+- [x] F-041: The jobs panel iterates `settings.CELERY_BEAT_SCHEDULE` with a `{task_name: label}` dict (including the disk task). Next run is `now + entry["schedule"].remaining_estimate(now)`, with the beat path `main.tasks.X` mapped to `main.X`. Delete `interval_minutes`.
 - [ ] F-072: Drop `TaskExecutionStatus` (migration; also drop `last_success_at` and `last_failure_at` if unused). Tasks write only the log row. views.py:265-271 reads the latest log per task. Update the admin and test_tasks/test_models assertions. Do this after F-030 and F-078.
 - [ ] F-119: Register PageView with a ModelAdmin whose `has_add_permission` and `has_delete_permission` return False, with `readonly_fields = ("count",)`.
 - [ ] F-069: Add a data migration that fills empty `github_url` on `blog=True` projects exactly as the code computes it today (Q15). Then delete `BLOG_REPO_PATHS`, `get_repo_path`, `_active_github_username` and the fallbacks (markdown_sync.py:13-41, 59, 63-65, 80-88). project_footer.html:6 uses `project.github_url`, and `repo_path` is dropped from the blog_detail context and detail.html:31.

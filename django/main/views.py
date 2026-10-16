@@ -3,6 +3,7 @@ from datetime import date, timedelta
 
 import bleach
 import markdown
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
@@ -21,6 +22,7 @@ from .heatmap import (
 from .markdown_sync import build_readme_url, get_repo_path
 from .models import Project, Tag, TaskExecutionLog, TaskExecutionStatus
 from .tasks import (
+    DISK_USAGE_TASK_NAME,
     REFRESH_HEATMAP_TASK_NAME,
     SYNC_MARKDOWNS_TASK_NAME,
     disk_level,
@@ -64,6 +66,13 @@ ALLOWED_MARKDOWN_ATTRIBUTES = {
     "span": ["class"],
 }
 ALLOWED_MARKDOWN_PROTOCOLS = ["http", "https", "mailto"]
+
+# Beat task paths map to these names via "main.tasks.X" -> "main.X".
+SCHEDULED_JOB_LABELS = {
+    REFRESH_HEATMAP_TASK_NAME: "Heatmap Refresh",
+    SYNC_MARKDOWNS_TASK_NAME: "Markdown Sync (.md)",
+    DISK_USAGE_TASK_NAME: "Disk Usage Check",
+}
 
 _GITHUB_IMG_PREFIXES = (
     "https://github.com/",
@@ -203,49 +212,32 @@ def _get_disk_info():
 
 
 def _get_scheduled_jobs_overview():
-    """Build admin-facing summary for periodic markdown/heatmap tasks."""
+    """Build admin-facing summary for every Celery beat entry."""
+    now = timezone.now()
     task_statuses = {
         item.task_name: item
         for item in TaskExecutionStatus.objects.filter(
-            task_name__in=[REFRESH_HEATMAP_TASK_NAME, SYNC_MARKDOWNS_TASK_NAME]
+            task_name__in=SCHEDULED_JOB_LABELS
         )
     }
 
-    jobs_config = [
-        {
-            "task_name": REFRESH_HEATMAP_TASK_NAME,
-            "label": "Heatmap Refresh",
-            "schedule_label": "Every 60 minutes",
-            "interval_minutes": 60,
-        },
-        {
-            "task_name": SYNC_MARKDOWNS_TASK_NAME,
-            "label": "Markdown Sync (.md)",
-            "schedule_label": "Every 2 hours",
-            "interval_minutes": 120,
-        },
-    ]
-
     jobs = []
-    for item in jobs_config:
-        status = task_statuses.get(item["task_name"])
-        last_run_at = status.last_run_at if status else None
-        next_run_at = (
-            last_run_at + timedelta(minutes=item["interval_minutes"])
-            if last_run_at
-            else timezone.now() + timedelta(minutes=item["interval_minutes"])
-        )
-
+    for entry in settings.CELERY_BEAT_SCHEDULE.values():
+        task_name = entry["task"].replace("main.tasks.", "main.")
+        status = task_statuses.get(task_name)
+        # remaining_delta gives the exact fire time; now + remaining_estimate(now)
+        # lands a few microseconds early (shows 07:59 for an 08:00 run).
+        start, delta, _ = entry["schedule"].remaining_delta(now)
         jobs.append(
             {
-                "label": item["label"],
-                "task_name": item["task_name"],
-                "schedule_label": item["schedule_label"],
+                "label": SCHEDULED_JOB_LABELS.get(task_name, task_name),
+                "task_name": task_name,
+                "schedule_label": str(entry["schedule"]),
                 "status": status.last_status
                 if status and status.last_status
                 else "never",
-                "last_run_at": last_run_at,
-                "next_run_at": next_run_at,
+                "last_run_at": status.last_run_at if status else None,
+                "next_run_at": start + delta,
                 "last_error": status.last_error if status else "",
                 "last_total": status.last_total if status else 0,
                 "last_updated": status.last_updated if status else 0,
