@@ -254,67 +254,32 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", async function () {
-    const variantConfigs = [
-        {
-            prefix: "heatmap-minimal",
-            dayClass: "h-4 w-4 rounded-[3px] border border-base-300/70 bg-base-200",
-            tooltipMode: "title",
-        },
-    ];
+    const DAY_CLASS = "h-4 w-4 rounded-[3px] border border-base-300/70 bg-base-200";
+    // Indexed by the server-side contribution level (0..4).
+    const COLORS = ["", "#9be9a8", "#40c463", "#30a14e", "#216e39"];
 
-    const variants = variantConfigs.map(function (config) {
-        return {
-            config: config,
-            statusEl: document.getElementById(config.prefix + "-status"),
-            errorEl: document.getElementById(config.prefix + "-error"),
-            errorTextEl: document.getElementById(config.prefix + "-error-text"),
-            contentEl: document.getElementById(config.prefix + "-content"),
-            gridEl: document.getElementById(config.prefix + "-grid"),
-            monthsEl: document.getElementById(config.prefix + "-months"),
-            usernameEl: document.getElementById(config.prefix + "-username"),
-            totalEl: document.getElementById(config.prefix + "-total"),
-            last30El: document.getElementById(config.prefix + "-last30"),
-        };
-    }).filter(function (variant) {
-        return (
-            variant.statusEl
-            && variant.errorEl
-            && variant.errorTextEl
-            && variant.contentEl
-            && variant.gridEl
-            && variant.monthsEl
-            && variant.usernameEl
-            && variant.totalEl
-            && variant.last30El
-        );
-    });
-
-    if (!variants.length) {
-        return;
-    }
+    const statusEl = document.getElementById("heatmap-minimal-status");
+    const errorEl = document.getElementById("heatmap-minimal-error");
+    const errorTextEl = document.getElementById("heatmap-minimal-error-text");
+    const contentEl = document.getElementById("heatmap-minimal-content");
+    const gridEl = document.getElementById("heatmap-minimal-grid");
+    const monthsEl = document.getElementById("heatmap-minimal-months");
+    const usernameEl = document.getElementById("heatmap-minimal-username");
+    const totalEl = document.getElementById("heatmap-minimal-total");
+    const last30El = document.getElementById("heatmap-minimal-last30");
 
     const heatmapEnabled = {{ heatmap_enabled|yesno:"true,false" }};
 
-    function showError(variant, message) {
-        variant.statusEl.classList.add("hidden");
-        variant.contentEl.classList.add("hidden");
-        variant.errorTextEl.textContent = message;
-        variant.errorEl.classList.remove("hidden");
+    function showError(message) {
+        statusEl.classList.add("hidden");
+        contentEl.classList.add("hidden");
+        errorTextEl.textContent = message;
+        errorEl.classList.remove("hidden");
     }
 
     if (!heatmapEnabled) {
-        variants.forEach(function (variant) {
-            variant.statusEl.textContent = "Heatmap is disabled until GITHUB_HEATMAP_TOKEN is configured.";
-        });
+        statusEl.textContent = "Heatmap is disabled until GITHUB_HEATMAP_TOKEN is configured.";
         return;
-    }
-
-    function contributionColor(count) {
-        if (!count || count <= 0) return "";
-        if (count < 3) return "#9be9a8";
-        if (count < 6) return "#40c463";
-        if (count < 9) return "#30a14e";
-        return "#216e39";
     }
 
     function normalizeDays(week) {
@@ -343,16 +308,16 @@ document.addEventListener("DOMContentLoaded", async function () {
         return null;
     }
 
-    function renderMonthLabels(variant, weeks) {
+    function renderMonthLabels(weeks) {
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        variant.monthsEl.innerHTML = "";
-        variant.monthsEl.style.gridTemplateColumns = "";
+        monthsEl.innerHTML = "";
+        monthsEl.style.gridTemplateColumns = "";
 
         if (!weeks.length) {
             return;
         }
 
-        variant.monthsEl.style.gridTemplateColumns = `repeat(${weeks.length}, minmax(0, 1fr))`;
+        monthsEl.style.gridTemplateColumns = `repeat(${weeks.length}, minmax(0, 1fr))`;
 
         const segments = [];
         weeks.forEach(function (week) {
@@ -372,33 +337,33 @@ document.addEventListener("DOMContentLoaded", async function () {
             label.style.gridColumn = `span ${segment.weeks} / span ${segment.weeks}`;
             label.className = "truncate pr-1 text-xs font-semibold leading-none text-base-content/85";
             label.textContent = segment.month >= 0 ? monthNames[segment.month] : "";
-            variant.monthsEl.appendChild(label);
+            monthsEl.appendChild(label);
         });
     }
 
-    function renderGrid(variant, raw) {
+    function renderGrid(raw) {
         const weeks = Array.isArray(raw && raw.weeks) ? raw.weeks : [];
-        variant.gridEl.innerHTML = "";
-        variant.gridEl.style.gridTemplateColumns = "";
-        renderMonthLabels(variant, weeks);
+        gridEl.innerHTML = "";
+        gridEl.style.gridTemplateColumns = "";
+        renderMonthLabels(weeks);
 
         if (!weeks.length) {
-            variant.gridEl.innerHTML = '<p class="text-sm text-base-content/70">No weekly data available.</p>';
+            gridEl.innerHTML = '<p class="text-sm text-base-content/70">No weekly data available.</p>';
             return;
         }
 
-        variant.gridEl.style.gridTemplateColumns = `repeat(${weeks.length}, minmax(0, 1fr))`;
+        gridEl.style.gridTemplateColumns = `repeat(${weeks.length}, minmax(0, 1fr))`;
 
         weeks.forEach(function (week) {
             const weekCol = document.createElement("div");
             weekCol.className = "flex min-w-0 flex-col gap-1";
 
             normalizeDays(week).forEach(function (day) {
-                const count = Number(day.count || day.contribution_count || 0);
+                const count = Number(day.count || 0);
                 const dayEl = document.createElement("div");
-                dayEl.className = variant.config.dayClass;
+                dayEl.className = DAY_CLASS;
 
-                const color = contributionColor(count);
+                const color = COLORS[day.level || 0];
                 if (color) {
                     dayEl.style.background = color;
                     dayEl.style.borderColor = color;
@@ -416,13 +381,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 const tooltipText = dayLabel + " - " + count + " contributions";
                 dayEl.title = tooltipText;
                 dayEl.setAttribute("aria-label", tooltipText);
-                if (variant.config.tooltipMode === "daisy") {
-                    dayEl.setAttribute("data-tip", tooltipText);
-                }
                 weekCol.appendChild(dayEl);
             });
 
-            variant.gridEl.appendChild(weekCol);
+            gridEl.appendChild(weekCol);
         });
     }
 
@@ -437,25 +399,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         const payload = await response.json();
         if (!response.ok) {
-            variants.forEach(function (variant) {
-                showError(variant, payload.error || "Heatmap service is temporarily unavailable.");
-            });
+            showError(payload.error || "Heatmap service is temporarily unavailable.");
             return;
         }
 
-        variants.forEach(function (variant) {
-            variant.usernameEl.textContent = payload.username || "-";
-            variant.totalEl.textContent = payload.total ?? "-";
-            variant.last30El.textContent = payload.last_30_days_total ?? 0;
-            renderGrid(variant, payload.raw || {});
-            variant.statusEl.classList.add("hidden");
-            variant.errorEl.classList.add("hidden");
-            variant.contentEl.classList.remove("hidden");
-        });
+        usernameEl.textContent = payload.username || "-";
+        totalEl.textContent = payload.total ?? "-";
+        last30El.textContent = payload.last_30_days_total ?? 0;
+        renderGrid(payload.raw || {});
+        statusEl.classList.add("hidden");
+        errorEl.classList.add("hidden");
+        contentEl.classList.remove("hidden");
     } catch (error) {
-        variants.forEach(function (variant) {
-            showError(variant, "Heatmap service is temporarily unavailable.");
-        });
+        showError("Heatmap service is temporarily unavailable.");
     }
 });
 </script>
