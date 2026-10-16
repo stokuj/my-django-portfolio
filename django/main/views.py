@@ -19,7 +19,7 @@ from .heatmap import (
     get_or_create_snapshot,
     is_snapshot_stale,
 )
-from .markdown_sync import build_readme_url, get_repo_path
+from .markdown_sync import build_readme_url
 from .models import Project, Tag, TaskExecutionLog
 from .tasks import (
     DISK_USAGE_TASK_NAME,
@@ -326,7 +326,6 @@ def blog_detail(request, blog_slug):
     project = get_object_or_404(Project, blog=True, blog_url=blog_slug)
     markdown_content = _load_project_markdown(project)
     markdown_html = _render_markdown_to_html(markdown_content)
-    repo_path = get_repo_path(project)
     readme_url = build_readme_url(project)
     all_projects = Project.objects.order_by("-date")
 
@@ -337,7 +336,6 @@ def blog_detail(request, blog_slug):
             "project": project,
             "all_projects": all_projects,
             "blog_markdown_html": markdown_html,
-            "repo_path": repo_path,
             "readme_url": readme_url,
         },
     )

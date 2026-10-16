@@ -1,7 +1,9 @@
 import datetime
+import importlib
 import shutil
 import tempfile
 
+from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -323,3 +325,30 @@ class ProjectMediaCleanupTests(TestCase):
             self.assertTrue(storage.exists(old_name))
 
         self.assertFalse(storage.exists(old_name))
+
+
+class BackfillGithubUrlMigrationTest(TestCase):
+    def test_fills_empty_github_url_on_blog_projects(self):
+        migration = importlib.import_module("main.migrations.0023_backfill_project_github_url")
+        profile = PortfolioProfile.objects.get(is_active=True)
+        profile.github_url = "https://github.com/owner/"
+        profile.save(update_fields=["github_url"])
+
+        def make(slug, **kwargs):
+            return Project.objects.create(
+                title=slug, short_description=slug, blog_url=slug, **kwargs
+            )
+
+        mapped = make("weather-web-scraping", blog=True)
+        unmapped = make("some-repo", blog=True, github_url="")
+        kept = make("kept", blog=True, github_url="https://github.com/other/kept")
+        not_blog = make("not-blog", blog=False)
+
+        migration.backfill_github_url(apps, None)
+
+        for project in (mapped, unmapped, kept, not_blog):
+            project.refresh_from_db()
+        self.assertEqual(mapped.github_url, "https://github.com/owner/WeatherWebScraping")
+        self.assertEqual(unmapped.github_url, "https://github.com/owner/some-repo")
+        self.assertEqual(kept.github_url, "https://github.com/other/kept")
+        self.assertIsNone(not_blog.github_url)

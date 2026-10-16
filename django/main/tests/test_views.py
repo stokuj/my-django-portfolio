@@ -569,6 +569,9 @@ class ViewsTest(TestCase):
             response.context["readme_url"],
             "https://github.com/example/readme-link-project#readme",
         )
+        self.assertContains(
+            response, 'href="https://github.com/example/readme-link-project" target="_blank"'
+        )
 
     def test_run_markdown_sync_task_requires_staff_access(self):
         response = self.client.post(reverse("run_markdown_sync_task"))

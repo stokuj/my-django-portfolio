@@ -9,7 +9,7 @@ from django.core.files.base import ContentFile
 from django.test import TestCase, override_settings
 
 from main.markdown_sync import sync_project_markdown
-from main.models import PortfolioProfile, Project
+from main.models import Project
 
 
 def _make_mock_response(content: bytes, status_code: int = 200) -> MagicMock:
@@ -39,11 +39,6 @@ class MarkdownSyncTests(TestCase):
         cls._override.disable()
         shutil.rmtree(cls._media_root, ignore_errors=True)
         super().tearDownClass()
-
-    def setUp(self):
-        profile = PortfolioProfile.objects.get(is_active=True)
-        profile.github_url = "https://github.com/test-user"
-        profile.save(update_fields=["github_url"])
 
     def test_sync_project_markdown_replaces_file_on_success(self):
         project = Project.objects.create(

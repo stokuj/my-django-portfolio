@@ -29,7 +29,6 @@ def portfolio_profile(request):
     github_url = source.github_url or "#"
     linkedin_url = source.linkedin_url or "#"
     email = source.email
-    github_base = github_url.rstrip("/") if github_url != "#" else "#"
 
     return {
         "site_name": source.site_name,
@@ -41,7 +40,6 @@ def portfolio_profile(request):
         "profile_email": email,
         "profile_email_href": f"mailto:{email}" if email else "#",
         "profile_github_url": github_url,
-        "profile_github_base": github_base,
         "profile_linkedin_url": linkedin_url,
         "profile_core_stack": source.core_stack,
         "profile_current_learning": source.current_learning,
