@@ -135,7 +135,7 @@ Files: `infra/Dockerfile`, `pyproject.toml`
 
 ### 3i. PostgreSQL 18 on a fresh database (`chore/deps-postgres-18`), risk medium
 No data migration (R2): the new database starts empty on dev and on the new droplet; the owner re-enters projects, tags, profile and thumbnails in admin, and heatmap and blog markdown refill from GitHub.
-- [ ] F-007: Use `image: postgres:18` in both compose files. Mount the data volume at `/var/lib/postgresql` (the postgres:18 image moved PGDATA). Use new volume names (`postgres18_data`, `postgres18_dev_data`) so the old PG13 volumes stay untouched; never run `docker volume rm`. Check with `make dev-up` that db starts and `migrate` runs on the empty volume.
+- [x] F-007: Use `image: postgres:18` in both compose files. Mount the data volume at `/var/lib/postgresql` (the postgres:18 image moved PGDATA). Use new volume names (`postgres18_data`, `postgres18_dev_data`) so the old PG13 volumes stay untouched; never run `docker volume rm`. Check with `make dev-up` that db starts and `migrate` runs on the empty volume.
 - [ ] F-007 (runbook): Write a "New droplet bootstrap" section in `docs/implementation.md`: create the droplet with DO backups on, add the DO Monitoring alert (disk > 85%, email), install Docker, clone the repo, write the server `.env` (incl. ADMIN_BASIC_USER/HASH), set the GitHub secrets (SERVER_HOST, SERVER_USER, SSH_PRIVATE_KEY, SERVER_SSH_FINGERPRINT), run the first deploy, `createsuperuser`, re-enter content in admin, trigger both sync jobs from /about, then delete GHCR_PAT. Merge in the first-deploy checklist items from Phases 2 and 10.
 
 ### 3j. Django 6.1 (`chore/deps-django-6.1`), risk medium, after 3i
