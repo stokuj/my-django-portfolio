@@ -96,12 +96,12 @@ def build_markdown_candidate_urls(project):
     return deduped
 
 
-def _download_markdown(url, timeout=20):
+def _download_markdown(url):
     try:
         response = requests.get(
             url,
             headers={"User-Agent": "my-django-portfolio-markdown-sync/1.0"},
-            timeout=timeout,
+            timeout=20,
         )
         response.raise_for_status()
     except requests.exceptions.HTTPError:
@@ -132,7 +132,7 @@ def _download_markdown(url, timeout=20):
     return text
 
 
-def sync_project_markdown(project, timeout=20):
+def sync_project_markdown(project):
     candidate_urls = build_markdown_candidate_urls(project)
     if not candidate_urls:
         return {
@@ -148,7 +148,7 @@ def sync_project_markdown(project, timeout=20):
 
     for url in candidate_urls:
         try:
-            markdown_text = _download_markdown(url, timeout=timeout)
+            markdown_text = _download_markdown(url)
             source_url = url
             break
         except (requests.exceptions.HTTPError, requests.exceptions.RequestException,

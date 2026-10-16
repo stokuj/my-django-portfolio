@@ -14,8 +14,7 @@ from .models import HeatmapSnapshot
 
 def get_configured_github_token():
     """Return configured GitHub token for direct heatmap API requests."""
-    github_token = (getattr(settings, "GITHUB_HEATMAP_TOKEN", "") or "").strip()
-    return github_token or None
+    return settings.GITHUB_HEATMAP_TOKEN or None
 
 
 def contribution_level(count):
@@ -67,16 +66,13 @@ def build_weeks_payload(contribution_days):
     return weeks, total
 
 
-def fetch_heatmap_data(github_token=None):
+def fetch_heatmap_data():
     """Fetch normalized heatmap payload directly from GitHub APIs.
-
-    Args:
-        github_token (str | None): Optional GitHub bearer token override.
 
     Returns:
         tuple[dict | None, str | None]: `(payload, error_message)` pair.
     """
-    token = github_token or get_configured_github_token()
+    token = get_configured_github_token()
     if not token:
         return None, "Heatmap is not configured."
 
@@ -110,21 +106,21 @@ def get_or_create_snapshot():
     return snapshot
 
 
-def is_snapshot_stale(snapshot, ttl_minutes=None):
+def is_snapshot_stale(snapshot):
     """Check whether cached snapshot is stale against configured TTL.
 
     Args:
         snapshot (HeatmapSnapshot): Snapshot model instance.
-        ttl_minutes (int | None): Optional TTL override in minutes.
 
     Returns:
         bool: True when snapshot should be refreshed.
     """
-    ttl = ttl_minutes or int(getattr(settings, "HEATMAP_CACHE_TTL_MINUTES", 60))
     if not snapshot.fetched_at:
         return True
 
-    threshold = timezone.now() - datetime.timedelta(minutes=ttl)
+    threshold = timezone.now() - datetime.timedelta(
+        minutes=settings.HEATMAP_CACHE_TTL_MINUTES
+    )
     return snapshot.fetched_at <= threshold
 
 

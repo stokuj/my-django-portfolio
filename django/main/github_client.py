@@ -85,11 +85,7 @@ def fetch_authenticated_user(token):
     return {"id": raw_id, "login": raw_login}
 
 
-def fetch_contribution_days(
-    username,
-    token,
-    graphql_url="https://api.github.com/graphql",
-):
+def fetch_contribution_days(username, token):
     """Fetch one-year contribution days for a user from GitHub GraphQL API."""
     to_day = date.today()
     from_day = to_day - timedelta(days=364)
@@ -113,7 +109,7 @@ def fetch_contribution_days(
 
     try:
         response = requests.post(
-            graphql_url,
+            "https://api.github.com/graphql",
             json={
                 "query": query,
                 "variables": {
