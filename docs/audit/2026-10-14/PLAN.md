@@ -122,7 +122,7 @@ Files: `infra/Dockerfile`, `pyproject.toml`
 - [x] F-050: Remove asgiref, packaging and tzdata from dependencies. Use `"pyjwt>=2.15.0"` and `"sqlparse>=0.6.0"`. Run `uv lock`.
 
 ### 3e. Pillow (`chore/deps-pillow-12.3`), risk low
-- [ ] F-052: `pillow==12.3.0`, then `uv lock --upgrade-package pillow`.
+- [x] F-052: `pillow==12.3.0`, then `uv lock --upgrade-package pillow`.
 
 ### 3f. Celery (`chore/deps-celery-5.6`), risk low
 - [ ] F-051: `celery[redis]==5.6.3`, `uv lock`, then check in `make dev-up` that the worker and beat log scheduled runs.
