@@ -20,6 +20,15 @@ DISK_CRITICAL_GB = 1.0
 DISK_WARNING_GB = 2.0
 
 
+def disk_level(free_gb):
+    """Classify free disk space as "critical", "warning" or "ok"."""
+    if free_gb < DISK_CRITICAL_GB:
+        return "critical"
+    if free_gb < DISK_WARNING_GB:
+        return "warning"
+    return "ok"
+
+
 @shared_task(ignore_result=True)
 def healthcheck_task():
     return "ok"
@@ -110,7 +119,8 @@ def check_disk_usage_task():
     status, _ = TaskExecutionStatus.objects.get_or_create(task_name=DISK_USAGE_TASK_NAME)
     status.last_run_at = timezone.now()
 
-    if free_gb < DISK_CRITICAL_GB:
+    level = disk_level(free_gb)
+    if level == "critical":
         logger.critical("DISK CRITICAL: only %.1f GB free on /", free_gb)
         _finish(
             status,
@@ -119,7 +129,7 @@ def check_disk_usage_task():
             0,
             f"CRITICAL: {free_gb:.1f} GB free (below {DISK_CRITICAL_GB} GB threshold)",
         )
-    elif free_gb < DISK_WARNING_GB:
+    elif level == "warning":
         logger.warning("DISK WARNING: only %.1f GB free on /", free_gb)
         _finish(
             status,

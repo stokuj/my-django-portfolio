@@ -188,7 +188,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-061: Delete `STATICFILES_STORAGE` (unless F-099 step 2 is planned, in which case replace it with `STORAGES`), `environ.Env(DEBUG=...)` (use plain `Env()`), `CELERY_RESULT_BACKEND/SERIALIZER/ACCEPT_CONTENT` (settings, both compose files, `.env.example:44`), one `DEFAULT_AUTO_FIELD`, the commented prints, the default AUTHENTICATION_BACKENDS and the empty TEMPLATES DIRS. Translate the Polish comments. Check with `collectstatic --dry-run`.
 - [x] F-091: Build the timeline from `Project.STATUS_CHOICES` and delete `status_labels` and `status_order`.
 - [x] F-092: `_calculate_last_30_days_total` becomes a one-line `sum(...)` with `start <= date <= today`.
-- [ ] F-093: Add `disk_level(free_gb)` in tasks.py next to the thresholds, used by `views._get_disk_info` and the task.
+- [x] F-093: Add `disk_level(free_gb)` in tasks.py next to the thresholds, used by `views._get_disk_info` and the task.
 - [ ] F-094: Delete `heatmap_component_visible` (and its if/endif at about.html:47,257), the `blog_markdown_content` key and the unused hero class slots. Use `with project.markdown_file.open("rb") as f: return f.read().decode("utf-8-sig")`.
 - [ ] F-065: Add a `PortfolioProfile.get_active()` classmethod used at context_processors.py:28 and markdown_sync.py:33,63.
 - [ ] F-084: In about.html, replace the variant loop with direct consts, delete the `daisy` tooltip branch and the `contribution_count` fallback (also views.py:231), and use `COLORS[day.level || 0]`.

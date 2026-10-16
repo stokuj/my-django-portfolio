@@ -21,10 +21,9 @@ from .heatmap import (
 from .markdown_sync import build_readme_url, get_repo_path
 from .models import Project, Tag, TaskExecutionLog, TaskExecutionStatus
 from .tasks import (
-    DISK_CRITICAL_GB,
-    DISK_WARNING_GB,
     REFRESH_HEATMAP_TASK_NAME,
     SYNC_MARKDOWNS_TASK_NAME,
+    disk_level,
     refresh_portfolio_heatmap_cache_task,
     sync_project_markdowns_task,
 )
@@ -195,19 +194,12 @@ def _get_disk_info():
     total_gb = round(usage.total / (1024 ** 3), 1)
     free_pct = round((usage.free / usage.total) * 100, 1)
 
-    if free_raw_gb < DISK_CRITICAL_GB:
-        level = "critical"
-    elif free_raw_gb < DISK_WARNING_GB:
-        level = "warning"
-    else:
-        level = "ok"
-
     return {
         "free_gb": free_gb,
         "used_gb": used_gb,
         "total_gb": total_gb,
         "free_pct": free_pct,
-        "level": level,
+        "level": disk_level(free_raw_gb),
     }
 
 
