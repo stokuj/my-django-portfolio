@@ -89,6 +89,36 @@ class ViewsTest(TestCase):
                     response, f'<meta name="description" content="{description}">', html=True
                 )
 
+    def test_share_tags_use_absolute_urls(self):
+        response = self.client.get(reverse("home"))
+        self.assertContains(
+            response,
+            '<meta property="og:image" content="http://testserver/static/images/hero-bg.png">',
+            html=True,
+        )
+        self.assertContains(
+            response, '<meta property="og:url" content="http://testserver/">', html=True
+        )
+        self.assertContains(
+            response, '<meta name="twitter:card" content="summary_large_image">', html=True
+        )
+
+    def test_blog_detail_share_tags_use_project_and_thumbnail(self):
+        self.project.thumbnail = SimpleUploadedFile("thumb.png", b"png")
+        self.project.save()
+        response = self.client.get(reverse("blog_detail", args=[self.project.blog_url]))
+        self.assertContains(
+            response, '<meta property="og:title" content="Test Project">', html=True
+        )
+        self.assertContains(
+            response, '<meta property="og:description" content="A test project">', html=True
+        )
+        self.assertContains(
+            response,
+            f'<meta property="og:image" content="http://testserver{self.project.thumbnail.url}">',
+            html=True,
+        )
+
     def test_settings_drop_sites_framework_and_heatmap_api_base_url(self):
         self.assertNotIn("django.contrib.sites", settings.INSTALLED_APPS)
         self.assertFalse(hasattr(settings, "SITE_ID"))

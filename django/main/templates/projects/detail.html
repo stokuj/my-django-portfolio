@@ -3,6 +3,9 @@
 
 {% block title %}{{ project.title }}{% endblock title %}
 {% block meta_description %}{{ project.short_description }}{% endblock meta_description %}
+{% block og_title %}{{ project.title }}{% endblock og_title %}
+{% block og_description %}{{ project.short_description }}{% endblock og_description %}
+{% block og_image %}{% if project.thumbnail %}{{ request.scheme }}://{{ request.get_host }}{{ project.thumbnail.url }}{% else %}{{ block.super }}{% endif %}{% endblock og_image %}
 
 {% block content %}
 <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
