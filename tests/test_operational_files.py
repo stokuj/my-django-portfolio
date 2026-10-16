@@ -71,6 +71,10 @@ class OperationalFileTests(unittest.TestCase):
         content = (ROOT / "infra/docker-compose.prod.yml").read_text(encoding="utf-8")
         self.assertEqual(content.count("    logging:"), 6)
 
+    def test_prod_compose_all_services_restart_always(self):
+        content = (ROOT / "infra/docker-compose.prod.yml").read_text(encoding="utf-8")
+        self.assertEqual(content.count("    restart: always"), 6)
+
     def test_prod_compose_logging_has_rotation(self):
         content = (ROOT / "infra/docker-compose.prod.yml").read_text(encoding="utf-8")
         self.assertIn('max-size: "10m"', content)

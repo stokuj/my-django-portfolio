@@ -153,20 +153,20 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - **Verify:** `make verify`, plus a manual check of the mobile menu in Playwright WebKit or on an iPhone, and visual checks of the headings and titles.
 - **Risk:** low to medium (F-003 and F-040 change runtime paths).
 
-- [ ] F-008: Add `restart: always` to `web` and `caddy` in prod compose. Optionally assert `count("    restart: always") == 6` in test_operational_files.py.
-- [ ] F-004 + F-079: In mobile-menu.js:10, toggle `dropdown-open` on `button.parentElement` instead of `hidden`. Remove `hidden` from base.html:42. In the Escape handler, return early unless `aria-expanded === "true"`. Change `lg:hidden` to `md:hidden` at base.html:25.
-- [ ] F-029: Wrap input.css:9-17 in `@layer base { }`.
-- [ ] F-034 + F-111: Rename the `page_name` block to `title` in about.html:3 and detail.html:4. In base.html:8 use `{% block title %}{{ site_name|default:"My Portfolio" }}{% endblock %}`. projects/index.html gets `Projects | {{ site_name|default:"My Portfolio" }}`. Add one test on the detail page `<title>`.
-- [ ] F-003: In `sync_project_markdown`, skip the write when the stored bytes equal the new text (counted as success). When the content changed and a file exists, overwrite it in place with `storage.open(name, "wb")`. Call `markdown_file.save` only when there is no file. Tests: two syncs with different content keep the same name; an identical sync does not rewrite the file.
-- [ ] F-040: Move `templates/errors/404.html` and `500.html` to `templates/404.html` and `500.html`. Delete views.py:90-97 and config/urls.py:32-34. Rewrite ErrorHandlersTest (test_views.py:22, 650-664) against `django.views.defaults`.
-- [ ] F-025: Add `def clean(self): self.name = self.name.upper()` on Tag.
-- [ ] F-026: In `_delete_file_field`, capture name and storage and run `transaction.on_commit(lambda: storage.exists(name) and storage.delete(name))`. Add `captureOnCommitCallbacks(execute=True)` to the cleanup tests.
-- [ ] F-059: `[h.strip() for h in env.list(...) if h.strip()]` at settings.py:43 and :107.
-- [ ] F-067: Before the 401/403 check at both call sites, raise GitHubUpstreamError("GitHub rate limit exceeded") when the status is 403 and `X-RateLimit-Remaining == "0"` or `Retry-After` is present. Add one mocked test.
-- [ ] F-076: Remove the `blog_slug` parameter from `sync_project_markdowns_task` (tasks.py:30,37-38) and `run_markdown_sync_task` (views.py:426-437), and update test_views.py:551.
-- [ ] F-077: Delete the 6 `last_success_at=None` and the 3 `last_failure_at=None` assignments, and update test_tasks.py:189,231,331 to check that the timestamps are kept.
-- [ ] F-089: Turn `home/` into `RedirectView.as_view(pattern_name="home", permanent=True)` without a name. Update test_urls.py:24 and test_middleware.py:28-30, and drop `/home/` from middleware.py:13.
-- [ ] F-120 + F-128: Add a UTF-8 decode validator and help_text on `markdown_file` (help_text: replaced by the GitHub README on sync when Blog is on). Add a `validate_str_list` validator on `tech_stack` and `tools_libraries`. One `makemigrations` (a no-op AlterField), plus one full_clean test.
+- [x] F-008: Add `restart: always` to `web` and `caddy` in prod compose. Optionally assert `count("    restart: always") == 6` in test_operational_files.py.
+- [x] F-004 + F-079: In mobile-menu.js:10, toggle `dropdown-open` on `button.parentElement` instead of `hidden`. Remove `hidden` from base.html:42. In the Escape handler, return early unless `aria-expanded === "true"`. Change `lg:hidden` to `md:hidden` at base.html:25.
+- [x] F-029: Wrap input.css:9-17 in `@layer base { }`.
+- [x] F-034 + F-111: Rename the `page_name` block to `title` in about.html:3 and detail.html:4. In base.html:8 use `{% block title %}{{ site_name|default:"My Portfolio" }}{% endblock %}`. projects/index.html gets `Projects | {{ site_name|default:"My Portfolio" }}`. Add one test on the detail page `<title>`.
+- [x] F-003: In `sync_project_markdown`, skip the write when the stored bytes equal the new text (counted as success). When the content changed and a file exists, overwrite it in place with `storage.open(name, "wb")`. Call `markdown_file.save` only when there is no file. Tests: two syncs with different content keep the same name; an identical sync does not rewrite the file.
+- [x] F-040: Move `templates/errors/404.html` and `500.html` to `templates/404.html` and `500.html`. Delete views.py:90-97 and config/urls.py:32-34. Rewrite ErrorHandlersTest (test_views.py:22, 650-664) against `django.views.defaults`.
+- [x] F-025: Add `def clean(self): self.name = self.name.upper()` on Tag.
+- [x] F-026: In `_delete_file_field`, capture name and storage and run `transaction.on_commit(lambda: storage.exists(name) and storage.delete(name))`. Add `captureOnCommitCallbacks(execute=True)` to the cleanup tests.
+- [x] F-059: `[h.strip() for h in env.list(...) if h.strip()]` at settings.py:43 and :107.
+- [x] F-067: Before the 401/403 check at both call sites, raise GitHubUpstreamError("GitHub rate limit exceeded") when the status is 403 and `X-RateLimit-Remaining == "0"` or `Retry-After` is present. Add one mocked test.
+- [x] F-076: Remove the `blog_slug` parameter from `sync_project_markdowns_task` (tasks.py:30,37-38) and `run_markdown_sync_task` (views.py:426-437), and update test_views.py:551.
+- [x] F-077: Delete the 6 `last_success_at=None` and the 3 `last_failure_at=None` assignments, and update test_tasks.py:189,231,331 to check that the timestamps are kept.
+- [x] F-089: Turn `home/` into `RedirectView.as_view(pattern_name="home", permanent=True)` without a name. Update test_urls.py:24 and test_middleware.py:28-30, and drop `/home/` from middleware.py:13.
+- [x] F-120 + F-128: Add a UTF-8 decode validator and help_text on `markdown_file` (help_text: replaced by the GitHub README on sync when Blog is on). Add a `validate_str_list` validator on `tech_stack` and `tools_libraries`. One `makemigrations` (a no-op AlterField), plus one full_clean test.
 
 **End of phase: report what changed and the verification output.**
 

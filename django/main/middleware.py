@@ -10,8 +10,7 @@ class VisitorCountMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        is_home = request.path in ("/", "/home/")
-        if is_home and not request.session.get("has_visited"):
+        if request.path == "/" and not request.session.get("has_visited"):
             counter = PageView.get_instance()
             PageView.objects.filter(id=counter.id).update(count=F("count") + 1)
             request.session["has_visited"] = True

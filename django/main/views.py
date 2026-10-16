@@ -90,16 +90,6 @@ def _clean_attributes(tag, name, value):
     return True
 
 
-def handler404(request, exception):
-    """Render custom 404 error page."""
-    return render(request, "errors/404.html", status=404)
-
-
-def handler500(request):
-    """Render custom 500 error page."""
-    return render(request, "errors/500.html", status=500)
-
-
 def home(request):
     """Render home page with projects grouped by status timeline."""
     projects = Project.objects.prefetch_related("tags").order_by("-date")
@@ -428,24 +418,16 @@ def blog_detail(request, blog_slug):
 @staff_member_required
 @require_POST
 def run_markdown_sync_task(request):
-    """Enqueue markdown sync Celery task for one slug or all projects."""
-    blog_slug = (request.POST.get("blog_slug") or "").strip() or None
-
+    """Enqueue markdown sync Celery task for all blog projects."""
     try:
-        async_result = sync_project_markdowns_task.delay(blog_slug=blog_slug)
+        async_result = sync_project_markdowns_task.delay()
     except Exception:
         messages.error(request, "Failed to enqueue markdown sync task.")
     else:
-        if blog_slug:
-            messages.success(
-                request,
-                f"Markdown sync task queued for slug '{blog_slug}' (task id: {async_result.id}).",
-            )
-        else:
-            messages.success(
-                request,
-                f"Markdown sync task queued for all blog projects (task id: {async_result.id}).",
-            )
+        messages.success(
+            request,
+            f"Markdown sync task queued for all blog projects (task id: {async_result.id}).",
+        )
 
     return redirect(_get_safe_redirect_url(request))
 

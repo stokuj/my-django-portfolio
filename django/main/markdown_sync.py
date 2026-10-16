@@ -165,15 +165,23 @@ def sync_project_markdown(project, timeout=20):
             "error": last_error,
         }
 
+    data = markdown_text.encode("utf-8")
     old_name = project.markdown_file.name if project.markdown_file else ""
-    target_basename = (
-        Path(old_name).name if old_name else f"{project.blog_url or f'project-{project.id}'}.md"
-    )
+    storage = project.markdown_file.storage
 
-    project.markdown_file.save(
-        target_basename, ContentFile(markdown_text.encode("utf-8")), save=False
-    )
-    project.save(update_fields=["markdown_file"])
+    if old_name and storage.exists(old_name):
+        # Overwrite in place: FileField.save would add a random suffix to the name.
+        with storage.open(old_name, "rb") as fh:
+            unchanged = fh.read() == data
+        if not unchanged:
+            with storage.open(old_name, "wb") as fh:
+                fh.write(data)
+    else:
+        target_basename = (
+            Path(old_name).name if old_name else f"{project.blog_url or f'project-{project.id}'}.md"
+        )
+        project.markdown_file.save(target_basename, ContentFile(data), save=False)
+        project.save(update_fields=["markdown_file"])
     new_name = project.markdown_file.name
 
     return {

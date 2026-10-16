@@ -4,6 +4,7 @@ import tempfile
 
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError
 from django.test import TestCase, override_settings
 
@@ -26,6 +27,11 @@ class TagModelTest(TestCase):
     def test_tag_uppercase_conversion(self):
         tag = Tag.objects.create(name="django")
         self.assertEqual(tag.name, "DJANGO")
+
+    def test_full_clean_rejects_case_only_duplicate(self):
+        Tag.objects.create(name="python")
+        with self.assertRaises(ValidationError):
+            Tag(name="Python").full_clean()
 
 
 class ProjectModelTest(TestCase):
@@ -173,6 +179,26 @@ class ProjectModelTest(TestCase):
 
         project.full_clean()
 
+    def test_full_clean_rejects_non_utf8_markdown_and_non_string_lists(self):
+        project = Project(
+            title="Bad Content Project",
+            short_description="Project with invalid file and lists",
+            blog=True,
+            blog_url="bad-content-project",
+            markdown_file=SimpleUploadedFile("readme.md", b"\xff\xfe bad"),
+            tech_stack="Python",
+            tools_libraries=["pytest", 3],
+            status="planned",
+        )
+
+        with self.assertRaises(ValidationError) as ctx:
+            project.full_clean()
+
+        self.assertEqual(
+            set(ctx.exception.message_dict),
+            {"markdown_file", "tech_stack", "tools_libraries"},
+        )
+
 
 class PageViewModelTest(TestCase):
     def test_pageview_creation(self):
@@ -295,7 +321,10 @@ class ProjectMediaCleanupTests(TestCase):
         thumb_name = project.thumbnail.name
         self.assertTrue(storage.exists(thumb_name))
 
-        project.delete()
+        with self.captureOnCommitCallbacks(execute=True):
+            project.delete()
+            # Deletion waits for the commit, so a rollback keeps the file.
+            self.assertTrue(storage.exists(thumb_name))
 
         self.assertFalse(storage.exists(thumb_name))
 
@@ -305,6 +334,8 @@ class ProjectMediaCleanupTests(TestCase):
         old_name = project.thumbnail.name
         self.assertTrue(storage.exists(old_name))
 
-        project.thumbnail.save("thumb_new.png", ContentFile(b"new-fake-png"), save=True)
+        with self.captureOnCommitCallbacks(execute=True):
+            project.thumbnail.save("thumb_new.png", ContentFile(b"new-fake-png"), save=True)
+            self.assertTrue(storage.exists(old_name))
 
         self.assertFalse(storage.exists(old_name))

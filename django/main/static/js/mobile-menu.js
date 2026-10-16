@@ -7,7 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const setMenuState = (isOpen) => {
-        menu.classList.toggle("hidden", !isOpen);
+        // daisyUI shows .dropdown-content on :focus-within; dropdown-close overrides that.
+        button.parentElement.classList.toggle("dropdown-open", isOpen);
+        button.parentElement.classList.toggle("dropdown-close", !isOpen);
         button.setAttribute("aria-expanded", String(isOpen));
     };
 
@@ -25,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
+        if (event.key === "Escape" && button.getAttribute("aria-expanded") === "true") {
             setMenuState(false);
             button.focus();
         }

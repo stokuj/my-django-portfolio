@@ -45,6 +45,14 @@ def _default_headers(token):
     }
 
 
+def _raise_if_rate_limited(response):
+    # GitHub answers rate limits with 403 too; do not report them as a bad token.
+    if response.status_code == 403 and (
+        response.headers.get("X-RateLimit-Remaining") == "0" or "Retry-After" in response.headers
+    ):
+        raise GitHubUpstreamError("GitHub rate limit exceeded")
+
+
 def fetch_authenticated_user(token):
     """Fetch basic profile data for the token owner from GitHub REST API."""
     try:
@@ -56,6 +64,7 @@ def fetch_authenticated_user(token):
     except (requests.Timeout, requests.RequestException) as exc:
         raise GitHubUpstreamError from exc
 
+    _raise_if_rate_limited(response)
     if response.status_code in {401, 403}:
         raise GitHubAuthError
     if response.status_code >= 400:
@@ -122,6 +131,7 @@ def fetch_contribution_days(
     except (requests.Timeout, requests.RequestException) as exc:
         raise GitHubUpstreamError from exc
 
+    _raise_if_rate_limited(response)
     if response.status_code in {401, 403}:
         raise GitHubAuthError
     if response.status_code >= 400:
