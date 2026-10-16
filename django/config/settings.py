@@ -14,7 +14,6 @@ import os
 from pathlib import Path
 
 import environ
-from celery.schedules import crontab
 from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -192,26 +191,3 @@ LOGGING = {
     },
 }
 
-CELERY_BROKER_URL = env(
-    "CELERY_BROKER_URL",
-    default="redis://localhost:6379/0" if DEBUG else "redis://redis:6379/0",
-)
-CELERY_TIMEZONE = TIME_ZONE
-CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_TASK_IGNORE_RESULT = True
-CELERY_TASK_TIME_LIMIT = 600
-CELERY_TASK_SOFT_TIME_LIMIT = 540
-CELERY_BEAT_SCHEDULE = {
-    "refresh-portfolio-heatmap-hourly": {
-        "task": "main.tasks.refresh_portfolio_heatmap_cache_task",
-        "schedule": crontab(minute=0),
-    },
-    "sync-project-markdowns-every-2h": {
-        "task": "main.tasks.sync_project_markdowns_task",
-        "schedule": crontab(hour="*/2", minute=0),
-    },
-    "check-disk-usage-daily": {
-        "task": "main.tasks.check_disk_usage_task",
-        "schedule": crontab(hour=6, minute=0),
-    },
-}
