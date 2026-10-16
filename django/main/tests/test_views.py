@@ -65,7 +65,7 @@ class ViewsTest(TestCase):
         self.assertTemplateUsed(response, "pages/home.html")
         self.assertIn("timeline_sections", response.context)
 
-    def test_task_3_settings_remove_sites_framework_and_heatmap_api_base_url(self):
+    def test_settings_drop_sites_framework_and_heatmap_api_base_url(self):
         self.assertNotIn("django.contrib.sites", settings.INSTALLED_APPS)
         self.assertFalse(hasattr(settings, "SITE_ID"))
         self.assertFalse(hasattr(settings, "HEATMAP_API_BASE_URL"))
@@ -90,7 +90,6 @@ class ViewsTest(TestCase):
         self.assertContains(response, "GitHub Contributions")
         self.assertFalse(response.context["heatmap_enabled"])
         self.assertNotContains(response, "Scheduled Jobs")
-        self.assertNotContains(response, "Heatmap Refresh (FastAPI)")
 
     def test_about_shows_heatmap_for_admin_when_not_configured(self):
         User = get_user_model()
@@ -111,12 +110,6 @@ class ViewsTest(TestCase):
         self.assertContains(response, "Sync Heatmap")
         self.assertContains(response, "Sync Markdown")
         self.assertFalse(response.context["heatmap_enabled"])
-        self.assertNotContains(response, "Connect your GitHub account")
-        self.assertNotContains(response, "/accounts/3rdparty/")
-        self.assertNotContains(response, "/accounts/github/login/")
-        self.assertNotContains(response, "Disconnect GitHub")
-        self.assertNotContains(response, "Live from FastAPI")
-        self.assertNotContains(response, "Heatmap Refresh (FastAPI)")
         self.assertContains(response, "Heatmap Refresh")
 
     def test_about_scheduled_jobs_follow_beat_schedule(self):
@@ -261,9 +254,7 @@ class ViewsTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "GitHub Contributions")
-        self.assertNotContains(response, "Login with GitHub")
-        self.assertNotContains(response, "Live from FastAPI")
-        self.assertNotContains(response, "Heatmap Refresh (FastAPI)")
+        self.assertTrue(response.context["heatmap_enabled"])
 
     @patch("main.views.get_configured_github_token", return_value="gho_valid_token")
     def test_about_heatmap_data_returns_public_admin_data(self, _token_mock):

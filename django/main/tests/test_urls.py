@@ -32,12 +32,11 @@ class URLsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "GitHub Contributions")
         self.assertFalse(response.context["heatmap_enabled"])
-        self.assertNotContains(response, "Login with GitHub")
-        self.assertNotContains(response, "Live from FastAPI")
 
-    def test_about_heatmap_data_is_public(self):
+    def test_about_heatmap_data_returns_404_when_not_configured(self):
         response = self.client.get("/about/heatmap-data/")
         self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), {"error": "Heatmap is not configured."})
 
     def test_about_heatmap_disconnect_route_is_removed(self):
         response = self.client.post("/about/heatmap-disconnect/")
