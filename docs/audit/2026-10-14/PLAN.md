@@ -297,7 +297,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 
 - [x] F-001: Add workflow-level `concurrency: {group: deploy-prod, cancel-in-progress: false}`. Replace docker-build-push.yml:108-109 with `up -d --remove-orphans --wait`, and update tests/test_operational_files.py:79-95. Also (A9) push `:${{ github.sha }}`, use `image: ghcr.io/stokuj/my-django-portfolio:${IMAGE_TAG:-latest}`, and `git checkout --detach ${{ github.sha }}` with `IMAGE_TAG` on the server.
 - [x] F-048: Add a `pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB}` healthcheck on db (both compose files, interval 5s, retries 12), with `db: {condition: service_healthy}` for web, worker and beat. Delete the `entrypoint:` lines, `wait-for-db.sh`, Dockerfile:29-30 and `postgresql-client`, and drop the worker `sleep 45` and `WORKER_START_DELAY_SECONDS` (`.env.example:47`).
-- [ ] F-009: Gunicorn command `--workers 1 --threads 4 --timeout 60 --access-logfile -` (prod.yml:46) (A8).
+- [x] F-009: Gunicorn command `--workers 1 --threads 4 --timeout 60 --access-logfile -` (prod.yml:46) (A8).
 - [ ] F-024: VisitorCountMiddleware checks `request.COOKIES.get("has_visited")` and sets it on the response with `set_cookie(..., max_age=settings.SESSION_COOKIE_AGE, secure=settings.SESSION_COOKIE_SECURE, httponly=True, samesite="Lax")` instead of the session. Run test_middleware.py.
 - [ ] F-062: `CELERY_TASK_TIME_LIMIT = 600` and `CELERY_TASK_SOFT_TIME_LIMIT = 540` in settings.
 - [ ] F-078: In `_log_task_execution`, after the create, `TaskExecutionLog.objects.filter(created_at__lt=timezone.now() - timedelta(days=90)).delete()`.
