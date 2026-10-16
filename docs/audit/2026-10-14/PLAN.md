@@ -316,7 +316,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - **Verify:** `make verify`; `make dev-up` and check that the hero images render; `curl -sI -H 'Accept-Encoding: gzip'` against /static on the Caddy stack shows `Content-Encoding`.
 - **Risk:** low (F-099 step 2 is medium: manifest storage).
 
-- [ ] F-099 (step 1): Add `encode zstd gzip` to the apex Caddy block.
+- [x] F-099 (step 1): Add `encode zstd gzip` to the apex Caddy block.
 - [x] F-099 (step 2): Skipped (A10). Was: Use `STORAGES = {"default": FileSystemStorage, "staticfiles": ManifestStaticFilesStorage}`, add `collectstatic --noinput` to `make verify`, check the dynamic `{% static hero_background %}` values, and only then add `header /static/* Cache-Control "public, max-age=31536000, immutable"` (never on /media).
 - [ ] F-082: Delete `hero-bg3.png`, re-encode `hero-bg.png` and `hero-bg2.png` to WebP at q70, and point the 5 `hero_background=` include arguments at the new files.
 - [ ] F-022: Set `"CONN_MAX_AGE": 60, "CONN_HEALTH_CHECKS": True` in `DATABASES["default"]`.
