@@ -66,6 +66,14 @@ class ViewsTest(TestCase):
         self.assertTemplateUsed(response, "pages/home.html")
         self.assertIn("timeline_sections", response.context)
 
+    def test_nav_marks_current_page(self):
+        response = self.client.get(reverse("about"))
+        self.assertContains(response, 'aria-current="page"', count=2)
+        self.assertContains(
+            response,
+            'class="btn btn-ghost text-xl ui-motion" aria-current="page">About me</a>',
+        )
+
     def test_settings_drop_sites_framework_and_heatmap_api_base_url(self):
         self.assertNotIn("django.contrib.sites", settings.INSTALLED_APPS)
         self.assertFalse(hasattr(settings, "SITE_ID"))
