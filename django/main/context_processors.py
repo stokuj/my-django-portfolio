@@ -26,8 +26,6 @@ def portfolio_profile(request):
         dict: Context with profile details used across home/about templates.
     """
     source = PortfolioProfile.get_active()
-    github_url = source.github_url or "#"
-    linkedin_url = source.linkedin_url or "#"
     email = source.email
 
     return {
@@ -38,9 +36,9 @@ def portfolio_profile(request):
         "profile_home_intro": source.home_intro,
         "profile_about_intro": source.about_intro,
         "profile_email": email,
-        "profile_email_href": f"mailto:{email}" if email else "#",
-        "profile_github_url": github_url,
-        "profile_linkedin_url": linkedin_url,
+        "profile_email_href": f"mailto:{email}" if email else "",
+        "profile_github_url": source.github_url,
+        "profile_linkedin_url": source.linkedin_url,
         "profile_core_stack": source.core_stack,
         "profile_current_learning": source.current_learning,
         "profile_current_learning_summary": source.current_learning_summary,

@@ -5,7 +5,16 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="theme-color" content="#fef8ea">
+        <meta name="description" content="{% block meta_description %}{{ profile_home_intro }}{% endblock %}">
+        <meta property="og:title" content="{% block og_title %}{{ site_name|default:"My Portfolio" }}{% endblock %}">
+        <meta property="og:description" content="{% block og_description %}{{ profile_home_intro }}{% endblock %}">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ request.build_absolute_uri }}">
+        <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/hero-bg.png' %}{% endblock %}">
+        <meta name="twitter:card" content="summary_large_image">
         <title>{% block title %}{{ site_name|default:"My Portfolio" }}{% endblock %}</title>
+        <script>try{var t=localStorage.getItem("theme");if(t==="dim2")document.documentElement.dataset.theme=t}catch(e){}</script>
+        <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
         <script src="{% static 'js/theme-toggle.js' %}" defer></script>
         <script src="{% static 'js/mobile-menu.js' %}" defer></script>
@@ -41,9 +50,9 @@
                                 id="mobile-menu"
                                 class="menu dropdown-content mt-3 rounded-box bg-base-100 p-2 text-lg shadow w-72 space-y-2"
                             >
-                                <li class="mb-2 mt-2"><a href="{% url 'home' %}" class="ui-link-motion">Home</a></li>
-                                <li class="mb-2 mt-2"><a href="{% url 'projects' %}" class="ui-link-motion">My Projects</a></li>
-                                <li class="mb-2 mt-2"><a href="{% url 'about' %}" class="ui-link-motion">About me</a></li>
+                                <li class="mb-2 mt-2"><a href="{% url 'home' %}" class="ui-link-motion"{% if request.resolver_match.url_name == "home" %} aria-current="page"{% endif %}>Home</a></li>
+                                <li class="mb-2 mt-2"><a href="{% url 'projects' %}" class="ui-link-motion"{% if request.resolver_match.url_name == "projects" %} aria-current="page"{% endif %}>My Projects</a></li>
+                                <li class="mb-2 mt-2"><a href="{% url 'about' %}" class="ui-link-motion"{% if request.resolver_match.url_name == "about" %} aria-current="page"{% endif %}>About me</a></li>
                             </ul>
                         </div>
 
@@ -52,30 +61,38 @@
 
                     <!-- Center: Navigation links -->
                     <div class="hidden md:flex items-center space-x-4">
-                        <a href="{% url 'home' %}" class="btn btn-ghost text-xl ui-motion">Home</a>
-                        <a href="{% url 'projects' %}" class="btn btn-ghost text-xl ui-motion">My Projects</a>
-                        <a href="{% url 'about' %}" class="btn btn-ghost text-xl ui-motion">About me</a>
+                        <a href="{% url 'home' %}" class="btn btn-ghost text-xl ui-motion"{% if request.resolver_match.url_name == "home" %} aria-current="page"{% endif %}>Home</a>
+                        <a href="{% url 'projects' %}" class="btn btn-ghost text-xl ui-motion"{% if request.resolver_match.url_name == "projects" %} aria-current="page"{% endif %}>My Projects</a>
+                        <a href="{% url 'about' %}" class="btn btn-ghost text-xl ui-motion"{% if request.resolver_match.url_name == "about" %} aria-current="page"{% endif %}>About me</a>
                     </div>
 
                     <!-- Right side: Social links + Theme toggle -->
                     <div class="flex items-center space-x-2">
+                        {% if profile_github_url %}
                         <!-- GitHub -->
                         <a
                             href="{{ profile_github_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             class="hidden sm:inline-flex btn btn-ghost btn-circle ui-motion"
                             aria-label="Open GitHub profile"
                         >
                             {% include "components/icons/github_icon.html" %}
                         </a>
+                        {% endif %}
 
+                        {% if profile_linkedin_url %}
                         <!-- LinkedIn -->
                         <a
                             href="{{ profile_linkedin_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             class="hidden sm:inline-flex btn btn-ghost btn-circle ui-motion"
                             aria-label="Open LinkedIn profile"
                         >
                             {% include "components/icons/linkedin_icon.html" %}
                         </a>
+                        {% endif %}
 
                         <!-- Theme selector -->
                         <input
@@ -124,6 +141,7 @@
                         </p>
 
                         <div class="flex gap-4 mt-4">
+                            {% if profile_github_url %}
                             <a
                                 href="{{ profile_github_url }}"
                                 target="_blank"
@@ -133,7 +151,9 @@
                             >
                                 {% include "components/icons/github_icon.html" %}
                             </a>
+                            {% endif %}
 
+                            {% if profile_linkedin_url %}
                             <a
                                 href="{{ profile_linkedin_url }}"
                                 target="_blank"
@@ -143,6 +163,7 @@
                             >
                                 {% include "components/icons/linkedin_icon.html" %}
                             </a>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -155,27 +176,32 @@
                         </div>
 
                         <div class="flex flex-col gap-2">
-                            <a href="{% url 'projects' %}" class="link link-hover hover:text-primary ui-link-motion">Projects</a>
+                            {% if profile_email %}
                             <a href="{{ profile_email_href }}" class="link link-hover hover:text-primary ui-link-motion">Contact me</a>
+                            {% endif %}
                         </div>
                     </div>
 
                     <!-- Right column -->
                     <div class="space-y-4">
+                        {% if profile_email %}
                         <a href="{{ profile_email_href }}" class="btn btn-primary w-full ui-motion">
                             Get In Touch
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" aria-hidden="true" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                             </svg>
                         </a>
+                        {% endif %}
 
                         <p class="opacity-75 text-sm">
                             I'm always open to interesting collaborations and new challenges!
                         </p>
 
+                        {% if profile_email %}
                         <div class="text-sm">
                             <p>Email: <a href="{{ profile_email_href }}" class="link link-hover hover:text-primary ui-link-motion">{{ profile_email }}</a></p>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
 

@@ -264,24 +264,24 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - **Verify:** `make verify`; `make dev-up` and check /, /projects/, /about and a blog page in light and dark themes and at 375px; Caddy validate.
 - **Risk:** low.
 
-- [ ] F-028: Add an inline head script in base.html before the stylesheet: `try{var t=localStorage.getItem("theme");if(t==="dim2")document.documentElement.dataset.theme=t}catch(e){}`. Wrap the storage calls in theme-toggle.js in try/catch and delete `legacyThemeMap`.
-- [ ] F-036: Delete the skeleton (index.html:40-60) and `hidden` (:62). In projects-filters.js delete :8, :89-90 and the skeleton and grid parts of the :11 guard.
-- [ ] F-074: Remove the debounce wrappers and call `applyFilters` directly on input and at :69 and :84.
-- [ ] F-075: Render `aria-pressed` in the template (true on All, false on tags) and set it in the loop at projects-filters.js:76.
-- [ ] F-080: Add `aria-current="page"` via `request.resolver_match.url_name` on the 6 nav links and `aria-hidden="true"` on the SVG at :167. Delete the duplicate footer link at :158.
-- [ ] F-083: In timeline_section.html use `<details class="collapse ..." name="timeline-accordion" {% if section.checked %}open{% endif %}>` with `<summary class="collapse-title">`.
-- [ ] F-085: The heatmap grid gets `role="img"` and an aria-label summary set in renderGrid. Add `aria-hidden` on the month row, drop the per-cell aria-label (keep title), and add `role="alert"` on the error box.
-- [ ] F-127: Add `{% if sidebar_project.id == project.id %}aria-current="page"{% endif %}` at blog_projects_sidebar.html:8.
-- [ ] F-110: In base.html add `<meta name="description" content="{% block meta_description %}{{ profile_home_intro }}{% endblock %}">`, overridden in about (profile_about_intro) and detail (project.short_description).
-- [ ] F-121: Add og:title (own `og_title` block), og:description, og:type, og:url (`request.build_absolute_uri`), an absolute og:image (thumbnail or default image) and `twitter:card`. Override them on detail.
-- [ ] F-122: Add `static/images/favicon.svg` and `<link rel="icon" type="image/svg+xml">`, plus Caddy `redir /favicon.ico /static/images/favicon.svg`.
-- [ ] F-132: Caddy `respond /robots.txt "User-agent: *\nDisallow: /admin/\n" 200`, before reverse_proxy.
-- [ ] F-124: In the context processor return `''` instead of `'#'` (lines 31, 32, 34, 44). Guard the links with `{% if %}` in about_content.html, base.html and project_footer.html:6.
-- [ ] F-126: Delete the `{% elif project.github_url %}` branch (timeline_project_item.html:13-14).
-- [ ] F-125: `<time datetime="{{ project.date|date:'Y-m' }}">`.
-- [ ] F-123: Add `target="_blank" rel="noopener noreferrer"` to the header social links (base.html:63, :72).
-- [ ] F-117: ProjectAdmin: `list_display` (title, status, blog, blog_url, date), `list_filter` (status, blog, tags), `filter_horizontal = ("tags",)`. TaskExecutionLogAdmin: `list_filter` (task_name, last_status) and `date_hierarchy = "created_at"`.
-- [ ] F-116: Add `django.contrib.sitemaps`, a blog-project sitemap and a static-pages sitemap, a `sitemap.xml` route and a Sitemap line in the F-132 robots.txt.
+- [x] F-028: Add an inline head script in base.html before the stylesheet: `try{var t=localStorage.getItem("theme");if(t==="dim2")document.documentElement.dataset.theme=t}catch(e){}`. Wrap the storage calls in theme-toggle.js in try/catch and delete `legacyThemeMap`.
+- [x] F-036: Delete the skeleton (index.html:40-60) and `hidden` (:62). In projects-filters.js delete :8, :89-90 and the skeleton and grid parts of the :11 guard.
+- [x] F-074: Remove the debounce wrappers and call `applyFilters` directly on input and at :69 and :84.
+- [x] F-075: Render `aria-pressed` in the template (true on All, false on tags) and set it in the loop at projects-filters.js:76.
+- [x] F-080: Add `aria-current="page"` via `request.resolver_match.url_name` on the 6 nav links and `aria-hidden="true"` on the SVG at :167. Delete the duplicate footer link at :158.
+- [x] F-083: In timeline_section.html use `<details class="collapse ..." name="timeline-accordion" {% if section.checked %}open{% endif %}>` with `<summary class="collapse-title">`.
+- [x] F-085: The heatmap grid gets `role="img"` and an aria-label summary set in renderGrid. Add `aria-hidden` on the month row, drop the per-cell aria-label (keep title), and add `role="alert"` on the error box.
+- [x] F-127: Add `{% if sidebar_project.id == project.id %}aria-current="page"{% endif %}` at blog_projects_sidebar.html:8.
+- [x] F-110: In base.html add `<meta name="description" content="{% block meta_description %}{{ profile_home_intro }}{% endblock %}">`, overridden in about (profile_about_intro) and detail (project.short_description).
+- [x] F-121: Add og:title (own `og_title` block), og:description, og:type, og:url (`request.build_absolute_uri`), an absolute og:image (thumbnail or default image) and `twitter:card`. Override them on detail.
+- [x] F-122: Add `static/images/favicon.svg` and `<link rel="icon" type="image/svg+xml">`, plus Caddy `redir /favicon.ico /static/images/favicon.svg`.
+- [x] F-132: Caddy `respond /robots.txt "User-agent: *\nDisallow: /admin/\n" 200`, before reverse_proxy.
+- [x] F-124: In the context processor return `''` instead of `'#'` (lines 31, 32, 34, 44). Guard the links with `{% if %}` in about_content.html, base.html and project_footer.html:6.
+- [x] F-126: Delete the `{% elif project.github_url %}` branch (timeline_project_item.html:13-14).
+- [x] F-125: `<time datetime="{{ project.date|date:'Y-m' }}">`.
+- [x] F-123: Add `target="_blank" rel="noopener noreferrer"` to the header social links (base.html:63, :72).
+- [x] F-117: ProjectAdmin: `list_display` (title, status, blog, blog_url, date), `list_filter` (status, blog, tags), `filter_horizontal = ("tags",)`. TaskExecutionLogAdmin: `list_filter` (task_name, last_status) and `date_hierarchy = "created_at"`.
+- [x] F-116: Add `django.contrib.sitemaps`, a blog-project sitemap and a static-pages sitemap, a `sitemap.xml` route and a Sitemap line in the F-132 robots.txt.
 
 **End of phase: report what changed and the verification output.**
 

@@ -42,6 +42,18 @@ class URLsTest(TestCase):
         response = self.client.post("/about/heatmap-disconnect/")
         self.assertEqual(response.status_code, 404)
 
+    def test_sitemap_lists_pages_and_blog_projects(self):
+        Project.objects.create(
+            title="No Blog", short_description="x", blog=False, blog_url="no-blog"
+        )
+
+        response = self.client.get("/sitemap.xml")
+
+        self.assertEqual(response.status_code, 200)
+        for path in ("/", "/projects/", "/about/", "/blog/test-project-urls/"):
+            self.assertContains(response, f"<loc>http://testserver{path}</loc>")
+        self.assertNotContains(response, "no-blog")
+
     def test_projects_url(self):
         response = self.client.get("/projects/")
         self.assertEqual(response.status_code, 200)

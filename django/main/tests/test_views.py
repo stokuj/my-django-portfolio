@@ -24,6 +24,7 @@ from django.views import defaults
 from main.models import (
     HeatmapSnapshot,
     PageView,
+    PortfolioProfile,
     Project,
     Tag,
     TaskExecutionLog,
@@ -65,6 +66,67 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "pages/home.html")
         self.assertIn("timeline_sections", response.context)
+
+    def test_nav_marks_current_page(self):
+        response = self.client.get(reverse("about"))
+        self.assertContains(response, 'aria-current="page"', count=2)
+        self.assertContains(
+            response,
+            'class="btn btn-ghost text-xl ui-motion" aria-current="page">About me</a>',
+        )
+
+    def test_pages_have_meta_description(self):
+        profile = PortfolioProfile.get_active()
+        cases = [
+            (reverse("home"), profile.home_intro),
+            (reverse("about"), profile.about_intro),
+            (reverse("blog_detail", args=[self.project.blog_url]), "A test project"),
+        ]
+        for url, description in cases:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertContains(
+                    response, f'<meta name="description" content="{description}">', html=True
+                )
+
+    def test_share_tags_use_absolute_urls(self):
+        response = self.client.get(reverse("home"))
+        self.assertContains(
+            response,
+            '<meta property="og:image" content="http://testserver/static/images/hero-bg.png">',
+            html=True,
+        )
+        self.assertContains(
+            response, '<meta property="og:url" content="http://testserver/">', html=True
+        )
+        self.assertContains(
+            response, '<meta name="twitter:card" content="summary_large_image">', html=True
+        )
+
+    def test_blog_detail_share_tags_use_project_and_thumbnail(self):
+        self.project.thumbnail = SimpleUploadedFile("thumb.png", b"png")
+        self.project.save()
+        response = self.client.get(reverse("blog_detail", args=[self.project.blog_url]))
+        self.assertContains(
+            response, '<meta property="og:title" content="Test Project">', html=True
+        )
+        self.assertContains(
+            response, '<meta property="og:description" content="A test project">', html=True
+        )
+        self.assertContains(
+            response,
+            f'<meta property="og:image" content="http://testserver{self.project.thumbnail.url}">',
+            html=True,
+        )
+
+    def test_blank_profile_links_are_not_rendered(self):
+        PortfolioProfile.objects.update_or_create(
+            is_active=True, defaults={"email": "", "github_url": "", "linkedin_url": ""}
+        )
+        response = self.client.get(reverse("about"))
+        self.assertNotContains(response, 'href="#"')
+        self.assertNotContains(response, 'aria-label="Open GitHub profile"')
+        self.assertNotContains(response, "Contact Me")
 
     def test_settings_drop_sites_framework_and_heatmap_api_base_url(self):
         self.assertNotIn("django.contrib.sites", settings.INSTALLED_APPS)
@@ -349,6 +411,11 @@ class ViewsTest(TestCase):
             response, reverse("blog_detail", args=[self.project.blog_url])
         )
 
+    def test_projects_tag_filters_expose_pressed_state(self):
+        response = self.client.get(reverse("projects"))
+        self.assertContains(response, 'data-tag="all" type="button" aria-pressed="true"')
+        self.assertContains(response, 'data-tag="python" type="button" aria-pressed="false"')
+
     def test_projects_view_uses_detail_link_when_blog_slug_missing(self):
         no_slug_project = Project.objects.create(
             title="No Slug Blog Project",
@@ -444,7 +511,7 @@ class ViewsTest(TestCase):
         response = self.client.get(reverse("blog_detail", args=[project.blog_url]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "<h1>Title</h1>", html=True)
-        self.assertNotContains(response, "<script>")
+        self.assertNotIn("<script", response.context["blog_markdown_html"])
 
     def test_blog_detail_sanitizes_unsafe_image_attributes(self):
         markdown_file = SimpleUploadedFile(
@@ -531,6 +598,12 @@ class ViewsTest(TestCase):
             'integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"',
         )
         self.assertContains(response, 'crossorigin="anonymous"')
+
+    def test_blog_detail_sidebar_marks_current_project(self):
+        response = self.client.get(reverse("blog_detail", args=[self.project.blog_url]))
+        # The sidebar renders twice (mobile and desktop); the nav has no current link here.
+        self.assertContains(response, 'aria-current="page"', count=2)
+        self.assertContains(response, 'active" aria-current="page">')
 
     def test_blog_detail_includes_all_projects_for_sidebar(self):
         other_project = Project.objects.create(
@@ -779,3 +852,19 @@ class PageViewAdminTests(TestCase):
         self.assertEqual(delete.status_code, 403)
         self.assertEqual(change.status_code, 200)
         self.assertNotContains(change, 'name="count"')
+
+    def test_project_and_task_log_changelists_render_filters(self):
+        User = get_user_model()
+        self.client.force_login(
+            User.objects.create_superuser(username="root", password="secret")
+        )
+        Project.objects.create(title="Admin Project", short_description="x")
+        TaskExecutionLog.objects.create(task_name="main.tasks.sync", last_status="success")
+
+        projects = self.client.get(reverse("admin:main_project_changelist"))
+        logs = self.client.get(reverse("admin:main_taskexecutionlog_changelist"))
+
+        self.assertEqual(projects.status_code, 200)
+        self.assertContains(projects, "By status")
+        self.assertEqual(logs.status_code, 200)
+        self.assertContains(logs, "By last status")
