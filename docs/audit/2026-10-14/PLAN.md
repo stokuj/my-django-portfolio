@@ -277,7 +277,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-122: Add `static/images/favicon.svg` and `<link rel="icon" type="image/svg+xml">`, plus Caddy `redir /favicon.ico /static/images/favicon.svg`.
 - [x] F-132: Caddy `respond /robots.txt "User-agent: *\nDisallow: /admin/\n" 200`, before reverse_proxy.
 - [x] F-124: In the context processor return `''` instead of `'#'` (lines 31, 32, 34, 44). Guard the links with `{% if %}` in about_content.html, base.html and project_footer.html:6.
-- [ ] F-126: Delete the `{% elif project.github_url %}` branch (timeline_project_item.html:13-14).
+- [x] F-126: Delete the `{% elif project.github_url %}` branch (timeline_project_item.html:13-14).
 - [ ] F-125: `<time datetime="{{ project.date|date:'Y-m' }}">`.
 - [ ] F-123: Add `target="_blank" rel="noopener noreferrer"` to the header social links (base.html:63, :72).
 - [ ] F-117: ProjectAdmin: `list_display` (title, status, blog, blog_url, date), `list_filter` (status, blog, tags), `filter_horizontal = ("tags",)`. TaskExecutionLogAdmin: `list_filter` (task_name, last_status) and `date_hierarchy = "created_at"`.
