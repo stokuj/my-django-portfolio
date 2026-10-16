@@ -11,7 +11,6 @@ from main.tasks import (
     REFRESH_HEATMAP_TASK_NAME,
     SYNC_MARKDOWNS_TASK_NAME,
     check_disk_usage_task,
-    healthcheck_task,
     refresh_portfolio_heatmap_cache_task,
     sync_project_markdowns_task,
 )
@@ -203,11 +202,6 @@ class TaskStatusTrackingTests(TestCase):
         self.assertEqual(log.last_failed, 1)
         self.assertEqual(log.last_error, "Heatmap is not configured.")
         update_error_mock.assert_called_once_with("Heatmap is not configured.")
-
-
-class TaskIgnoreResultTests(TestCase):
-    def test_healthcheck_task_has_ignore_result(self):
-        self.assertTrue(getattr(healthcheck_task, "ignore_result", False))
 
 
 class DiskUsageTaskTests(TestCase):

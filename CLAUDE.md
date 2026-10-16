@@ -64,7 +64,7 @@ Single app `main` under `django/`. Configuration lives in `django/config/` (sett
 ### Key modules
 - `django/main/models.py` — all domain models: `Project`, `Tag`, `PortfolioProfile`, `HeatmapSnapshot`, `PageView`, `TaskExecutionLog`
 - `django/main/views.py` — page views and admin-tool endpoints
-- `django/main/tasks.py` — two main Celery tasks: `sync_project_markdowns_task` and `refresh_portfolio_heatmap_cache_task`
+- `django/main/tasks.py` — Celery tasks: `sync_project_markdowns_task`, `refresh_portfolio_heatmap_cache_task` and `check_disk_usage_task`
 - `django/main/markdown_sync.py` — fetches README markdown from GitHub and writes to `media/blog_markdown/`
 - `django/main/heatmap.py` — fetches GitHub contribution data (one GraphQL query) and persists to `HeatmapSnapshot`
 - `django/main/context_processors.py` — injects visitor count, project count, and active `PortfolioProfile` into every template
@@ -84,6 +84,7 @@ Loaded from `.env` at project root via `django-environ`. `SECRET_KEY` is require
 Defined in `django/config/settings.py` (`CELERY_BEAT_SCHEDULE`):
 - Heatmap refresh: every hour
 - Markdown sync: every 2 hours
+- Disk usage check: daily at 06:00
 
 ### Tests location
 - `django/main/tests/` — Django unit/integration tests (views, models, tasks, middleware, heatmap, markdown sync)

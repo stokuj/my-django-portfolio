@@ -32,9 +32,9 @@ Celery tasks are implemented in `django/main/tasks.py`.
 
 Key jobs:
 
-- `healthcheck_task`: worker health check.
-- `sync_project_markdowns_task`: synchronizes markdown from repository links.
-- `refresh_portfolio_heatmap_cache_task`: refreshes and caches heatmap data.
+- `refresh_portfolio_heatmap_cache_task`: refreshes and caches heatmap data (beat: every hour).
+- `sync_project_markdowns_task`: synchronizes markdown from repository links (beat: every 2 hours).
+- `check_disk_usage_task`: records free disk space for the admin About page (beat: daily at 06:00).
 
 Common implementation patterns:
 

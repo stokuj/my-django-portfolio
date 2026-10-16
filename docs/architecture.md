@@ -128,7 +128,7 @@ Celery is used for jobs that should not block HTTP requests.
 
 - Broker: Redis (`CELERY_BROKER_URL`); task results are not stored.
 - Periodic schedule: `CELERY_BEAT_SCHEDULE` in `django/config/settings.py`.
-- Notable periodic job: `main.tasks.sync_project_markdowns_task`.
+- Periodic jobs: heatmap refresh every hour, markdown sync every 2 hours, disk usage check daily at 06:00.
 - Task observability: each run appends a `TaskExecutionLog` row; the newest row per task is its current status.
 
 ## Direct GitHub Heatmap Integration
