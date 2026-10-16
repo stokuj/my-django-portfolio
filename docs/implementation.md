@@ -105,7 +105,7 @@ Local development uses `infra/docker-compose.dev.yml` with `db`, `redis`, `web`,
 ### Backups and restore
 
 - DigitalOcean droplet backups cover the whole disk, including the Docker volumes (database and media).
-- Every deploy dumps the database before `up` (which runs `migrate`): `pg_dump -Fc` inside the `db` container, written to `~/backups/pre-deploy-YYYY-MM-DD-HHMM.dump` on the server. Dumps older than 14 days are deleted. The first deploy has no dump because `db` is not running yet.
+- Every deploy dumps the database before `up` (which runs `migrate`): `pg_dump -Fc` inside the `db` container, written to `~/backups/pre-deploy-YYYY-MM-DD-HHMM.dump` on the server. The dumps contain the whole database, including admin password hashes, so `~/backups` is `700` and each dump is `600`; keep them that way when copying them off the droplet. Dumps older than 14 days are deleted. The first deploy has no dump because `db` is not running yet.
 - Restore a dump on the server (stop the app services so nothing writes meanwhile):
 
 ```bash

@@ -100,11 +100,14 @@ jobs:
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
             docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml pull
+            docker logout ghcr.io
             docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml run --rm --no-deps web python manage.py check --deploy --fail-level WARNING
             # Restore point before migrate runs; skipped on the first deploy (db not running yet).
+            # Dumps hold the whole DB (incl. password hashes): owner-only dir and files.
             mkdir -p ~/backups
+            chmod 700 ~/backups
             if [ -n "$(docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml ps --status running -q db)" ]; then
-              docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml exec -T db sh -c 'pg_dump -Fc -U "$POSTGRES_USER" -d "$POSTGRES_DB"' > ~/backups/pre-deploy-$(date +%F-%H%M).dump
+              (umask 077; docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml exec -T db sh -c 'pg_dump -Fc -U "$POSTGRES_USER" -d "$POSTGRES_DB"' > ~/backups/pre-deploy-$(date +%F-%H%M).dump)
             fi
             find ~/backups -name 'pre-deploy-*.dump' -mtime +14 -delete
 
