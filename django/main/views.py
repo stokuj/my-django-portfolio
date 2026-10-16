@@ -177,42 +177,14 @@ def _build_heatmap_snapshot_response(snapshot):
 
 def _calculate_last_30_days_total(payload):
     """Sum contribution counts from payload days within last 30 days."""
-    weeks = payload.get("weeks") if isinstance(payload, dict) else None
-    if not isinstance(weeks, list):
-        return 0
-
     today = date.today()
-    start_date = today - timedelta(days=29)
-    total = 0
-
-    for week in weeks:
-        days = week.get("days") if isinstance(week, dict) else None
-        if not isinstance(days, list):
-            continue
-
-        for day in days:
-            if not isinstance(day, dict):
-                continue
-
-            day_date = day.get("date")
-            if not day_date:
-                continue
-
-            try:
-                parsed_date = date.fromisoformat(str(day_date).split("T", 1)[0])
-            except ValueError:
-                continue
-
-            if not (start_date <= parsed_date <= today):
-                continue
-
-            count = day.get("count", day.get("contribution_count", 0))
-            try:
-                total += int(count or 0)
-            except (TypeError, ValueError):
-                continue
-
-    return total
+    start = today - timedelta(days=29)
+    return sum(
+        day["count"]
+        for week in payload.get("weeks", [])
+        for day in week["days"]
+        if start <= date.fromisoformat(day["date"]) <= today
+    )
 
 
 def _get_disk_info():
