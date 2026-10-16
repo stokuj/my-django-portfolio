@@ -1,3 +1,4 @@
+import collections
 import datetime
 import shutil
 import tempfile
@@ -5,6 +6,7 @@ from unittest.mock import patch
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.messages import get_messages
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -64,7 +66,7 @@ class ViewsTest(TestCase):
         self.assertTemplateUsed(response, "pages/home.html")
         self.assertIn("timeline_sections", response.context)
 
-    def test_task_3_settings_remove_sites_framework_and_heatmap_api_base_url(self):
+    def test_settings_drop_sites_framework_and_heatmap_api_base_url(self):
         self.assertNotIn("django.contrib.sites", settings.INSTALLED_APPS)
         self.assertFalse(hasattr(settings, "SITE_ID"))
         self.assertFalse(hasattr(settings, "HEATMAP_API_BASE_URL"))
@@ -89,7 +91,6 @@ class ViewsTest(TestCase):
         self.assertContains(response, "GitHub Contributions")
         self.assertFalse(response.context["heatmap_enabled"])
         self.assertNotContains(response, "Scheduled Jobs")
-        self.assertNotContains(response, "Heatmap Refresh (FastAPI)")
 
     def test_about_shows_heatmap_for_admin_when_not_configured(self):
         User = get_user_model()
@@ -110,12 +111,6 @@ class ViewsTest(TestCase):
         self.assertContains(response, "Sync Heatmap")
         self.assertContains(response, "Sync Markdown")
         self.assertFalse(response.context["heatmap_enabled"])
-        self.assertNotContains(response, "Connect your GitHub account")
-        self.assertNotContains(response, "/accounts/3rdparty/")
-        self.assertNotContains(response, "/accounts/github/login/")
-        self.assertNotContains(response, "Disconnect GitHub")
-        self.assertNotContains(response, "Live from FastAPI")
-        self.assertNotContains(response, "Heatmap Refresh (FastAPI)")
         self.assertContains(response, "Heatmap Refresh")
 
     def test_about_scheduled_jobs_follow_beat_schedule(self):
@@ -260,9 +255,7 @@ class ViewsTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "GitHub Contributions")
-        self.assertNotContains(response, "Login with GitHub")
-        self.assertNotContains(response, "Live from FastAPI")
-        self.assertNotContains(response, "Heatmap Refresh (FastAPI)")
+        self.assertTrue(response.context["heatmap_enabled"])
 
     @patch("main.views.get_configured_github_token", return_value="gho_valid_token")
     def test_about_heatmap_data_returns_public_admin_data(self, _token_mock):
@@ -659,6 +652,26 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("home"))
 
+    def test_admin_tool_views_report_enqueue_failure(self):
+        User = get_user_model()
+        self.client.force_login(
+            User.objects.create_user(username="staff-enqueue-fail", password="x", is_staff=True)
+        )
+        cases = (
+            ("run_markdown_sync_task", "main.views.sync_project_markdowns_task.delay",
+             "Failed to enqueue markdown sync task."),
+            ("run_heatmap_refresh_task", "main.views.refresh_portfolio_heatmap_cache_task.delay",
+             "Failed to enqueue heatmap refresh task."),
+        )
+        for url_name, delay_path, error in cases:
+            with self.subTest(url_name=url_name):
+                with patch(delay_path, side_effect=ConnectionError("broker down")):
+                    response = self.client.post(reverse(url_name), {"next": reverse("about")})
+
+                self.assertEqual(response.status_code, 302)
+                self.assertEqual(response.url, reverse("about"))
+                self.assertIn(error, [str(m) for m in get_messages(response.wsgi_request)])
+
     def test_blog_detail_strips_external_img_src(self):
         project = Project.objects.create(
             title="Img Test",
@@ -668,32 +681,46 @@ class ViewsTest(TestCase):
             blog_url="img-test-slug",
             status="finished",
         )
-        external_md = b'# Test\n\n![tracker](https://evil.com/pixel.gif)\n\n![github](https://raw.githubusercontent.com/user/repo/main/img.png)\n'
-        project.markdown_file.save("img-test-slug.md", ContentFile(external_md), save=True)
+        kept_srcs = [
+            "https://raw.githubusercontent.com/user/repo/main/img.png",
+            "https://camo.githubusercontent.com/abc123/def456",
+            "https://github.com/user/repo/assets/1/screenshot.png",
+        ]
+        external_md = "# Test\n\n![tracker](https://evil.com/pixel.gif)\n\n" + "".join(
+            f"![github]({src})\n\n" for src in kept_srcs
+        )
+        project.markdown_file.save(
+            "img-test-slug.md", ContentFile(external_md.encode()), save=True
+        )
 
         response = self.client.get(reverse("blog_detail", args=["img-test-slug"]))
 
         self.assertEqual(response.status_code, 200)
         content = response.content.decode()
         self.assertNotIn("evil.com", content)
-        self.assertIn("raw.githubusercontent.com", content)
+        for src in kept_srcs:
+            self.assertIn(f'src="{src}"', content)
 
     def test_about_shows_disk_info_for_staff(self):
-        from django.contrib.auth import get_user_model
         User = get_user_model()
         staff = User.objects.create_user("diskstaff", password="pass", is_staff=True)
         self.client.force_login(staff)
+        gb = 1024 ** 3
+        DiskUsage = collections.namedtuple("DiskUsage", ["total", "used", "free"])
 
-        response = self.client.get(reverse("about"))
+        # Level uses unrounded free space: 0.96 and 1.96 would round up past the thresholds.
+        for free_gb, level in ((0.96, "critical"), (1.96, "warning")):
+            with self.subTest(free_gb=free_gb):
+                usage = DiskUsage(
+                    total=10 * gb, used=int((10 - free_gb) * gb), free=int(free_gb * gb)
+                )
+                with patch("main.views.shutil.disk_usage", return_value=usage):
+                    response = self.client.get(reverse("about"))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("disk_info", response.context)
-        disk = response.context["disk_info"]
-        self.assertIn("free_gb", disk)
-        self.assertIn("used_gb", disk)
-        self.assertIn("total_gb", disk)
-        self.assertIn("level", disk)
-        self.assertIn(disk["level"], ("ok", "warning", "critical"))
+                self.assertEqual(response.status_code, 200)
+                disk = response.context["disk_info"]
+                self.assertEqual(disk["level"], level)
+                self.assertEqual(disk["total_gb"], 10.0)
 
 
 class ErrorHandlersTest(TestCase):

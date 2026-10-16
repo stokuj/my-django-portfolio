@@ -114,6 +114,50 @@ class TaskStatusTrackingTests(TestCase):
         self.assertEqual(log.last_updated, 1)
         self.assertEqual(log.last_failed, 1)
 
+    def test_sync_task_records_task_exception_as_partial_success(self):
+        first = Project.objects.create(
+            title="Task Raise 1",
+            short_description="sync task",
+            blog=True,
+            blog_url="task-raise-1",
+            status="finished",
+        )
+        Project.objects.create(
+            title="Task Raise 2",
+            short_description="sync task",
+            blog=True,
+            blog_url="task-raise-2",
+            status="finished",
+        )
+
+        def _sync_side_effect(project):
+            if project.id == first.id:
+                return {"project_id": project.id, "slug": project.blog_url, "updated": True}
+            raise RuntimeError("boom")
+
+        with patch("main.tasks.sync_project_markdown", side_effect=_sync_side_effect):
+            result = sync_project_markdowns_task()
+
+        log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
+        self.assertEqual(result["failed"], 1)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_PARTIAL_SUCCESS)
+        self.assertEqual(log.last_total, 2)
+        self.assertEqual(log.last_updated, 1)
+        self.assertEqual(log.last_failed, 1)
+        self.assertIn("task-raise-2: task_exception", log.last_error)
+
+    @patch("main.tasks.fetch_heatmap_data", return_value=(None, "boom"))
+    def test_heatmap_refresh_task_records_fetch_error(self, fetch_mock):
+        result = refresh_portfolio_heatmap_cache_task()
+
+        log = TaskExecutionLog.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
+        snapshot = HeatmapSnapshot.objects.get(key="portfolio")
+        self.assertEqual(result, {"ok": False, "error": "boom"})
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)
+        self.assertEqual(log.last_failed, 1)
+        self.assertEqual(log.last_error, "boom")
+        self.assertEqual(snapshot.last_error, "boom")
+
     @patch("main.tasks.fetch_heatmap_data")
     def test_heatmap_refresh_task_updates_status_on_success(self, fetch_mock):
         fetch_mock.return_value = (

@@ -172,3 +172,60 @@ class MarkdownSyncTests(TestCase):
         project.markdown_file.open("rb")
         self.assertEqual(project.markdown_file.read().decode("utf-8"), "# Old")
         project.markdown_file.close()
+
+    def test_sync_project_markdown_falls_back_to_master_on_404(self):
+        project = Project.objects.create(
+            title="Sync Fallback",
+            short_description="sync test",
+            date=datetime.date(2025, 1, 1),
+            blog=True,
+            blog_url="sync-fallback",
+            github_url="https://github.com/example/sync-fallback",
+            status="finished",
+        )
+
+        with patch(
+            "main.markdown_sync.requests.get",
+            side_effect=[
+                _make_mock_response(b"Not Found", status_code=404),
+                _make_mock_response(b"# From master"),
+            ],
+        ) as get_mock:
+            result = sync_project_markdown(project)
+
+        self.assertTrue(result["updated"])
+        self.assertEqual(
+            result["source_url"],
+            "https://raw.githubusercontent.com/example/sync-fallback/master/README.md",
+        )
+        self.assertEqual(get_mock.call_count, 2)
+        project.refresh_from_db()
+        with project.markdown_file.open("rb") as fh:
+            self.assertEqual(fh.read(), b"# From master")
+
+    def test_sync_project_markdown_rejects_html_body(self):
+        project = Project.objects.create(
+            title="Sync Html",
+            short_description="sync test",
+            date=datetime.date(2025, 1, 1),
+            blog=True,
+            blog_url="sync-html",
+            github_url="https://github.com/example/sync-html",
+            status="finished",
+        )
+        project.markdown_file.save("sync-html.md", ContentFile(b"# Old"), save=True)
+        old_name = project.markdown_file.name
+
+        with patch(
+            "main.markdown_sync.requests.get",
+            return_value=_make_mock_response(b"<!DOCTYPE html><html><body>Login</body></html>"),
+        ):
+            result = sync_project_markdown(project)
+
+        self.assertFalse(result["updated"])
+        self.assertEqual(result["reason"], "download_failed")
+        self.assertIn("HTML", result["error"])
+        project.refresh_from_db()
+        self.assertEqual(project.markdown_file.name, old_name)
+        with project.markdown_file.open("rb") as fh:
+            self.assertEqual(fh.read(), b"# Old")

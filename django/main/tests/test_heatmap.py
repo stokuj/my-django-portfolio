@@ -13,13 +13,17 @@ from main.heatmap import build_weeks_payload, contribution_level, fetch_heatmap_
 
 class GitHubClientTests(SimpleTestCase):
     @patch("main.github_client.requests.post")
-    def test_fetch_contribution_days_raises_auth_error_for_401(self, post_mock):
-        response = Mock()
-        response.status_code = 401
-        post_mock.return_value = response
+    def test_fetch_contribution_days_maps_http_errors(self, post_mock):
+        cases = ((401, GitHubAuthError), (403, GitHubAuthError), (500, GitHubUpstreamError))
+        for status_code, error_class in cases:
+            with self.subTest(status_code=status_code):
+                response = Mock()
+                response.status_code = status_code
+                response.headers = {}
+                post_mock.return_value = response
 
-        with self.assertRaises(GitHubAuthError):
-            fetch_contribution_days("gho_invalid")
+                with self.assertRaises(error_class):
+                    fetch_contribution_days("gho_token")
 
     @patch("main.github_client.requests.post")
     def test_fetch_contribution_days_raises_upstream_error_for_rate_limit(self, post_mock):

@@ -290,7 +290,13 @@ class ProjectMediaCleanupTests(TestCase):
         shutil.rmtree(cls._media_root, ignore_errors=True)
         super().tearDownClass()
 
-    def _make_project_with_thumbnail(self):
+    # (field, first file, replacement file) for each file field cleaned up by signals.
+    FILE_FIELDS = (
+        ("thumbnail", "thumb.png", "thumb_new.png"),
+        ("markdown_file", "readme.md", "readme_new.md"),
+    )
+
+    def _make_project_with_file(self, field, filename):
         from main.models import Project
         project = Project.objects.create(
             title="Media Test",
@@ -298,33 +304,37 @@ class ProjectMediaCleanupTests(TestCase):
             date=datetime.date(2025, 1, 1),
             status="finished",
         )
-        project.thumbnail.save("thumb.png", ContentFile(b"fake-png"), save=True)
+        getattr(project, field).save(filename, ContentFile(b"fake"), save=True)
         return project
 
-    def test_thumbnail_deleted_when_project_deleted(self):
-        project = self._make_project_with_thumbnail()
-        storage = project.thumbnail.storage
-        thumb_name = project.thumbnail.name
-        self.assertTrue(storage.exists(thumb_name))
+    def test_file_deleted_when_project_deleted(self):
+        for field, filename, _ in self.FILE_FIELDS:
+            with self.subTest(field=field):
+                project = self._make_project_with_file(field, filename)
+                storage = getattr(project, field).storage
+                name = getattr(project, field).name
+                self.assertTrue(storage.exists(name))
 
-        with self.captureOnCommitCallbacks(execute=True):
-            project.delete()
-            # Deletion waits for the commit, so a rollback keeps the file.
-            self.assertTrue(storage.exists(thumb_name))
+                with self.captureOnCommitCallbacks(execute=True):
+                    project.delete()
+                    # Deletion waits for the commit, so a rollback keeps the file.
+                    self.assertTrue(storage.exists(name))
 
-        self.assertFalse(storage.exists(thumb_name))
+                self.assertFalse(storage.exists(name))
 
-    def test_old_thumbnail_deleted_when_replaced(self):
-        project = self._make_project_with_thumbnail()
-        storage = project.thumbnail.storage
-        old_name = project.thumbnail.name
-        self.assertTrue(storage.exists(old_name))
+    def test_old_file_deleted_when_replaced(self):
+        for field, filename, new_filename in self.FILE_FIELDS:
+            with self.subTest(field=field):
+                project = self._make_project_with_file(field, filename)
+                storage = getattr(project, field).storage
+                old_name = getattr(project, field).name
+                self.assertTrue(storage.exists(old_name))
 
-        with self.captureOnCommitCallbacks(execute=True):
-            project.thumbnail.save("thumb_new.png", ContentFile(b"new-fake-png"), save=True)
-            self.assertTrue(storage.exists(old_name))
+                with self.captureOnCommitCallbacks(execute=True):
+                    getattr(project, field).save(new_filename, ContentFile(b"new"), save=True)
+                    self.assertTrue(storage.exists(old_name))
 
-        self.assertFalse(storage.exists(old_name))
+                self.assertFalse(storage.exists(old_name))
 
 
 class BackfillGithubUrlMigrationTest(TestCase):
