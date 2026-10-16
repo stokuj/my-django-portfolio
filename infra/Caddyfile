@@ -31,6 +31,7 @@ https://{$APP_DOMAIN} {
 	respond /robots.txt <<TXT
 		User-agent: *
 		Disallow: /admin/
+		Sitemap: https://{$APP_DOMAIN}/sitemap.xml
 
 		TXT 200
 
