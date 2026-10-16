@@ -128,7 +128,7 @@ Files: `infra/Dockerfile`, `pyproject.toml`
 - [x] F-051: `celery[redis]==5.6.3`, `uv lock`, then check in `make dev-up` that the worker and beat log scheduled runs.
 
 ### 3g. Routine minor bumps (`chore/deps-minor-bumps`), risk low
-- [ ] F-106 (part A): django-environ, markdown, requests and ruff to their latest versions, `uv lock`, then `npm update` (tailwindcss, @tailwindcss/cli, daisyui).
+- [x] F-106 (part A): django-environ, markdown, requests and ruff to their latest versions, `uv lock`, then `npm update` (tailwindcss, @tailwindcss/cli, daisyui).
 
 ### 3h. gunicorn 26 and pymdown-extensions 12 (`chore/deps-gunicorn-pymdown`), risk medium
 - [ ] F-106 (part B): Read both changelogs, bump, and run `uv lock`. The arithmatex test covers pymdown, and `make dev-up` checks that gunicorn starts.
