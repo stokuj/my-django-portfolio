@@ -7,6 +7,10 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
 jobs:
   verify:
     uses: ./.github/workflows/django.yml
@@ -22,6 +26,8 @@ jobs:
     permissions:
       contents: read
       packages: write # Required to push to GitHub Container Registry
+    env:
+      IMAGE_TAG: ${{ github.sha }}
 
     steps:
       - name: Checkout repository
@@ -61,7 +67,10 @@ jobs:
         run: docker compose --env-file .env -f infra/docker-compose.prod.yml build web
 
       - name: Push images to GitHub Container Registry
-        run: docker compose --env-file .env -f infra/docker-compose.prod.yml push web
+        run: |
+          docker compose --env-file .env -f infra/docker-compose.prod.yml push web
+          docker tag ghcr.io/stokuj/my-django-portfolio:$IMAGE_TAG ghcr.io/stokuj/my-django-portfolio:latest
+          docker push ghcr.io/stokuj/my-django-portfolio:latest
 
   deploy:
     name: Deploy to DigitalOcean Droplet
@@ -82,18 +91,17 @@ jobs:
           fingerprint: ${{ secrets.SERVER_SSH_FINGERPRINT }}
           script: |
             set -e
+            export IMAGE_TAG=${{ github.sha }}
             cd ~/my_django_portfolio
 
-            git fetch --all
-            git checkout main
-            git pull origin main
+            git fetch origin
+            git checkout --detach ${{ github.sha }}
 
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
             docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml pull
             docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml run --rm --no-deps --entrypoint "" web python manage.py check --deploy --fail-level WARNING
-            docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml down --remove-orphans
-            docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml up -d --force-recreate
+            docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml up -d --remove-orphans --wait
 
             docker builder prune -af
             docker image prune -af

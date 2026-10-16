@@ -30,7 +30,7 @@ services:
     build:
       context: ..
       dockerfile: infra/Dockerfile
-    image: ghcr.io/stokuj/my-django-portfolio:latest
+    image: ghcr.io/stokuj/my-django-portfolio:${IMAGE_TAG:-latest}
     user: "10001:10001"
     restart: always
     env_file:
@@ -67,7 +67,7 @@ services:
     build:
       context: ..
       dockerfile: infra/Dockerfile
-    image: ghcr.io/stokuj/my-django-portfolio:latest
+    image: ghcr.io/stokuj/my-django-portfolio:${IMAGE_TAG:-latest}
     user: "10001:10001"
     restart: always
     env_file:
@@ -100,7 +100,7 @@ services:
     build:
       context: ..
       dockerfile: infra/Dockerfile
-    image: ghcr.io/stokuj/my-django-portfolio:latest
+    image: ghcr.io/stokuj/my-django-portfolio:${IMAGE_TAG:-latest}
     user: "10001:10001"
     restart: always
     env_file:
