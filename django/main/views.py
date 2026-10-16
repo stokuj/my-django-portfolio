@@ -327,7 +327,9 @@ def blog_detail(request, blog_slug):
     markdown_content = _load_project_markdown(project)
     markdown_html = _render_markdown_to_html(markdown_content)
     readme_url = build_readme_url(project)
-    all_projects = Project.objects.order_by("-date")
+    all_projects = Project.objects.only(
+        "id", "title", "blog", "blog_url", "github_url", "date"
+    ).order_by("-date")
 
     return render(
         request,
