@@ -118,6 +118,10 @@ $C start web worker beat
 
 - If the dump is a rollback from a bad release, start the previous image instead of the current one: `IMAGE_TAG=<previous sha> $C up -d --wait`.
 
+### Disk monitoring
+
+Disk alerting lives in DigitalOcean Monitoring (alert at 85% disk usage, by email). The daily `check_disk_usage_task` only records its result for the admin About page and notifies nobody.
+
 ## New droplet bootstrap
 
 Owner steps, in order, for the new droplet. They need the server, the DigitalOcean console or GitHub secrets. Nothing is migrated from the archived droplet: PostgreSQL 18 starts on an empty `postgres18_data` volume, content is re-entered in admin, and heatmap and blog markdown refill from GitHub.
@@ -131,12 +135,11 @@ Owner steps, in order, for the new droplet. They need the server, the DigitalOce
 7. [ ] Set the GitHub secrets `SERVER_HOST`, `SERVER_USER` and `SSH_PRIVATE_KEY`.
 8. [ ] Add the `SERVER_SSH_FINGERPRINT` GitHub secret: the SHA256 value from `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub | awk '{print $2}'`, run on the droplet (not via `ssh-keyscan`). Update it if the droplet or its host key changes.
 9. [ ] Run the first deploy: merge the `dev → main` PR. The `db` service initialises an empty PostgreSQL 18 database and `web` runs `migrate`.
-10. [ ] Create the admin account: `docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml exec web python manage.py createsuperuser`.
-11. [ ] Re-enter projects, tags, the portfolio profile and thumbnails in admin.
-12. [ ] Log in and trigger both sync jobs on `/about` ("Sync Heatmap" and "Sync Markdown").
-13. [ ] After the first successful deploy (GHCR login uses the job's `GITHUB_TOKEN`), delete the `GHCR_PAT` and `GHCR_USERNAME` GitHub secrets.
-
-Phase 10 of the 2026-10-14 audit adds its owner steps to this list.
+10. [ ] Watch the first deploy: follow the Actions log until the job is green, then run `docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml ps` on the droplet and check that every service is up and `db` is healthy.
+11. [ ] Create the admin account: `docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml exec web python manage.py createsuperuser`.
+12. [ ] Re-enter projects, tags, the portfolio profile and thumbnails in admin.
+13. [ ] Log in and trigger both sync jobs on `/about` ("Sync Heatmap" and "Sync Markdown").
+14. [ ] After the first successful deploy (GHCR login uses the job's `GITHUB_TOKEN`), delete the `GHCR_PAT` and `GHCR_USERNAME` GitHub secrets.
 
 ## Development and Verification Workflow
 
