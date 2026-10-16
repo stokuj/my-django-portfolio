@@ -267,7 +267,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-028: Add an inline head script in base.html before the stylesheet: `try{var t=localStorage.getItem("theme");if(t==="dim2")document.documentElement.dataset.theme=t}catch(e){}`. Wrap the storage calls in theme-toggle.js in try/catch and delete `legacyThemeMap`.
 - [x] F-036: Delete the skeleton (index.html:40-60) and `hidden` (:62). In projects-filters.js delete :8, :89-90 and the skeleton and grid parts of the :11 guard.
 - [x] F-074: Remove the debounce wrappers and call `applyFilters` directly on input and at :69 and :84.
-- [ ] F-075: Render `aria-pressed` in the template (true on All, false on tags) and set it in the loop at projects-filters.js:76.
+- [x] F-075: Render `aria-pressed` in the template (true on All, false on tags) and set it in the loop at projects-filters.js:76.
 - [ ] F-080: Add `aria-current="page"` via `request.resolver_match.url_name` on the 6 nav links and `aria-hidden="true"` on the SVG at :167. Delete the duplicate footer link at :158.
 - [ ] F-083: In timeline_section.html use `<details class="collapse ..." name="timeline-accordion" {% if section.checked %}open{% endif %}>` with `<summary class="collapse-title">`.
 - [ ] F-085: The heatmap grid gets `role="img"` and an aria-label summary set in renderGrid. Add `aria-hidden` on the month row, drop the per-cell aria-label (keep title), and add `role="alert"` on the error box.

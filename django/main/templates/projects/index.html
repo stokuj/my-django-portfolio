@@ -31,9 +31,9 @@
             </div>
 
             <div id="tagFilter" class="flex flex-wrap gap-2">
-                <button class="btn btn-sm btn-primary ui-motion" data-tag="all" type="button">All Projects</button>
+                <button class="btn btn-sm btn-primary ui-motion" data-tag="all" type="button" aria-pressed="true">All Projects</button>
                 {% for tag in all_tags %}
-                <button class="btn btn-sm btn-outline ui-motion" data-tag="{{ tag.name|lower }}" type="button">{{ tag.name }}</button>
+                <button class="btn btn-sm btn-outline ui-motion" data-tag="{{ tag.name|lower }}" type="button" aria-pressed="false">{{ tag.name }}</button>
                 {% endfor %}
             </div>
         </div>

@@ -55,10 +55,12 @@ document.addEventListener("DOMContentLoaded", () => {
             tagButtons.forEach((btn) => {
                 btn.classList.remove("btn-primary");
                 btn.classList.add("btn-outline");
+                btn.setAttribute("aria-pressed", "false");
             });
 
             button.classList.remove("btn-outline");
             button.classList.add("btn-primary");
+            button.setAttribute("aria-pressed", "true");
 
             applyFilters();
         });

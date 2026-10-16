@@ -349,6 +349,11 @@ class ViewsTest(TestCase):
             response, reverse("blog_detail", args=[self.project.blog_url])
         )
 
+    def test_projects_tag_filters_expose_pressed_state(self):
+        response = self.client.get(reverse("projects"))
+        self.assertContains(response, 'data-tag="all" type="button" aria-pressed="true"')
+        self.assertContains(response, 'data-tag="python" type="button" aria-pressed="false"')
+
     def test_projects_view_uses_detail_link_when_blog_slug_missing(self):
         no_slug_project = Project.objects.create(
             title="No Slug Blog Project",
