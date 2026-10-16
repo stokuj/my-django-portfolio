@@ -125,7 +125,7 @@ Files: `infra/Dockerfile`, `pyproject.toml`
 - [x] F-052: `pillow==12.3.0`, then `uv lock --upgrade-package pillow`.
 
 ### 3f. Celery (`chore/deps-celery-5.6`), risk low
-- [ ] F-051: `celery[redis]==5.6.3`, `uv lock`, then check in `make dev-up` that the worker and beat log scheduled runs.
+- [x] F-051: `celery[redis]==5.6.3`, `uv lock`, then check in `make dev-up` that the worker and beat log scheduled runs.
 
 ### 3g. Routine minor bumps (`chore/deps-minor-bumps`), risk low
 - [ ] F-106 (part A): django-environ, markdown, requests and ruff to their latest versions, `uv lock`, then `npm update` (tailwindcss, @tailwindcss/cli, daisyui).
