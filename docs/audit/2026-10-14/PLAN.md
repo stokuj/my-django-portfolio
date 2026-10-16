@@ -155,7 +155,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 
 - [x] F-008: Add `restart: always` to `web` and `caddy` in prod compose. Optionally assert `count("    restart: always") == 6` in test_operational_files.py.
 - [x] F-004 + F-079: In mobile-menu.js:10, toggle `dropdown-open` on `button.parentElement` instead of `hidden`. Remove `hidden` from base.html:42. In the Escape handler, return early unless `aria-expanded === "true"`. Change `lg:hidden` to `md:hidden` at base.html:25.
-- [ ] F-029: Wrap input.css:9-17 in `@layer base { }`.
+- [x] F-029: Wrap input.css:9-17 in `@layer base { }`.
 - [ ] F-034 + F-111: Rename the `page_name` block to `title` in about.html:3 and detail.html:4. In base.html:8 use `{% block title %}{{ site_name|default:"My Portfolio" }}{% endblock %}`. projects/index.html gets `Projects | {{ site_name|default:"My Portfolio" }}`. Add one test on the detail page `<title>`.
 - [ ] F-003: In `sync_project_markdown`, skip the write when the stored bytes equal the new text (counted as success). When the content changed and a file exists, overwrite it in place with `storage.open(name, "wb")`. Call `markdown_file.save` only when there is no file. Tests: two syncs with different content keep the same name; an identical sync does not rewrite the file.
 - [ ] F-040: Move `templates/errors/404.html` and `500.html` to `templates/404.html` and `500.html`. Delete views.py:90-97 and config/urls.py:32-34. Rewrite ErrorHandlersTest (test_views.py:22, 650-664) against `django.views.defaults`.
