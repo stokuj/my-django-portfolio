@@ -33,6 +33,16 @@ class GitHubClientTests(SimpleTestCase):
         with self.assertRaises(GitHubAuthError):
             fetch_authenticated_user("gho_invalid")
 
+    @patch("main.github_client.requests.get")
+    def test_fetch_authenticated_user_raises_upstream_error_for_rate_limit(self, get_mock):
+        response = Mock()
+        response.status_code = 403
+        response.headers = {"X-RateLimit-Remaining": "0"}
+        get_mock.return_value = response
+
+        with self.assertRaises(GitHubUpstreamError):
+            fetch_authenticated_user("gho_valid")
+
     @patch("main.github_client.requests.post")
     def test_fetch_contribution_days_flattens_graphql_weeks(self, post_mock):
         response = Mock()
