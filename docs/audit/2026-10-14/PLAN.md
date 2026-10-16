@@ -164,7 +164,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-059: `[h.strip() for h in env.list(...) if h.strip()]` at settings.py:43 and :107.
 - [x] F-067: Before the 401/403 check at both call sites, raise GitHubUpstreamError("GitHub rate limit exceeded") when the status is 403 and `X-RateLimit-Remaining == "0"` or `Retry-After` is present. Add one mocked test.
 - [x] F-076: Remove the `blog_slug` parameter from `sync_project_markdowns_task` (tasks.py:30,37-38) and `run_markdown_sync_task` (views.py:426-437), and update test_views.py:551.
-- [ ] F-077: Delete the 6 `last_success_at=None` and the 3 `last_failure_at=None` assignments, and update test_tasks.py:189,231,331 to check that the timestamps are kept.
+- [x] F-077: Delete the 6 `last_success_at=None` and the 3 `last_failure_at=None` assignments, and update test_tasks.py:189,231,331 to check that the timestamps are kept.
 - [ ] F-089: Turn `home/` into `RedirectView.as_view(pattern_name="home", permanent=True)` without a name. Update test_urls.py:24 and test_middleware.py:28-30, and drop `/home/` from middleware.py:13.
 - [ ] F-120 + F-128: Add a UTF-8 decode validator and help_text on `markdown_file` (help_text: replaced by the GitHub README on sync when Blog is on). Add a `validate_str_list` validator on `tech_stack` and `tools_libraries`. One `makemigrations` (a no-op AlterField), plus one full_clean test.
 

@@ -65,11 +65,9 @@ def sync_project_markdowns_task():
     if failed_count == 0:
         status.last_status = TaskExecutionStatus.STATUS_SUCCESS
         status.last_success_at = timezone.now()
-        status.last_failure_at = None
         status.last_error = ""
     elif updated_count > 0:
         status.last_status = TaskExecutionStatus.STATUS_PARTIAL_SUCCESS
-        status.last_success_at = None
         status.last_failure_at = timezone.now()
         failed_results = [item for item in results if not item.get("updated")]
         status.last_error = "; ".join(
@@ -79,7 +77,6 @@ def sync_project_markdowns_task():
     else:
         failed_results = [item for item in results if not item.get("updated")]
         status.last_status = TaskExecutionStatus.STATUS_FAILURE
-        status.last_success_at = None
         status.last_failure_at = timezone.now()
         status.last_error = "; ".join(
             f"{item.get('slug')}: {item.get('reason', 'unknown_error')}"
@@ -118,7 +115,6 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
         message = "Heatmap is not configured."
         update_snapshot_error(message)
         status.last_status = TaskExecutionStatus.STATUS_FAILURE
-        status.last_success_at = None
         status.last_failure_at = timezone.now()
         status.last_total = 1
         status.last_updated = 0
@@ -144,7 +140,6 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
     if error:
         update_snapshot_error(error)
         status.last_status = TaskExecutionStatus.STATUS_FAILURE
-        status.last_success_at = None
         status.last_failure_at = timezone.now()
         status.last_total = 1
         status.last_updated = 0
@@ -169,7 +164,6 @@ def refresh_portfolio_heatmap_cache_task(schedule_next=False):
     snapshot = update_snapshot_with_payload(payload)
     status.last_status = TaskExecutionStatus.STATUS_SUCCESS
     status.last_success_at = timezone.now()
-    status.last_failure_at = None
     status.last_total = 1
     status.last_updated = 1
     status.last_failed = 0
@@ -213,7 +207,6 @@ def check_disk_usage_task():
         status.last_error = (
             f"CRITICAL: {free_gb:.1f} GB free (below {DISK_CRITICAL_GB} GB threshold)"
         )
-        status.last_success_at = None
         status.last_failure_at = timezone.now()
     elif free_gb < DISK_WARNING_GB:
         logger.warning("DISK WARNING: only %.1f GB free on /", free_gb)
@@ -221,7 +214,6 @@ def check_disk_usage_task():
         status.last_updated = 0
         status.last_failed = 1
         status.last_error = f"WARNING: {free_gb:.1f} GB free (below {DISK_WARNING_GB} GB threshold)"
-        status.last_success_at = None
         status.last_failure_at = timezone.now()
     else:
         logger.info("DISK OK: %.1f GB free on /", free_gb)
@@ -230,7 +222,6 @@ def check_disk_usage_task():
         status.last_failed = 0
         status.last_error = ""
         status.last_success_at = timezone.now()
-        status.last_failure_at = None
 
     status.save(
         update_fields=[

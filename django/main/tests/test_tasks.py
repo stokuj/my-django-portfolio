@@ -131,7 +131,7 @@ class TaskStatusTrackingTests(TestCase):
         )
         self.assertEqual(execution_log.last_total, 2)
 
-    def test_sync_task_clears_failure_timestamp_after_success(self):
+    def test_sync_task_keeps_failure_timestamp_after_success(self):
         project = Project.objects.create(
             title="Task Success Transition",
             short_description="sync task",
@@ -139,10 +139,11 @@ class TaskStatusTrackingTests(TestCase):
             blog_url="task-success-transition",
             status="finished",
         )
+        seeded = timezone.now()
         TaskExecutionStatus.objects.create(
             task_name=SYNC_MARKDOWNS_TASK_NAME,
             last_status=TaskExecutionStatus.STATUS_FAILURE,
-            last_failure_at=timezone.now(),
+            last_failure_at=seeded,
         )
 
         with patch(
@@ -157,9 +158,9 @@ class TaskStatusTrackingTests(TestCase):
 
         status = TaskExecutionStatus.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
         self.assertIsNotNone(status.last_success_at)
-        self.assertIsNone(status.last_failure_at)
+        self.assertEqual(status.last_failure_at, seeded)
 
-    def test_sync_task_clears_success_timestamp_after_failure(self):
+    def test_sync_task_keeps_success_timestamp_after_failure(self):
         Project.objects.create(
             title="Task Failure Transition",
             short_description="sync task",
@@ -167,10 +168,11 @@ class TaskStatusTrackingTests(TestCase):
             blog_url="task-failure-transition",
             status="finished",
         )
+        seeded = timezone.now()
         TaskExecutionStatus.objects.create(
             task_name=SYNC_MARKDOWNS_TASK_NAME,
             last_status=TaskExecutionStatus.STATUS_SUCCESS,
-            last_success_at=timezone.now(),
+            last_success_at=seeded,
         )
 
         with patch(
@@ -185,10 +187,10 @@ class TaskStatusTrackingTests(TestCase):
             sync_project_markdowns_task()
 
         status = TaskExecutionStatus.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
-        self.assertIsNone(status.last_success_at)
+        self.assertEqual(status.last_success_at, seeded)
         self.assertIsNotNone(status.last_failure_at)
 
-    def test_sync_task_clears_success_timestamp_after_partial_success(self):
+    def test_sync_task_keeps_success_timestamp_after_partial_success(self):
         first = Project.objects.create(
             title="Task Partial Transition 1",
             short_description="sync task",
@@ -203,10 +205,11 @@ class TaskStatusTrackingTests(TestCase):
             blog_url="task-partial-transition-2",
             status="finished",
         )
+        seeded = timezone.now()
         TaskExecutionStatus.objects.create(
             task_name=SYNC_MARKDOWNS_TASK_NAME,
             last_status=TaskExecutionStatus.STATUS_SUCCESS,
-            last_success_at=timezone.now(),
+            last_success_at=seeded,
         )
 
         def _sync_side_effect(project):
@@ -227,7 +230,7 @@ class TaskStatusTrackingTests(TestCase):
             sync_project_markdowns_task()
 
         status = TaskExecutionStatus.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
-        self.assertIsNone(status.last_success_at)
+        self.assertEqual(status.last_success_at, seeded)
         self.assertIsNotNone(status.last_failure_at)
 
     @patch("main.tasks.fetch_heatmap_data")
@@ -264,13 +267,14 @@ class TaskStatusTrackingTests(TestCase):
 
     @patch("main.tasks.fetch_heatmap_data")
     @patch("main.tasks.get_configured_github_token", return_value="gho_task_token")
-    def test_heatmap_refresh_task_clears_failure_timestamp_after_success(
+    def test_heatmap_refresh_task_keeps_failure_timestamp_after_success(
         self, _token_mock, fetch_mock
     ):
+        seeded = timezone.now()
         TaskExecutionStatus.objects.create(
             task_name=REFRESH_HEATMAP_TASK_NAME,
             last_status=TaskExecutionStatus.STATUS_FAILURE,
-            last_failure_at=timezone.now(),
+            last_failure_at=seeded,
         )
         status = TaskExecutionStatus.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
 
@@ -286,7 +290,7 @@ class TaskStatusTrackingTests(TestCase):
         refresh_portfolio_heatmap_cache_task()
 
         status.refresh_from_db()
-        self.assertIsNone(status.last_failure_at)
+        self.assertEqual(status.last_failure_at, seeded)
         self.assertIsNotNone(status.last_success_at)
 
     @patch("main.tasks.update_snapshot_error")
@@ -314,20 +318,21 @@ class TaskStatusTrackingTests(TestCase):
 
     @patch("main.tasks.update_snapshot_error")
     @patch("main.tasks.get_configured_github_token", return_value=None)
-    def test_heatmap_refresh_task_clears_success_timestamp_after_failure(
+    def test_heatmap_refresh_task_keeps_success_timestamp_after_failure(
         self, _token_mock, update_error_mock
     ):
+        seeded = timezone.now()
         TaskExecutionStatus.objects.create(
             task_name=REFRESH_HEATMAP_TASK_NAME,
             last_status=TaskExecutionStatus.STATUS_SUCCESS,
-            last_success_at=timezone.now(),
+            last_success_at=seeded,
         )
         status = TaskExecutionStatus.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
 
         refresh_portfolio_heatmap_cache_task()
 
         status.refresh_from_db()
-        self.assertIsNone(status.last_success_at)
+        self.assertEqual(status.last_success_at, seeded)
         self.assertIsNotNone(status.last_failure_at)
         update_error_mock.assert_called_once_with("Heatmap is not configured.")
 
