@@ -120,8 +120,8 @@ class PageView(models.Model):
         return instance
 
 
-class TaskExecutionStatus(models.Model):
-    """Latest execution status snapshot for a named background task."""
+class TaskExecutionLog(models.Model):
+    """Log entry for one background task run; the newest row per task is its status."""
 
     STATUS_SUCCESS = "success"
     STATUS_PARTIAL_SUCCESS = "partial_success"
@@ -132,35 +132,14 @@ class TaskExecutionStatus(models.Model):
         (STATUS_FAILURE, "Failure"),
     ]
 
-    task_name = models.CharField(max_length=150, unique=True)
-    last_status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, blank=True, default=""
-    )
-    last_run_at = models.DateTimeField(blank=True, null=True)
-    last_success_at = models.DateTimeField(blank=True, null=True)
-    last_failure_at = models.DateTimeField(blank=True, null=True)
-    last_total = models.PositiveIntegerField(default=0)
-    last_updated = models.PositiveIntegerField(default=0)
-    last_failed = models.PositiveIntegerField(default=0)
-    last_error = models.TextField(blank=True, default="")
-
-    def __str__(self):
-        return self.task_name
-
-
-class TaskExecutionLog(models.Model):
-    """Historical log entry for a single background task execution."""
-
     task_name = models.CharField(max_length=150, db_index=True)
     last_status = models.CharField(
         max_length=20,
-        choices=TaskExecutionStatus.STATUS_CHOICES,
+        choices=STATUS_CHOICES,
         blank=True,
         default="",
     )
     last_run_at = models.DateTimeField(blank=True, null=True)
-    last_success_at = models.DateTimeField(blank=True, null=True)
-    last_failure_at = models.DateTimeField(blank=True, null=True)
     last_total = models.PositiveIntegerField(default=0)
     last_updated = models.PositiveIntegerField(default=0)
     last_failed = models.PositiveIntegerField(default=0)

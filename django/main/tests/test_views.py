@@ -25,7 +25,6 @@ from main.models import (
     Project,
     Tag,
     TaskExecutionLog,
-    TaskExecutionStatus,
 )
 from main.views import _render_markdown_to_html
 
@@ -119,6 +118,49 @@ class ViewsTest(TestCase):
         self.assertNotContains(response, "Heatmap Refresh (FastAPI)")
         self.assertContains(response, "Heatmap Refresh")
 
+    def test_about_scheduled_jobs_follow_beat_schedule(self):
+        User = get_user_model()
+        admin_user = User.objects.create_user(
+            username="admin-jobs", password="secret", is_staff=True
+        )
+        self.client.force_login(admin_user)
+        last_run = timezone.now() - datetime.timedelta(minutes=5)
+        TaskExecutionLog.objects.create(
+            task_name="main.check_disk_usage_task",
+            last_status=TaskExecutionLog.STATUS_FAILURE,
+            last_run_at=last_run - datetime.timedelta(days=1),
+        )
+        TaskExecutionLog.objects.create(
+            task_name="main.check_disk_usage_task",
+            last_status=TaskExecutionLog.STATUS_SUCCESS,
+            last_run_at=last_run,
+        )
+
+        before = timezone.now()
+        response = self.client.get(reverse("about"))
+
+        jobs = {job["task_name"]: job for job in response.context["scheduled_jobs"]}
+        self.assertEqual(
+            set(jobs),
+            {
+                "main.refresh_portfolio_heatmap_cache_task",
+                "main.sync_project_markdowns_task",
+                "main.check_disk_usage_task",
+            },
+        )
+        disk = jobs["main.check_disk_usage_task"]
+        self.assertEqual(disk["label"], "Disk Usage Check")
+        self.assertEqual(disk["status"], "success")
+        self.assertEqual(disk["last_run_at"], last_run)
+        self.assertEqual(jobs["main.sync_project_markdowns_task"]["status"], "never")
+        for job in jobs.values():
+            # Crontab entries fire on the hour, within the next day.
+            self.assertGreater(job["next_run_at"], before)
+            self.assertLessEqual(
+                job["next_run_at"], before + datetime.timedelta(days=1)
+            )
+            self.assertEqual(job["next_run_at"].minute, 0)
+
     def test_about_shows_executed_tasks_list_for_admin(self):
         User = get_user_model()
         admin_user = User.objects.create_user(
@@ -135,7 +177,7 @@ class ViewsTest(TestCase):
 
         TaskExecutionLog.objects.create(
             task_name="main.older_task",
-            last_status=TaskExecutionStatus.STATUS_FAILURE,
+            last_status=TaskExecutionLog.STATUS_FAILURE,
             last_run_at=older_time,
             last_failed=1,
             last_total=1,
@@ -143,7 +185,7 @@ class ViewsTest(TestCase):
         )
         TaskExecutionLog.objects.create(
             task_name="main.newer_task",
-            last_status=TaskExecutionStatus.STATUS_SUCCESS,
+            last_status=TaskExecutionLog.STATUS_SUCCESS,
             last_run_at=newer_time,
             last_updated=1,
             last_total=1,
@@ -176,7 +218,7 @@ class ViewsTest(TestCase):
         for idx in range(35):
             TaskExecutionLog.objects.create(
                 task_name=f"main.task_{idx}",
-                last_status=TaskExecutionStatus.STATUS_SUCCESS,
+                last_status=TaskExecutionLog.STATUS_SUCCESS,
                 last_run_at=now - datetime.timedelta(minutes=idx),
                 last_total=1,
                 last_updated=1,
@@ -527,6 +569,9 @@ class ViewsTest(TestCase):
             response.context["readme_url"],
             "https://github.com/example/readme-link-project#readme",
         )
+        self.assertContains(
+            response, 'href="https://github.com/example/readme-link-project" target="_blank"'
+        )
 
     def test_run_markdown_sync_task_requires_staff_access(self):
         response = self.client.post(reverse("run_markdown_sync_task"))
@@ -689,3 +734,21 @@ class MarkdownSanitizerTest(SimpleTestCase):
                 html = _render_markdown_to_html(markdown_source)
                 for token in forbidden:
                     self.assertNotIn(token, html)
+
+
+class PageViewAdminTests(TestCase):
+    def test_pageview_admin_blocks_add_and_delete(self):
+        User = get_user_model()
+        self.client.force_login(
+            User.objects.create_superuser(username="root", password="secret")
+        )
+        PageView.get_instance()
+
+        add = self.client.get(reverse("admin:main_pageview_add"))
+        delete = self.client.get(reverse("admin:main_pageview_delete", args=[1]))
+        change = self.client.get(reverse("admin:main_pageview_change", args=[1]))
+
+        self.assertEqual(add.status_code, 403)
+        self.assertEqual(delete.status_code, 403)
+        self.assertEqual(change.status_code, 200)
+        self.assertNotContains(change, 'name="count"')

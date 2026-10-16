@@ -2,9 +2,8 @@ import collections
 from unittest.mock import patch
 
 from django.test import TestCase, override_settings
-from django.utils import timezone
 
-from main.models import HeatmapSnapshot, Project, TaskExecutionLog, TaskExecutionStatus
+from main.models import HeatmapSnapshot, Project, TaskExecutionLog
 from main.tasks import (
     DISK_USAGE_TASK_NAME,
     REFRESH_HEATMAP_TASK_NAME,
@@ -36,21 +35,14 @@ class TaskStatusTrackingTests(TestCase):
         ):
             result = sync_project_markdowns_task()
 
-        status = TaskExecutionStatus.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
-        execution_log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
+        log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
         self.assertEqual(result["failed"], 0)
-        self.assertEqual(status.last_status, TaskExecutionStatus.STATUS_SUCCESS)
-        self.assertEqual(status.last_total, 1)
-        self.assertEqual(status.last_updated, 1)
-        self.assertEqual(status.last_failed, 0)
-        self.assertIsNotNone(status.last_run_at)
-        self.assertIsNotNone(status.last_success_at)
-        self.assertIsNone(status.last_failure_at)
-        self.assertEqual(status.last_error, "")
-        self.assertEqual(execution_log.last_status, TaskExecutionStatus.STATUS_SUCCESS)
-        self.assertEqual(execution_log.last_total, 1)
-        self.assertEqual(execution_log.last_updated, 1)
-        self.assertEqual(execution_log.last_failed, 0)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
+        self.assertEqual(log.last_total, 1)
+        self.assertEqual(log.last_updated, 1)
+        self.assertEqual(log.last_failed, 0)
+        self.assertIsNotNone(log.last_run_at)
+        self.assertEqual(log.last_error, "")
 
     def test_sync_task_updates_status_on_failure(self):
         Project.objects.create(
@@ -73,18 +65,14 @@ class TaskStatusTrackingTests(TestCase):
         ):
             result = sync_project_markdowns_task()
 
-        status = TaskExecutionStatus.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
-        execution_log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
+        log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
         self.assertEqual(result["failed"], 1)
-        self.assertEqual(status.last_status, TaskExecutionStatus.STATUS_FAILURE)
-        self.assertEqual(status.last_total, 1)
-        self.assertEqual(status.last_updated, 0)
-        self.assertEqual(status.last_failed, 1)
-        self.assertIsNotNone(status.last_run_at)
-        self.assertIsNotNone(status.last_failure_at)
-        self.assertIn("task-failure: download_failed", status.last_error)
-        self.assertEqual(execution_log.last_status, TaskExecutionStatus.STATUS_FAILURE)
-        self.assertEqual(execution_log.last_failed, 1)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)
+        self.assertEqual(log.last_total, 1)
+        self.assertEqual(log.last_updated, 0)
+        self.assertEqual(log.last_failed, 1)
+        self.assertIsNotNone(log.last_run_at)
+        self.assertIn("task-failure: download_failed", log.last_error)
 
     def test_sync_task_updates_status_on_partial_success(self):
         first = Project.objects.create(
@@ -119,119 +107,12 @@ class TaskStatusTrackingTests(TestCase):
         with patch("main.tasks.sync_project_markdown", side_effect=_sync_side_effect):
             result = sync_project_markdowns_task()
 
-        status = TaskExecutionStatus.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
-        execution_log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
+        log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
         self.assertEqual(result["failed"], 1)
-        self.assertEqual(status.last_status, TaskExecutionStatus.STATUS_PARTIAL_SUCCESS)
-        self.assertEqual(status.last_total, 2)
-        self.assertEqual(status.last_updated, 1)
-        self.assertEqual(status.last_failed, 1)
-        self.assertEqual(
-            execution_log.last_status, TaskExecutionStatus.STATUS_PARTIAL_SUCCESS
-        )
-        self.assertEqual(execution_log.last_total, 2)
-
-    def test_sync_task_keeps_failure_timestamp_after_success(self):
-        project = Project.objects.create(
-            title="Task Success Transition",
-            short_description="sync task",
-            blog=True,
-            blog_url="task-success-transition",
-            status="finished",
-        )
-        seeded = timezone.now()
-        TaskExecutionStatus.objects.create(
-            task_name=SYNC_MARKDOWNS_TASK_NAME,
-            last_status=TaskExecutionStatus.STATUS_FAILURE,
-            last_failure_at=seeded,
-        )
-
-        with patch(
-            "main.tasks.sync_project_markdown",
-            return_value={
-                "project_id": project.id,
-                "slug": project.blog_url,
-                "updated": True,
-            },
-        ):
-            sync_project_markdowns_task()
-
-        status = TaskExecutionStatus.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
-        self.assertIsNotNone(status.last_success_at)
-        self.assertEqual(status.last_failure_at, seeded)
-
-    def test_sync_task_keeps_success_timestamp_after_failure(self):
-        Project.objects.create(
-            title="Task Failure Transition",
-            short_description="sync task",
-            blog=True,
-            blog_url="task-failure-transition",
-            status="finished",
-        )
-        seeded = timezone.now()
-        TaskExecutionStatus.objects.create(
-            task_name=SYNC_MARKDOWNS_TASK_NAME,
-            last_status=TaskExecutionStatus.STATUS_SUCCESS,
-            last_success_at=seeded,
-        )
-
-        with patch(
-            "main.tasks.sync_project_markdown",
-            return_value={
-                "project_id": 1,
-                "slug": "task-failure-transition",
-                "updated": False,
-                "reason": "download_failed",
-            },
-        ):
-            sync_project_markdowns_task()
-
-        status = TaskExecutionStatus.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
-        self.assertEqual(status.last_success_at, seeded)
-        self.assertIsNotNone(status.last_failure_at)
-
-    def test_sync_task_keeps_success_timestamp_after_partial_success(self):
-        first = Project.objects.create(
-            title="Task Partial Transition 1",
-            short_description="sync task",
-            blog=True,
-            blog_url="task-partial-transition-1",
-            status="finished",
-        )
-        Project.objects.create(
-            title="Task Partial Transition 2",
-            short_description="sync task",
-            blog=True,
-            blog_url="task-partial-transition-2",
-            status="finished",
-        )
-        seeded = timezone.now()
-        TaskExecutionStatus.objects.create(
-            task_name=SYNC_MARKDOWNS_TASK_NAME,
-            last_status=TaskExecutionStatus.STATUS_SUCCESS,
-            last_success_at=seeded,
-        )
-
-        def _sync_side_effect(project):
-            if project.id == first.id:
-                return {
-                    "project_id": project.id,
-                    "slug": project.blog_url,
-                    "updated": True,
-                }
-            return {
-                "project_id": project.id,
-                "slug": project.blog_url,
-                "updated": False,
-                "reason": "download_failed",
-            }
-
-        with patch("main.tasks.sync_project_markdown", side_effect=_sync_side_effect):
-            sync_project_markdowns_task()
-
-        status = TaskExecutionStatus.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
-        self.assertEqual(status.last_success_at, seeded)
-        self.assertIsNotNone(status.last_failure_at)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_PARTIAL_SUCCESS)
+        self.assertEqual(log.last_total, 2)
+        self.assertEqual(log.last_updated, 1)
+        self.assertEqual(log.last_failed, 1)
 
     @patch("main.tasks.fetch_heatmap_data")
     def test_heatmap_refresh_task_updates_status_on_success(self, fetch_mock):
@@ -246,46 +127,17 @@ class TaskStatusTrackingTests(TestCase):
 
         result = refresh_portfolio_heatmap_cache_task()
 
-        status = TaskExecutionStatus.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
-        execution_log = TaskExecutionLog.objects.get(
-            task_name=REFRESH_HEATMAP_TASK_NAME
-        )
+        log = TaskExecutionLog.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
         snapshot = HeatmapSnapshot.objects.get(key="portfolio")
         self.assertEqual(result["ok"], True)
         self.assertEqual(result["username"], "portfolio-admin")
-        self.assertEqual(status.last_status, TaskExecutionStatus.STATUS_SUCCESS)
-        self.assertEqual(status.last_total, 1)
-        self.assertEqual(status.last_updated, 1)
-        self.assertEqual(status.last_failed, 0)
-        self.assertEqual(status.last_error, "")
-        self.assertEqual(execution_log.last_status, TaskExecutionStatus.STATUS_SUCCESS)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
+        self.assertEqual(log.last_total, 1)
+        self.assertEqual(log.last_updated, 1)
+        self.assertEqual(log.last_failed, 0)
+        self.assertEqual(log.last_error, "")
         self.assertEqual(snapshot.username, "portfolio-admin")
         fetch_mock.assert_called_once_with()
-
-    @patch("main.tasks.fetch_heatmap_data")
-    def test_heatmap_refresh_task_keeps_failure_timestamp_after_success(self, fetch_mock):
-        seeded = timezone.now()
-        TaskExecutionStatus.objects.create(
-            task_name=REFRESH_HEATMAP_TASK_NAME,
-            last_status=TaskExecutionStatus.STATUS_FAILURE,
-            last_failure_at=seeded,
-        )
-        status = TaskExecutionStatus.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
-
-        fetch_mock.return_value = (
-            {
-                "username": "portfolio-admin",
-                "total": 17,
-                "weeks": [{"days": []}],
-            },
-            None,
-        )
-
-        refresh_portfolio_heatmap_cache_task()
-
-        status.refresh_from_db()
-        self.assertEqual(status.last_failure_at, seeded)
-        self.assertIsNotNone(status.last_success_at)
 
     @patch("main.tasks.update_snapshot_error")
     @override_settings(GITHUB_HEATMAP_TOKEN="")
@@ -294,40 +146,16 @@ class TaskStatusTrackingTests(TestCase):
     ):
         result = refresh_portfolio_heatmap_cache_task()
 
-        status = TaskExecutionStatus.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
-        execution_log = TaskExecutionLog.objects.get(
-            task_name=REFRESH_HEATMAP_TASK_NAME
-        )
+        log = TaskExecutionLog.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
         self.assertEqual(
             result,
             {"ok": False, "error": "Heatmap is not configured."},
         )
-        self.assertEqual(status.last_status, TaskExecutionStatus.STATUS_FAILURE)
-        self.assertEqual(status.last_total, 1)
-        self.assertEqual(status.last_updated, 0)
-        self.assertEqual(status.last_failed, 1)
-        self.assertEqual(status.last_error, "Heatmap is not configured.")
-        self.assertEqual(execution_log.last_status, TaskExecutionStatus.STATUS_FAILURE)
-        update_error_mock.assert_called_once_with("Heatmap is not configured.")
-
-    @patch("main.tasks.update_snapshot_error")
-    @override_settings(GITHUB_HEATMAP_TOKEN="")
-    def test_heatmap_refresh_task_keeps_success_timestamp_after_failure(
-        self, update_error_mock
-    ):
-        seeded = timezone.now()
-        TaskExecutionStatus.objects.create(
-            task_name=REFRESH_HEATMAP_TASK_NAME,
-            last_status=TaskExecutionStatus.STATUS_SUCCESS,
-            last_success_at=seeded,
-        )
-        status = TaskExecutionStatus.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
-
-        refresh_portfolio_heatmap_cache_task()
-
-        status.refresh_from_db()
-        self.assertEqual(status.last_success_at, seeded)
-        self.assertIsNotNone(status.last_failure_at)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)
+        self.assertEqual(log.last_total, 1)
+        self.assertEqual(log.last_updated, 0)
+        self.assertEqual(log.last_failed, 1)
+        self.assertEqual(log.last_error, "Heatmap is not configured.")
         update_error_mock.assert_called_once_with("Heatmap is not configured.")
 
 
@@ -349,24 +177,24 @@ class DiskUsageTaskTests(TestCase):
         with patch("main.tasks.shutil.disk_usage", return_value=usage):
             check_disk_usage_task()
 
-        status = TaskExecutionStatus.objects.get(task_name=DISK_USAGE_TASK_NAME)
-        self.assertEqual(status.last_status, TaskExecutionStatus.STATUS_SUCCESS)
-        self.assertEqual(status.last_error, "")
+        log = TaskExecutionLog.objects.get(task_name=DISK_USAGE_TASK_NAME)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
+        self.assertEqual(log.last_error, "")
 
     def test_disk_task_partial_when_below_2gb(self):
         usage = self._fake_usage(total_gb=10.0, free_gb=1.5)
         with patch("main.tasks.shutil.disk_usage", return_value=usage):
             check_disk_usage_task()
 
-        status = TaskExecutionStatus.objects.get(task_name=DISK_USAGE_TASK_NAME)
-        self.assertEqual(status.last_status, TaskExecutionStatus.STATUS_PARTIAL_SUCCESS)
-        self.assertIn("1.5", status.last_error)
+        log = TaskExecutionLog.objects.get(task_name=DISK_USAGE_TASK_NAME)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_PARTIAL_SUCCESS)
+        self.assertIn("1.5", log.last_error)
 
     def test_disk_task_failure_when_below_1gb(self):
         usage = self._fake_usage(total_gb=10.0, free_gb=0.8)
         with patch("main.tasks.shutil.disk_usage", return_value=usage):
             check_disk_usage_task()
 
-        status = TaskExecutionStatus.objects.get(task_name=DISK_USAGE_TASK_NAME)
-        self.assertEqual(status.last_status, TaskExecutionStatus.STATUS_FAILURE)
-        self.assertIn("CRITICAL", status.last_error)
+        log = TaskExecutionLog.objects.get(task_name=DISK_USAGE_TASK_NAME)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)
+        self.assertIn("CRITICAL", log.last_error)

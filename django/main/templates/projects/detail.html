@@ -11,9 +11,11 @@
                 {% if blog_markdown_html %}
                 <div class="md-sheet">
                     <div class="flex justify-end">
+                        {% if readme_url %}
                         <div class="md-pill">
                             <a class="ml-1 underline" href="{{ readme_url }}" target="_blank" rel="noopener noreferrer">README.md</a>
                         </div>
+                        {% endif %}
                     </div>
                     <article class="md-article">{{ blog_markdown_html|safe }}</article>
                 </div>
@@ -28,7 +30,7 @@
                 {% include "projects/components/blog_sidebar_cards.html" %}
             </div>
 
-            {% include "projects/components/project_footer.html" with repo_path=repo_path %}
+            {% include "projects/components/project_footer.html" %}
         </div>
     </div>
 </div>

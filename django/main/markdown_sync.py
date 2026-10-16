@@ -5,40 +5,8 @@ from urllib.parse import urlparse
 import requests
 from django.core.files.base import ContentFile
 
-from .models import PortfolioProfile
-
 logger = logging.getLogger(__name__)
 MAX_MARKDOWN_SIZE_BYTES = 10 * 1024 * 1024
-
-BLOG_REPO_PATHS = {
-    "activity-tracker": "activity_tracker",
-    "analiza-makro-konkurs": "analiza-makro-konkurs",
-    "cartoon-filter": "cartoon-filter",
-    "currency-price-prediction": "CryptoCurrencyPP",
-    "github-heatmap": "github-heatmap",
-    "granular-data-grouping": "granular_data_grouping",
-    "multidimensional-dashboard": "multidimensional-dashboard",
-    "my-django-portfolio": "my_django_portfolio",
-    "NTwI-obliczenia-ziarniste": "NTwI-obliczenia-ziarniste",
-    "weather-web-scraping": "WeatherWebScraping",
-    "web-scraping-lubimyczytac": "web_scraping_lubimyczytac",
-}
-
-
-def get_repo_path(project):
-    return BLOG_REPO_PATHS.get(project.blog_url, project.blog_url)
-
-
-def _active_github_username():
-    profile = PortfolioProfile.get_active()
-    github_url = (profile.github_url or "").rstrip("/")
-    if not github_url:
-        return None
-
-    path_parts = [part for part in urlparse(github_url).path.split("/") if part]
-    if not path_parts:
-        return None
-    return path_parts[-1]
 
 
 def _parse_github_owner_repo(github_url):
@@ -56,38 +24,19 @@ def _parse_github_owner_repo(github_url):
 
 
 def build_readme_url(project):
-    repo_path = get_repo_path(project)
     if project.github_url:
         return f"{project.github_url.rstrip('/')}#readme"
-
-    profile = PortfolioProfile.get_active()
-    github_base = (profile.github_url or "https://github.com/your-username").rstrip("/")
-    return f"{github_base}/{repo_path}#readme"
+    return None
 
 
 def build_markdown_candidate_urls(project):
-    candidates = []
-
     owner, repo = _parse_github_owner_repo(project.github_url)
-    if owner and repo:
-        candidates.extend(
-            [
-                f"https://raw.githubusercontent.com/{owner}/{repo}/main/README.md",
-                f"https://raw.githubusercontent.com/{owner}/{repo}/master/README.md",
-            ]
-        )
-
-    repo_path = get_repo_path(project)
-    active_username = _active_github_username()
-    if active_username and repo_path:
-        candidates.extend(
-            [
-                f"https://raw.githubusercontent.com/{active_username}/{repo_path}/main/README.md",
-                f"https://raw.githubusercontent.com/{active_username}/{repo_path}/master/README.md",
-            ]
-        )
-
-    return list(dict.fromkeys(candidates))
+    if not (owner and repo):
+        return []
+    return [
+        f"https://raw.githubusercontent.com/{owner}/{repo}/main/README.md",
+        f"https://raw.githubusercontent.com/{owner}/{repo}/master/README.md",
+    ]
 
 
 def _download_markdown(url):
