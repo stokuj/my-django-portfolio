@@ -27,15 +27,13 @@ def healthcheck_task():
 
 
 @shared_task(ignore_result=True)
-def sync_project_markdowns_task(blog_slug=None):
+def sync_project_markdowns_task():
     status, _ = TaskExecutionStatus.objects.get_or_create(
         task_name=SYNC_MARKDOWNS_TASK_NAME
     )
     status.last_run_at = timezone.now()
 
     projects = Project.objects.filter(blog=True)
-    if blog_slug:
-        projects = projects.filter(blog_url=blog_slug)
 
     results = []
     updated_count = 0

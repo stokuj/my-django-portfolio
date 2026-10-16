@@ -552,7 +552,7 @@ class ViewsTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("home"))
-        delay_mock.assert_called_once_with(blog_slug=None)
+        delay_mock.assert_called_once_with()
 
     def test_run_markdown_sync_task_redirects_to_safe_next_path(self):
         User = get_user_model()
