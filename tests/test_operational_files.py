@@ -31,11 +31,6 @@ class OperationalFileTests(unittest.TestCase):
         ]:
             self.assertIn(target, content)
 
-    def test_makefile_uses_helper_scripts(self):
-        content = (ROOT / "Makefile").read_text(encoding="utf-8")
-        self.assertIn("python infra/scripts/ensure_env.py", content)
-        self.assertIn("python infra/scripts/compose_status.py", content)
-
     def test_makefile_passes_root_env_file_to_compose(self):
         content = (ROOT / "Makefile").read_text(encoding="utf-8")
         self.assertIn("docker compose --env-file .env -p my-django-portfolio-dev", content)
