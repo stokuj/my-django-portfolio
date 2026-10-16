@@ -63,7 +63,7 @@ A filterable grid of projects. You can search by name or filter by technology ta
 <img width="2267" height="1334" alt="screencapture-localhost-projects-2026-02-22-15_13_50" src="https://github.com/user-attachments/assets/25a3085e-edf2-45aa-93b9-42c47f36e2f9" />
 
 ### About page
-The main landing page showing a brief intro ("Hi, I am John Doe"), tech stack badges, current learning goals, and a live GitHub contributions heatmap fetched directly by Django from GitHub.
+Shows a brief intro ("Hi, I am John Doe"), tech stack badges, current learning goals, and a live GitHub contributions heatmap fetched directly by Django from GitHub.
 <img width="2267" height="1669" alt="image" src="https://github.com/user-attachments/assets/5e01c6d9-9e82-4745-8210-7076888c9722" />
 
 ### Dark theme
