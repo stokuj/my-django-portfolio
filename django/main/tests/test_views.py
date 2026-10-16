@@ -10,6 +10,7 @@ from django.contrib.messages import get_messages
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db import connection
 from django.test import (
     Client,
     RequestFactory,
@@ -17,6 +18,7 @@ from django.test import (
     TestCase,
     override_settings,
 )
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
 from django.views import defaults
@@ -618,6 +620,28 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("all_projects", response.context)
         self.assertIn(other_project, response.context["all_projects"])
+
+    def test_blog_detail_sidebar_query_count_does_not_grow_with_projects(self):
+        # A field the sidebar reads but .only() omits would cost one query per row.
+        url = reverse("blog_detail", args=[self.project.blog_url])
+        self.client.get(url)
+
+        def count_queries():
+            with CaptureQueriesContext(connection) as ctx:
+                self.client.get(url)
+            return len(ctx.captured_queries)
+
+        baseline = count_queries()
+        for i in range(3):
+            Project.objects.create(
+                title=f"Sidebar Project {i}",
+                short_description="Sidebar row",
+                blog=i == 0,
+                blog_url="sidebar-project-0" if i == 0 else None,
+                github_url="https://github.com/example/repo" if i == 1 else "",
+                status="finished",
+            )
+        self.assertEqual(count_queries(), baseline)
 
     def test_blog_detail_builds_branch_agnostic_readme_url(self):
         project = Project.objects.create(

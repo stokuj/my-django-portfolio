@@ -18,6 +18,8 @@ https://{$APP_DOMAIN} {
 		max_size 10MB
 	}
 
+	encode zstd gzip
+
 	# Static and media files served directly by Caddy
 	@files path /static/* /media/*
 	handle @files {
