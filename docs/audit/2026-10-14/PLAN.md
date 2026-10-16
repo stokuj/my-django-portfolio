@@ -107,7 +107,7 @@ Baseline: `make verify` (after Phase 1 it runs both test suites).
 Files: `.github/workflows/django.yml`, `.github/workflows/docker-build-push.yml`, `.github/dependabot.yml`
 - [x] F-013: Drop `strategy`/matrix and set `python-version: "3.13"`. Use `branches: [ main ]`. Use `actions/checkout@v5`, `actions/setup-node@v5`, `actions/setup-python@v6` (or a pinned `astral-sh/setup-uv` with `enable-cache: true` replacing the pip and uv lines). Use `uv sync --locked --extra dev`. Delete the `.env` step.
 - [x] F-018: Pin `appleboy/ssh-action` to its latest v1 full commit SHA with a `# vX.Y.Z` comment. If script_stop is dropped, add `set -e` as the first script line.
-- [ ] F-054 + F-101: Add `.github/dependabot.yml` with monthly `github-actions` (`/`), `docker` (`/infra`), `uv` (`/`) and `npm` (`/`), each grouping minor and patch updates into one PR.
+- [x] F-054 + F-101: Add `.github/dependabot.yml` with monthly `github-actions` (`/`), `docker` (`/infra`), `uv` (`/`) and `npm` (`/`), each grouping minor and patch updates into one PR.
 
 ### 3b. CI Node aligned with Dockerfile (`chore/ci-node-22`), risk low
 Files: `.github/workflows/django.yml`, `.github/workflows/docker-build-push.yml`, `.env.example`
