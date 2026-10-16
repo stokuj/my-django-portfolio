@@ -1,7 +1,9 @@
 import collections
+from datetime import timedelta
 from unittest.mock import patch
 
 from django.test import TestCase, override_settings
+from django.utils import timezone
 
 from main.models import HeatmapSnapshot, Project, TaskExecutionLog
 from main.tasks import (
@@ -242,3 +244,21 @@ class DiskUsageTaskTests(TestCase):
         log = TaskExecutionLog.objects.get(task_name=DISK_USAGE_TASK_NAME)
         self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)
         self.assertIn("CRITICAL", log.last_error)
+
+
+class TaskLogRetentionTests(TestCase):
+    def test_finished_run_deletes_log_rows_older_than_90_days(self):
+        old = TaskExecutionLog.objects.create(task_name=DISK_USAGE_TASK_NAME)
+        recent = TaskExecutionLog.objects.create(task_name=DISK_USAGE_TASK_NAME)
+        now = timezone.now()
+        TaskExecutionLog.objects.filter(pk=old.pk).update(created_at=now - timedelta(days=91))
+        TaskExecutionLog.objects.filter(pk=recent.pk).update(created_at=now - timedelta(days=89))
+
+        DiskUsage = collections.namedtuple("DiskUsage", ["total", "used", "free"])
+        healthy = DiskUsage(total=10, used=5, free=5 * 1024 ** 3)
+        with patch("main.tasks.shutil.disk_usage", return_value=healthy):
+            check_disk_usage_task()
+
+        self.assertFalse(TaskExecutionLog.objects.filter(pk=old.pk).exists())
+        self.assertTrue(TaskExecutionLog.objects.filter(pk=recent.pk).exists())
+        self.assertEqual(TaskExecutionLog.objects.count(), 2)

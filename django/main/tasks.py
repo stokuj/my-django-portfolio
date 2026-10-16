@@ -1,5 +1,6 @@
 import logging
 import shutil
+from datetime import timedelta
 
 from celery import shared_task
 from django.utils import timezone
@@ -18,6 +19,7 @@ REFRESH_HEATMAP_TASK_NAME = "main.refresh_portfolio_heatmap_cache_task"
 DISK_USAGE_TASK_NAME = "main.check_disk_usage_task"
 DISK_CRITICAL_GB = 1.0
 DISK_WARNING_GB = 2.0
+LOG_RETENTION_DAYS = 90
 
 
 def disk_level(free_gb):
@@ -148,7 +150,10 @@ def check_disk_usage_task():
 
 
 def _finish(task_name, started_at, state, total, updated, error=""):
-    """Write the log row for a finished run (the only place log rows are written)."""
+    """Write the log row for a finished run (the only place log rows are written).
+
+    Also prunes rows older than LOG_RETENTION_DAYS.
+    """
     TaskExecutionLog.objects.create(
         task_name=task_name,
         last_status=state,
@@ -158,3 +163,6 @@ def _finish(task_name, started_at, state, total, updated, error=""):
         last_failed=total - updated,
         last_error=error,
     )
+    TaskExecutionLog.objects.filter(
+        created_at__lt=timezone.now() - timedelta(days=LOG_RETENTION_DAYS)
+    ).delete()

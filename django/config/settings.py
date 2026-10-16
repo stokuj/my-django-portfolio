@@ -198,6 +198,8 @@ CELERY_BROKER_URL = env(
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TASK_IGNORE_RESULT = True
+CELERY_TASK_TIME_LIMIT = 600
+CELERY_TASK_SOFT_TIME_LIMIT = 540
 CELERY_BEAT_SCHEDULE = {
     "refresh-portfolio-heatmap-hourly": {
         "task": "main.tasks.refresh_portfolio_heatmap_cache_task",
