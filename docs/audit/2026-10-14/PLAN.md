@@ -119,7 +119,7 @@ Files: `infra/Dockerfile`, `pyproject.toml`
 - [x] F-045: Replace Dockerfile:26-27 with `COPY --from=ghcr.io/astral-sh/uv:<pinned> /uv /bin/uv` and `RUN uv export --frozen --no-dev --no-emit-project -o /tmp/req.txt && uv pip install --system --no-cache-dir -r /tmp/req.txt && uv pip install --system --no-cache-dir --no-deps .`. Delete the `[tool.uv] pip` table (pyproject.toml:29-30). Compare `pip freeze` in the old and new images.
 
 ### 3d. Transitive pins (`chore/deps-transitive-pins`), risk low, after 3c
-- [ ] F-050: Remove asgiref, packaging and tzdata from dependencies. Use `"pyjwt>=2.15.0"` and `"sqlparse>=0.6.0"`. Run `uv lock`.
+- [x] F-050: Remove asgiref, packaging and tzdata from dependencies. Use `"pyjwt>=2.15.0"` and `"sqlparse>=0.6.0"`. Run `uv lock`.
 
 ### 3e. Pillow (`chore/deps-pillow-12.3`), risk low
 - [ ] F-052: `pillow==12.3.0`, then `uv lock --upgrade-package pillow`.
