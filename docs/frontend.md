@@ -35,11 +35,12 @@ flowchart TD
     ProjectDB["Project model (DB)"]
 
     Hero["components/hero_section.html"]
+    HeroContent["components/hero/*_content.html"]
     TimelineSection["components/timeline_section.html"]
     TimelineItem["components/timeline_project_item.html"]
     ProjectCard["projects/components/project_card.html"]
     ProjectFooter["projects/components/project_footer.html"]
-    Sidebar["projects/components/blog_*_sidebar.html"]
+    Sidebar["projects/components/blog_projects_sidebar.html\n+ blog_sidebar_cards.html"]
     GithubIcon["components/icons/github_icon.html"]
     LinkedinIcon["components/icons/linkedin_icon.html"]
 
@@ -54,11 +55,14 @@ flowchart TD
     Base --> GithubIcon
     Base --> LinkedinIcon
 
+    Hero --> HeroContent
+
     Home --> Hero
     Home --> TimelineSection
     TimelineSection --> TimelineItem
 
     About --> Hero
+    Errors --> Hero
 
     ProjectsIndex --> Hero
     ProjectsIndex --> ProjectCard
