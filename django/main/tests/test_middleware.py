@@ -25,9 +25,9 @@ class VisitorCountMiddlewareTest(TestCase):
         second_client.get(self.home_url)
         self.assertEqual(PageView.get_instance().count, 2)
 
-    def test_home_alias_path_is_counted(self):
+    def test_home_alias_redirect_is_not_counted(self):
         self.client.get("/home/")
-        self.assertEqual(PageView.get_instance().count, 1)
+        self.assertEqual(PageView.get_instance().count, 0)
 
     def test_non_home_path_does_not_increment_counter(self):
         self.client.get(self.about_url)

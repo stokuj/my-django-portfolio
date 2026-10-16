@@ -1,6 +1,7 @@
 import datetime
 
 from django.test import Client, TestCase, override_settings
+from django.urls import reverse
 
 from main.models import PageView, Project
 
@@ -23,7 +24,8 @@ class URLsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         response = self.client.get("/home/")
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, "/", status_code=301)
+        self.assertEqual(reverse("home"), "/")
 
     def test_about_url(self):
         response = self.client.get("/about/")
