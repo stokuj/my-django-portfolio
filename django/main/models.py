@@ -1,7 +1,7 @@
 import datetime
 
 from django.core.validators import FileExtensionValidator
-from django.db import models
+from django.db import models, transaction
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 
@@ -244,9 +244,9 @@ class HeatmapSnapshot(models.Model):
 
 def _delete_file_field(field):
     if field and field.name:
-        storage = field.storage
-        if storage.exists(field.name):
-            storage.delete(field.name)
+        name, storage = field.name, field.storage
+        # Delete only after commit, so a rolled-back save or delete keeps the file.
+        transaction.on_commit(lambda: storage.exists(name) and storage.delete(name))
 
 
 @receiver(post_delete, sender=Project)

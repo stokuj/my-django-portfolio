@@ -160,7 +160,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-003: In `sync_project_markdown`, skip the write when the stored bytes equal the new text (counted as success). When the content changed and a file exists, overwrite it in place with `storage.open(name, "wb")`. Call `markdown_file.save` only when there is no file. Tests: two syncs with different content keep the same name; an identical sync does not rewrite the file.
 - [x] F-040: Move `templates/errors/404.html` and `500.html` to `templates/404.html` and `500.html`. Delete views.py:90-97 and config/urls.py:32-34. Rewrite ErrorHandlersTest (test_views.py:22, 650-664) against `django.views.defaults`.
 - [x] F-025: Add `def clean(self): self.name = self.name.upper()` on Tag.
-- [ ] F-026: In `_delete_file_field`, capture name and storage and run `transaction.on_commit(lambda: storage.exists(name) and storage.delete(name))`. Add `captureOnCommitCallbacks(execute=True)` to the cleanup tests.
+- [x] F-026: In `_delete_file_field`, capture name and storage and run `transaction.on_commit(lambda: storage.exists(name) and storage.delete(name))`. Add `captureOnCommitCallbacks(execute=True)` to the cleanup tests.
 - [ ] F-059: `[h.strip() for h in env.list(...) if h.strip()]` at settings.py:43 and :107.
 - [ ] F-067: Before the 401/403 check at both call sites, raise GitHubUpstreamError("GitHub rate limit exceeded") when the status is 403 and `X-RateLimit-Remaining == "0"` or `Retry-After` is present. Add one mocked test.
 - [ ] F-076: Remove the `blog_slug` parameter from `sync_project_markdowns_task` (tasks.py:30,37-38) and `run_markdown_sync_task` (views.py:426-437), and update test_views.py:551.

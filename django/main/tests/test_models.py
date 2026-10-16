@@ -300,7 +300,10 @@ class ProjectMediaCleanupTests(TestCase):
         thumb_name = project.thumbnail.name
         self.assertTrue(storage.exists(thumb_name))
 
-        project.delete()
+        with self.captureOnCommitCallbacks(execute=True):
+            project.delete()
+            # Deletion waits for the commit, so a rollback keeps the file.
+            self.assertTrue(storage.exists(thumb_name))
 
         self.assertFalse(storage.exists(thumb_name))
 
@@ -310,6 +313,8 @@ class ProjectMediaCleanupTests(TestCase):
         old_name = project.thumbnail.name
         self.assertTrue(storage.exists(old_name))
 
-        project.thumbnail.save("thumb_new.png", ContentFile(b"new-fake-png"), save=True)
+        with self.captureOnCommitCallbacks(execute=True):
+            project.thumbnail.save("thumb_new.png", ContentFile(b"new-fake-png"), save=True)
+            self.assertTrue(storage.exists(old_name))
 
         self.assertFalse(storage.exists(old_name))
