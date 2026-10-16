@@ -319,7 +319,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-099 (step 1): Add `encode zstd gzip` to the apex Caddy block.
 - [x] F-099 (step 2): Skipped (A10). Was: Use `STORAGES = {"default": FileSystemStorage, "staticfiles": ManifestStaticFilesStorage}`, add `collectstatic --noinput` to `make verify`, check the dynamic `{% static hero_background %}` values, and only then add `header /static/* Cache-Control "public, max-age=31536000, immutable"` (never on /media).
 - [x] F-082: Delete `hero-bg3.png`, re-encode `hero-bg.png` and `hero-bg2.png` to WebP at q70, and point the 5 `hero_background=` include arguments at the new files. `hero-bg.png` stays as the default `og:image` (crawlers handle WebP unevenly).
-- [ ] F-022: Set `"CONN_MAX_AGE": 60, "CONN_HEALTH_CHECKS": True` in `DATABASES["default"]`.
+- [x] F-022: Set `"CONN_MAX_AGE": 60, "CONN_HEALTH_CHECKS": True` in `DATABASES["default"]`.
 - [ ] F-096: Sidebar query: `Project.objects.only("id","title","blog","blog_url","github_url","date").order_by("-date")`.
 - [x] F-064: Skipped (A10). Was: cache only the active profile with `cache.get_or_set` (300s, LocMem), cleared by post_save and post_delete on PortfolioProfile. Keep visitor_count uncached.
 - [x] F-071: Won't fix (A10).
