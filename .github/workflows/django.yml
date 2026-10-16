@@ -39,3 +39,6 @@ jobs:
 
     - name: Run Verification
       run: make verify
+
+    - name: Validate prod compose file
+      run: cp .env.example .env && docker compose -f infra/docker-compose.prod.yml config -q
