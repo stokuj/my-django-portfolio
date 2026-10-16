@@ -6,7 +6,6 @@ from .models import (
     Project,
     Tag,
     TaskExecutionLog,
-    TaskExecutionStatus,
 )
 
 
@@ -61,38 +60,6 @@ class PortfolioProfileAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(TaskExecutionStatus)
-class TaskExecutionStatusAdmin(admin.ModelAdmin):
-    list_display = (
-        "task_name",
-        "last_status",
-        "last_total",
-        "last_updated",
-        "last_failed",
-        "last_run_at",
-        "last_success_at",
-        "last_failure_at",
-    )
-    readonly_fields = (
-        "task_name",
-        "last_status",
-        "last_run_at",
-        "last_success_at",
-        "last_failure_at",
-        "last_total",
-        "last_updated",
-        "last_failed",
-        "last_error",
-    )
-    search_fields = ("task_name",)
-
-    def has_add_permission(self, request):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-
 @admin.register(TaskExecutionLog)
 class TaskExecutionLogAdmin(admin.ModelAdmin):
     list_display = (
@@ -108,8 +75,6 @@ class TaskExecutionLogAdmin(admin.ModelAdmin):
         "task_name",
         "last_status",
         "last_run_at",
-        "last_success_at",
-        "last_failure_at",
         "last_total",
         "last_updated",
         "last_failed",

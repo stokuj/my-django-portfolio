@@ -62,7 +62,7 @@ Six Docker services in production: `web` (Gunicorn+Django), `db` (PostgreSQL), `
 Single app `main` under `django/`. Configuration lives in `django/config/` (settings, urls, celery, wsgi/asgi). The `django/` directory is both the Django project root and the `--workdir` for Celery.
 
 ### Key modules
-- `django/main/models.py` — all domain models: `Project`, `Tag`, `PortfolioProfile`, `HeatmapSnapshot`, `PageView`, `TaskExecutionStatus`, `TaskExecutionLog`
+- `django/main/models.py` — all domain models: `Project`, `Tag`, `PortfolioProfile`, `HeatmapSnapshot`, `PageView`, `TaskExecutionLog`
 - `django/main/views.py` — page views and admin-tool endpoints
 - `django/main/tasks.py` — two main Celery tasks: `sync_project_markdowns_task` and `refresh_portfolio_heatmap_cache_task`
 - `django/main/markdown_sync.py` — fetches README markdown from GitHub and writes to `media/blog_markdown/`
@@ -70,7 +70,7 @@ Single app `main` under `django/`. Configuration lives in `django/config/` (sett
 - `django/main/context_processors.py` — injects visitor count, project count, and active `PortfolioProfile` into every template
 
 ### Background task observability
-Every task run writes to `TaskExecutionStatus` (latest snapshot, keyed by `task_name`) and appends a `TaskExecutionLog` row. Admin users see this on the about page.
+Every task run appends a `TaskExecutionLog` row; the newest row per `task_name` is that task's current status. Admin users see this on the about page.
 
 ### Environment variables
 Loaded from `.env` at project root via `django-environ`. `SECRET_KEY` is required at startup. Key vars: `DJANGO_DEBUG`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, `GITHUB_HEATMAP_TOKEN`, `HEATMAP_CACHE_TTL_MINUTES`, `CELERY_BROKER_URL`, `DB_*` (or `DOCKER_DB_*` for compose). See `.env.example`.

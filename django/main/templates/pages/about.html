@@ -218,22 +218,6 @@
                             <span class="font-semibold">Last run:</span>
                             <time class="js-local-datetime" datetime="{{ task.last_run_at|date:'c' }}">{{ task.last_run_at|date:"Y-m-d H:i" }}</time>
                         </p>
-                        <p>
-                            <span class="font-semibold">Last success:</span>
-                            {% if task.last_success_at %}
-                            <time class="js-local-datetime" datetime="{{ task.last_success_at|date:'c' }}">{{ task.last_success_at|date:"Y-m-d H:i" }}</time>
-                            {% else %}
-                            -
-                            {% endif %}
-                        </p>
-                        <p>
-                            <span class="font-semibold">Last failure:</span>
-                            {% if task.last_failure_at %}
-                            <time class="js-local-datetime" datetime="{{ task.last_failure_at|date:'c' }}">{{ task.last_failure_at|date:"Y-m-d H:i" }}</time>
-                            {% else %}
-                            -
-                            {% endif %}
-                        </p>
                         <p><span class="font-semibold">Totals:</span> {{ task.last_updated }}/{{ task.last_total }} ok, {{ task.last_failed }} failed</p>
                     </div>
 

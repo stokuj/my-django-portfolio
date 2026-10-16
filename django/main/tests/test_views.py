@@ -25,7 +25,6 @@ from main.models import (
     Project,
     Tag,
     TaskExecutionLog,
-    TaskExecutionStatus,
 )
 from main.views import _render_markdown_to_html
 
@@ -126,9 +125,14 @@ class ViewsTest(TestCase):
         )
         self.client.force_login(admin_user)
         last_run = timezone.now() - datetime.timedelta(minutes=5)
-        TaskExecutionStatus.objects.create(
+        TaskExecutionLog.objects.create(
             task_name="main.check_disk_usage_task",
-            last_status=TaskExecutionStatus.STATUS_SUCCESS,
+            last_status=TaskExecutionLog.STATUS_FAILURE,
+            last_run_at=last_run - datetime.timedelta(days=1),
+        )
+        TaskExecutionLog.objects.create(
+            task_name="main.check_disk_usage_task",
+            last_status=TaskExecutionLog.STATUS_SUCCESS,
             last_run_at=last_run,
         )
 
@@ -173,7 +177,7 @@ class ViewsTest(TestCase):
 
         TaskExecutionLog.objects.create(
             task_name="main.older_task",
-            last_status=TaskExecutionStatus.STATUS_FAILURE,
+            last_status=TaskExecutionLog.STATUS_FAILURE,
             last_run_at=older_time,
             last_failed=1,
             last_total=1,
@@ -181,7 +185,7 @@ class ViewsTest(TestCase):
         )
         TaskExecutionLog.objects.create(
             task_name="main.newer_task",
-            last_status=TaskExecutionStatus.STATUS_SUCCESS,
+            last_status=TaskExecutionLog.STATUS_SUCCESS,
             last_run_at=newer_time,
             last_updated=1,
             last_total=1,
@@ -214,7 +218,7 @@ class ViewsTest(TestCase):
         for idx in range(35):
             TaskExecutionLog.objects.create(
                 task_name=f"main.task_{idx}",
-                last_status=TaskExecutionStatus.STATUS_SUCCESS,
+                last_status=TaskExecutionLog.STATUS_SUCCESS,
                 last_run_at=now - datetime.timedelta(minutes=idx),
                 last_total=1,
                 last_updated=1,

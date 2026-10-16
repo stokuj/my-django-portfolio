@@ -49,26 +49,11 @@ erDiagram
         int count
     }
 
-    TASK_EXECUTION_STATUS {
-        int id PK
-        string task_name UK
-        string last_status
-        datetime last_run_at
-        datetime last_success_at
-        datetime last_failure_at
-        int last_total
-        int last_updated
-        int last_failed
-        text last_error
-    }
-
     TASK_EXECUTION_LOG {
         int id PK
         string task_name
         string last_status
         datetime last_run_at
-        datetime last_success_at
-        datetime last_failure_at
         int last_total
         int last_updated
         int last_failed
@@ -144,7 +129,7 @@ Celery is used for jobs that should not block HTTP requests.
 - Broker: Redis (`CELERY_BROKER_URL`); task results are not stored.
 - Periodic schedule: `CELERY_BEAT_SCHEDULE` in `django/config/settings.py`.
 - Notable periodic job: `main.tasks.sync_project_markdowns_task`.
-- Task observability: `TaskExecutionStatus` and `TaskExecutionLog` store latest and historical run metadata.
+- Task observability: each run appends a `TaskExecutionLog` row; the newest row per task is its current status.
 
 ## Direct GitHub Heatmap Integration
 

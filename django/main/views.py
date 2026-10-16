@@ -20,7 +20,7 @@ from .heatmap import (
     is_snapshot_stale,
 )
 from .markdown_sync import build_readme_url, get_repo_path
-from .models import Project, Tag, TaskExecutionLog, TaskExecutionStatus
+from .models import Project, Tag, TaskExecutionLog
 from .tasks import (
     DISK_USAGE_TASK_NAME,
     REFRESH_HEATMAP_TASK_NAME,
@@ -214,17 +214,15 @@ def _get_disk_info():
 def _get_scheduled_jobs_overview():
     """Build admin-facing summary for every Celery beat entry."""
     now = timezone.now()
-    task_statuses = {
-        item.task_name: item
-        for item in TaskExecutionStatus.objects.filter(
-            task_name__in=SCHEDULED_JOB_LABELS
-        )
-    }
-
     jobs = []
     for entry in settings.CELERY_BEAT_SCHEDULE.values():
         task_name = entry["task"].replace("main.tasks.", "main.")
-        status = task_statuses.get(task_name)
+        # One query per beat entry; .first() keeps this portable (no DISTINCT ON).
+        status = (
+            TaskExecutionLog.objects.filter(task_name=task_name)
+            .order_by("-last_run_at", "-id")
+            .first()
+        )
         # remaining_delta gives the exact fire time; now + remaining_estimate(now)
         # lands a few microseconds early (shows 07:59 for an 08:00 run).
         start, delta, _ = entry["schedule"].remaining_delta(now)
