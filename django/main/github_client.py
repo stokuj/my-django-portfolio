@@ -97,7 +97,7 @@ def fetch_contribution_days(token):
             },
             timeout=20,
         )
-    except (requests.Timeout, requests.RequestException) as exc:
+    except requests.RequestException as exc:
         raise GitHubUpstreamError from exc
 
     _raise_if_rate_limited(response)
