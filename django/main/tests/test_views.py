@@ -669,15 +669,25 @@ class ViewsTest(TestCase):
             blog_url="img-test-slug",
             status="finished",
         )
-        external_md = b'# Test\n\n![tracker](https://evil.com/pixel.gif)\n\n![github](https://raw.githubusercontent.com/user/repo/main/img.png)\n'
-        project.markdown_file.save("img-test-slug.md", ContentFile(external_md), save=True)
+        kept_srcs = [
+            "https://raw.githubusercontent.com/user/repo/main/img.png",
+            "https://camo.githubusercontent.com/abc123/def456",
+            "https://github.com/user/repo/assets/1/screenshot.png",
+        ]
+        external_md = "# Test\n\n![tracker](https://evil.com/pixel.gif)\n\n" + "".join(
+            f"![github]({src})\n\n" for src in kept_srcs
+        )
+        project.markdown_file.save(
+            "img-test-slug.md", ContentFile(external_md.encode()), save=True
+        )
 
         response = self.client.get(reverse("blog_detail", args=["img-test-slug"]))
 
         self.assertEqual(response.status_code, 200)
         content = response.content.decode()
         self.assertNotIn("evil.com", content)
-        self.assertIn("raw.githubusercontent.com", content)
+        for src in kept_srcs:
+            self.assertIn(f'src="{src}"', content)
 
     def test_about_shows_disk_info_for_staff(self):
         User = get_user_model()
