@@ -102,7 +102,7 @@ make prod-down
 
 ### Prerequisites
 
-- Python 3.13+
+- Python 3.13
 - PostgreSQL
 - Redis (required for Celery worker/beat)
 - Node.js + npm

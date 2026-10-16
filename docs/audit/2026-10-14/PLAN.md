@@ -341,7 +341,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-129: In architecture.md:6, say "In production (infra/docker-compose.prod.yml)" and add one line on dev compose (no Caddy, runserver on 127.0.0.1:8000).
 - [x] F-131: In the frontend.md diagram, add Errors --> Hero, list both blog sidebar partials, and add a `HeroContent["components/hero/*_content.html"]` node.
 - [x] F-113: Drop "The main landing page" at README.md:67.
-- [ ] F-114: Change "Python 3.13+" to "Python 3.13" at README.md:106.
+- [x] F-114: Change "Python 3.13+" to "Python 3.13" at README.md:106.
 - [x] F-043: Done before Phase 1 (R5): `docs/superpowers/` removed, this plan moved to `docs/audit/2026-10-14/PLAN.md`.
 - [ ] Q21: `git rm -r docs/audit/2026-10-14/find docs/audit/2026-10-14/verify`; keep `SYNTHESIS.md`, `completeness.md`, `README.md`, `DECISIONS.md` and this plan. Drop the `verify/` pointer at the top of this file.
 - [ ] Final sweep: update CLAUDE.md, README.md and the docs for every structural change made in Phases 1-11 (Makefile targets, removed scripts, healthchecks, deploy steps).
