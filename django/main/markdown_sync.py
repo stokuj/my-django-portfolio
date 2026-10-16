@@ -30,7 +30,7 @@ def get_repo_path(project):
 
 
 def _active_github_username():
-    profile = PortfolioProfile.objects.filter(is_active=True).first() or PortfolioProfile()
+    profile = PortfolioProfile.get_active()
     github_url = (profile.github_url or "").rstrip("/")
     if not github_url:
         return None
@@ -60,7 +60,7 @@ def build_readme_url(project):
     if project.github_url:
         return f"{project.github_url.rstrip('/')}#readme"
 
-    profile = PortfolioProfile.objects.filter(is_active=True).first() or PortfolioProfile()
+    profile = PortfolioProfile.get_active()
     github_base = (profile.github_url or "https://github.com/your-username").rstrip("/")
     return f"{github_base}/{repo_path}#readme"
 
