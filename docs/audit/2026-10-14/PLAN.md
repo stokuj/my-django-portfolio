@@ -180,24 +180,24 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - **Verify:** `make verify`; `docker compose -f infra/docker-compose.prod.yml config` diff before and after (F-047); Caddy validate (F-100); `git status --ignored --porcelain` diff (F-057); a visual check of /about.
 - **Risk:** low (F-023 is medium: GitHub client rewrite).
 
-- [ ] F-033: Delete `schedule_next`, `_maybe_schedule_next_refresh` (tasks.py:250-257) and its call sites, `views._schedule_next_heatmap_refresh` (views.py:189-197), the beat kwargs (settings.py:218) and the apply_async patch (test_views.py:240,243,278). Update test_views.py:70,203.
-- [ ] F-030: Add a `_finish(status, state, total, updated, error="")` helper (sets the fields, the success/failure timestamp, saves and logs), used at all 5 sites. Delete tasks.py:119-143 and the token import. In tests 294 and 317 use `override_settings(GITHUB_HEATMAP_TOKEN="")`. Compute `last_error` once.
-- [ ] F-068: Delete the unused override params (`github_token=`, `ttl_minutes=`, `graphql_url=`, the markdown `timeout=`). `get_configured_github_token` becomes `return settings.GITHUB_HEATMAP_TOKEN or None`.
-- [ ] F-023: Use one GraphQL `viewer { login contributionsCollection { ... } }` call returning `(login, days)`, with a single `try/except (KeyError, TypeError)` raising GitHubUpstreamError, and `any()` for the auth substrings. Delete `fetch_authenticated_user` and heatmap.py:82-86, and keep one day-type filter. Update the test_heatmap.py mocks.
-- [ ] F-070: Drop the try/except around `requests.get` (markdown_sync.py:100-110) and the Content-Length block (:112-121). Use `list(dict.fromkeys(candidates))`, catch `(OSError, ValueError)` at :154, and catch `requests.RequestException` in github_client.
-- [ ] F-061: Delete `STATICFILES_STORAGE` (unless F-099 step 2 is planned, in which case replace it with `STORAGES`), `environ.Env(DEBUG=...)` (use plain `Env()`), `CELERY_RESULT_BACKEND/SERIALIZER/ACCEPT_CONTENT` (settings, both compose files, `.env.example:44`), one `DEFAULT_AUTO_FIELD`, the commented prints, the default AUTHENTICATION_BACKENDS and the empty TEMPLATES DIRS. Translate the Polish comments. Check with `collectstatic --dry-run`.
-- [ ] F-091: Build the timeline from `Project.STATUS_CHOICES` and delete `status_labels` and `status_order`.
-- [ ] F-092: `_calculate_last_30_days_total` becomes a one-line `sum(...)` with `start <= date <= today`.
-- [ ] F-093: Add `disk_level(free_gb)` in tasks.py next to the thresholds, used by `views._get_disk_info` and the task.
-- [ ] F-094: Delete `heatmap_component_visible` (and its if/endif at about.html:47,257), the `blog_markdown_content` key and the unused hero class slots. Use `with project.markdown_file.open("rb") as f: return f.read().decode("utf-8-sig")`.
-- [ ] F-065: Add a `PortfolioProfile.get_active()` classmethod used at context_processors.py:28 and markdown_sync.py:33,63.
-- [ ] F-084: In about.html, replace the variant loop with direct consts, delete the `daisy` tooltip branch and the `contribution_count` fallback (also views.py:231), and use `COLORS[day.level || 0]`.
-- [ ] F-086: Merge the two `<img>` blocks in project_card.html into one.
-- [ ] F-081: Delete `hover:bg-primary-focus` (base.html:165), `menu-compact` (base.html:42) and `not-prose` (detail.html:26).
-- [ ] F-100: In the Caddyfile use `@files path /static/* /media/*` with one `handle @files { root * /srv; file_server }`, keeping the F-044 headers (`header /media/* ...`). Run `caddy fmt` and `caddy validate`.
-- [ ] F-047: Delete the SECRET_KEY, DJANGO_DEBUG, ALLOWED_HOSTS and CSRF_TRUSTED_ORIGINS lines from the 6 environment blocks (prod and dev). The `docker compose config` output must stay the same.
-- [ ] F-049: In the Makefile, dev-up becomes `@test -f .env || { cp .env.example .env && echo "Created .env from .env.example."; }` (a Makefile text change only; the agent does not run `make dev-up` on a checkout without .env). dev-status copies the prod-status `docker ps` line with label `my-django-portfolio-dev`. Delete `infra/scripts/`, `tests/test_operational_helpers.py` and `tests/test_operational_files.py:34-37`.
-- [ ] F-057: Cut `.gitignore` to the Python basics, `.env*`, the celerybeat files and the custom tail (:166-180), and drop the duplicate line. The ignored set must be unchanged.
+- [x] F-033: Delete `schedule_next`, `_maybe_schedule_next_refresh` (tasks.py:250-257) and its call sites, `views._schedule_next_heatmap_refresh` (views.py:189-197), the beat kwargs (settings.py:218) and the apply_async patch (test_views.py:240,243,278). Update test_views.py:70,203.
+- [x] F-030: Add a `_finish(status, state, total, updated, error="")` helper (sets the fields, the success/failure timestamp, saves and logs), used at all 5 sites. Delete tasks.py:119-143 and the token import. In tests 294 and 317 use `override_settings(GITHUB_HEATMAP_TOKEN="")`. Compute `last_error` once.
+- [x] F-068: Delete the unused override params (`github_token=`, `ttl_minutes=`, `graphql_url=`, the markdown `timeout=`). `get_configured_github_token` becomes `return settings.GITHUB_HEATMAP_TOKEN or None`.
+- [x] F-023: Use one GraphQL `viewer { login contributionsCollection { ... } }` call returning `(login, days)`, with a single `try/except (KeyError, TypeError)` raising GitHubUpstreamError, and `any()` for the auth substrings. Delete `fetch_authenticated_user` and heatmap.py:82-86, and keep one day-type filter. Update the test_heatmap.py mocks.
+- [x] F-070: Drop the try/except around `requests.get` (markdown_sync.py:100-110) and the Content-Length block (:112-121). Use `list(dict.fromkeys(candidates))`, catch `(OSError, ValueError)` at :154, and catch `requests.RequestException` in github_client.
+- [x] F-061: Delete `STATICFILES_STORAGE` (unless F-099 step 2 is planned, in which case replace it with `STORAGES`), `environ.Env(DEBUG=...)` (use plain `Env()`), `CELERY_RESULT_BACKEND/SERIALIZER/ACCEPT_CONTENT` (settings, both compose files, `.env.example:44`), one `DEFAULT_AUTO_FIELD`, the commented prints, the default AUTHENTICATION_BACKENDS and the empty TEMPLATES DIRS. Translate the Polish comments. Check with `collectstatic --dry-run`.
+- [x] F-091: Build the timeline from `Project.STATUS_CHOICES` and delete `status_labels` and `status_order`.
+- [x] F-092: `_calculate_last_30_days_total` becomes a one-line `sum(...)` with `start <= date <= today`.
+- [x] F-093: Add `disk_level(free_gb)` in tasks.py next to the thresholds, used by `views._get_disk_info` and the task.
+- [x] F-094: Delete `heatmap_component_visible` (and its if/endif at about.html:47,257), the `blog_markdown_content` key and the unused hero class slots. Use `with project.markdown_file.open("rb") as f: return f.read().decode("utf-8-sig")`.
+- [x] F-065: Add a `PortfolioProfile.get_active()` classmethod used at context_processors.py:28 and markdown_sync.py:33,63.
+- [x] F-084: In about.html, replace the variant loop with direct consts, delete the `daisy` tooltip branch and the `contribution_count` fallback (also views.py:231), and use `COLORS[day.level || 0]`.
+- [x] F-086: Merge the two `<img>` blocks in project_card.html into one.
+- [x] F-081: Delete `hover:bg-primary-focus` (base.html:165), `menu-compact` (base.html:42) and `not-prose` (detail.html:26).
+- [x] F-100: In the Caddyfile use `@files path /static/* /media/*` with one `handle @files { root * /srv; file_server }`, keeping the F-044 headers (`header /media/* ...`). Run `caddy fmt` and `caddy validate`.
+- [x] F-047: Delete the SECRET_KEY, DJANGO_DEBUG, ALLOWED_HOSTS and CSRF_TRUSTED_ORIGINS lines from the 6 environment blocks (prod and dev). The `docker compose config` output must stay the same.
+- [x] F-049: In the Makefile, dev-up becomes `@test -f .env || { cp .env.example .env && echo "Created .env from .env.example."; }` (a Makefile text change only; the agent does not run `make dev-up` on a checkout without .env). dev-status copies the prod-status `docker ps` line with label `my-django-portfolio-dev`. Delete `infra/scripts/`, `tests/test_operational_helpers.py` and `tests/test_operational_files.py:34-37`.
+- [x] F-057: Cut `.gitignore` to the Python basics, `.env*`, the celerybeat files and the custom tail (:166-180), and drop the duplicate line. The ignored set must be unchanged.
 
 **End of phase: report what changed and the verification output.**
 

@@ -21,10 +21,9 @@ from .heatmap import (
 from .markdown_sync import build_readme_url, get_repo_path
 from .models import Project, Tag, TaskExecutionLog, TaskExecutionStatus
 from .tasks import (
-    DISK_CRITICAL_GB,
-    DISK_WARNING_GB,
     REFRESH_HEATMAP_TASK_NAME,
     SYNC_MARKDOWNS_TASK_NAME,
+    disk_level,
     refresh_portfolio_heatmap_cache_task,
     sync_project_markdowns_task,
 )
@@ -93,14 +92,7 @@ def _clean_attributes(tag, name, value):
 def home(request):
     """Render home page with projects grouped by status timeline."""
     projects = Project.objects.prefetch_related("tags").order_by("-date")
-    status_labels = {
-        "planned": "Planned",
-        "ongoing": "Ongoing",
-        "finished": "Finished",
-    }
-    status_order = ["planned", "ongoing", "finished"]
-
-    projects_by_status = {status: [] for status in status_order}
+    projects_by_status = {status: [] for status, _ in Project.STATUS_CHOICES}
     for project in projects:
         if project.status in projects_by_status:
             projects_by_status[project.status].append(project)
@@ -108,11 +100,11 @@ def home(request):
     timeline_sections = [
         {
             "status": status,
-            "title": status_labels[status],
+            "title": label,
             "checked": status == "finished",
             "projects": projects_by_status[status],
         }
-        for status in status_order
+        for status, label in Project.STATUS_CHOICES
     ]
 
     return render(request, "pages/home.html", {"timeline_sections": timeline_sections})
@@ -124,7 +116,6 @@ def about(request):
     is_admin_user = request.user.is_authenticated and request.user.is_staff
 
     context = {
-        "heatmap_component_visible": True,
         "heatmap_enabled": has_portfolio_token,
     }
 
@@ -182,55 +173,16 @@ def _build_heatmap_snapshot_response(snapshot):
     )
 
 
-def _schedule_next_heatmap_refresh():
-    """Best-effort enqueue of next asynchronous heatmap refresh task."""
-    try:
-        refresh_portfolio_heatmap_cache_task.apply_async(
-            kwargs={"schedule_next": False},
-            countdown=3600,
-        )
-    except Exception:
-        return
-
-
 def _calculate_last_30_days_total(payload):
     """Sum contribution counts from payload days within last 30 days."""
-    weeks = payload.get("weeks") if isinstance(payload, dict) else None
-    if not isinstance(weeks, list):
-        return 0
-
     today = date.today()
-    start_date = today - timedelta(days=29)
-    total = 0
-
-    for week in weeks:
-        days = week.get("days") if isinstance(week, dict) else None
-        if not isinstance(days, list):
-            continue
-
-        for day in days:
-            if not isinstance(day, dict):
-                continue
-
-            day_date = day.get("date")
-            if not day_date:
-                continue
-
-            try:
-                parsed_date = date.fromisoformat(str(day_date).split("T", 1)[0])
-            except ValueError:
-                continue
-
-            if not (start_date <= parsed_date <= today):
-                continue
-
-            count = day.get("count", day.get("contribution_count", 0))
-            try:
-                total += int(count or 0)
-            except (TypeError, ValueError):
-                continue
-
-    return total
+    start = today - timedelta(days=29)
+    return sum(
+        day["count"]
+        for week in payload.get("weeks", [])
+        for day in week["days"]
+        if start <= date.fromisoformat(day["date"]) <= today
+    )
 
 
 def _get_disk_info():
@@ -241,19 +193,12 @@ def _get_disk_info():
     total_gb = round(usage.total / (1024 ** 3), 1)
     free_pct = round((usage.free / usage.total) * 100, 1)
 
-    if free_raw_gb < DISK_CRITICAL_GB:
-        level = "critical"
-    elif free_raw_gb < DISK_WARNING_GB:
-        level = "warning"
-    else:
-        level = "ok"
-
     return {
         "free_gb": free_gb,
         "used_gb": used_gb,
         "total_gb": total_gb,
         "free_pct": free_pct,
-        "level": level,
+        "level": disk_level(free_raw_gb),
     }
 
 
@@ -320,7 +265,7 @@ def projects(request):
     """Render projects listing page with tag filters metadata."""
     projects = Project.objects.order_by("-date", "-id").prefetch_related("tags")
 
-    # Pobieramy wszystkie unikalne tagi
+    # All tags, for the filter bar
     all_tags = Tag.objects.all().order_by("name")
 
     return render(
@@ -339,22 +284,16 @@ def _load_project_markdown(project):
         return None
 
     try:
-        project.markdown_file.open("rb")
-        return project.markdown_file.read().decode("utf-8")
+        with project.markdown_file.open("rb") as f:
+            return f.read().decode("utf-8-sig")
     except (OSError, UnicodeDecodeError):
         return None
-    finally:
-        try:
-            project.markdown_file.close()
-        except OSError:
-            pass
 
 
 def _render_markdown_to_html(markdown_content):
     """Render markdown to safe HTML using an explicit allowlist."""
     if not markdown_content:
         return None
-    markdown_content = markdown_content.lstrip("\ufeff")
     markdown_html = markdown.markdown(
         markdown_content,
         extensions=["fenced_code", "tables", "pymdownx.arithmatex"],
@@ -407,7 +346,6 @@ def blog_detail(request, blog_slug):
         {
             "project": project,
             "all_projects": all_projects,
-            "blog_markdown_content": markdown_content,
             "blog_markdown_html": markdown_html,
             "repo_path": repo_path,
             "readme_url": readme_url,
@@ -437,7 +375,7 @@ def run_markdown_sync_task(request):
 def run_heatmap_refresh_task(request):
     """Enqueue immediate heatmap refresh task from admin tools."""
     try:
-        async_result = refresh_portfolio_heatmap_cache_task.delay(schedule_next=False)
+        async_result = refresh_portfolio_heatmap_cache_task.delay()
     except Exception:
         messages.error(request, "Failed to enqueue heatmap refresh task.")
     else:

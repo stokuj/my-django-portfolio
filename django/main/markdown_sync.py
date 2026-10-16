@@ -30,7 +30,7 @@ def get_repo_path(project):
 
 
 def _active_github_username():
-    profile = PortfolioProfile.objects.filter(is_active=True).first() or PortfolioProfile()
+    profile = PortfolioProfile.get_active()
     github_url = (profile.github_url or "").rstrip("/")
     if not github_url:
         return None
@@ -60,7 +60,7 @@ def build_readme_url(project):
     if project.github_url:
         return f"{project.github_url.rstrip('/')}#readme"
 
-    profile = PortfolioProfile.objects.filter(is_active=True).first() or PortfolioProfile()
+    profile = PortfolioProfile.get_active()
     github_base = (profile.github_url or "https://github.com/your-username").rstrip("/")
     return f"{github_base}/{repo_path}#readme"
 
@@ -87,38 +87,16 @@ def build_markdown_candidate_urls(project):
             ]
         )
 
-    deduped = []
-    seen = set()
-    for url in candidates:
-        if url not in seen:
-            deduped.append(url)
-            seen.add(url)
-    return deduped
+    return list(dict.fromkeys(candidates))
 
 
-def _download_markdown(url, timeout=20):
-    try:
-        response = requests.get(
-            url,
-            headers={"User-Agent": "my-django-portfolio-markdown-sync/1.0"},
-            timeout=timeout,
-        )
-        response.raise_for_status()
-    except requests.exceptions.HTTPError:
-        raise
-    except requests.exceptions.RequestException as exc:
-        raise OSError(str(exc)) from exc
-
-    content_length = response.headers.get("Content-Length")
-    if content_length is not None:
-        try:
-            parsed_length = int(content_length)
-        except (TypeError, ValueError):
-            parsed_length = None
-        if parsed_length is not None and parsed_length > MAX_MARKDOWN_SIZE_BYTES:
-            raise ValueError(
-                f"Downloaded markdown exceeds size limit ({MAX_MARKDOWN_SIZE_BYTES} bytes)"
-            )
+def _download_markdown(url):
+    response = requests.get(
+        url,
+        headers={"User-Agent": "my-django-portfolio-markdown-sync/1.0"},
+        timeout=20,
+    )
+    response.raise_for_status()
 
     raw_bytes = response.content
     if len(raw_bytes) > MAX_MARKDOWN_SIZE_BYTES:
@@ -132,7 +110,7 @@ def _download_markdown(url, timeout=20):
     return text
 
 
-def sync_project_markdown(project, timeout=20):
+def sync_project_markdown(project):
     candidate_urls = build_markdown_candidate_urls(project)
     if not candidate_urls:
         return {
@@ -148,11 +126,11 @@ def sync_project_markdown(project, timeout=20):
 
     for url in candidate_urls:
         try:
-            markdown_text = _download_markdown(url, timeout=timeout)
+            markdown_text = _download_markdown(url)
             source_url = url
             break
-        except (requests.exceptions.HTTPError, requests.exceptions.RequestException,
-                UnicodeDecodeError, ValueError, OSError) as exc:
+        # requests.RequestException is an OSError; UnicodeDecodeError is a ValueError.
+        except (OSError, ValueError) as exc:
             last_error = str(exc)
             logger.warning("Markdown sync failed for %s from %s: %s", project.blog_url, url, exc)
 

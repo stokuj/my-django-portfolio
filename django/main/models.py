@@ -227,6 +227,11 @@ class PortfolioProfile(models.Model):
     def __str__(self):
         return self.full_name
 
+    @classmethod
+    def get_active(cls):
+        """Return the active profile, or an unsaved default one."""
+        return cls.objects.filter(is_active=True).first() or cls()
+
 
 class HeatmapSnapshot(models.Model):
     """Cached heatmap payload and sync metadata for portfolio views."""

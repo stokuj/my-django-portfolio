@@ -6,7 +6,6 @@ from django.utils import timezone
 from .github_client import (
     GitHubAuthError,
     GitHubUpstreamError,
-    fetch_authenticated_user,
     fetch_contribution_days,
 )
 from .models import HeatmapSnapshot
@@ -14,8 +13,7 @@ from .models import HeatmapSnapshot
 
 def get_configured_github_token():
     """Return configured GitHub token for direct heatmap API requests."""
-    github_token = (getattr(settings, "GITHUB_HEATMAP_TOKEN", "") or "").strip()
-    return github_token or None
+    return settings.GITHUB_HEATMAP_TOKEN or None
 
 
 def contribution_level(count):
@@ -67,27 +65,18 @@ def build_weeks_payload(contribution_days):
     return weeks, total
 
 
-def fetch_heatmap_data(github_token=None):
+def fetch_heatmap_data():
     """Fetch normalized heatmap payload directly from GitHub APIs.
-
-    Args:
-        github_token (str | None): Optional GitHub bearer token override.
 
     Returns:
         tuple[dict | None, str | None]: `(payload, error_message)` pair.
     """
-    token = github_token or get_configured_github_token()
+    token = get_configured_github_token()
     if not token:
         return None, "Heatmap is not configured."
 
     try:
-        github_user = fetch_authenticated_user(token)
-        raw_username = github_user.get("login")
-        if not isinstance(raw_username, str) or not raw_username:
-            raise GitHubUpstreamError("GitHub user response is invalid")
-        username = raw_username
-
-        contribution_days = fetch_contribution_days(username, token)
+        username, contribution_days = fetch_contribution_days(token)
         weeks, total = build_weeks_payload(contribution_days)
     except GitHubAuthError:
         return None, "Configured GitHub token is invalid or expired."
@@ -110,21 +99,21 @@ def get_or_create_snapshot():
     return snapshot
 
 
-def is_snapshot_stale(snapshot, ttl_minutes=None):
+def is_snapshot_stale(snapshot):
     """Check whether cached snapshot is stale against configured TTL.
 
     Args:
         snapshot (HeatmapSnapshot): Snapshot model instance.
-        ttl_minutes (int | None): Optional TTL override in minutes.
 
     Returns:
         bool: True when snapshot should be refreshed.
     """
-    ttl = ttl_minutes or int(getattr(settings, "HEATMAP_CACHE_TTL_MINUTES", 60))
     if not snapshot.fetched_at:
         return True
 
-    threshold = timezone.now() - datetime.timedelta(minutes=ttl)
+    threshold = timezone.now() - datetime.timedelta(
+        minutes=settings.HEATMAP_CACHE_TTL_MINUTES
+    )
     return snapshot.fetched_at <= threshold
 
 

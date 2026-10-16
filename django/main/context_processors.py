@@ -25,9 +25,7 @@ def portfolio_profile(request):
     Returns:
         dict: Context with profile details used across home/about templates.
     """
-    source = (
-        PortfolioProfile.objects.filter(is_active=True).first() or PortfolioProfile()
-    )
+    source = PortfolioProfile.get_active()
     github_url = source.github_url or "#"
     linkedin_url = source.linkedin_url or "#"
     email = source.email

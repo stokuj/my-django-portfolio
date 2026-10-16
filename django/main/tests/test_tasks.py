@@ -1,7 +1,7 @@
 import collections
 from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from main.models import HeatmapSnapshot, Project, TaskExecutionLog, TaskExecutionStatus
@@ -234,10 +234,7 @@ class TaskStatusTrackingTests(TestCase):
         self.assertIsNotNone(status.last_failure_at)
 
     @patch("main.tasks.fetch_heatmap_data")
-    @patch("main.tasks.get_configured_github_token", return_value="gho_task_token")
-    def test_heatmap_refresh_task_updates_status_on_success(
-        self, _token_mock, fetch_mock
-    ):
+    def test_heatmap_refresh_task_updates_status_on_success(self, fetch_mock):
         fetch_mock.return_value = (
             {
                 "username": "portfolio-admin",
@@ -266,10 +263,7 @@ class TaskStatusTrackingTests(TestCase):
         fetch_mock.assert_called_once_with()
 
     @patch("main.tasks.fetch_heatmap_data")
-    @patch("main.tasks.get_configured_github_token", return_value="gho_task_token")
-    def test_heatmap_refresh_task_keeps_failure_timestamp_after_success(
-        self, _token_mock, fetch_mock
-    ):
+    def test_heatmap_refresh_task_keeps_failure_timestamp_after_success(self, fetch_mock):
         seeded = timezone.now()
         TaskExecutionStatus.objects.create(
             task_name=REFRESH_HEATMAP_TASK_NAME,
@@ -294,9 +288,9 @@ class TaskStatusTrackingTests(TestCase):
         self.assertIsNotNone(status.last_success_at)
 
     @patch("main.tasks.update_snapshot_error")
-    @patch("main.tasks.get_configured_github_token", return_value=None)
+    @override_settings(GITHUB_HEATMAP_TOKEN="")
     def test_heatmap_refresh_task_updates_status_on_missing_token_failure(
-        self, _token_mock, update_error_mock
+        self, update_error_mock
     ):
         result = refresh_portfolio_heatmap_cache_task()
 
@@ -317,9 +311,9 @@ class TaskStatusTrackingTests(TestCase):
         update_error_mock.assert_called_once_with("Heatmap is not configured.")
 
     @patch("main.tasks.update_snapshot_error")
-    @patch("main.tasks.get_configured_github_token", return_value=None)
+    @override_settings(GITHUB_HEATMAP_TOKEN="")
     def test_heatmap_refresh_task_keeps_success_timestamp_after_failure(
-        self, _token_mock, update_error_mock
+        self, update_error_mock
     ):
         seeded = timezone.now()
         TaskExecutionStatus.objects.create(
