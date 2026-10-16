@@ -47,10 +47,6 @@ services:
       # Mount the shared volume for user-uploaded media files
       - media_volume:/app/media
     environment:
-      - SECRET_KEY=${SECRET_KEY}
-      - DJANGO_DEBUG=${DJANGO_DEBUG}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
       - DB_ENGINE=${DOCKER_DB_ENGINE}
       - DB_NAME=${DOCKER_DB_NAME}
       - DB_USER=${DOCKER_DB_USER}
@@ -83,10 +79,6 @@ services:
     volumes:
       - media_volume:/app/media
     environment:
-      - SECRET_KEY=${SECRET_KEY}
-      - DJANGO_DEBUG=${DJANGO_DEBUG}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
       - DB_ENGINE=${DOCKER_DB_ENGINE}
       - DB_NAME=${DOCKER_DB_NAME}
       - DB_USER=${DOCKER_DB_USER}
@@ -118,10 +110,6 @@ services:
     volumes:
       - celerybeat_schedule:/app/django/celerybeat-schedule
     environment:
-      - SECRET_KEY=${SECRET_KEY}
-      - DJANGO_DEBUG=${DJANGO_DEBUG}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
-      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
       - DB_ENGINE=${DOCKER_DB_ENGINE}
       - DB_NAME=${DOCKER_DB_NAME}
       - DB_USER=${DOCKER_DB_USER}
