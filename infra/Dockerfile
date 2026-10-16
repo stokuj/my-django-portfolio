@@ -22,9 +22,11 @@ COPY pyproject.toml uv.lock ./
 COPY django ./django
 COPY --from=css-builder /app/django/main/static/css/style.css /app/django/main/static/css/style.css
 
-# 6. Install uv and use it to install dependencies
-RUN pip install --no-cache-dir uv
-RUN uv pip install --system --no-cache-dir .
+# 6. Install uv and install the locked dependencies, then the project itself
+COPY --from=ghcr.io/astral-sh/uv:0.13.1 /uv /bin/uv
+RUN uv export --frozen --no-dev --no-emit-project -o /tmp/req.txt && \
+    uv pip install --system --no-cache-dir -r /tmp/req.txt && \
+    uv pip install --system --no-cache-dir --no-deps .
 
 # 7. Make entrypoint script executable
 RUN chmod +x /app/django/entrypoints/wait-for-db.sh
