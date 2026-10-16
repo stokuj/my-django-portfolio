@@ -99,24 +99,6 @@ def get_or_create_snapshot():
     return snapshot
 
 
-def is_snapshot_stale(snapshot):
-    """Check whether cached snapshot is stale against configured TTL.
-
-    Args:
-        snapshot (HeatmapSnapshot): Snapshot model instance.
-
-    Returns:
-        bool: True when snapshot should be refreshed.
-    """
-    if not snapshot.fetched_at:
-        return True
-
-    threshold = timezone.now() - datetime.timedelta(
-        minutes=settings.HEATMAP_CACHE_TTL_MINUTES
-    )
-    return snapshot.fetched_at <= threshold
-
-
 def update_snapshot_with_payload(payload):
     """Persist successful heatmap payload into snapshot fields.
 
