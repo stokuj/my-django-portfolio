@@ -131,7 +131,7 @@ Files: `infra/Dockerfile`, `pyproject.toml`
 - [x] F-106 (part A): django-environ, markdown, requests and ruff to their latest versions, `uv lock`, then `npm update` (tailwindcss, @tailwindcss/cli, daisyui).
 
 ### 3h. gunicorn 26 and pymdown-extensions 12 (`chore/deps-gunicorn-pymdown`), risk medium
-- [ ] F-106 (part B): Read both changelogs, bump, and run `uv lock`. The arithmatex test covers pymdown, and `make dev-up` checks that gunicorn starts.
+- [x] F-106 (part B): Read both changelogs, bump, and run `uv lock`. The arithmatex test covers pymdown, and `make dev-up` checks that gunicorn starts.
 
 ### 3i. PostgreSQL 18 on a fresh database (`chore/deps-postgres-18`), risk medium
 No data migration (R2): the new database starts empty on dev and on the new droplet; the owner re-enters projects, tags, profile and thumbnails in admin, and heatmap and blog markdown refill from GitHub.
