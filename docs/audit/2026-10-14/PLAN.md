@@ -112,7 +112,7 @@ Files: `.github/workflows/django.yml`, `.github/workflows/docker-build-push.yml`
 ### 3b. CI Node aligned with Dockerfile (`chore/ci-node-22`), risk low
 Files: `.github/workflows/django.yml`, `.github/workflows/docker-build-push.yml`, `.env.example`
 - [x] F-014: Set `node-version: 22` in django.yml (matching `infra/Dockerfile:2` node:22-slim). Delete the setup-node and "Build CSS (preflight)" steps in docker-build-push.yml:34-42.
-- [ ] F-055 + F-112: Delete the build job `env:` (16-25), all IMAGE_NAME lines (workflow :10, :52, :105 and `.env.example:30`) and the `master` refs (:5, :86, :100-101). Keep the `.env` heredoc.
+- [x] F-055 + F-112: Delete the build job `env:` (16-25), all IMAGE_NAME lines (workflow :10, :52, :105 and `.env.example:30`) and the `master` refs (:5, :86, :100-101). Keep the `.env` heredoc.
 
 ### 3c. Docker image installs from uv.lock (`chore/docker-uv-lock`), risk medium
 Files: `infra/Dockerfile`, `pyproject.toml`

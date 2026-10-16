@@ -2,14 +2,10 @@ name: Build, Push and Deploy
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions: {}
-
-env:
-  # The name for the Docker image, built from the repository name
-  IMAGE_NAME: ghcr.io/${{ github.repository }}
 
 jobs:
   verify:
@@ -23,16 +19,6 @@ jobs:
     needs: verify
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    env:
-      SECRET_KEY: ci-build-placeholder-secret
-      DJANGO_DEBUG: "False"
-      ALLOWED_HOSTS: localhost,127.0.0.1
-      DOCKER_DB_ENGINE: django.db.backends.postgresql
-      DOCKER_DB_NAME: ci_build_db
-      DOCKER_DB_USER: ci_build_user
-      DOCKER_DB_PASSWORD: ci_build_password
-      DOCKER_DB_HOST: db
-      DOCKER_DB_PORT: "5432"
     permissions:
       contents: read
       packages: write # Required to push to GitHub Container Registry
@@ -48,7 +34,6 @@ jobs:
           DJANGO_DEBUG=False
           ALLOWED_HOSTS=localhost,127.0.0.1
           CSRF_TRUSTED_ORIGINS=http://127.0.0.1
-          IMAGE_NAME=ghcr.io/${{ github.repository }}
           DOCKER_DB_ENGINE=django.db.backends.postgresql
           DOCKER_DB_NAME=ci_build_db
           DOCKER_DB_USER=ci_build_user
@@ -82,7 +67,7 @@ jobs:
     name: Deploy to DigitalOcean Droplet
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     permissions:
       contents: read
       packages: read
@@ -100,12 +85,10 @@ jobs:
             cd ~/my_django_portfolio
 
             git fetch --all
-            git checkout main || git checkout master
-            git pull origin main || git pull origin master
+            git checkout main
+            git pull origin main
 
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-
-            export IMAGE_NAME=ghcr.io/${{ github.repository }}
 
             docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml pull
             docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml run --rm --no-deps --entrypoint "" web python manage.py check --deploy --fail-level WARNING
