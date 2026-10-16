@@ -1,8 +1,8 @@
 # My Django Portfolio
 
-My personal portfolio blog built with **Django**. It uses **Postgres** to store data, **Tailwind** for frontend styling, **Docker** for containerized deployment, and has asynchronous tasks with **Celery** + Redis. It fetches GitHub contribution data directly from the GitHub API and uses GitHub Actions for **CI/CD**.
+My personal portfolio blog built with **Django**. It uses **Postgres** to store data, **Tailwind** for frontend styling, **Docker** for containerized deployment, and runs periodic jobs from cron as Django management commands. It fetches GitHub contribution data directly from the GitHub API and uses GitHub Actions for **CI/CD**.
 
-The key feature is that the app pulls Markdown from GitHub **README.MD** files and shows it on blog pages, and Celery keeps this content updated in the background.
+The key feature is that the app pulls Markdown from GitHub **README.MD** files and shows it on blog pages, and a cron job keeps this content updated.
 
 ---
 ## Project Structure
@@ -14,7 +14,8 @@ my_django_portfolio/
 |  |- main/                   # Core app
 |  |  |- models.py            
 |  |  |- views.py             # Page/API views
-|  |  |- tasks.py             # Celery tasks
+|  |  |- tasks.py             # Periodic job functions
+|  |  |- management/          # Commands run by cron
 |  |  |- templates/           # Django templates
 |  |  |- static/              # CSS/JS/images
 |  |  `- tests/               
@@ -39,15 +40,13 @@ my_django_portfolio/
 - Responsive UI built with Tailwind CSS + DaisyUI
 - Visitor counter middleware (once per browser, via a cookie) and profile-driven site metadata
 - SEO: meta description, Open Graph/Twitter tags, `robots.txt` and `sitemap.xml`
-- Background jobs with Celery worker + beat scheduler
-- Scheduled jobs: markdown sync (`main.tasks.sync_project_markdowns_task`) every 2 hours, heatmap refresh every hour, disk usage check daily
-- GitHub contribution heatmap data endpoint (`/about/heatmap-data/`) that serves the stored snapshot and refreshes it in the background
+- Periodic jobs run by host cron: `manage.py sync_markdowns` every 2 hours, `manage.py refresh_heatmap` every hour
+- GitHub contribution heatmap data endpoint (`/about/heatmap-data/`) that serves the stored snapshot
 
 ## Tech Stack
 
 - Python 3.13, Django 6.1
-- PostgreSQL 18, Redis
-- Celery 5.6
+- PostgreSQL 18
 - Tailwind CSS v4 with DaisyUI
 - Gunicorn, Caddy
 - Docker Compose
@@ -71,7 +70,7 @@ All backgrounds, text, and cards switch to dark colors. The accent color shifts 
 <img width="2267" height="1486" alt="image" src="https://github.com/user-attachments/assets/21b6ea0b-0625-4202-9176-3b4e24ed108b" />
 
 ### About when logged as admin (page owner)
-The about page with extra admin controls visible, including a Scheduled Jobs panel showing Celery tasks (heatmap refresh, markdown sync, disk usage check) and an Executed Tasks panel with task history and run timestamps.
+The about page with extra admin controls visible, including a Scheduled Jobs panel showing the cron jobs (heatmap refresh, markdown sync) and an Executed Tasks panel with task history and run timestamps.
 <img width="2267" height="2843" alt="image" src="https://github.com/user-attachments/assets/17c53ec4-56ae-4acb-8e3b-da50f7059f4c" />
 
 ## Quick Start (Docker)
@@ -104,7 +103,6 @@ make prod-down
 
 - Python 3.13
 - PostgreSQL
-- Redis (required for Celery worker/beat)
 - Node.js + npm
 
 ### Setup
@@ -116,7 +114,7 @@ npm install
 npm run build:css
 ```
 
-### Run app and workers
+### Run the app
 
 ```bash
 uv run python django/manage.py migrate
@@ -124,11 +122,11 @@ uv run python django/manage.py collectstatic --noinput
 uv run python django/manage.py runserver
 ```
 
-In separate terminals:
+Run the periodic jobs by hand when needed:
 
 ```bash
-uv run celery -A config worker --workdir=django --loglevel=info
-uv run celery -A config beat --workdir=django --loglevel=info
+uv run python django/manage.py refresh_heatmap
+uv run python django/manage.py sync_markdowns
 ```
 
 Open `http://localhost:8000`.
@@ -160,8 +158,7 @@ make verify
 - CSS not updating: run `npm run build:css` and verify input/output paths in `package.json`.
 - SELinux bind mount issue with Caddyfile: use `:Z` relabel option (already configured in `docker-compose.prod.yml`).
 - `502 Bad Gateway` after changing DB name: if you change `DOCKER_DB_NAME`, create that database in PostgreSQL first, otherwise `migrate` fails and `web` does not start.
-- Markdown sync looks successful but files are not visible in app: ensure `worker` mounts `media_volume:/app/media`.
-- Permission errors on static/media/celerybeat files in Docker: app containers run as non-root (`10001:10001`), so existing volumes may need a one-time ownership fix (`chown`).
+- Permission errors on static/media files in Docker: app containers run as non-root (`10001:10001`), so existing volumes may need a one-time ownership fix (`chown`).
 - `UnicodeDecodeError` in templates/content: save text files as UTF-8.
 
 ## License
