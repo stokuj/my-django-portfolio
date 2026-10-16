@@ -192,7 +192,7 @@ No data migration (R2): the new database starts empty on dev and on the new drop
 - [x] F-094: Delete `heatmap_component_visible` (and its if/endif at about.html:47,257), the `blog_markdown_content` key and the unused hero class slots. Use `with project.markdown_file.open("rb") as f: return f.read().decode("utf-8-sig")`.
 - [x] F-065: Add a `PortfolioProfile.get_active()` classmethod used at context_processors.py:28 and markdown_sync.py:33,63.
 - [x] F-084: In about.html, replace the variant loop with direct consts, delete the `daisy` tooltip branch and the `contribution_count` fallback (also views.py:231), and use `COLORS[day.level || 0]`.
-- [ ] F-086: Merge the two `<img>` blocks in project_card.html into one.
+- [x] F-086: Merge the two `<img>` blocks in project_card.html into one.
 - [ ] F-081: Delete `hover:bg-primary-focus` (base.html:165), `menu-compact` (base.html:42) and `not-prose` (detail.html:26).
 - [ ] F-100: In the Caddyfile use `@files path /static/* /media/*` with one `handle @files { root * /srv; file_server }`, keeping the F-044 headers (`header /media/* ...`). Run `caddy fmt` and `caddy validate`.
 - [ ] F-047: Delete the SECRET_KEY, DJANGO_DEBUG, ALLOWED_HOSTS and CSRF_TRUSTED_ORIGINS lines from the 6 environment blocks (prod and dev). The `docker compose config` output must stay the same.
