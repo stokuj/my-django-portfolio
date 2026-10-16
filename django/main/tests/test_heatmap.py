@@ -6,42 +6,42 @@ from django.test import SimpleTestCase, override_settings
 from main.github_client import (
     GitHubAuthError,
     GitHubUpstreamError,
-    fetch_authenticated_user,
     fetch_contribution_days,
 )
 from main.heatmap import build_weeks_payload, contribution_level, fetch_heatmap_data
 
 
 class GitHubClientTests(SimpleTestCase):
-    @patch("main.github_client.requests.get")
-    def test_fetch_authenticated_user_returns_login(self, get_mock):
-        response = Mock()
-        response.status_code = 200
-        response.json.return_value = {"id": 123, "login": "PortfolioUser"}
-        get_mock.return_value = response
-
-        payload = fetch_authenticated_user("gho_valid")
-
-        self.assertEqual(payload, {"id": 123, "login": "PortfolioUser"})
-
-    @patch("main.github_client.requests.get")
-    def test_fetch_authenticated_user_raises_auth_error_for_401(self, get_mock):
+    @patch("main.github_client.requests.post")
+    def test_fetch_contribution_days_raises_auth_error_for_401(self, post_mock):
         response = Mock()
         response.status_code = 401
-        get_mock.return_value = response
+        post_mock.return_value = response
 
         with self.assertRaises(GitHubAuthError):
-            fetch_authenticated_user("gho_invalid")
+            fetch_contribution_days("gho_invalid")
 
-    @patch("main.github_client.requests.get")
-    def test_fetch_authenticated_user_raises_upstream_error_for_rate_limit(self, get_mock):
+    @patch("main.github_client.requests.post")
+    def test_fetch_contribution_days_raises_upstream_error_for_rate_limit(self, post_mock):
         response = Mock()
         response.status_code = 403
         response.headers = {"X-RateLimit-Remaining": "0"}
-        get_mock.return_value = response
+        post_mock.return_value = response
 
         with self.assertRaises(GitHubUpstreamError):
-            fetch_authenticated_user("gho_valid")
+            fetch_contribution_days("gho_valid")
+
+    @patch("main.github_client.requests.post")
+    def test_fetch_contribution_days_raises_upstream_error_for_missing_data(
+        self, post_mock
+    ):
+        response = Mock()
+        response.status_code = 200
+        response.json.return_value = {"data": None}
+        post_mock.return_value = response
+
+        with self.assertRaises(GitHubUpstreamError):
+            fetch_contribution_days("gho_valid")
 
     @patch("main.github_client.requests.post")
     def test_fetch_contribution_days_flattens_graphql_weeks(self, post_mock):
@@ -49,7 +49,8 @@ class GitHubClientTests(SimpleTestCase):
         response.status_code = 200
         response.json.return_value = {
             "data": {
-                "user": {
+                "viewer": {
+                    "login": "PortfolioUser",
                     "contributionsCollection": {
                         "contributionCalendar": {
                             "weeks": [
@@ -81,10 +82,11 @@ class GitHubClientTests(SimpleTestCase):
         }
         post_mock.return_value = response
 
-        payload = fetch_contribution_days("portfolio-user", "gho_valid")
+        login, days = fetch_contribution_days("gho_valid")
 
+        self.assertEqual(login, "PortfolioUser")
         self.assertEqual(
-            payload,
+            days,
             [
                 {"date": "2026-01-04", "count": 1},
                 {"date": "2026-01-05", "count": 3},
@@ -97,7 +99,7 @@ class GitHubClientTests(SimpleTestCase):
         self, _post_mock
     ):
         with self.assertRaises(GitHubUpstreamError):
-            fetch_contribution_days("portfolio-user", "gho_valid")
+            fetch_contribution_days("gho_valid")
 
     @patch("main.github_client.requests.post")
     def test_fetch_contribution_days_raises_auth_error_for_graphql_errors(
@@ -116,7 +118,7 @@ class GitHubClientTests(SimpleTestCase):
         post_mock.return_value = response
 
         with self.assertRaises(GitHubAuthError):
-            fetch_contribution_days("PortfolioUser", "gho_invalid")
+            fetch_contribution_days("gho_invalid")
 
 
 class HeatmapHelpersTests(SimpleTestCase):
@@ -177,18 +179,15 @@ class HeatmapHelpersTests(SimpleTestCase):
 
     @override_settings(GITHUB_HEATMAP_TOKEN="gho_env_token")
     @patch("main.heatmap.fetch_contribution_days")
-    @patch("main.heatmap.fetch_authenticated_user")
-    def test_fetch_heatmap_data_returns_normalized_payload(
-        self,
-        fetch_user_mock,
-        fetch_days_mock,
-    ):
-        fetch_user_mock.return_value = {"id": 123, "login": "PortfolioUser"}
-        fetch_days_mock.return_value = [
-            {"date": "2026-01-04", "count": 1},
-            {"date": "2026-01-05", "count": 3},
-            {"date": "2026-01-12", "count": 10},
-        ]
+    def test_fetch_heatmap_data_returns_normalized_payload(self, fetch_days_mock):
+        fetch_days_mock.return_value = (
+            "PortfolioUser",
+            [
+                {"date": "2026-01-04", "count": 1},
+                {"date": "2026-01-05", "count": 3},
+                {"date": "2026-01-12", "count": 10},
+            ],
+        )
 
         payload, error = fetch_heatmap_data()
 
@@ -230,28 +229,20 @@ class HeatmapHelpersTests(SimpleTestCase):
                 ],
             },
         )
-        fetch_user_mock.assert_called_once_with("gho_env_token")
-        fetch_days_mock.assert_called_once_with("PortfolioUser", "gho_env_token")
-
-    @override_settings(GITHUB_HEATMAP_TOKEN="gho_invalid")
-    @patch("main.heatmap.fetch_authenticated_user", side_effect=GitHubAuthError)
-    def test_fetch_heatmap_data_maps_auth_error(self, _fetch_user_mock):
-        payload, error = fetch_heatmap_data()
-
-        self.assertIsNone(payload)
-        self.assertEqual(error, "Configured GitHub token is invalid or expired.")
+        fetch_days_mock.assert_called_once_with("gho_env_token")
 
     @override_settings(GITHUB_HEATMAP_TOKEN="gho_invalid")
     @patch("main.heatmap.fetch_contribution_days", side_effect=GitHubAuthError)
-    @patch("main.heatmap.fetch_authenticated_user")
-    def test_fetch_heatmap_data_maps_graphql_auth_error(
-        self,
-        fetch_user_mock,
-        _fetch_days_mock,
-    ):
-        fetch_user_mock.return_value = {"id": 123, "login": "PortfolioUser"}
-
+    def test_fetch_heatmap_data_maps_auth_error(self, _fetch_days_mock):
         payload, error = fetch_heatmap_data()
 
         self.assertIsNone(payload)
         self.assertEqual(error, "Configured GitHub token is invalid or expired.")
+
+    @override_settings(GITHUB_HEATMAP_TOKEN="gho_valid")
+    @patch("main.heatmap.fetch_contribution_days", side_effect=GitHubUpstreamError)
+    def test_fetch_heatmap_data_maps_upstream_error(self, _fetch_days_mock):
+        payload, error = fetch_heatmap_data()
+
+        self.assertIsNone(payload)
+        self.assertEqual(error, "Heatmap service is temporarily unavailable.")

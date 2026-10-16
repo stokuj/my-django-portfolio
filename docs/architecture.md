@@ -25,7 +25,7 @@ flowchart LR
     R --> WK[Celery Worker]
     B[Celery Beat] --> R
     WK --> P
-    W --> G[GitHub REST + GraphQL APIs]
+    W --> G[GitHub GraphQL API]
     C --> S[(Static Files)]
     C --> M[(Media Files)]
 ```
@@ -151,7 +151,7 @@ Celery is used for jobs that should not block HTTP requests.
 The project fetches GitHub contribution heatmap data directly from Django.
 
 - The GitHub bearer token is configured with `GITHUB_HEATMAP_TOKEN`.
-- Django calls GitHub REST `/user` to resolve the configured account and GitHub GraphQL to fetch contribution days.
+- Django sends one GitHub GraphQL `viewer` query for the token owner's login and contribution days.
 - Data is normalized and persisted in `HeatmapSnapshot`.
 - On token or upstream errors, Django returns safe fallback messages and keeps the last valid snapshot.
 
@@ -169,7 +169,7 @@ sequenceDiagram
     Beat->>Redis: enqueue periodic task
     Redis->>Worker: deliver task
     Worker->>Django: execute task function
-    Django->>GitHub: GET /user + GraphQL contributionCalendar
+    Django->>GitHub: GraphQL viewer contributionCalendar
     GitHub-->>Django: contribution payload / error
     Django->>DB: read/write state and logs
     Django-->>Worker: task result payload

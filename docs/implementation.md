@@ -49,7 +49,7 @@ Heatmap integration is implemented through `django/main/heatmap.py`, `django/mai
 
 - Configuration: Django reads `GITHUB_HEATMAP_TOKEN` from `.env`.
 - Authorization: the same configured GitHub bearer token is used for all heatmap fetches.
-- Fetch path: `fetch_heatmap_data(github_token=None)` resolves the token owner through GitHub REST and then fetches contribution days through GitHub GraphQL.
+- Fetch path: `fetch_heatmap_data()` sends one GitHub GraphQL `viewer` query that returns the token owner's login and contribution days.
 - Caching path: valid payloads are normalized and saved to `HeatmapSnapshot`.
 - Failure behavior: on token/network/upstream errors, Django stores an error message and can reuse the last valid snapshot.
 - Scope note: GitHub login and social auth are not part of the runtime anymore.

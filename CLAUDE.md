@@ -66,7 +66,7 @@ Single app `main` under `django/`. Configuration lives in `django/config/` (sett
 - `django/main/views.py` — page views and admin-tool endpoints
 - `django/main/tasks.py` — two main Celery tasks: `sync_project_markdowns_task` and `refresh_portfolio_heatmap_cache_task`
 - `django/main/markdown_sync.py` — fetches README markdown from GitHub and writes to `media/blog_markdown/`
-- `django/main/heatmap.py` — fetches GitHub contribution data (REST + GraphQL) and persists to `HeatmapSnapshot`
+- `django/main/heatmap.py` — fetches GitHub contribution data (one GraphQL query) and persists to `HeatmapSnapshot`
 - `django/main/context_processors.py` — injects visitor count, project count, and active `PortfolioProfile` into every template
 
 ### Background task observability

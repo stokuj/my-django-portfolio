@@ -6,7 +6,6 @@ from django.utils import timezone
 from .github_client import (
     GitHubAuthError,
     GitHubUpstreamError,
-    fetch_authenticated_user,
     fetch_contribution_days,
 )
 from .models import HeatmapSnapshot
@@ -77,13 +76,7 @@ def fetch_heatmap_data():
         return None, "Heatmap is not configured."
 
     try:
-        github_user = fetch_authenticated_user(token)
-        raw_username = github_user.get("login")
-        if not isinstance(raw_username, str) or not raw_username:
-            raise GitHubUpstreamError("GitHub user response is invalid")
-        username = raw_username
-
-        contribution_days = fetch_contribution_days(username, token)
+        username, contribution_days = fetch_contribution_days(token)
         weeks, total = build_weeks_payload(contribution_days)
     except GitHubAuthError:
         return None, "Configured GitHub token is invalid or expired."
