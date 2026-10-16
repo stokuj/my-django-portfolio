@@ -119,6 +119,15 @@ class ViewsTest(TestCase):
             html=True,
         )
 
+    def test_blank_profile_links_are_not_rendered(self):
+        PortfolioProfile.objects.update_or_create(
+            is_active=True, defaults={"email": "", "github_url": "", "linkedin_url": ""}
+        )
+        response = self.client.get(reverse("about"))
+        self.assertNotContains(response, 'href="#"')
+        self.assertNotContains(response, 'aria-label="Open GitHub profile"')
+        self.assertNotContains(response, "Contact Me")
+
     def test_settings_drop_sites_framework_and_heatmap_api_base_url(self):
         self.assertNotIn("django.contrib.sites", settings.INSTALLED_APPS)
         self.assertFalse(hasattr(settings, "SITE_ID"))
