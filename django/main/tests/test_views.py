@@ -355,6 +355,10 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "projects/detail.html")
 
+    def test_blog_detail_title_is_project_title(self):
+        response = self.client.get(reverse("blog_detail", args=["test-project-views"]))
+        self.assertContains(response, "<title>Test Project</title>", html=False)
+
     def test_blog_detail_renders_even_without_markdown_file(self):
         Project.objects.create(
             title="Missing Blog Template",
