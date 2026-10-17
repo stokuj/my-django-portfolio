@@ -1,8 +1,8 @@
 # My Django Portfolio
 
-My personal portfolio blog built with **Django**. It uses **Postgres** to store data, **Tailwind** for frontend styling, **Docker** for containerized deployment, and has asynchronous tasks with **Celery** + Redis. It fetches GitHub contribution data directly from the GitHub API and uses GitHub Actions for **CI/CD**.
+My personal portfolio blog built with **Django**. It uses **Postgres** to store data, **Tailwind** for frontend styling, **Docker** for containerized deployment, and runs periodic jobs from cron as Django management commands. It fetches GitHub contribution data directly from the GitHub API and uses GitHub Actions for **CI/CD**.
 
-The key feature is that the app pulls Markdown from GitHub **README.MD** files and shows it on blog pages, and Celery keeps this content updated in the background.
+The key feature is that the app pulls Markdown from GitHub **README.MD** files and shows it on blog pages, and a cron job keeps this content updated.
 
 ---
 ## Project Structure
@@ -11,11 +11,11 @@ The key feature is that the app pulls Markdown from GitHub **README.MD** files a
 my_django_portfolio/
 |- django/
 |  |- config/                 # Project config
-|  |- entrypoints/            # Container startup scripts
 |  |- main/                   # Core app
 |  |  |- models.py            
 |  |  |- views.py             # Page/API views
-|  |  |- tasks.py             # Celery tasks
+|  |  |- tasks.py             # Periodic job functions
+|  |  |- management/          # Commands run by cron
 |  |  |- templates/           # Django templates
 |  |  |- static/              # CSS/JS/images
 |  |  `- tests/               
@@ -25,8 +25,7 @@ my_django_portfolio/
 |  |- Caddyfile
 |  |- docker-compose.dev.yml
 |  |- docker-compose.prod.yml
-|  |- Dockerfile
-|  `- scripts/            # .env and status helper scripts
+|  `- Dockerfile
 |- Makefile
 |- package.json
 |- pyproject.toml
@@ -39,16 +38,15 @@ my_django_portfolio/
 - Blog routing by slug (`/blog/<slug>/`)
 - Tag and status-based project organization
 - Responsive UI built with Tailwind CSS + DaisyUI
-- Visitor counter middleware and profile-driven site metadata
-- Background jobs with Celery worker + beat scheduler
-- Scheduled markdown synchronization (`main.tasks.sync_project_markdowns_task`)
-- GitHub contribution heatmap data endpoint (`/about/heatmap-data/`) with cached snapshot storage
+- Visitor counter middleware (once per browser, via a cookie) and profile-driven site metadata
+- SEO: meta description, Open Graph/Twitter tags, `robots.txt` and `sitemap.xml`
+- Periodic jobs run by host cron: `manage.py sync_markdowns` every 2 hours, `manage.py refresh_heatmap` every hour
+- GitHub contribution heatmap data endpoint (`/about/heatmap-data/`) that serves the stored snapshot
 
 ## Tech Stack
 
-- Python 3.13, Django 5.1
-- PostgreSQL, Redis
-- Celery
+- Python 3.13, Django 6.1
+- PostgreSQL 18
 - Tailwind CSS v4 with DaisyUI
 - Gunicorn, Caddy
 - Docker Compose
@@ -64,7 +62,7 @@ A filterable grid of projects. You can search by name or filter by technology ta
 <img width="2267" height="1334" alt="screencapture-localhost-projects-2026-02-22-15_13_50" src="https://github.com/user-attachments/assets/25a3085e-edf2-45aa-93b9-42c47f36e2f9" />
 
 ### About page
-The main landing page showing a brief intro ("Hi, I am John Doe"), tech stack badges, current learning goals, and a live GitHub contributions heatmap fetched directly by Django from GitHub.
+Shows a brief intro ("Hi, I am John Doe"), tech stack badges, current learning goals, and a live GitHub contributions heatmap fetched directly by Django from GitHub.
 <img width="2267" height="1669" alt="image" src="https://github.com/user-attachments/assets/5e01c6d9-9e82-4745-8210-7076888c9722" />
 
 ### Dark theme
@@ -72,7 +70,7 @@ All backgrounds, text, and cards switch to dark colors. The accent color shifts 
 <img width="2267" height="1486" alt="image" src="https://github.com/user-attachments/assets/21b6ea0b-0625-4202-9176-3b4e24ed108b" />
 
 ### About when logged as admin (page owner)
-The about page with extra admin controls visible, including a Scheduled Jobs panel showing Celery tasks (heatmap refresh, markdown sync) and an Executed Tasks panel with task history and run timestamps.
+The about page with extra admin controls visible, including a Scheduled Jobs panel showing the cron jobs (heatmap refresh, markdown sync) and an Executed Tasks panel with task history and run timestamps.
 <img width="2267" height="2843" alt="image" src="https://github.com/user-attachments/assets/17c53ec4-56ae-4acb-8e3b-da50f7059f4c" />
 
 ## Quick Start (Docker)
@@ -103,9 +101,8 @@ make prod-down
 
 ### Prerequisites
 
-- Python 3.13+
+- Python 3.13
 - PostgreSQL
-- Redis (required for Celery worker/beat)
 - Node.js + npm
 
 ### Setup
@@ -117,7 +114,7 @@ npm install
 npm run build:css
 ```
 
-### Run app and workers
+### Run the app
 
 ```bash
 uv run python django/manage.py migrate
@@ -125,11 +122,11 @@ uv run python django/manage.py collectstatic --noinput
 uv run python django/manage.py runserver
 ```
 
-In separate terminals:
+Run the periodic jobs by hand when needed:
 
 ```bash
-uv run celery -A config worker --workdir=django --loglevel=info
-uv run celery -A config beat --workdir=django --loglevel=info
+uv run python django/manage.py refresh_heatmap
+uv run python django/manage.py sync_markdowns
 ```
 
 Open `http://localhost:8000`.
@@ -140,7 +137,7 @@ Open `http://localhost:8000`.
 make verify
 ```
 
-`make verify` expects the dev dependencies installed through `uv sync --extra dev`.
+`make verify` expects `uv sync --extra dev` and `npm install` (it builds CSS first).
 
 ## Heatmap Configuration
 
@@ -160,9 +157,8 @@ make verify
 - Docker socket permission error: add your user to the Docker group or run with elevated privileges.
 - CSS not updating: run `npm run build:css` and verify input/output paths in `package.json`.
 - SELinux bind mount issue with Caddyfile: use `:Z` relabel option (already configured in `docker-compose.prod.yml`).
-- `502 Bad Gateway` after changing DB name: if you change `DOCKER_DB_NAME`, create that database in PostgreSQL first, otherwise `web` can stay in `wait-for-db`.
-- Markdown sync looks successful but files are not visible in app: ensure `worker` mounts `media_volume:/app/media`.
-- Permission errors on static/media/celerybeat files in Docker: app containers run as non-root (`10001:10001`), so existing volumes may need a one-time ownership fix (`chown`).
+- `502 Bad Gateway` after changing DB name: if you change `DOCKER_DB_NAME`, create that database in PostgreSQL first, otherwise `migrate` fails and `web` does not start.
+- Permission errors on static/media files in Docker: app containers run as non-root (`10001:10001`), so existing volumes may need a one-time ownership fix (`chown`).
 - `UnicodeDecodeError` in templates/content: save text files as UTF-8.
 
 ## License

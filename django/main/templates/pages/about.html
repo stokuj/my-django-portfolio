@@ -1,17 +1,19 @@
 ﻿{% extends "base.html" %}
 
-{% block page_name %}About{% endblock page_name %}
+{% block title %}About{% endblock title %}
+{% block meta_description %}{{ profile.about_intro }}{% endblock meta_description %}
+{% block og_description %}{{ profile.about_intro }}{% endblock og_description %}
 {% block content %}
 
 <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-    {% include "components/hero_section.html" with hero_background="images/hero-bg2.png" hero_overlay_class="bg-base-100/90" hero_content_template="components/hero/about_content.html" %}
+    {% include "components/hero_section.html" with hero_background="images/hero-bg2.webp" hero_overlay_class="bg-base-100/90" hero_content_template="components/hero/about_content.html" %}
 
     <section class="mt-6 grid gap-4 md:grid-cols-3">
         <article class="card border border-base-300 bg-base-200 shadow-sm">
             <div class="card-body p-5">
                 <h2 class="card-title text-xl text-primary">Core Stack</h2>
                 <div class="mt-3 flex flex-wrap gap-2">
-                    {% for item in profile_core_stack %}
+                    {% for item in profile.core_stack %}
                     <span class="badge badge-secondary p-3">{{ item }}</span>
                     {% endfor %}
                 </div>
@@ -22,12 +24,12 @@
             <div class="card-body p-5">
                 <h2 class="card-title text-xl text-primary">Current Learning</h2>
                 <div class="mt-3 flex flex-wrap gap-2">
-                    {% for item in profile_current_learning %}
+                    {% for item in profile.current_learning %}
                     <span class="badge badge-info p-3">{{ item }}</span>
                     {% endfor %}
                 </div>
                 <p class="mt-4 text-sm text-base-content/80 sm:text-base">
-                    {{ profile_current_learning_summary }}
+                    {{ profile.current_learning_summary }}
                 </p>
             </div>
         </article>
@@ -36,7 +38,7 @@
             <div class="card-body p-5">
                 <h2 class="card-title text-xl text-primary">Interests</h2>
                 <div class="mt-3 flex flex-wrap gap-2">
-                    {% for item in profile_interests %}
+                    {% for item in profile.interests %}
                     <span class="badge badge-warning p-3">{{ item }}</span>
                     {% endfor %}
                 </div>
@@ -44,7 +46,6 @@
         </article>
     </section>
 
-    {% if heatmap_component_visible %}
     <section class="mt-6 rounded-2xl border border-base-300 bg-gradient-to-br from-base-200 to-base-100 shadow-sm">
         <div class="p-4 sm:p-6">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -54,7 +55,7 @@
                 </div>
             </div>
 
-            <div id="heatmap-minimal-error" class="alert alert-error mt-4 hidden">
+            <div id="heatmap-minimal-error" class="alert alert-error mt-4 hidden" role="alert">
                 <span id="heatmap-minimal-error-text"></span>
             </div>
             <div id="heatmap-minimal-content" class="mt-4 hidden">
@@ -76,10 +77,10 @@
                     <div class="overflow-x-auto pb-1">
                         <div class="w-full min-w-[720px]">
                             <div class="flex">
-                                <div id="heatmap-minimal-months" class="mb-2 grid w-full items-end gap-1"></div>
+                                <div id="heatmap-minimal-months" class="mb-2 grid w-full items-end gap-1" aria-hidden="true"></div>
                             </div>
                             <div class="flex">
-                                <div id="heatmap-minimal-grid" class="grid min-h-[112px] w-full gap-1"></div>
+                                <div id="heatmap-minimal-grid" class="grid min-h-[112px] w-full gap-1" role="img"></div>
                             </div>
                             <div class="mt-3 flex items-center justify-between text-xs text-base-content/75">
                                 <span>Less</span>
@@ -98,7 +99,6 @@
             </div>
         </div>
     </section>
-    {% endif %}
 
     {% if request.user.is_authenticated and request.user.is_staff %}
     <section class="mt-6 rounded-2xl border border-base-300 bg-base-200 shadow-sm">
@@ -155,21 +155,17 @@
                         <p><span class="font-semibold">Schedule:</span> {{ job.schedule_label }}</p>
                         <p>
                             <span class="font-semibold">Last run:</span>
-                            {% if job.last_run_at %}
-                            <time class="js-local-datetime" datetime="{{ job.last_run_at|date:'c' }}">{{ job.last_run_at|date:"Y-m-d H:i" }}</time>
+                            {% if job.run_at %}
+                            <time class="js-local-datetime" datetime="{{ job.run_at|date:'c' }}">{{ job.run_at|date:"Y-m-d H:i" }}</time>
                             {% else %}
                             never
                             {% endif %}
                         </p>
-                        <p>
-                            <span class="font-semibold">Next run:</span>
-                            <time class="js-local-datetime" datetime="{{ job.next_run_at|date:'c' }}">{{ job.next_run_at|date:"Y-m-d H:i" }}</time>
-                        </p>
-                        <p><span class="font-semibold">Totals:</span> {{ job.last_updated }}/{{ job.last_total }} ok, {{ job.last_failed }} failed</p>
+                        <p><span class="font-semibold">Totals:</span> {{ job.updated }}/{{ job.total }} ok, {{ job.failed }} failed</p>
                     </div>
 
-                    {% if job.last_error %}
-                    <p class="mt-3 text-xs text-error break-all"><span class="font-semibold">Last error:</span> {{ job.last_error }}</p>
+                    {% if job.error %}
+                    <p class="mt-3 text-xs text-error break-all"><span class="font-semibold">Last error:</span> {{ job.error }}</p>
                     {% endif %}
                 </article>
                 {% endfor %}
@@ -204,11 +200,11 @@
                 <article class="rounded-xl border border-base-300 bg-base-100 p-5">
                     <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <p class="font-semibold break-all">{{ task.task_name }}</p>
-                        {% if task.last_status == 'success' %}
+                        {% if task.status == 'success' %}
                         <span class="badge badge-success badge-sm">success</span>
-                        {% elif task.last_status == 'partial_success' %}
+                        {% elif task.status == 'partial_success' %}
                         <span class="badge badge-warning badge-sm">partial_success</span>
-                        {% elif task.last_status == 'failure' %}
+                        {% elif task.status == 'failure' %}
                         <span class="badge badge-error badge-sm">failure</span>
                         {% else %}
                         <span class="badge badge-ghost badge-sm">unknown</span>
@@ -218,29 +214,13 @@
                     <div class="mt-3 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
                         <p>
                             <span class="font-semibold">Last run:</span>
-                            <time class="js-local-datetime" datetime="{{ task.last_run_at|date:'c' }}">{{ task.last_run_at|date:"Y-m-d H:i" }}</time>
+                            <time class="js-local-datetime" datetime="{{ task.run_at|date:'c' }}">{{ task.run_at|date:"Y-m-d H:i" }}</time>
                         </p>
-                        <p>
-                            <span class="font-semibold">Last success:</span>
-                            {% if task.last_success_at %}
-                            <time class="js-local-datetime" datetime="{{ task.last_success_at|date:'c' }}">{{ task.last_success_at|date:"Y-m-d H:i" }}</time>
-                            {% else %}
-                            -
-                            {% endif %}
-                        </p>
-                        <p>
-                            <span class="font-semibold">Last failure:</span>
-                            {% if task.last_failure_at %}
-                            <time class="js-local-datetime" datetime="{{ task.last_failure_at|date:'c' }}">{{ task.last_failure_at|date:"Y-m-d H:i" }}</time>
-                            {% else %}
-                            -
-                            {% endif %}
-                        </p>
-                        <p><span class="font-semibold">Totals:</span> {{ task.last_updated }}/{{ task.last_total }} ok, {{ task.last_failed }} failed</p>
+                        <p><span class="font-semibold">Totals:</span> {{ task.updated }}/{{ task.total }} ok, {{ task.failed }} failed</p>
                     </div>
 
-                    {% if task.last_error %}
-                    <p class="mt-3 text-xs text-error break-all"><span class="font-semibold">Last error:</span> {{ task.last_error }}</p>
+                    {% if task.error %}
+                    <p class="mt-3 text-xs text-error break-all"><span class="font-semibold">Last error:</span> {{ task.error }}</p>
                     {% endif %}
                 </article>
                 {% empty %}
@@ -254,70 +234,34 @@
     {% endif %}
 </div>
 
-{% if heatmap_component_visible %}
 <script>
 document.addEventListener("DOMContentLoaded", async function () {
-    const variantConfigs = [
-        {
-            prefix: "heatmap-minimal",
-            dayClass: "h-4 w-4 rounded-[3px] border border-base-300/70 bg-base-200",
-            tooltipMode: "title",
-        },
-    ];
+    const DAY_CLASS = "h-4 w-4 rounded-[3px] border border-base-300/70 bg-base-200";
+    // Indexed by the server-side contribution level (0..4).
+    const COLORS = ["", "#9be9a8", "#40c463", "#30a14e", "#216e39"];
 
-    const variants = variantConfigs.map(function (config) {
-        return {
-            config: config,
-            statusEl: document.getElementById(config.prefix + "-status"),
-            errorEl: document.getElementById(config.prefix + "-error"),
-            errorTextEl: document.getElementById(config.prefix + "-error-text"),
-            contentEl: document.getElementById(config.prefix + "-content"),
-            gridEl: document.getElementById(config.prefix + "-grid"),
-            monthsEl: document.getElementById(config.prefix + "-months"),
-            usernameEl: document.getElementById(config.prefix + "-username"),
-            totalEl: document.getElementById(config.prefix + "-total"),
-            last30El: document.getElementById(config.prefix + "-last30"),
-        };
-    }).filter(function (variant) {
-        return (
-            variant.statusEl
-            && variant.errorEl
-            && variant.errorTextEl
-            && variant.contentEl
-            && variant.gridEl
-            && variant.monthsEl
-            && variant.usernameEl
-            && variant.totalEl
-            && variant.last30El
-        );
-    });
-
-    if (!variants.length) {
-        return;
-    }
+    const statusEl = document.getElementById("heatmap-minimal-status");
+    const errorEl = document.getElementById("heatmap-minimal-error");
+    const errorTextEl = document.getElementById("heatmap-minimal-error-text");
+    const contentEl = document.getElementById("heatmap-minimal-content");
+    const gridEl = document.getElementById("heatmap-minimal-grid");
+    const monthsEl = document.getElementById("heatmap-minimal-months");
+    const usernameEl = document.getElementById("heatmap-minimal-username");
+    const totalEl = document.getElementById("heatmap-minimal-total");
+    const last30El = document.getElementById("heatmap-minimal-last30");
 
     const heatmapEnabled = {{ heatmap_enabled|yesno:"true,false" }};
 
-    function showError(variant, message) {
-        variant.statusEl.classList.add("hidden");
-        variant.contentEl.classList.add("hidden");
-        variant.errorTextEl.textContent = message;
-        variant.errorEl.classList.remove("hidden");
+    function showError(message) {
+        statusEl.classList.add("hidden");
+        contentEl.classList.add("hidden");
+        errorTextEl.textContent = message;
+        errorEl.classList.remove("hidden");
     }
 
     if (!heatmapEnabled) {
-        variants.forEach(function (variant) {
-            variant.statusEl.textContent = "Heatmap is disabled until GITHUB_HEATMAP_TOKEN is configured.";
-        });
+        statusEl.textContent = "Heatmap is disabled until GITHUB_HEATMAP_TOKEN is configured.";
         return;
-    }
-
-    function contributionColor(count) {
-        if (!count || count <= 0) return "";
-        if (count < 3) return "#9be9a8";
-        if (count < 6) return "#40c463";
-        if (count < 9) return "#30a14e";
-        return "#216e39";
     }
 
     function normalizeDays(week) {
@@ -346,16 +290,16 @@ document.addEventListener("DOMContentLoaded", async function () {
         return null;
     }
 
-    function renderMonthLabels(variant, weeks) {
+    function renderMonthLabels(weeks) {
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        variant.monthsEl.innerHTML = "";
-        variant.monthsEl.style.gridTemplateColumns = "";
+        monthsEl.innerHTML = "";
+        monthsEl.style.gridTemplateColumns = "";
 
         if (!weeks.length) {
             return;
         }
 
-        variant.monthsEl.style.gridTemplateColumns = `repeat(${weeks.length}, minmax(0, 1fr))`;
+        monthsEl.style.gridTemplateColumns = `repeat(${weeks.length}, minmax(0, 1fr))`;
 
         const segments = [];
         weeks.forEach(function (week) {
@@ -375,33 +319,35 @@ document.addEventListener("DOMContentLoaded", async function () {
             label.style.gridColumn = `span ${segment.weeks} / span ${segment.weeks}`;
             label.className = "truncate pr-1 text-xs font-semibold leading-none text-base-content/85";
             label.textContent = segment.month >= 0 ? monthNames[segment.month] : "";
-            variant.monthsEl.appendChild(label);
+            monthsEl.appendChild(label);
         });
     }
 
-    function renderGrid(variant, raw) {
-        const weeks = Array.isArray(raw && raw.weeks) ? raw.weeks : [];
-        variant.gridEl.innerHTML = "";
-        variant.gridEl.style.gridTemplateColumns = "";
-        renderMonthLabels(variant, weeks);
+    function renderGrid(weeks) {
+        gridEl.innerHTML = "";
+        gridEl.style.gridTemplateColumns = "";
+        renderMonthLabels(weeks);
 
         if (!weeks.length) {
-            variant.gridEl.innerHTML = '<p class="text-sm text-base-content/70">No weekly data available.</p>';
+            gridEl.innerHTML = '<p class="text-sm text-base-content/70">No weekly data available.</p>';
+            gridEl.setAttribute("aria-label", "No weekly data available.");
             return;
         }
 
-        variant.gridEl.style.gridTemplateColumns = `repeat(${weeks.length}, minmax(0, 1fr))`;
+        gridEl.style.gridTemplateColumns = `repeat(${weeks.length}, minmax(0, 1fr))`;
+        let total = 0;
 
         weeks.forEach(function (week) {
             const weekCol = document.createElement("div");
             weekCol.className = "flex min-w-0 flex-col gap-1";
 
             normalizeDays(week).forEach(function (day) {
-                const count = Number(day.count || day.contribution_count || 0);
+                const count = Number(day.count || 0);
+                total += count;
                 const dayEl = document.createElement("div");
-                dayEl.className = variant.config.dayClass;
+                dayEl.className = DAY_CLASS;
 
-                const color = contributionColor(count);
+                const color = COLORS[day.level || 0];
                 if (color) {
                     dayEl.style.background = color;
                     dayEl.style.borderColor = color;
@@ -418,15 +364,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                 }
                 const tooltipText = dayLabel + " - " + count + " contributions";
                 dayEl.title = tooltipText;
-                dayEl.setAttribute("aria-label", tooltipText);
-                if (variant.config.tooltipMode === "daisy") {
-                    dayEl.setAttribute("data-tip", tooltipText);
-                }
                 weekCol.appendChild(dayEl);
             });
 
-            variant.gridEl.appendChild(weekCol);
+            gridEl.appendChild(weekCol);
         });
+        gridEl.setAttribute("aria-label", `GitHub contributions heatmap, ${total} contributions in the last ${weeks.length} weeks`);
     }
 
     try {
@@ -440,29 +383,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         const payload = await response.json();
         if (!response.ok) {
-            variants.forEach(function (variant) {
-                showError(variant, payload.error || "Heatmap service is temporarily unavailable.");
-            });
+            showError(payload.error || "Heatmap service is temporarily unavailable.");
             return;
         }
 
-        variants.forEach(function (variant) {
-            variant.usernameEl.textContent = payload.username || "-";
-            variant.totalEl.textContent = payload.total ?? "-";
-            variant.last30El.textContent = payload.last_30_days_total ?? 0;
-            renderGrid(variant, payload.raw || {});
-            variant.statusEl.classList.add("hidden");
-            variant.errorEl.classList.add("hidden");
-            variant.contentEl.classList.remove("hidden");
-        });
+        usernameEl.textContent = payload.username || "-";
+        totalEl.textContent = payload.total ?? "-";
+        last30El.textContent = payload.last_30_days_total ?? 0;
+        renderGrid(Array.isArray(payload.weeks) ? payload.weeks : []);
+        statusEl.classList.add("hidden");
+        errorEl.classList.add("hidden");
+        contentEl.classList.remove("hidden");
     } catch (error) {
-        variants.forEach(function (variant) {
-            showError(variant, "Heatmap service is temporarily unavailable.");
-        });
+        showError("Heatmap service is temporarily unavailable.");
     }
 });
 </script>
-{% endif %}
 
 {% if request.user.is_authenticated and request.user.is_staff %}
 <script>

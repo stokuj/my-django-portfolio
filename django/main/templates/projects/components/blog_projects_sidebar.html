@@ -5,7 +5,7 @@
             {% for sidebar_project in all_projects %}
             <li>
                 {% if sidebar_project.blog and sidebar_project.blog_url %}
-                <a href="{% url 'blog_detail' sidebar_project.blog_url %}" class="ui-link-motion {% if sidebar_project.id == project.id %}active{% endif %}">
+                <a href="{% url 'blog_detail' sidebar_project.blog_url %}" class="ui-link-motion {% if sidebar_project.id == project.id %}active{% endif %}"{% if sidebar_project.id == project.id %} aria-current="page"{% endif %}>
                     {{ sidebar_project.title }}
                 </a>
                 {% elif sidebar_project.github_url %}

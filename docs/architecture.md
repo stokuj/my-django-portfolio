@@ -2,15 +2,16 @@
 
 ## System Overview
 
-The application is a Django-based portfolio/blog platform with asynchronous background processing.
-Core runtime services are orchestrated with Docker Compose:
+The application is a Django-based portfolio/blog platform with cron-run periodic jobs.
+In production (`infra/docker-compose.prod.yml`), the runtime services are orchestrated with Docker Compose:
 
 - `web`: Django app served by Gunicorn.
 - `db`: PostgreSQL database.
-- `redis`: message broker/result backend for Celery.
-- `worker`: Celery worker for asynchronous jobs.
-- `beat`: Celery beat scheduler for periodic jobs.
 - `caddy`: reverse proxy and static/media serving.
+
+The host crontab runs periodic jobs as management commands inside `web`.
+
+Dev compose (`infra/docker-compose.dev.yml`) has no Caddy; `web` runs `runserver`, published on `127.0.0.1:8000`.
 
 The heatmap feature is implemented inside Django and fetches GitHub data directly.
 
@@ -21,11 +22,8 @@ flowchart LR
     U[User Browser] --> C[Caddy]
     C --> W[Gunicorn + Django Web]
     W --> P[(PostgreSQL)]
-    W --> R[(Redis)]
-    R --> WK[Celery Worker]
-    B[Celery Beat] --> R
-    WK --> P
-    W --> G[GitHub REST + GraphQL APIs]
+    CR[Host crontab] -->|manage.py command| W
+    W --> G[GitHub GraphQL API + raw README files]
     C --> S[(Static Files)]
     C --> M[(Media Files)]
 ```
@@ -34,10 +32,10 @@ flowchart LR
 
 ### Django Layering
 
-- `django/config/`: project configuration (`settings.py`, `urls.py`, `celery.py`).
-- `django/main/models.py`: domain entities, including projects and task execution status/logging.
+- `django/config/`: project configuration (`settings.py`, `urls.py`).
+- `django/main/models.py`: domain entities, including projects and task execution logging (`TaskExecutionLog`).
 - `django/main/views.py`: request handling and template rendering.
-- `django/main/tasks.py`: asynchronous and scheduled task execution.
+- `django/main/tasks.py`: periodic job functions; `django/main/management/commands/` wraps them for cron.
 - `django/main/markdown_sync.py` and `django/main/heatmap.py`: integration and domain helpers.
 
 # ERD (Django Models)
@@ -49,30 +47,14 @@ erDiagram
         int count
     }
 
-    TASK_EXECUTION_STATUS {
-        int id PK
-        string task_name UK
-        string last_status
-        datetime last_run_at
-        datetime last_success_at
-        datetime last_failure_at
-        int last_total
-        int last_updated
-        int last_failed
-        text last_error
-    }
-
     TASK_EXECUTION_LOG {
         int id PK
         string task_name
-        string last_status
-        datetime last_run_at
-        datetime last_success_at
-        datetime last_failure_at
-        int last_total
-        int last_updated
-        int last_failed
-        text last_error
+        string status
+        datetime run_at
+        int total
+        int updated
+        text error
         datetime created_at
     }
 
@@ -96,11 +78,7 @@ erDiagram
 
     HEATMAP_SNAPSHOT {
         int id PK
-        string key UK
         json payload
-        string username
-        int total
-        int weeks_count
         datetime fetched_at
         text last_error
     }
@@ -137,42 +115,38 @@ erDiagram
 5. Templates render HTML using shared context processors.
 6. The response is returned through Caddy.
 
-## Asynchronous Processing
+## Periodic Jobs
 
-Celery is used for jobs that should not block HTTP requests.
+The host crontab runs `docker compose exec -T web python manage.py <command>` (entries in "New droplet bootstrap" in `docs/implementation.md`).
 
-- Broker/backend: Redis (`CELERY_BROKER_URL`, `CELERY_RESULT_BACKEND`).
-- Periodic schedule: `CELERY_BEAT_SCHEDULE` in `django/config/settings.py`.
-- Notable periodic job: `main.tasks.sync_project_markdowns_task`.
-- Task observability: `TaskExecutionStatus` and `TaskExecutionLog` store latest and historical run metadata.
+- `refresh_heatmap`: every hour. `sync_markdowns`: every 2 hours.
+- Admin "Sync" buttons on `/about` run the same job functions inside the request.
+- Task observability: each run appends a `TaskExecutionLog` row; the newest row per task is its current status.
 
 ## Direct GitHub Heatmap Integration
 
 The project fetches GitHub contribution heatmap data directly from Django.
 
 - The GitHub bearer token is configured with `GITHUB_HEATMAP_TOKEN`.
-- Django calls GitHub REST `/user` to resolve the configured account and GitHub GraphQL to fetch contribution days.
+- Django sends one GitHub GraphQL `viewer` query for the token owner's login and contribution days.
 - Data is normalized and persisted in `HeatmapSnapshot`.
 - On token or upstream errors, Django returns safe fallback messages and keeps the last valid snapshot.
+- The `/about/heatmap-data/` endpoint only serves the stored snapshot; GitHub is called by the cron job or the admin "Sync Heatmap" button.
 
-### Async Flow Diagram
+### Job Flow Diagram
 
 ```mermaid
 sequenceDiagram
-    participant Beat as Celery Beat
-    participant Redis as Redis
-    participant Worker as Celery Worker
-    participant Django as Django Domain Logic
+    participant Cron as Host crontab
+    participant Cmd as manage.py command (web)
     participant GitHub as GitHub APIs
     participant DB as PostgreSQL
 
-    Beat->>Redis: enqueue periodic task
-    Redis->>Worker: deliver task
-    Worker->>Django: execute task function
-    Django->>GitHub: GET /user + GraphQL contributionCalendar
-    GitHub-->>Django: contribution payload / error
-    Django->>DB: read/write state and logs
-    Django-->>Worker: task result payload
+    Cron->>Cmd: docker compose exec -T web
+    Cmd->>GitHub: GraphQL viewer contributionCalendar
+    GitHub-->>Cmd: contribution payload / error
+    Cmd->>DB: write snapshot and TaskExecutionLog
+    Cmd-->>Cron: exit code
 ```
 
 ## Static and Media Delivery
@@ -186,11 +160,12 @@ sequenceDiagram
 
 - Environment variables are loaded from `.env` via `django-environ`.
 - `SECRET_KEY` is required; startup fails if missing.
-- In non-debug mode, secure cookie and HTTPS settings are enabled.
+- In non-debug mode, secure cookie and HTTPS settings are enabled; the deploy fails if `check --deploy --fail-level WARNING` reports anything.
+- In production Caddy adds `basic_auth` in front of `/admin*`.
 - Allowed hosts and CSRF trusted origins are controlled by env vars.
 
 ## Extensibility Notes
 
 - Keep views thin; move business logic into helpers/services/tasks.
 - Keep task payloads and return structures stable.
-- Add new periodic jobs through `CELERY_BEAT_SCHEDULE` and explicit task logging.
+- Add new periodic jobs as a management command with explicit task logging, a crontab entry and a `SCHEDULED_JOBS` row in `django/main/views.py`.

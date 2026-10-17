@@ -1,9 +1,12 @@
 import datetime
+import importlib
 import shutil
 import tempfile
 
+from django.apps import apps
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import IntegrityError
 from django.test import TestCase, override_settings
 
@@ -13,7 +16,6 @@ from main.models import (
     Project,
     Tag,
     TaskExecutionLog,
-    TaskExecutionStatus,
 )
 
 
@@ -26,6 +28,11 @@ class TagModelTest(TestCase):
     def test_tag_uppercase_conversion(self):
         tag = Tag.objects.create(name="django")
         self.assertEqual(tag.name, "DJANGO")
+
+    def test_full_clean_rejects_case_only_duplicate(self):
+        Tag.objects.create(name="python")
+        with self.assertRaises(ValidationError):
+            Tag(name="Python").full_clean()
 
 
 class ProjectModelTest(TestCase):
@@ -173,6 +180,34 @@ class ProjectModelTest(TestCase):
 
         project.full_clean()
 
+    def test_full_clean_rejects_non_utf8_markdown_and_non_string_lists(self):
+        project = Project(
+            title="Bad Content Project",
+            short_description="Project with invalid file and lists",
+            blog=True,
+            blog_url="bad-content-project",
+            markdown_file=SimpleUploadedFile("readme.md", b"\xff\xfe bad"),
+            tech_stack="Python",
+            tools_libraries=["pytest", 3],
+            status="planned",
+        )
+
+        with self.assertRaises(ValidationError) as ctx:
+            project.full_clean()
+
+        self.assertEqual(
+            set(ctx.exception.message_dict),
+            {"markdown_file", "tech_stack", "tools_libraries"},
+        )
+
+    def test_blog_requires_blog_url(self):
+        project = Project(title="Blog", short_description="d", blog=True, blog_url=None)
+
+        with self.assertRaisesMessage(ValidationError, "A blog post needs a blog URL."):
+            project.full_clean()
+        with self.assertRaises(IntegrityError):
+            project.save()
+
 
 class PageViewModelTest(TestCase):
     def test_pageview_creation(self):
@@ -187,11 +222,13 @@ class PortfolioProfileModelTest(TestCase):
         self.assertEqual(profile.full_name, "John Doe")
         self.assertEqual(
             profile.home_intro,
-            "Junior Programmer and Data Science Enthusiast building practical web and analytics projects.",
+            "Junior Programmer and Data Science Enthusiast building practical web "
+            "and analytics projects.",
         )
         self.assertEqual(
             profile.about_intro,
-            "Junior Full-Stack and Data Science enthusiast focused on robust Django applications, clean architecture, and practical data tooling.",
+            "Junior Full-Stack and Data Science enthusiast focused on robust Django "
+            "applications, clean architecture, and practical data tooling.",
         )
         self.assertEqual(
             profile.core_stack,
@@ -211,7 +248,8 @@ class PortfolioProfileModelTest(TestCase):
         )
         self.assertEqual(
             profile.current_learning_summary,
-            "I am expanding my stack to design more scalable systems and improve deployment workflows.",
+            "I am expanding my stack to design more scalable systems and improve "
+            "deployment workflows.",
         )
         self.assertEqual(
             profile.interests,
@@ -229,36 +267,21 @@ class PortfolioProfileModelTest(TestCase):
             PortfolioProfile.objects.create(full_name="Second Active", is_active=True)
 
 
-class TaskExecutionStatusModelTest(TestCase):
-    def test_task_execution_status_creation(self):
-        status = TaskExecutionStatus.objects.create(
-            task_name="main.sync_project_markdowns_task"
-        )
-
-        self.assertEqual(status.task_name, "main.sync_project_markdowns_task")
-        self.assertEqual(status.last_status, "")
-        self.assertEqual(status.last_total, 0)
-        self.assertEqual(status.last_updated, 0)
-        self.assertEqual(status.last_failed, 0)
-        self.assertEqual(status.last_error, "")
-        self.assertEqual(str(status), "main.sync_project_markdowns_task")
-
-
 class TaskExecutionLogModelTest(TestCase):
     def test_task_execution_log_creation(self):
         log = TaskExecutionLog.objects.create(
             task_name="main.sync_project_markdowns_task",
-            last_status=TaskExecutionStatus.STATUS_SUCCESS,
-            last_total=1,
-            last_updated=1,
+            status=TaskExecutionLog.STATUS_SUCCESS,
+            total=1,
+            updated=1,
         )
 
         self.assertEqual(log.task_name, "main.sync_project_markdowns_task")
-        self.assertEqual(log.last_status, TaskExecutionStatus.STATUS_SUCCESS)
-        self.assertEqual(log.last_total, 1)
-        self.assertEqual(log.last_updated, 1)
-        self.assertEqual(log.last_failed, 0)
-        self.assertEqual(log.last_error, "")
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_SUCCESS)
+        self.assertEqual(log.total, 1)
+        self.assertEqual(log.updated, 1)
+        self.assertEqual(log.failed, 0)
+        self.assertEqual(log.error, "")
 
 
 class ProjectMediaCleanupTests(TestCase):
@@ -275,7 +298,13 @@ class ProjectMediaCleanupTests(TestCase):
         shutil.rmtree(cls._media_root, ignore_errors=True)
         super().tearDownClass()
 
-    def _make_project_with_thumbnail(self):
+    # (field, first file, replacement file) for each file field cleaned up by signals.
+    FILE_FIELDS = (
+        ("thumbnail", "thumb.png", "thumb_new.png"),
+        ("markdown_file", "readme.md", "readme_new.md"),
+    )
+
+    def _make_project_with_file(self, field, filename):
         from main.models import Project
         project = Project.objects.create(
             title="Media Test",
@@ -283,27 +312,61 @@ class ProjectMediaCleanupTests(TestCase):
             date=datetime.date(2025, 1, 1),
             status="finished",
         )
-        project.thumbnail.save("thumb.png", ContentFile(b"fake-png"), save=True)
+        getattr(project, field).save(filename, ContentFile(b"fake"), save=True)
         return project
 
-    def test_thumbnail_deleted_when_project_deleted(self):
-        from main.models import Project
-        project = self._make_project_with_thumbnail()
-        storage = project.thumbnail.storage
-        thumb_name = project.thumbnail.name
-        self.assertTrue(storage.exists(thumb_name))
+    def test_file_deleted_when_project_deleted(self):
+        for field, filename, _ in self.FILE_FIELDS:
+            with self.subTest(field=field):
+                project = self._make_project_with_file(field, filename)
+                storage = getattr(project, field).storage
+                name = getattr(project, field).name
+                self.assertTrue(storage.exists(name))
 
-        project.delete()
+                with self.captureOnCommitCallbacks(execute=True):
+                    project.delete()
+                    # Deletion waits for the commit, so a rollback keeps the file.
+                    self.assertTrue(storage.exists(name))
 
-        self.assertFalse(storage.exists(thumb_name))
+                self.assertFalse(storage.exists(name))
 
-    def test_old_thumbnail_deleted_when_replaced(self):
-        from main.models import Project
-        project = self._make_project_with_thumbnail()
-        storage = project.thumbnail.storage
-        old_name = project.thumbnail.name
-        self.assertTrue(storage.exists(old_name))
+    def test_old_file_deleted_when_replaced(self):
+        for field, filename, new_filename in self.FILE_FIELDS:
+            with self.subTest(field=field):
+                project = self._make_project_with_file(field, filename)
+                storage = getattr(project, field).storage
+                old_name = getattr(project, field).name
+                self.assertTrue(storage.exists(old_name))
 
-        project.thumbnail.save("thumb_new.png", ContentFile(b"new-fake-png"), save=True)
+                with self.captureOnCommitCallbacks(execute=True):
+                    getattr(project, field).save(new_filename, ContentFile(b"new"), save=True)
+                    self.assertTrue(storage.exists(old_name))
 
-        self.assertFalse(storage.exists(old_name))
+                self.assertFalse(storage.exists(old_name))
+
+
+class BackfillGithubUrlMigrationTest(TestCase):
+    def test_fills_empty_github_url_on_blog_projects(self):
+        migration = importlib.import_module("main.migrations.0023_backfill_project_github_url")
+        profile = PortfolioProfile.objects.get(is_active=True)
+        profile.github_url = "https://github.com/owner/"
+        profile.save(update_fields=["github_url"])
+
+        def make(slug, **kwargs):
+            return Project.objects.create(
+                title=slug, short_description=slug, blog_url=slug, **kwargs
+            )
+
+        mapped = make("weather-web-scraping", blog=True)
+        unmapped = make("some-repo", blog=True, github_url="")
+        kept = make("kept", blog=True, github_url="https://github.com/other/kept")
+        not_blog = make("not-blog", blog=False)
+
+        migration.backfill_github_url(apps, None)
+
+        for project in (mapped, unmapped, kept, not_blog):
+            project.refresh_from_db()
+        self.assertEqual(mapped.github_url, "https://github.com/owner/WeatherWebScraping")
+        self.assertEqual(unmapped.github_url, "https://github.com/owner/some-repo")
+        self.assertEqual(kept.github_url, "https://github.com/other/kept")
+        self.assertIsNone(not_blog.github_url)

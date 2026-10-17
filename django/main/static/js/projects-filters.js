@@ -4,34 +4,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const tagButtons = document.querySelectorAll("#tagFilter button");
     const projectCards = document.querySelectorAll(".project-card");
     const emptyState = document.getElementById("emptyState");
-    const projectGrid = document.getElementById("projectGrid");
-    const projectGridSkeleton = document.getElementById("projectGridSkeleton");
     const filterResultsStatus = document.getElementById("filterResultsStatus");
 
-    if (!searchInput || !clearButton || !emptyState || !projectGrid || !projectGridSkeleton) {
+    if (!searchInput || !clearButton || !emptyState) {
         return;
     }
 
     let activeTag = "all";
-    let searchDebounceTimer = null;
-
-    function applyFiltersDebounced() {
-        if (searchDebounceTimer) {
-            clearTimeout(searchDebounceTimer);
-        }
-        searchDebounceTimer = setTimeout(() => {
-            applyFilters();
-            searchDebounceTimer = null;
-        }, 150);
-    }
-
-    function applyFiltersImmediate() {
-        if (searchDebounceTimer) {
-            clearTimeout(searchDebounceTimer);
-            searchDebounceTimer = null;
-        }
-        applyFilters();
-    }
 
     function applyFilters() {
         const searchTerm = searchInput.value.trim().toLowerCase();
@@ -62,11 +41,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    searchInput.addEventListener("input", applyFiltersDebounced);
+    searchInput.addEventListener("input", applyFilters);
     clearButton.addEventListener("click", () => {
         searchInput.value = "";
         searchInput.focus();
-        applyFiltersImmediate();
+        applyFilters();
     });
 
     tagButtons.forEach((button) => {
@@ -76,16 +55,16 @@ document.addEventListener("DOMContentLoaded", () => {
             tagButtons.forEach((btn) => {
                 btn.classList.remove("btn-primary");
                 btn.classList.add("btn-outline");
+                btn.setAttribute("aria-pressed", "false");
             });
 
             button.classList.remove("btn-outline");
             button.classList.add("btn-primary");
+            button.setAttribute("aria-pressed", "true");
 
-            applyFiltersImmediate();
+            applyFilters();
         });
     });
 
     applyFilters();
-    projectGrid.classList.remove("hidden");
-    projectGridSkeleton.classList.add("hidden");
 });
