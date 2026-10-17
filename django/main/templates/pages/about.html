@@ -1,8 +1,8 @@
 ﻿{% extends "base.html" %}
 
 {% block title %}About{% endblock title %}
-{% block meta_description %}{{ profile_about_intro }}{% endblock meta_description %}
-{% block og_description %}{{ profile_about_intro }}{% endblock og_description %}
+{% block meta_description %}{{ profile.about_intro }}{% endblock meta_description %}
+{% block og_description %}{{ profile.about_intro }}{% endblock og_description %}
 {% block content %}
 
 <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -13,7 +13,7 @@
             <div class="card-body p-5">
                 <h2 class="card-title text-xl text-primary">Core Stack</h2>
                 <div class="mt-3 flex flex-wrap gap-2">
-                    {% for item in profile_core_stack %}
+                    {% for item in profile.core_stack %}
                     <span class="badge badge-secondary p-3">{{ item }}</span>
                     {% endfor %}
                 </div>
@@ -24,12 +24,12 @@
             <div class="card-body p-5">
                 <h2 class="card-title text-xl text-primary">Current Learning</h2>
                 <div class="mt-3 flex flex-wrap gap-2">
-                    {% for item in profile_current_learning %}
+                    {% for item in profile.current_learning %}
                     <span class="badge badge-info p-3">{{ item }}</span>
                     {% endfor %}
                 </div>
                 <p class="mt-4 text-sm text-base-content/80 sm:text-base">
-                    {{ profile_current_learning_summary }}
+                    {{ profile.current_learning_summary }}
                 </p>
             </div>
         </article>
@@ -38,7 +38,7 @@
             <div class="card-body p-5">
                 <h2 class="card-title text-xl text-primary">Interests</h2>
                 <div class="mt-3 flex flex-wrap gap-2">
-                    {% for item in profile_interests %}
+                    {% for item in profile.interests %}
                     <span class="badge badge-warning p-3">{{ item }}</span>
                     {% endfor %}
                 </div>

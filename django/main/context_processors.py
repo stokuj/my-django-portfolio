@@ -17,30 +17,5 @@ def visitor_counter(request):
 
 
 def portfolio_profile(request):
-    """Expose active portfolio profile fields for shared template usage.
-
-    Uses the first active profile as a source. If no active profile exists,
-    returns values from an empty `PortfolioProfile` instance as fallbacks.
-
-    Returns:
-        dict: Context with profile details used across home/about templates.
-    """
-    source = PortfolioProfile.get_active()
-    email = source.email
-
-    return {
-        "site_name": source.site_name,
-        "profile_full_name": source.full_name,
-        "profile_role_line": source.role_line,
-        "profile_specialization_line": source.specialization_line,
-        "profile_home_intro": source.home_intro,
-        "profile_about_intro": source.about_intro,
-        "profile_email": email,
-        "profile_email_href": f"mailto:{email}" if email else "",
-        "profile_github_url": source.github_url,
-        "profile_linkedin_url": source.linkedin_url,
-        "profile_core_stack": source.core_stack,
-        "profile_current_learning": source.current_learning,
-        "profile_current_learning_summary": source.current_learning_summary,
-        "profile_interests": source.interests,
-    }
+    """Expose the active portfolio profile (or an unsaved default) as `profile`."""
+    return {"profile": PortfolioProfile.get_active()}
