@@ -3,26 +3,21 @@ from datetime import date, timedelta
 
 import bleach
 import markdown
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.core.cache import cache
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_GET, require_POST
 
 from .heatmap import (
     get_configured_github_token,
     get_or_create_snapshot,
-    is_snapshot_stale,
 )
 from .markdown_sync import build_readme_url
 from .models import Project, Tag, TaskExecutionLog
 from .tasks import (
-    DISK_USAGE_TASK_NAME,
     REFRESH_HEATMAP_TASK_NAME,
     SYNC_MARKDOWNS_TASK_NAME,
     disk_level,
@@ -67,12 +62,11 @@ ALLOWED_MARKDOWN_ATTRIBUTES = {
 }
 ALLOWED_MARKDOWN_PROTOCOLS = ["http", "https", "mailto"]
 
-# Beat task paths map to these names via "main.tasks.X" -> "main.X".
-SCHEDULED_JOB_LABELS = {
-    REFRESH_HEATMAP_TASK_NAME: "Heatmap Refresh",
-    SYNC_MARKDOWNS_TASK_NAME: "Markdown Sync (.md)",
-    DISK_USAGE_TASK_NAME: "Disk Usage Check",
-}
+# Run by host crontab (see "New droplet bootstrap" in docs/implementation.md).
+SCHEDULED_JOBS = [
+    (REFRESH_HEATMAP_TASK_NAME, "Heatmap Refresh", "Hourly at :00"),
+    (SYNC_MARKDOWNS_TASK_NAME, "Markdown Sync (.md)", "Every 2 h at :00"),
+]
 
 _GITHUB_IMG_PREFIXES = (
     "https://github.com/",
@@ -138,7 +132,7 @@ def about(request):
 
 @require_GET
 def about_heatmap_data(request):
-    """Return cached heatmap payload JSON; enqueue a refresh when stale."""
+    """Return cached heatmap payload JSON; the hourly cron job keeps it fresh."""
     if not get_configured_github_token():
         return JsonResponse(
             {"error": "Heatmap is not configured."},
@@ -146,14 +140,6 @@ def about_heatmap_data(request):
         )
 
     snapshot = get_or_create_snapshot()
-
-    if not snapshot.payload or is_snapshot_stale(snapshot):
-        # ponytail: per-process LocMem lock, use Redis cache if workers > 1 process
-        if cache.add("heatmap-refresh-lock", 1, 300):
-            try:
-                refresh_portfolio_heatmap_cache_task.delay()
-            except Exception:
-                pass
 
     if not snapshot.payload:
         return JsonResponse(
@@ -212,30 +198,24 @@ def _get_disk_info():
 
 
 def _get_scheduled_jobs_overview():
-    """Build admin-facing summary for every Celery beat entry."""
-    now = timezone.now()
+    """Build admin-facing summary for every scheduled job."""
     jobs = []
-    for entry in settings.CELERY_BEAT_SCHEDULE.values():
-        task_name = entry["task"].replace("main.tasks.", "main.")
-        # One query per beat entry; .first() keeps this portable (no DISTINCT ON).
+    for task_name, label, schedule_label in SCHEDULED_JOBS:
+        # One query per job; .first() keeps this portable (no DISTINCT ON).
         status = (
             TaskExecutionLog.objects.filter(task_name=task_name)
             .order_by("-last_run_at", "-id")
             .first()
         )
-        # remaining_delta gives the exact fire time; now + remaining_estimate(now)
-        # lands a few microseconds early (shows 07:59 for an 08:00 run).
-        start, delta, _ = entry["schedule"].remaining_delta(now)
         jobs.append(
             {
-                "label": SCHEDULED_JOB_LABELS.get(task_name, task_name),
+                "label": label,
                 "task_name": task_name,
-                "schedule_label": str(entry["schedule"]),
+                "schedule_label": schedule_label,
                 "status": status.last_status
                 if status and status.last_status
                 else "never",
                 "last_run_at": status.last_run_at if status else None,
-                "next_run_at": start + delta,
                 "last_error": status.last_error if status else "",
                 "last_total": status.last_total if status else 0,
                 "last_updated": status.last_updated if status else 0,
@@ -346,16 +326,13 @@ def blog_detail(request, blog_slug):
 @staff_member_required
 @require_POST
 def run_markdown_sync_task(request):
-    """Enqueue markdown sync Celery task for all blog projects."""
-    try:
-        async_result = sync_project_markdowns_task.delay()
-    except Exception:
-        messages.error(request, "Failed to enqueue markdown sync task.")
+    """Run markdown sync for all blog projects in the request."""
+    result = sync_project_markdowns_task()
+    summary = f"Markdown sync: {result['updated']}/{result['total']} updated."
+    if result["failed"]:
+        messages.error(request, summary)
     else:
-        messages.success(
-            request,
-            f"Markdown sync task queued for all blog projects (task id: {async_result.id}).",
-        )
+        messages.success(request, summary)
 
     return redirect(_get_safe_redirect_url(request))
 
@@ -363,15 +340,11 @@ def run_markdown_sync_task(request):
 @staff_member_required
 @require_POST
 def run_heatmap_refresh_task(request):
-    """Enqueue immediate heatmap refresh task from admin tools."""
-    try:
-        async_result = refresh_portfolio_heatmap_cache_task.delay()
-    except Exception:
-        messages.error(request, "Failed to enqueue heatmap refresh task.")
+    """Run heatmap refresh in the request from admin tools."""
+    result = refresh_portfolio_heatmap_cache_task()
+    if result["ok"]:
+        messages.success(request, f"Heatmap refreshed: {result['total']} contributions.")
     else:
-        messages.success(
-            request,
-            f"Heatmap refresh task queued (task id: {async_result.id}).",
-        )
+        messages.error(request, f"Heatmap refresh failed: {result['error']}")
 
     return redirect(_get_safe_redirect_url(request))

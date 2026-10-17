@@ -21,15 +21,6 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  redis:
-    image: redis:7-alpine
-    restart: always
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
   web:
     build:
       context: ..
@@ -56,78 +47,9 @@ services:
       - DB_PASSWORD=${DOCKER_DB_PASSWORD}
       - DB_HOST=${DOCKER_DB_HOST}
       - DB_PORT=${DOCKER_DB_PORT}
-      - CELERY_BROKER_URL=redis://redis:6379/0
     depends_on:
       db:
         condition: service_healthy
-      redis:
-        condition: service_started
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  worker:
-    build:
-      context: ..
-      dockerfile: infra/Dockerfile
-    image: ghcr.io/stokuj/my-django-portfolio:${IMAGE_TAG:-latest}
-    user: "10001:10001"
-    restart: always
-    env_file:
-      - ../.env
-    working_dir: /app/django
-    command: celery -A config worker --loglevel=info
-    volumes:
-      - media_volume:/app/media
-    environment:
-      - DB_ENGINE=${DOCKER_DB_ENGINE}
-      - DB_NAME=${DOCKER_DB_NAME}
-      - DB_USER=${DOCKER_DB_USER}
-      - DB_PASSWORD=${DOCKER_DB_PASSWORD}
-      - DB_HOST=${DOCKER_DB_HOST}
-      - DB_PORT=${DOCKER_DB_PORT}
-      - CELERY_BROKER_URL=redis://redis:6379/0
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_started
-      web:
-        condition: service_started
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  beat:
-    build:
-      context: ..
-      dockerfile: infra/Dockerfile
-    image: ghcr.io/stokuj/my-django-portfolio:${IMAGE_TAG:-latest}
-    user: "10001:10001"
-    restart: always
-    env_file:
-      - ../.env
-    working_dir: /app/django
-    command: celery -A config beat --loglevel=info --schedule=/app/django/celerybeat-schedule/celerybeat-schedule.db
-    volumes:
-      - celerybeat_schedule:/app/django/celerybeat-schedule
-    environment:
-      - DB_ENGINE=${DOCKER_DB_ENGINE}
-      - DB_NAME=${DOCKER_DB_NAME}
-      - DB_USER=${DOCKER_DB_USER}
-      - DB_PASSWORD=${DOCKER_DB_PASSWORD}
-      - DB_HOST=${DOCKER_DB_HOST}
-      - DB_PORT=${DOCKER_DB_PORT}
-      - CELERY_BROKER_URL=redis://redis:6379/0
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_started
     logging:
       driver: json-file
       options:
@@ -167,6 +89,5 @@ volumes:
   postgres18_data:
   staticfiles_volume: # For static files (CSS, JS)
   media_volume:     # For media files (user uploads)
-  celerybeat_schedule:
   caddy_data:
   caddy_config:

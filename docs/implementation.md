@@ -2,8 +2,8 @@
 
 ## Repository Layout
 
-- `django/config/`: Django project configuration (settings, URLs, WSGI/ASGI, Celery bootstrap).
-- `django/main/`: application code (models, views, tasks, templates, static assets).
+- `django/config/`: Django project configuration (settings, URLs, WSGI/ASGI).
+- `django/main/`: application code (models, views, jobs, management commands, templates, static assets).
 - `docs/`: architecture and implementation documentation.
 - `infra/`: infrastructure files (`docker-compose.dev.yml`, `docker-compose.prod.yml`, `Dockerfile`, `Caddyfile`).
 - Root operational files: `Makefile`, `pyproject.toml`, `package.json`.
@@ -26,15 +26,14 @@ Main configuration is in `django/config/settings.py`.
 - Visitor tracking middleware: `django/main/middleware.py`. It counts a home page visit once per browser and sets a `has_visited` cookie.
 - Shared template context: `django/main/context_processors.py`.
 
-### Asynchronous Jobs (Celery)
+### Periodic Jobs (cron)
 
-Celery tasks are implemented in `django/main/tasks.py`.
+Jobs are plain functions in `django/main/tasks.py`, wrapped by management commands that the host crontab runs (see "New droplet bootstrap"):
 
-Key jobs:
+- `manage.py refresh_heatmap` → `refresh_portfolio_heatmap_cache_task`: refreshes and caches heatmap data (every hour).
+- `manage.py sync_markdowns` → `sync_project_markdowns_task`: synchronizes markdown from repository links (every 2 hours).
 
-- `refresh_portfolio_heatmap_cache_task`: refreshes and caches heatmap data (beat: every hour).
-- `sync_project_markdowns_task`: synchronizes markdown from repository links (beat: every 2 hours).
-- `check_disk_usage_task`: records free disk space for the admin About page (beat: daily at 06:00).
+A command exits non-zero when its job fails (for markdown sync: when any project fails). The admin "Sync" buttons on `/about` call the same functions inside the request.
 
 Common implementation patterns:
 
@@ -50,7 +49,7 @@ Heatmap integration is implemented through `django/main/heatmap.py`, `django/mai
 - Authorization: the same configured GitHub bearer token is used for all heatmap fetches.
 - Fetch path: `fetch_heatmap_data()` sends one GitHub GraphQL `viewer` query that returns the token owner's login and contribution days.
 - Caching path: valid payloads are normalized and saved to `HeatmapSnapshot`.
-- Serving path: `/about/heatmap-data/` returns the stored snapshot and enqueues `refresh_portfolio_heatmap_cache_task` when it is stale or empty (503 until the first payload exists). It never calls GitHub inline.
+- Serving path: `/about/heatmap-data/` returns the stored snapshot (503 until the first payload exists). It never calls GitHub; the hourly cron job keeps the snapshot fresh.
 - Failure behavior: on token/network/upstream errors, Django stores an error message and can reuse the last valid snapshot.
 - Scope note: GitHub login and social auth are not part of the runtime anymore.
 
@@ -59,7 +58,7 @@ Heatmap integration is implemented through `django/main/heatmap.py`, `django/mai
 - Core sync logic: `django/main/markdown_sync.py`.
 - Source: the `README.md` of each project's `github_url` repository (`main` branch, then `master`).
 - Trigger methods:
-  - scheduled via Celery beat,
+  - scheduled via host crontab (`manage.py sync_markdowns`),
   - manual via the staff-only POST route behind the About page admin tools (`run_markdown_sync_task`).
 - Returned summary is stable and includes `total`, `updated`, `failed`, and per-project details.
 
@@ -88,14 +87,11 @@ For the visual template map, see [`frontend.md`](frontend.md).
 
 Production services are defined in `infra/docker-compose.prod.yml`:
 
-- `db`: PostgreSQL 18 (volume `postgres18_data` mounted at `/var/lib/postgresql`), with a `pg_isready` healthcheck. `web`, `worker` and `beat` start only once it is healthy.
-- `redis`: broker/result backend for Celery.
-- `web`: Django + Gunicorn (`--workers 1 --threads 4 --timeout 60`); runs `migrate` and `collectstatic` on start.
-- `worker`: Celery worker.
-- `beat`: Celery beat scheduler.
+- `db`: PostgreSQL 18 (volume `postgres18_data` mounted at `/var/lib/postgresql`), with a `pg_isready` healthcheck. `web` starts only once it is healthy.
+- `web`: Django + Gunicorn (`--workers 1 --threads 4 --timeout 60`); runs `migrate` and `collectstatic` on start. Uses the image `ghcr.io/stokuj/my-django-portfolio:${IMAGE_TAG:-latest}`.
 - `caddy`: reverse proxy and static/media file server.
 
-`web`, `worker` and `beat` use the image `ghcr.io/stokuj/my-django-portfolio:${IMAGE_TAG:-latest}`.
+Periodic jobs run from the host crontab via `docker compose exec -T web python manage.py <command>`.
 
 ### Caddy Integration
 
@@ -106,7 +102,7 @@ Production services are defined in `infra/docker-compose.prod.yml`:
 
 ### Development Compose Services
 
-Local development uses `infra/docker-compose.dev.yml` with `db`, `redis`, `web`, `worker`, and `beat`. It does not include Caddy; Django is exposed directly on `127.0.0.1:8000` via `runserver`. The database volume is `postgres18_dev_data`.
+Local development uses `infra/docker-compose.dev.yml` with `db` and `web`. It does not include Caddy; Django is exposed directly on `127.0.0.1:8000` via `runserver`. The database volume is `postgres18_dev_data`.
 
 ### CI and deploy
 
@@ -124,16 +120,16 @@ Local development uses `infra/docker-compose.dev.yml` with `db`, `redis`, `web`,
 ```bash
 cd ~/my_django_portfolio
 C="docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml"
-$C stop web worker beat
+$C stop web
 $C exec -T db sh -c 'pg_restore --clean --if-exists -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < ~/backups/pre-deploy-YYYY-MM-DD-HHMM.dump
-$C start web worker beat
+$C start web
 ```
 
 - If the dump is a rollback from a bad release, start the previous image instead of the current one: `IMAGE_TAG=<previous sha> $C up -d --wait`.
 
 ### Disk monitoring
 
-Disk alerting lives in DigitalOcean Monitoring (alert at 85% disk usage, by email). The daily `check_disk_usage_task` only records its result for the admin About page and notifies nobody.
+Disk alerting lives in DigitalOcean Monitoring (alert at 85% disk usage, by email). The admin About page shows live free disk space and notifies nobody.
 
 ## New droplet bootstrap
 
@@ -152,7 +148,14 @@ Owner steps, in order, for the new droplet. They need the server, the DigitalOce
 11. [ ] Create the admin account: `docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml exec web python manage.py createsuperuser`.
 12. [ ] Re-enter projects, tags, the portfolio profile and thumbnails in admin.
 13. [ ] Log in and trigger both sync jobs on `/about` ("Sync Heatmap" and "Sync Markdown").
-14. [ ] After the first successful deploy (GHCR login uses the job's `GITHUB_TOKEN`), delete the `GHCR_PAT` and `GHCR_USERNAME` GitHub secrets.
+14. [ ] Install the periodic jobs with `crontab -e` as `SERVER_USER` (failures exit non-zero; each run is also logged on `/about`):
+
+    ```cron
+    0 * * * *   cd ~/my_django_portfolio && docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml exec -T web python manage.py refresh_heatmap
+    0 */2 * * * cd ~/my_django_portfolio && docker compose --env-file .env -p my_django_portfolio -f infra/docker-compose.prod.yml exec -T web python manage.py sync_markdowns
+    ```
+
+15. [ ] After the first successful deploy (GHCR login uses the job's `GITHUB_TOKEN`), delete the `GHCR_PAT` and `GHCR_USERNAME` GitHub secrets.
 
 ## Development and Verification Workflow
 

@@ -161,10 +161,6 @@
                             never
                             {% endif %}
                         </p>
-                        <p>
-                            <span class="font-semibold">Next run:</span>
-                            <time class="js-local-datetime" datetime="{{ job.next_run_at|date:'c' }}">{{ job.next_run_at|date:"Y-m-d H:i" }}</time>
-                        </p>
                         <p><span class="font-semibold">Totals:</span> {{ job.last_updated }}/{{ job.last_total }} ok, {{ job.last_failed }} failed</p>
                     </div>
 

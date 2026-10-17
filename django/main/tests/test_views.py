@@ -135,15 +135,6 @@ class ViewsTest(TestCase):
         self.assertFalse(hasattr(settings, "SITE_ID"))
         self.assertFalse(hasattr(settings, "HEATMAP_API_BASE_URL"))
 
-    def test_heatmap_refresh_is_scheduled_hourly_via_celery_beat(self):
-        schedule = settings.CELERY_BEAT_SCHEDULE["refresh-portfolio-heatmap-hourly"]
-
-        self.assertEqual(
-            schedule["task"],
-            "main.tasks.refresh_portfolio_heatmap_cache_task",
-        )
-        self.assertNotIn("kwargs", schedule)
-
     def test_about_view(self):
         response = self.client.get(reverse("about"))
         self.assertEqual(response.status_code, 200)
@@ -177,7 +168,7 @@ class ViewsTest(TestCase):
         self.assertFalse(response.context["heatmap_enabled"])
         self.assertContains(response, "Heatmap Refresh")
 
-    def test_about_scheduled_jobs_follow_beat_schedule(self):
+    def test_about_scheduled_jobs_show_latest_run_per_job(self):
         User = get_user_model()
         admin_user = User.objects.create_user(
             username="admin-jobs", password="secret", is_staff=True
@@ -185,17 +176,16 @@ class ViewsTest(TestCase):
         self.client.force_login(admin_user)
         last_run = timezone.now() - datetime.timedelta(minutes=5)
         TaskExecutionLog.objects.create(
-            task_name="main.check_disk_usage_task",
+            task_name="main.refresh_portfolio_heatmap_cache_task",
             last_status=TaskExecutionLog.STATUS_FAILURE,
             last_run_at=last_run - datetime.timedelta(days=1),
         )
         TaskExecutionLog.objects.create(
-            task_name="main.check_disk_usage_task",
+            task_name="main.refresh_portfolio_heatmap_cache_task",
             last_status=TaskExecutionLog.STATUS_SUCCESS,
             last_run_at=last_run,
         )
 
-        before = timezone.now()
         response = self.client.get(reverse("about"))
 
         jobs = {job["task_name"]: job for job in response.context["scheduled_jobs"]}
@@ -204,21 +194,14 @@ class ViewsTest(TestCase):
             {
                 "main.refresh_portfolio_heatmap_cache_task",
                 "main.sync_project_markdowns_task",
-                "main.check_disk_usage_task",
             },
         )
-        disk = jobs["main.check_disk_usage_task"]
-        self.assertEqual(disk["label"], "Disk Usage Check")
-        self.assertEqual(disk["status"], "success")
-        self.assertEqual(disk["last_run_at"], last_run)
+        heatmap = jobs["main.refresh_portfolio_heatmap_cache_task"]
+        self.assertEqual(heatmap["label"], "Heatmap Refresh")
+        self.assertEqual(heatmap["schedule_label"], "Hourly at :00")
+        self.assertEqual(heatmap["status"], "success")
+        self.assertEqual(heatmap["last_run_at"], last_run)
         self.assertEqual(jobs["main.sync_project_markdowns_task"]["status"], "never")
-        for job in jobs.values():
-            # Crontab entries fire on the hour, within the next day.
-            self.assertGreater(job["next_run_at"], before)
-            self.assertLessEqual(
-                job["next_run_at"], before + datetime.timedelta(days=1)
-            )
-            self.assertEqual(job["next_run_at"].minute, 0)
 
     def test_about_shows_executed_tasks_list_for_admin(self):
         User = get_user_model()
@@ -291,8 +274,11 @@ class ViewsTest(TestCase):
         self.assertNotContains(response, "main.task_30")
         self.assertNotContains(response, "main.task_34")
 
-    @patch("main.views.refresh_portfolio_heatmap_cache_task.delay")
-    def test_run_heatmap_refresh_task_queues_job_for_staff(self, delay_mock):
+    @patch(
+        "main.views.refresh_portfolio_heatmap_cache_task",
+        return_value={"ok": True, "total": 5},
+    )
+    def test_run_heatmap_refresh_task_runs_job_for_staff(self, task_mock):
         User = get_user_model()
         admin_user = User.objects.create_user(
             username="admin-run-heatmap",
@@ -302,7 +288,6 @@ class ViewsTest(TestCase):
             is_staff=True,
         )
         self.client.force_login(admin_user)
-        delay_mock.return_value.id = "task-123"
 
         response = self.client.post(
             reverse("run_heatmap_refresh_task"),
@@ -311,7 +296,11 @@ class ViewsTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("about"))
-        delay_mock.assert_called_once_with()
+        task_mock.assert_called_once_with()
+        self.assertIn(
+            "Heatmap refreshed: 5 contributions.",
+            [str(m) for m in get_messages(response.wsgi_request)],
+        )
 
     @patch("main.views.get_configured_github_token", return_value="gho_visible_token")
     def test_about_shows_heatmap_for_anonymous_when_configured(self, _token_mock):
@@ -346,33 +335,18 @@ class ViewsTest(TestCase):
         self.assertEqual(payload["weeks_count"], 2)
 
     @patch("main.views.get_configured_github_token", return_value="gho_valid_token")
-    @patch("main.views.refresh_portfolio_heatmap_cache_task.delay")
     @patch("main.heatmap.fetch_heatmap_data")
-    def test_about_heatmap_data_without_payload_returns_503_and_enqueues(
-        self, fetch_mock, delay_mock, _token_mock
-    ):
+    def test_about_heatmap_data_without_payload_returns_503(self, fetch_mock, _token_mock):
         response = self.client.get(reverse("about_heatmap_data"))
 
         self.assertEqual(response.status_code, 503)
         self.assertIn("error", response.json())
         fetch_mock.assert_not_called()
-        delay_mock.assert_called_once_with()
 
     @patch("main.views.get_configured_github_token", return_value="gho_valid_token")
-    @patch(
-        "main.views.refresh_portfolio_heatmap_cache_task.delay",
-        side_effect=ConnectionError("broker down"),
-    )
-    def test_about_heatmap_data_survives_enqueue_failure(self, _delay_mock, _token_mock):
-        response = self.client.get(reverse("about_heatmap_data"))
-
-        self.assertEqual(response.status_code, 503)
-
-    @patch("main.views.get_configured_github_token", return_value="gho_valid_token")
-    @patch("main.views.refresh_portfolio_heatmap_cache_task.delay")
     @patch("main.heatmap.fetch_heatmap_data")
-    def test_about_heatmap_data_serves_stale_snapshot_and_enqueues_once(
-        self, fetch_mock, delay_mock, _token_mock
+    def test_about_heatmap_data_serves_old_snapshot_without_fetching(
+        self, fetch_mock, _token_mock
     ):
         HeatmapSnapshot.objects.create(
             key="portfolio",
@@ -393,7 +367,6 @@ class ViewsTest(TestCase):
             self.assertEqual(response.json()["total"], 9)
 
         fetch_mock.assert_not_called()
-        delay_mock.assert_called_once_with()
 
     @patch("main.views.get_configured_github_token", return_value=None)
     def test_about_heatmap_data_shows_error_when_admin_github_token_missing(self, _token_mock):
@@ -668,7 +641,7 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn("/admin/login/", response.url)
 
-    def test_run_markdown_sync_task_enqueues_task_for_staff(self):
+    def test_run_markdown_sync_task_runs_job_for_staff(self):
         User = get_user_model()
         staff_user = User.objects.create_user(
             username="staff-user",
@@ -678,8 +651,10 @@ class ViewsTest(TestCase):
         )
         self.client.force_login(staff_user)
 
-        with patch("main.views.sync_project_markdowns_task.delay") as delay_mock:
-            delay_mock.return_value.id = "task-123"
+        with patch(
+            "main.views.sync_project_markdowns_task",
+            return_value={"total": 1, "updated": 1, "failed": 0},
+        ) as task_mock:
             response = self.client.post(
                 reverse("run_markdown_sync_task"),
                 {"next": reverse("home")},
@@ -687,7 +662,11 @@ class ViewsTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("home"))
-        delay_mock.assert_called_once_with()
+        task_mock.assert_called_once_with()
+        self.assertIn(
+            "Markdown sync: 1/1 updated.",
+            [str(m) for m in get_messages(response.wsgi_request)],
+        )
 
     def test_run_markdown_sync_task_redirects_to_safe_next_path(self):
         User = get_user_model()
@@ -699,8 +678,10 @@ class ViewsTest(TestCase):
         )
         self.client.force_login(staff_user)
 
-        with patch("main.views.sync_project_markdowns_task.delay") as delay_mock:
-            delay_mock.return_value.id = "task-123"
+        with patch(
+            "main.views.sync_project_markdowns_task",
+            return_value={"total": 1, "updated": 1, "failed": 0},
+        ):
             response = self.client.post(
                 reverse("run_markdown_sync_task"),
                 {"next": reverse("about")},
@@ -719,8 +700,10 @@ class ViewsTest(TestCase):
         )
         self.client.force_login(staff_user)
 
-        with patch("main.views.sync_project_markdowns_task.delay") as delay_mock:
-            delay_mock.return_value.id = "task-123"
+        with patch(
+            "main.views.sync_project_markdowns_task",
+            return_value={"total": 1, "updated": 1, "failed": 0},
+        ):
             response = self.client.post(
                 reverse("run_markdown_sync_task"),
                 {"next": "https://evil.example/phishing"},
@@ -739,8 +722,10 @@ class ViewsTest(TestCase):
         )
         self.client.force_login(staff_user)
 
-        with patch("main.views.sync_project_markdowns_task.delay") as delay_mock:
-            delay_mock.return_value.id = "task-123"
+        with patch(
+            "main.views.sync_project_markdowns_task",
+            return_value={"total": 1, "updated": 1, "failed": 0},
+        ):
             response = self.client.post(
                 reverse("run_markdown_sync_task"),
                 HTTP_REFERER="https://evil.example/phishing",
@@ -749,20 +734,20 @@ class ViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("home"))
 
-    def test_admin_tool_views_report_enqueue_failure(self):
+    def test_admin_tool_views_report_job_failure(self):
         User = get_user_model()
         self.client.force_login(
-            User.objects.create_user(username="staff-enqueue-fail", password="x", is_staff=True)
+            User.objects.create_user(username="staff-job-fail", password="x", is_staff=True)
         )
         cases = (
-            ("run_markdown_sync_task", "main.views.sync_project_markdowns_task.delay",
-             "Failed to enqueue markdown sync task."),
-            ("run_heatmap_refresh_task", "main.views.refresh_portfolio_heatmap_cache_task.delay",
-             "Failed to enqueue heatmap refresh task."),
+            ("run_markdown_sync_task", "main.views.sync_project_markdowns_task",
+             {"total": 2, "updated": 1, "failed": 1}, "Markdown sync: 1/2 updated."),
+            ("run_heatmap_refresh_task", "main.views.refresh_portfolio_heatmap_cache_task",
+             {"ok": False, "error": "boom"}, "Heatmap refresh failed: boom"),
         )
-        for url_name, delay_path, error in cases:
+        for url_name, task_path, result, error in cases:
             with self.subTest(url_name=url_name):
-                with patch(delay_path, side_effect=ConnectionError("broker down")):
+                with patch(task_path, return_value=result):
                     response = self.client.post(reverse(url_name), {"next": reverse("about")})
 
                 self.assertEqual(response.status_code, 302)

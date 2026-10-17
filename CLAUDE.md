@@ -47,24 +47,24 @@ uv run python django/manage.py collectstatic --noinput
 uv run python django/manage.py runserver
 ```
 
-### Celery (separate terminals)
+### Periodic jobs (run by host cron in prod)
 ```bash
-uv run celery -A config worker --workdir=django --loglevel=info
-uv run celery -A config beat --workdir=django --loglevel=info
+uv run python django/manage.py refresh_heatmap
+uv run python django/manage.py sync_markdowns
 ```
 
 ## Architecture
 
 ### Service topology
-Six Docker services in production: `web` (Gunicorn+Django), `db` (PostgreSQL), `redis`, `worker` (Celery worker), `beat` (Celery beat scheduler), `caddy` (reverse proxy + static/media serving). Dev compose omits Caddy. `db` has a `pg_isready` healthcheck; `web`, `worker` and `beat` wait for `service_healthy`. PostgreSQL 18 data lives in `postgres18_data` (dev: `postgres18_dev_data`) mounted at `/var/lib/postgresql`. Gunicorn runs `--workers 1 --threads 4 --timeout 60`.
+Three Docker services in production: `web` (Gunicorn+Django), `db` (PostgreSQL), `caddy` (reverse proxy + static/media serving). Dev compose omits Caddy. `db` has a `pg_isready` healthcheck; `web` waits for `service_healthy`. PostgreSQL 18 data lives in `postgres18_data` (dev: `postgres18_dev_data`) mounted at `/var/lib/postgresql`. Gunicorn runs `--workers 1 --threads 4 --timeout 60`.
 
 ### Django app layout
-Single app `main` under `django/`. Configuration lives in `django/config/` (settings, urls, celery, wsgi/asgi). The `django/` directory is both the Django project root and the `--workdir` for Celery.
+Single app `main` under `django/`. Configuration lives in `django/config/` (settings, urls, wsgi/asgi). The `django/` directory is the Django project root.
 
 ### Key modules
 - `django/main/models.py` — all domain models: `Project`, `Tag`, `PortfolioProfile`, `HeatmapSnapshot`, `PageView`, `TaskExecutionLog`
-- `django/main/views.py` — page views, the heatmap JSON endpoint (serves the stored snapshot and enqueues a refresh when stale) and admin-tool endpoints
-- `django/main/tasks.py` — Celery tasks: `sync_project_markdowns_task`, `refresh_portfolio_heatmap_cache_task` and `check_disk_usage_task`
+- `django/main/views.py` — page views, the heatmap JSON endpoint (serves the stored snapshot) and admin-tool endpoints (run jobs in the request)
+- `django/main/tasks.py` — job functions `sync_project_markdowns_task` and `refresh_portfolio_heatmap_cache_task`; `django/main/management/commands/` wraps them as `sync_markdowns` and `refresh_heatmap`
 - `django/main/markdown_sync.py` — fetches the README of each project's `github_url` and writes it to `media/blog_markdown/`
 - `django/main/heatmap.py` — fetches GitHub contribution data (one GraphQL query) and persists to `HeatmapSnapshot`
 - `django/main/context_processors.py` — injects visitor count, project count, and the active profile (`PortfolioProfile.get_active()`) into every template
@@ -73,7 +73,7 @@ Single app `main` under `django/`. Configuration lives in `django/config/` (sett
 Every task run appends a `TaskExecutionLog` row; the newest row per `task_name` is that task's current status. Rows older than 90 days are pruned. Admin users see this on the about page.
 
 ### Environment variables
-Loaded from `.env` at project root via `django-environ`. `SECRET_KEY` is required at startup. Key vars: `DJANGO_DEBUG`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, `GITHUB_HEATMAP_TOKEN`, `HEATMAP_CACHE_TTL_MINUTES`, `CELERY_BROKER_URL`, `DB_*` (or `DOCKER_DB_*` for compose), `ADMIN_BASIC_USER`/`ADMIN_BASIC_HASH` (Caddy). See `.env.example`.
+Loaded from `.env` at project root via `django-environ`. `SECRET_KEY` is required at startup. Key vars: `DJANGO_DEBUG`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, `GITHUB_HEATMAP_TOKEN`, `DB_*` (or `DOCKER_DB_*` for compose), `ADMIN_BASIC_USER`/`ADMIN_BASIC_HASH` (Caddy). See `.env.example`.
 
 ### Static and media files
 - CSS source: `django/main/static/src/css/input.css` → output: `django/main/static/css/style.css`
@@ -81,11 +81,10 @@ Loaded from `.env` at project root via `django-environ`. `SECRET_KEY` is require
 - Caddy also puts `basic_auth` on `/admin*`, serves `robots.txt`, compresses responses (zstd/gzip) and caps request bodies at 10MB
 - Containers run as non-root uid `10001:10001`; volume ownership matters
 
-### Celery beat schedule
-Defined in `django/config/settings.py` (`CELERY_BEAT_SCHEDULE`):
+### Job schedule
+Host crontab on the droplet (entries in "New droplet bootstrap" in `docs/implementation.md`); the admin panel mirrors it in `SCHEDULED_JOBS` (`django/main/views.py`):
 - Heatmap refresh: every hour
 - Markdown sync: every 2 hours
-- Disk usage check: daily at 06:00
 
 ### Tests location
 - `django/main/tests/` — Django unit/integration tests (views, models, tasks, middleware, heatmap, markdown sync)

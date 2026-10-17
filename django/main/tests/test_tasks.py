@@ -1,16 +1,16 @@
-import collections
 from datetime import timedelta
+from io import StringIO
 from unittest.mock import patch
 
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from main.models import HeatmapSnapshot, Project, TaskExecutionLog
 from main.tasks import (
-    DISK_USAGE_TASK_NAME,
     REFRESH_HEATMAP_TASK_NAME,
     SYNC_MARKDOWNS_TASK_NAME,
-    check_disk_usage_task,
     refresh_portfolio_heatmap_cache_task,
     sync_project_markdowns_task,
 )
@@ -204,55 +204,62 @@ class TaskStatusTrackingTests(TestCase):
         update_error_mock.assert_called_once_with("Heatmap is not configured.")
 
 
-class DiskUsageTaskTests(TestCase):
-    def _fake_usage(self, total_gb, free_gb):
-        total = int(total_gb * 1024 ** 3)
-        free = int(free_gb * 1024 ** 3)
-        used = total - free
-        DiskUsage = collections.namedtuple("DiskUsage", ["total", "used", "free"])
-        return DiskUsage(total=total, used=used, free=free)
-
-    def test_disk_task_success_when_ample_space(self):
-        usage = self._fake_usage(total_gb=10.0, free_gb=5.0)
-        with patch("main.tasks.shutil.disk_usage", return_value=usage):
-            check_disk_usage_task()
-
-        log = TaskExecutionLog.objects.get(task_name=DISK_USAGE_TASK_NAME)
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
-        self.assertEqual(log.last_error, "")
-
-    def test_disk_task_partial_when_below_2gb(self):
-        usage = self._fake_usage(total_gb=10.0, free_gb=1.5)
-        with patch("main.tasks.shutil.disk_usage", return_value=usage):
-            check_disk_usage_task()
-
-        log = TaskExecutionLog.objects.get(task_name=DISK_USAGE_TASK_NAME)
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_PARTIAL_SUCCESS)
-        self.assertIn("1.5", log.last_error)
-
-    def test_disk_task_failure_when_below_1gb(self):
-        usage = self._fake_usage(total_gb=10.0, free_gb=0.8)
-        with patch("main.tasks.shutil.disk_usage", return_value=usage):
-            check_disk_usage_task()
-
-        log = TaskExecutionLog.objects.get(task_name=DISK_USAGE_TASK_NAME)
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)
-        self.assertIn("CRITICAL", log.last_error)
-
-
 class TaskLogRetentionTests(TestCase):
     def test_finished_run_deletes_log_rows_older_than_90_days(self):
-        old = TaskExecutionLog.objects.create(task_name=DISK_USAGE_TASK_NAME)
-        recent = TaskExecutionLog.objects.create(task_name=DISK_USAGE_TASK_NAME)
+        old = TaskExecutionLog.objects.create(task_name=REFRESH_HEATMAP_TASK_NAME)
+        recent = TaskExecutionLog.objects.create(task_name=REFRESH_HEATMAP_TASK_NAME)
         now = timezone.now()
         TaskExecutionLog.objects.filter(pk=old.pk).update(created_at=now - timedelta(days=91))
         TaskExecutionLog.objects.filter(pk=recent.pk).update(created_at=now - timedelta(days=89))
 
-        DiskUsage = collections.namedtuple("DiskUsage", ["total", "used", "free"])
-        healthy = DiskUsage(total=10, used=5, free=5 * 1024 ** 3)
-        with patch("main.tasks.shutil.disk_usage", return_value=healthy):
-            check_disk_usage_task()
+        with patch("main.tasks.fetch_heatmap_data", return_value=(None, "boom")):
+            refresh_portfolio_heatmap_cache_task()
 
         self.assertFalse(TaskExecutionLog.objects.filter(pk=old.pk).exists())
         self.assertTrue(TaskExecutionLog.objects.filter(pk=recent.pk).exists())
         self.assertEqual(TaskExecutionLog.objects.count(), 2)
+
+
+class JobCommandTests(TestCase):
+    @patch("main.tasks.fetch_heatmap_data")
+    def test_refresh_heatmap_command_logs_success(self, fetch_mock):
+        fetch_mock.return_value = ({"username": "u", "total": 3, "weeks": []}, None)
+        out = StringIO()
+
+        call_command("refresh_heatmap", stdout=out)
+
+        log = TaskExecutionLog.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
+        self.assertIn("3 contributions", out.getvalue())
+
+    @patch("main.tasks.fetch_heatmap_data", return_value=(None, "boom"))
+    def test_refresh_heatmap_command_fails_on_error(self, _fetch_mock):
+        with self.assertRaisesMessage(CommandError, "boom"):
+            call_command("refresh_heatmap")
+
+        log = TaskExecutionLog.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)
+
+    @patch("main.tasks.sync_project_markdown", return_value={"updated": True})
+    def test_sync_markdowns_command_logs_success(self, _sync_mock):
+        Project.objects.create(title="Cmd", blog=True, blog_url="cmd")
+        out = StringIO()
+
+        call_command("sync_markdowns", stdout=out)
+
+        log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
+        self.assertIn("1/1 updated", out.getvalue())
+
+    @patch(
+        "main.tasks.sync_project_markdown",
+        return_value={"slug": "cmd", "updated": False, "reason": "http_404"},
+    )
+    def test_sync_markdowns_command_fails_when_a_project_fails(self, _sync_mock):
+        Project.objects.create(title="Cmd", blog=True, blog_url="cmd")
+
+        with self.assertRaisesMessage(CommandError, "0/1 updated"):
+            call_command("sync_markdowns")
+
+        log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)

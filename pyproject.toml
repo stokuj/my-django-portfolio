@@ -5,7 +5,6 @@ description = "My portfolio website, created using Django/TailwindCSS"
 requires-python = ">=3.13,<3.14"
 dependencies = [
     "bleach==6.4.0",
-    "celery[redis]==5.6.3",
     "django==6.1.2",
     "django-environ==0.14.0",
     "gunicorn==26.2.0",

@@ -2,15 +2,14 @@
 
 ## System Overview
 
-The application is a Django-based portfolio/blog platform with asynchronous background processing.
+The application is a Django-based portfolio/blog platform with cron-run periodic jobs.
 In production (`infra/docker-compose.prod.yml`), the runtime services are orchestrated with Docker Compose:
 
 - `web`: Django app served by Gunicorn.
 - `db`: PostgreSQL database.
-- `redis`: message broker/result backend for Celery.
-- `worker`: Celery worker for asynchronous jobs.
-- `beat`: Celery beat scheduler for periodic jobs.
 - `caddy`: reverse proxy and static/media serving.
+
+The host crontab runs periodic jobs as management commands inside `web`.
 
 Dev compose (`infra/docker-compose.dev.yml`) has no Caddy; `web` runs `runserver`, published on `127.0.0.1:8000`.
 
@@ -23,11 +22,8 @@ flowchart LR
     U[User Browser] --> C[Caddy]
     C --> W[Gunicorn + Django Web]
     W --> P[(PostgreSQL)]
-    W --> R[(Redis)]
-    R --> WK[Celery Worker]
-    B[Celery Beat] --> R
-    WK --> P
-    WK --> G[GitHub GraphQL API + raw README files]
+    CR[Host crontab] -->|manage.py command| W
+    W --> G[GitHub GraphQL API + raw README files]
     C --> S[(Static Files)]
     C --> M[(Media Files)]
 ```
@@ -36,10 +32,10 @@ flowchart LR
 
 ### Django Layering
 
-- `django/config/`: project configuration (`settings.py`, `urls.py`, `celery.py`).
+- `django/config/`: project configuration (`settings.py`, `urls.py`).
 - `django/main/models.py`: domain entities, including projects and task execution logging (`TaskExecutionLog`).
 - `django/main/views.py`: request handling and template rendering.
-- `django/main/tasks.py`: asynchronous and scheduled task execution.
+- `django/main/tasks.py`: periodic job functions; `django/main/management/commands/` wraps them for cron.
 - `django/main/markdown_sync.py` and `django/main/heatmap.py`: integration and domain helpers.
 
 # ERD (Django Models)
@@ -124,13 +120,12 @@ erDiagram
 5. Templates render HTML using shared context processors.
 6. The response is returned through Caddy.
 
-## Asynchronous Processing
+## Periodic Jobs
 
-Celery is used for jobs that should not block HTTP requests.
+The host crontab runs `docker compose exec -T web python manage.py <command>` (entries in "New droplet bootstrap" in `docs/implementation.md`).
 
-- Broker: Redis (`CELERY_BROKER_URL`); task results are not stored.
-- Periodic schedule: `CELERY_BEAT_SCHEDULE` in `django/config/settings.py`.
-- Periodic jobs: heatmap refresh every hour, markdown sync every 2 hours, disk usage check daily at 06:00.
+- `refresh_heatmap`: every hour. `sync_markdowns`: every 2 hours.
+- Admin "Sync" buttons on `/about` run the same job functions inside the request.
 - Task observability: each run appends a `TaskExecutionLog` row; the newest row per task is its current status.
 
 ## Direct GitHub Heatmap Integration
@@ -141,26 +136,22 @@ The project fetches GitHub contribution heatmap data directly from Django.
 - Django sends one GitHub GraphQL `viewer` query for the token owner's login and contribution days.
 - Data is normalized and persisted in `HeatmapSnapshot`.
 - On token or upstream errors, Django returns safe fallback messages and keeps the last valid snapshot.
-- The `/about/heatmap-data/` endpoint serves the stored snapshot and enqueues a refresh when it is stale; only the Celery worker calls GitHub.
+- The `/about/heatmap-data/` endpoint only serves the stored snapshot; GitHub is called by the cron job or the admin "Sync Heatmap" button.
 
-### Async Flow Diagram
+### Job Flow Diagram
 
 ```mermaid
 sequenceDiagram
-    participant Beat as Celery Beat
-    participant Redis as Redis
-    participant Worker as Celery Worker
-    participant Django as Django Domain Logic
+    participant Cron as Host crontab
+    participant Cmd as manage.py command (web)
     participant GitHub as GitHub APIs
     participant DB as PostgreSQL
 
-    Beat->>Redis: enqueue periodic task
-    Redis->>Worker: deliver task
-    Worker->>Django: execute task function
-    Django->>GitHub: GraphQL viewer contributionCalendar
-    GitHub-->>Django: contribution payload / error
-    Django->>DB: read/write state and logs
-    Django-->>Worker: task result payload
+    Cron->>Cmd: docker compose exec -T web
+    Cmd->>GitHub: GraphQL viewer contributionCalendar
+    GitHub-->>Cmd: contribution payload / error
+    Cmd->>DB: write snapshot and TaskExecutionLog
+    Cmd-->>Cron: exit code
 ```
 
 ## Static and Media Delivery
@@ -182,4 +173,4 @@ sequenceDiagram
 
 - Keep views thin; move business logic into helpers/services/tasks.
 - Keep task payloads and return structures stable.
-- Add new periodic jobs through `CELERY_BEAT_SCHEDULE` and explicit task logging.
+- Add new periodic jobs as a management command with explicit task logging, a crontab entry and a `SCHEDULED_JOBS` row in `django/main/views.py`.

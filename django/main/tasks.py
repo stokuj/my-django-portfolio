@@ -1,8 +1,6 @@
 import logging
-import shutil
 from datetime import timedelta
 
-from celery import shared_task
 from django.utils import timezone
 
 from .heatmap import (
@@ -16,7 +14,6 @@ from .models import Project, TaskExecutionLog
 logger = logging.getLogger(__name__)
 SYNC_MARKDOWNS_TASK_NAME = "main.sync_project_markdowns_task"
 REFRESH_HEATMAP_TASK_NAME = "main.refresh_portfolio_heatmap_cache_task"
-DISK_USAGE_TASK_NAME = "main.check_disk_usage_task"
 DISK_CRITICAL_GB = 1.0
 DISK_WARNING_GB = 2.0
 LOG_RETENTION_DAYS = 90
@@ -31,7 +28,6 @@ def disk_level(free_gb):
     return "ok"
 
 
-@shared_task(ignore_result=True)
 def sync_project_markdowns_task():
     started_at = timezone.now()
 
@@ -89,7 +85,6 @@ def sync_project_markdowns_task():
     }
 
 
-@shared_task(ignore_result=True)
 def refresh_portfolio_heatmap_cache_task():
     started_at = timezone.now()
 
@@ -109,39 +104,6 @@ def refresh_portfolio_heatmap_cache_task():
         "total": snapshot.total,
         "weeks_count": snapshot.weeks_count,
     }
-
-
-@shared_task(ignore_result=True)
-def check_disk_usage_task():
-    usage = shutil.disk_usage("/")
-    free_gb = usage.free / (1024 ** 3)
-
-    started_at = timezone.now()
-
-    level = disk_level(free_gb)
-    if level == "critical":
-        logger.critical("DISK CRITICAL: only %.1f GB free on /", free_gb)
-        _finish(
-            DISK_USAGE_TASK_NAME,
-            started_at,
-            TaskExecutionLog.STATUS_FAILURE,
-            1,
-            0,
-            f"CRITICAL: {free_gb:.1f} GB free (below {DISK_CRITICAL_GB} GB threshold)",
-        )
-    elif level == "warning":
-        logger.warning("DISK WARNING: only %.1f GB free on /", free_gb)
-        _finish(
-            DISK_USAGE_TASK_NAME,
-            started_at,
-            TaskExecutionLog.STATUS_PARTIAL_SUCCESS,
-            1,
-            0,
-            f"WARNING: {free_gb:.1f} GB free (below {DISK_WARNING_GB} GB threshold)",
-        )
-    else:
-        logger.info("DISK OK: %.1f GB free on /", free_gb)
-        _finish(DISK_USAGE_TASK_NAME, started_at, TaskExecutionLog.STATUS_SUCCESS, 1, 1)
 
 
 def _finish(task_name, started_at, state, total, updated, error=""):
