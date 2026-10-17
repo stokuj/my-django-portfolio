@@ -152,7 +152,7 @@ class TaskStatusTrackingTests(TestCase):
         result = refresh_portfolio_heatmap_cache_task()
 
         log = TaskExecutionLog.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
-        snapshot = HeatmapSnapshot.objects.get(key="portfolio")
+        snapshot = HeatmapSnapshot.objects.get()
         self.assertEqual(result, {"ok": False, "error": "boom"})
         self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)
         self.assertEqual(log.last_failed, 1)
@@ -173,15 +173,15 @@ class TaskStatusTrackingTests(TestCase):
         result = refresh_portfolio_heatmap_cache_task()
 
         log = TaskExecutionLog.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
-        snapshot = HeatmapSnapshot.objects.get(key="portfolio")
+        snapshot = HeatmapSnapshot.objects.get()
         self.assertEqual(result["ok"], True)
-        self.assertEqual(result["username"], "portfolio-admin")
+        self.assertEqual(result["total"], 17)
         self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
         self.assertEqual(log.last_total, 1)
         self.assertEqual(log.last_updated, 1)
         self.assertEqual(log.last_failed, 0)
         self.assertEqual(log.last_error, "")
-        self.assertEqual(snapshot.username, "portfolio-admin")
+        self.assertEqual(snapshot.payload["username"], "portfolio-admin")
         fetch_mock.assert_called_once_with()
 
     @patch("main.tasks.update_snapshot_error")

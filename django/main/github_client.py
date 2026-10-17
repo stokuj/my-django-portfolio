@@ -12,32 +12,6 @@ class GitHubUpstreamError(Exception):
     """Raised when GitHub requests fail for non-auth reasons."""
 
 
-_AUTH_ERROR_SUBSTRINGS = (
-    "resource not accessible",
-    "forbidden",
-    "unauthorized",
-    "bad credentials",
-)
-
-
-def _graphql_errors_indicate_auth_failure(errors):
-    for error in errors:
-        if not isinstance(error, Mapping):
-            continue
-
-        raw_type = error.get("type")
-        error_type = raw_type.lower() if isinstance(raw_type, str) else ""
-        raw_message = error.get("message")
-        message = raw_message.lower() if isinstance(raw_message, str) else ""
-
-        if error_type in {"forbidden", "unauthorized"}:
-            return True
-        if any(text in message for text in _AUTH_ERROR_SUBSTRINGS):
-            return True
-
-    return False
-
-
 def _default_headers(token):
     return {
         "Authorization": f"Bearer {token}",
@@ -54,11 +28,12 @@ def _raise_if_rate_limited(response):
         raise GitHubUpstreamError("GitHub rate limit exceeded")
 
 
-def fetch_contribution_days(token):
-    """Fetch the token owner's login and one-year contribution days via GraphQL.
+def fetch_contribution_weeks(token):
+    """Fetch the token owner's login and one-year contribution calendar via GraphQL.
 
     Returns:
-        tuple[str, list[dict]]: `(login, days)`, each day as `{"date", "count"}`.
+        tuple[str, list[list[dict]]]: `(login, weeks)`, weeks as GitHub groups them,
+        each day as `{"date", "count"}`.
     """
     to_day = date.today()
     from_day = to_day - timedelta(days=364)
@@ -113,19 +88,20 @@ def fetch_contribution_days(token):
     if not isinstance(payload, Mapping):
         raise GitHubUpstreamError("GitHub GraphQL response is invalid")
     raw_errors = payload.get("errors")
-    if isinstance(raw_errors, list) and raw_errors:
-        if _graphql_errors_indicate_auth_failure(raw_errors):
-            raise GitHubAuthError
+    # A bad token gets HTTP 401 above; GraphQL errors are upstream problems.
+    if raw_errors:
         raise GitHubUpstreamError("GitHub GraphQL returned errors")
 
     try:
         viewer = payload["data"]["viewer"]
         weeks = viewer["contributionsCollection"]["contributionCalendar"]["weeks"]
-        days = [
-            {"date": day["date"], "count": day["contributionCount"]}
+        weeks = [
+            [
+                {"date": day["date"], "count": day["contributionCount"]}
+                for day in week["contributionDays"]
+            ]
             for week in weeks
-            for day in week["contributionDays"]
         ]
-        return viewer["login"], days
+        return viewer["login"], weeks
     except (KeyError, TypeError) as exc:
         raise GitHubUpstreamError("GitHub GraphQL response is malformed") from exc

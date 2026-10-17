@@ -323,8 +323,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 
-    function renderGrid(raw) {
-        const weeks = Array.isArray(raw && raw.weeks) ? raw.weeks : [];
+    function renderGrid(weeks) {
         gridEl.innerHTML = "";
         gridEl.style.gridTemplateColumns = "";
         renderMonthLabels(weeks);
@@ -391,7 +390,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         usernameEl.textContent = payload.username || "-";
         totalEl.textContent = payload.total ?? "-";
         last30El.textContent = payload.last_30_days_total ?? 0;
-        renderGrid(payload.raw || {});
+        renderGrid(Array.isArray(payload.weeks) ? payload.weeks : []);
         statusEl.classList.add("hidden");
         errorEl.classList.add("hidden");
         contentEl.classList.remove("hidden");

@@ -96,14 +96,9 @@ def refresh_portfolio_heatmap_cache_task():
         )
         return {"ok": False, "error": error}
 
-    snapshot = update_snapshot_with_payload(payload)
+    update_snapshot_with_payload(payload)
     _finish(REFRESH_HEATMAP_TASK_NAME, started_at, TaskExecutionLog.STATUS_SUCCESS, 1, 1)
-    return {
-        "ok": True,
-        "username": snapshot.username,
-        "total": snapshot.total,
-        "weeks_count": snapshot.weeks_count,
-    }
+    return {"ok": True, "total": payload["total"]}
 
 
 def _finish(task_name, started_at, state, total, updated, error=""):
