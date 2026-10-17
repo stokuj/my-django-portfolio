@@ -79,11 +79,7 @@ erDiagram
 
     HEATMAP_SNAPSHOT {
         int id PK
-        string key UK
         json payload
-        string username
-        int total
-        int weeks_count
         datetime fetched_at
         text last_error
     }

@@ -313,10 +313,6 @@ class ViewsTest(TestCase):
     @patch("main.views.get_configured_github_token", return_value="gho_valid_token")
     def test_about_heatmap_data_returns_public_admin_data(self, _token_mock):
         HeatmapSnapshot.objects.create(
-            key="portfolio",
-            username="portfolio-admin",
-            total=12,
-            weeks_count=2,
             fetched_at=timezone.now(),
             payload={
                 "username": "portfolio-admin",
@@ -332,7 +328,11 @@ class ViewsTest(TestCase):
         self.assertEqual(payload["username"], "portfolio-admin")
         self.assertEqual(payload["total"], 12)
         self.assertEqual(payload["last_30_days_total"], 0)
-        self.assertEqual(payload["weeks_count"], 2)
+        self.assertEqual(payload["weeks"], [{"days": []}, {"days": []}])
+        self.assertEqual(
+            set(payload),
+            {"username", "total", "last_30_days_total", "fetched_at", "weeks"},
+        )
 
     @patch("main.views.get_configured_github_token", return_value="gho_valid_token")
     @patch("main.heatmap.fetch_heatmap_data")
@@ -349,10 +349,6 @@ class ViewsTest(TestCase):
         self, fetch_mock, _token_mock
     ):
         HeatmapSnapshot.objects.create(
-            key="portfolio",
-            username="portfolio-admin",
-            total=9,
-            weeks_count=1,
             fetched_at=timezone.now() - datetime.timedelta(days=1),
             payload={
                 "username": "portfolio-admin",

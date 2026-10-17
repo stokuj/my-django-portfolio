@@ -13,7 +13,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from .heatmap import (
     get_configured_github_token,
-    get_or_create_snapshot,
+    get_snapshot,
 )
 from .markdown_sync import build_readme_url
 from .models import Project, Tag, TaskExecutionLog
@@ -139,9 +139,9 @@ def about_heatmap_data(request):
             status=404,
         )
 
-    snapshot = get_or_create_snapshot()
+    snapshot = get_snapshot()
 
-    if not snapshot.payload:
+    if not snapshot or not snapshot.payload:
         return JsonResponse(
             {"error": "Heatmap data is not available yet. Try again in a minute."},
             status=503,
@@ -152,18 +152,16 @@ def about_heatmap_data(request):
 
 def _build_heatmap_snapshot_response(snapshot):
     """Serialize snapshot model into heatmap API response payload."""
-    last_30_days_total = _calculate_last_30_days_total(snapshot.payload)
-
+    payload = snapshot.payload
     return JsonResponse(
         {
-            "username": snapshot.username,
-            "total": snapshot.total,
-            "last_30_days_total": last_30_days_total,
-            "weeks_count": snapshot.weeks_count,
-            "raw": snapshot.payload,
+            "username": payload.get("username"),
+            "total": payload.get("total"),
+            "last_30_days_total": _calculate_last_30_days_total(payload),
             "fetched_at": snapshot.fetched_at.isoformat()
             if snapshot.fetched_at
             else None,
+            "weeks": payload.get("weeks", []),
         }
     )
 

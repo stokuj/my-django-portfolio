@@ -215,16 +215,9 @@ class PortfolioProfile(models.Model):
 class HeatmapSnapshot(models.Model):
     """Cached heatmap payload and sync metadata for portfolio views."""
 
-    key = models.CharField(max_length=40, unique=True, default="portfolio")
     payload = models.JSONField(default=dict, blank=True)
-    username = models.CharField(max_length=255, blank=True, default="")
-    total = models.PositiveIntegerField(default=0)
-    weeks_count = models.PositiveIntegerField(default=0)
     fetched_at = models.DateTimeField(blank=True, null=True)
     last_error = models.TextField(blank=True, default="")
-
-    def __str__(self):
-        return f"HeatmapSnapshot<{self.key}>"
 
 
 def _delete_file_field(field):
