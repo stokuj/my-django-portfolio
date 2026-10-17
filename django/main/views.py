@@ -202,7 +202,7 @@ def _get_scheduled_jobs_overview():
         # One query per job; .first() keeps this portable (no DISTINCT ON).
         status = (
             TaskExecutionLog.objects.filter(task_name=task_name)
-            .order_by("-last_run_at", "-id")
+            .order_by("-run_at", "-id")
             .first()
         )
         jobs.append(
@@ -210,14 +210,14 @@ def _get_scheduled_jobs_overview():
                 "label": label,
                 "task_name": task_name,
                 "schedule_label": schedule_label,
-                "status": status.last_status
-                if status and status.last_status
+                "status": status.status
+                if status and status.status
                 else "never",
-                "last_run_at": status.last_run_at if status else None,
-                "last_error": status.last_error if status else "",
-                "last_total": status.last_total if status else 0,
-                "last_updated": status.last_updated if status else 0,
-                "last_failed": status.last_failed if status else 0,
+                "run_at": status.run_at if status else None,
+                "error": status.error if status else "",
+                "total": status.total if status else 0,
+                "updated": status.updated if status else 0,
+                "failed": status.failed if status else 0,
             }
         )
 
@@ -226,7 +226,7 @@ def _get_scheduled_jobs_overview():
 
 def _get_executed_tasks():
     """Return latest task execution log entries for admin panel."""
-    return TaskExecutionLog.objects.order_by("-last_run_at", "-id")[:30]
+    return TaskExecutionLog.objects.order_by("-run_at", "-id")[:30]
 
 
 def projects(request):

@@ -173,7 +173,7 @@ class MarkdownSyncTests(TestCase):
         self.assertEqual(project.markdown_file.read().decode("utf-8"), "# Old")
         project.markdown_file.close()
 
-    def test_sync_project_markdown_falls_back_to_master_on_404(self):
+    def test_sync_project_markdown_reads_readme_from_head(self):
         project = Project.objects.create(
             title="Sync Fallback",
             short_description="sync test",
@@ -186,22 +186,19 @@ class MarkdownSyncTests(TestCase):
 
         with patch(
             "main.markdown_sync.requests.get",
-            side_effect=[
-                _make_mock_response(b"Not Found", status_code=404),
-                _make_mock_response(b"# From master"),
-            ],
+            return_value=_make_mock_response(b"# From HEAD"),
         ) as get_mock:
             result = sync_project_markdown(project)
 
         self.assertTrue(result["updated"])
         self.assertEqual(
             result["source_url"],
-            "https://raw.githubusercontent.com/example/sync-fallback/master/README.md",
+            "https://raw.githubusercontent.com/example/sync-fallback/HEAD/README.md",
         )
-        self.assertEqual(get_mock.call_count, 2)
+        self.assertEqual(get_mock.call_count, 1)
         project.refresh_from_db()
         with project.markdown_file.open("rb") as fh:
-            self.assertEqual(fh.read(), b"# From master")
+            self.assertEqual(fh.read(), b"# From HEAD")
 
     def test_sync_project_markdown_rejects_html_body(self):
         project = Project.objects.create(

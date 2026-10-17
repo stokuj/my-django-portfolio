@@ -58,26 +58,26 @@ class PortfolioProfileAdmin(admin.ModelAdmin):
 class TaskExecutionLogAdmin(admin.ModelAdmin):
     list_display = (
         "task_name",
-        "last_status",
-        "last_total",
-        "last_updated",
-        "last_failed",
-        "last_run_at",
+        "status",
+        "total",
+        "updated",
+        "failed",
+        "run_at",
         "created_at",
     )
     readonly_fields = (
         "task_name",
-        "last_status",
-        "last_run_at",
-        "last_total",
-        "last_updated",
-        "last_failed",
-        "last_error",
+        "status",
+        "run_at",
+        "total",
+        "updated",
+        "failed",
+        "error",
         "created_at",
     )
-    list_filter = ("task_name", "last_status")
+    list_filter = ("task_name", "status")
     date_hierarchy = "created_at"
-    search_fields = ("task_name", "last_error")
+    search_fields = ("task_name", "error")
 
     def has_add_permission(self, request):
         return False

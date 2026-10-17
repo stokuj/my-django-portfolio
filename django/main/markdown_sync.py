@@ -29,14 +29,12 @@ def build_readme_url(project):
     return None
 
 
-def build_markdown_candidate_urls(project):
+def build_markdown_url(project):
+    """Raw README URL on the repo's default branch (HEAD), or None without a GitHub repo."""
     owner, repo = _parse_github_owner_repo(project.github_url)
     if not (owner and repo):
-        return []
-    return [
-        f"https://raw.githubusercontent.com/{owner}/{repo}/main/README.md",
-        f"https://raw.githubusercontent.com/{owner}/{repo}/master/README.md",
-    ]
+        return None
+    return f"https://raw.githubusercontent.com/{owner}/{repo}/HEAD/README.md"
 
 
 def _download_markdown(url):
@@ -60,36 +58,18 @@ def _download_markdown(url):
 
 
 def sync_project_markdown(project):
-    candidate_urls = build_markdown_candidate_urls(project)
-    if not candidate_urls:
-        return {
-            "project_id": project.id,
-            "slug": project.blog_url,
-            "updated": False,
-            "reason": "no_candidate_urls",
-        }
-
-    markdown_text = None
-    source_url = None
-    last_error = None
-
-    for url in candidate_urls:
-        try:
-            markdown_text = _download_markdown(url)
-            source_url = url
-            break
-        # requests.RequestException is an OSError; UnicodeDecodeError is a ValueError.
-        except (OSError, ValueError) as exc:
-            last_error = str(exc)
-            logger.warning("Markdown sync failed for %s from %s: %s", project.blog_url, url, exc)
-
-    if markdown_text is None:
+    url = build_markdown_url(project)
+    try:
+        markdown_text = _download_markdown(url)
+    # requests.RequestException is an OSError; UnicodeDecodeError is a ValueError.
+    except (OSError, ValueError) as exc:
+        logger.warning("Markdown sync failed for %s from %s: %s", project.blog_url, url, exc)
         return {
             "project_id": project.id,
             "slug": project.blog_url,
             "updated": False,
             "reason": "download_failed",
-            "error": last_error,
+            "error": str(exc),
         }
 
     data = markdown_text.encode("utf-8")
@@ -115,6 +95,6 @@ def sync_project_markdown(project):
         "project_id": project.id,
         "slug": project.blog_url,
         "updated": True,
-        "source_url": source_url,
+        "source_url": url,
         "file": new_name,
     }

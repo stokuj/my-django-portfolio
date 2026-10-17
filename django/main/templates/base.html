@@ -5,14 +5,14 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="theme-color" content="#fef8ea">
-        <meta name="description" content="{% block meta_description %}{{ profile_home_intro }}{% endblock %}">
-        <meta property="og:title" content="{% block og_title %}{{ site_name|default:"My Portfolio" }}{% endblock %}">
-        <meta property="og:description" content="{% block og_description %}{{ profile_home_intro }}{% endblock %}">
+        <meta name="description" content="{% block meta_description %}{{ profile.home_intro }}{% endblock %}">
+        <meta property="og:title" content="{% block og_title %}{{ profile.site_name|default:"My Portfolio" }}{% endblock %}">
+        <meta property="og:description" content="{% block og_description %}{{ profile.home_intro }}{% endblock %}">
         <meta property="og:type" content="website">
         <meta property="og:url" content="{{ request.build_absolute_uri }}">
         <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/hero-bg.png' %}{% endblock %}">
         <meta name="twitter:card" content="summary_large_image">
-        <title>{% block title %}{{ site_name|default:"My Portfolio" }}{% endblock %}</title>
+        <title>{% block title %}{{ profile.site_name|default:"My Portfolio" }}{% endblock %}</title>
         <script>try{var t=localStorage.getItem("theme");if(t==="dim2")document.documentElement.dataset.theme=t}catch(e){}</script>
         <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -56,7 +56,7 @@
                             </ul>
                         </div>
 
-                        <a href="{% url 'home' %}" class="btn btn-ghost text-xl ui-motion">{{ site_name|default:"My Portfolio" }}</a>
+                        <a href="{% url 'home' %}" class="btn btn-ghost text-xl ui-motion">{{ profile.site_name|default:"My Portfolio" }}</a>
                     </div>
 
                     <!-- Center: Navigation links -->
@@ -68,10 +68,10 @@
 
                     <!-- Right side: Social links + Theme toggle -->
                     <div class="flex items-center space-x-2">
-                        {% if profile_github_url %}
+                        {% if profile.github_url %}
                         <!-- GitHub -->
                         <a
-                            href="{{ profile_github_url }}"
+                            href="{{ profile.github_url }}"
                             target="_blank"
                             rel="noopener noreferrer"
                             class="hidden sm:inline-flex btn btn-ghost btn-circle ui-motion"
@@ -81,10 +81,10 @@
                         </a>
                         {% endif %}
 
-                        {% if profile_linkedin_url %}
+                        {% if profile.linkedin_url %}
                         <!-- LinkedIn -->
                         <a
-                            href="{{ profile_linkedin_url }}"
+                            href="{{ profile.linkedin_url }}"
                             target="_blank"
                             rel="noopener noreferrer"
                             class="hidden sm:inline-flex btn btn-ghost btn-circle ui-motion"
@@ -133,17 +133,17 @@
 
                     <!-- Left column -->
                     <div class="space-y-4">
-                        <h2 class="text-2xl font-bold">{{ profile_full_name }}</h2>
+                        <h2 class="text-2xl font-bold">{{ profile.full_name }}</h2>
 
                         <p class="opacity-75">
-                            {{ profile_role_line }}<br>
-                            {{ profile_specialization_line }}
+                            {{ profile.role_line }}<br>
+                            {{ profile.specialization_line }}
                         </p>
 
                         <div class="flex gap-4 mt-4">
-                            {% if profile_github_url %}
+                            {% if profile.github_url %}
                             <a
-                                href="{{ profile_github_url }}"
+                                href="{{ profile.github_url }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 class="btn btn-ghost btn-circle hover:bg-base-300 ui-motion"
@@ -153,9 +153,9 @@
                             </a>
                             {% endif %}
 
-                            {% if profile_linkedin_url %}
+                            {% if profile.linkedin_url %}
                             <a
-                                href="{{ profile_linkedin_url }}"
+                                href="{{ profile.linkedin_url }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 class="btn btn-ghost btn-circle hover:bg-base-300 ui-motion"
@@ -176,16 +176,16 @@
                         </div>
 
                         <div class="flex flex-col gap-2">
-                            {% if profile_email %}
-                            <a href="{{ profile_email_href }}" class="link link-hover hover:text-primary ui-link-motion">Contact me</a>
+                            {% if profile.email %}
+                            <a href="mailto:{{ profile.email }}" class="link link-hover hover:text-primary ui-link-motion">Contact me</a>
                             {% endif %}
                         </div>
                     </div>
 
                     <!-- Right column -->
                     <div class="space-y-4">
-                        {% if profile_email %}
-                        <a href="{{ profile_email_href }}" class="btn btn-primary w-full ui-motion">
+                        {% if profile.email %}
+                        <a href="mailto:{{ profile.email }}" class="btn btn-primary w-full ui-motion">
                             Get In Touch
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" aria-hidden="true" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -197,9 +197,9 @@
                             I'm always open to interesting collaborations and new challenges!
                         </p>
 
-                        {% if profile_email %}
+                        {% if profile.email %}
                         <div class="text-sm">
-                            <p>Email: <a href="{{ profile_email_href }}" class="link link-hover hover:text-primary ui-link-motion">{{ profile_email }}</a></p>
+                            <p>Email: <a href="mailto:{{ profile.email }}" class="link link-hover hover:text-primary ui-link-motion">{{ profile.email }}</a></p>
                         </div>
                         {% endif %}
                     </div>
@@ -215,7 +215,7 @@
 
                         <div class="text-center md:text-right">
                             <p class="text-sm opacity-75">
-                                (c) {% now "Y" %} {{ profile_full_name }}. All rights reserved.<br>
+                                (c) {% now "Y" %} {{ profile.full_name }}. All rights reserved.<br>
                                 Built with Django and Tailwind CSS.
                             </p>
                         </div>

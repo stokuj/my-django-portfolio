@@ -200,6 +200,14 @@ class ProjectModelTest(TestCase):
             {"markdown_file", "tech_stack", "tools_libraries"},
         )
 
+    def test_blog_requires_blog_url(self):
+        project = Project(title="Blog", short_description="d", blog=True, blog_url=None)
+
+        with self.assertRaisesMessage(ValidationError, "A blog post needs a blog URL."):
+            project.full_clean()
+        with self.assertRaises(IntegrityError):
+            project.save()
+
 
 class PageViewModelTest(TestCase):
     def test_pageview_creation(self):
@@ -263,17 +271,17 @@ class TaskExecutionLogModelTest(TestCase):
     def test_task_execution_log_creation(self):
         log = TaskExecutionLog.objects.create(
             task_name="main.sync_project_markdowns_task",
-            last_status=TaskExecutionLog.STATUS_SUCCESS,
-            last_total=1,
-            last_updated=1,
+            status=TaskExecutionLog.STATUS_SUCCESS,
+            total=1,
+            updated=1,
         )
 
         self.assertEqual(log.task_name, "main.sync_project_markdowns_task")
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
-        self.assertEqual(log.last_total, 1)
-        self.assertEqual(log.last_updated, 1)
-        self.assertEqual(log.last_failed, 0)
-        self.assertEqual(log.last_error, "")
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_SUCCESS)
+        self.assertEqual(log.total, 1)
+        self.assertEqual(log.updated, 1)
+        self.assertEqual(log.failed, 0)
+        self.assertEqual(log.error, "")
 
 
 class ProjectMediaCleanupTests(TestCase):

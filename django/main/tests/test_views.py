@@ -57,6 +57,7 @@ class ViewsTest(TestCase):
             short_description="A test project",
             date=datetime.date(2023, 1, 1),
             status="finished",
+            blog=True,
             blog_url="test-project-views",
         )
         self.tag = Tag.objects.create(name="python")
@@ -177,13 +178,13 @@ class ViewsTest(TestCase):
         last_run = timezone.now() - datetime.timedelta(minutes=5)
         TaskExecutionLog.objects.create(
             task_name="main.refresh_portfolio_heatmap_cache_task",
-            last_status=TaskExecutionLog.STATUS_FAILURE,
-            last_run_at=last_run - datetime.timedelta(days=1),
+            status=TaskExecutionLog.STATUS_FAILURE,
+            run_at=last_run - datetime.timedelta(days=1),
         )
         TaskExecutionLog.objects.create(
             task_name="main.refresh_portfolio_heatmap_cache_task",
-            last_status=TaskExecutionLog.STATUS_SUCCESS,
-            last_run_at=last_run,
+            status=TaskExecutionLog.STATUS_SUCCESS,
+            run_at=last_run,
         )
 
         response = self.client.get(reverse("about"))
@@ -200,7 +201,7 @@ class ViewsTest(TestCase):
         self.assertEqual(heatmap["label"], "Heatmap Refresh")
         self.assertEqual(heatmap["schedule_label"], "Hourly at :00")
         self.assertEqual(heatmap["status"], "success")
-        self.assertEqual(heatmap["last_run_at"], last_run)
+        self.assertEqual(heatmap["run_at"], last_run)
         self.assertEqual(jobs["main.sync_project_markdowns_task"]["status"], "never")
 
     def test_about_shows_executed_tasks_list_for_admin(self):
@@ -219,18 +220,17 @@ class ViewsTest(TestCase):
 
         TaskExecutionLog.objects.create(
             task_name="main.older_task",
-            last_status=TaskExecutionLog.STATUS_FAILURE,
-            last_run_at=older_time,
-            last_failed=1,
-            last_total=1,
-            last_error="older error",
+            status=TaskExecutionLog.STATUS_FAILURE,
+            run_at=older_time,
+            total=1,
+            error="older error",
         )
         TaskExecutionLog.objects.create(
             task_name="main.newer_task",
-            last_status=TaskExecutionLog.STATUS_SUCCESS,
-            last_run_at=newer_time,
-            last_updated=1,
-            last_total=1,
+            status=TaskExecutionLog.STATUS_SUCCESS,
+            run_at=newer_time,
+            updated=1,
+            total=1,
         )
 
         response = self.client.get(reverse("about"))
@@ -260,10 +260,10 @@ class ViewsTest(TestCase):
         for idx in range(35):
             TaskExecutionLog.objects.create(
                 task_name=f"main.task_{idx}",
-                last_status=TaskExecutionLog.STATUS_SUCCESS,
-                last_run_at=now - datetime.timedelta(minutes=idx),
-                last_total=1,
-                last_updated=1,
+                status=TaskExecutionLog.STATUS_SUCCESS,
+                run_at=now - datetime.timedelta(minutes=idx),
+                total=1,
+                updated=1,
             )
 
         response = self.client.get(reverse("about"))
@@ -389,10 +389,10 @@ class ViewsTest(TestCase):
 
     def test_projects_view_uses_detail_link_when_blog_slug_missing(self):
         no_slug_project = Project.objects.create(
-            title="No Slug Blog Project",
-            short_description="Blog project without slug",
+            title="No Slug Project",
+            short_description="Project without blog slug",
             date=datetime.date(2023, 2, 1),
-            blog=True,
+            blog=False,
             blog_url=None,
             status="ongoing",
         )
@@ -864,7 +864,7 @@ class PageViewAdminTests(TestCase):
             User.objects.create_superuser(username="root", password="secret")
         )
         Project.objects.create(title="Admin Project", short_description="x")
-        TaskExecutionLog.objects.create(task_name="main.tasks.sync", last_status="success")
+        TaskExecutionLog.objects.create(task_name="main.tasks.sync", status="success")
 
         projects = self.client.get(reverse("admin:main_project_changelist"))
         logs = self.client.get(reverse("admin:main_taskexecutionlog_changelist"))
@@ -872,4 +872,4 @@ class PageViewAdminTests(TestCase):
         self.assertEqual(projects.status_code, 200)
         self.assertContains(projects, "By status")
         self.assertEqual(logs.status_code, 200)
-        self.assertContains(logs, "By last status")
+        self.assertContains(logs, "By status")

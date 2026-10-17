@@ -8,7 +8,7 @@ from .heatmap import (
     update_snapshot_error,
     update_snapshot_with_payload,
 )
-from .markdown_sync import sync_project_markdown
+from .markdown_sync import build_markdown_url, sync_project_markdown
 from .models import Project, TaskExecutionLog
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,8 @@ def disk_level(free_gb):
 def sync_project_markdowns_task():
     started_at = timezone.now()
 
-    projects = Project.objects.filter(blog=True)
+    # Projects without a GitHub repo have no README to fetch; skip, don't count as failed.
+    projects = [p for p in Project.objects.filter(blog=True) if build_markdown_url(p)]
 
     results = []
     updated_count = 0
@@ -108,12 +109,11 @@ def _finish(task_name, started_at, state, total, updated, error=""):
     """
     TaskExecutionLog.objects.create(
         task_name=task_name,
-        last_status=state,
-        last_run_at=started_at,
-        last_total=total,
-        last_updated=updated,
-        last_failed=total - updated,
-        last_error=error,
+        status=state,
+        run_at=started_at,
+        total=total,
+        updated=updated,
+        error=error,
     )
     TaskExecutionLog.objects.filter(
         created_at__lt=timezone.now() - timedelta(days=LOG_RETENTION_DAYS)

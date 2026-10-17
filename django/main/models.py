@@ -72,7 +72,7 @@ class Project(models.Model):
     tools_libraries = models.JSONField(default=list, blank=True, validators=[validate_str_list])
     short_description = models.CharField(max_length=100)
     date = models.DateField(default=datetime.date(2022, 5, 1))
-    blog = models.BooleanField(default=True)
+    blog = models.BooleanField(default=False)
     blog_url = models.SlugField(max_length=100, blank=True, null=True, default=None)
     github_url = models.URLField(
         max_length=255,
@@ -101,6 +101,17 @@ class Project(models.Model):
                 fields=["blog_url"],
                 condition=models.Q(blog_url__isnull=False) & ~models.Q(blog_url=""),
                 name="uniq_project_blog_url_when_present",
+            ),
+            # Empty slug is stored as NULL only; a blog needs a slug to be reachable.
+            models.CheckConstraint(
+                condition=~models.Q(blog_url=""),
+                name="project_blog_url_not_empty",
+                violation_error_message="Leave the blog URL empty instead of blank text.",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(blog=False) | models.Q(blog_url__isnull=False),
+                name="project_blog_requires_blog_url",
+                violation_error_message="A blog post needs a blog URL.",
             ),
         ]
 
@@ -133,21 +144,24 @@ class TaskExecutionLog(models.Model):
     ]
 
     task_name = models.CharField(max_length=150, db_index=True)
-    last_status = models.CharField(
+    status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         blank=True,
         default="",
     )
-    last_run_at = models.DateTimeField(blank=True, null=True)
-    last_total = models.PositiveIntegerField(default=0)
-    last_updated = models.PositiveIntegerField(default=0)
-    last_failed = models.PositiveIntegerField(default=0)
-    last_error = models.TextField(blank=True, default="")
+    run_at = models.DateTimeField(blank=True, null=True)
+    total = models.PositiveIntegerField(default=0)
+    updated = models.PositiveIntegerField(default=0)
+    error = models.TextField(blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def failed(self):
+        return self.total - self.updated
+
     def __str__(self):
-        return f"{self.task_name} @ {self.last_run_at}"
+        return f"{self.task_name} @ {self.run_at}"
 
 
 class PortfolioProfile(models.Model):
