@@ -15,14 +15,28 @@ from main.tasks import (
     sync_project_markdowns_task,
 )
 
+REPO_URL = "https://github.com/example/repo"
+
 
 class TaskStatusTrackingTests(TestCase):
+    def test_sync_task_skips_projects_without_github_repo(self):
+        Project.objects.create(title="No Repo", blog=True, blog_url="no-repo")
+
+        with patch("main.tasks.sync_project_markdown") as sync_mock:
+            result = sync_project_markdowns_task()
+
+        sync_mock.assert_not_called()
+        self.assertEqual((result["total"], result["failed"]), (0, 0))
+        log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
+        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
+
     def test_sync_task_updates_status_on_success(self):
         project = Project.objects.create(
             title="Task Success",
             short_description="sync task",
             blog=True,
             blog_url="task-success",
+            github_url=REPO_URL,
             status="finished",
         )
 
@@ -51,6 +65,7 @@ class TaskStatusTrackingTests(TestCase):
             short_description="sync task",
             blog=True,
             blog_url="task-failure",
+            github_url=REPO_URL,
             status="finished",
         )
 
@@ -81,6 +96,7 @@ class TaskStatusTrackingTests(TestCase):
             short_description="sync task",
             blog=True,
             blog_url="task-partial-1",
+            github_url=REPO_URL,
             status="finished",
         )
         Project.objects.create(
@@ -88,6 +104,7 @@ class TaskStatusTrackingTests(TestCase):
             short_description="sync task",
             blog=True,
             blog_url="task-partial-2",
+            github_url=REPO_URL,
             status="finished",
         )
 
@@ -121,6 +138,7 @@ class TaskStatusTrackingTests(TestCase):
             short_description="sync task",
             blog=True,
             blog_url="task-raise-1",
+            github_url=REPO_URL,
             status="finished",
         )
         Project.objects.create(
@@ -128,6 +146,7 @@ class TaskStatusTrackingTests(TestCase):
             short_description="sync task",
             blog=True,
             blog_url="task-raise-2",
+            github_url=REPO_URL,
             status="finished",
         )
 
@@ -242,7 +261,7 @@ class JobCommandTests(TestCase):
 
     @patch("main.tasks.sync_project_markdown", return_value={"updated": True})
     def test_sync_markdowns_command_logs_success(self, _sync_mock):
-        Project.objects.create(title="Cmd", blog=True, blog_url="cmd")
+        Project.objects.create(title="Cmd", blog=True, blog_url="cmd", github_url=REPO_URL)
         out = StringIO()
 
         call_command("sync_markdowns", stdout=out)
@@ -256,7 +275,7 @@ class JobCommandTests(TestCase):
         return_value={"slug": "cmd", "updated": False, "reason": "http_404"},
     )
     def test_sync_markdowns_command_fails_when_a_project_fails(self, _sync_mock):
-        Project.objects.create(title="Cmd", blog=True, blog_url="cmd")
+        Project.objects.create(title="Cmd", blog=True, blog_url="cmd", github_url=REPO_URL)
 
         with self.assertRaisesMessage(CommandError, "0/1 updated"):
             call_command("sync_markdowns")
