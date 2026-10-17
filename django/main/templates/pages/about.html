@@ -155,17 +155,17 @@
                         <p><span class="font-semibold">Schedule:</span> {{ job.schedule_label }}</p>
                         <p>
                             <span class="font-semibold">Last run:</span>
-                            {% if job.last_run_at %}
-                            <time class="js-local-datetime" datetime="{{ job.last_run_at|date:'c' }}">{{ job.last_run_at|date:"Y-m-d H:i" }}</time>
+                            {% if job.run_at %}
+                            <time class="js-local-datetime" datetime="{{ job.run_at|date:'c' }}">{{ job.run_at|date:"Y-m-d H:i" }}</time>
                             {% else %}
                             never
                             {% endif %}
                         </p>
-                        <p><span class="font-semibold">Totals:</span> {{ job.last_updated }}/{{ job.last_total }} ok, {{ job.last_failed }} failed</p>
+                        <p><span class="font-semibold">Totals:</span> {{ job.updated }}/{{ job.total }} ok, {{ job.failed }} failed</p>
                     </div>
 
-                    {% if job.last_error %}
-                    <p class="mt-3 text-xs text-error break-all"><span class="font-semibold">Last error:</span> {{ job.last_error }}</p>
+                    {% if job.error %}
+                    <p class="mt-3 text-xs text-error break-all"><span class="font-semibold">Last error:</span> {{ job.error }}</p>
                     {% endif %}
                 </article>
                 {% endfor %}
@@ -200,11 +200,11 @@
                 <article class="rounded-xl border border-base-300 bg-base-100 p-5">
                     <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <p class="font-semibold break-all">{{ task.task_name }}</p>
-                        {% if task.last_status == 'success' %}
+                        {% if task.status == 'success' %}
                         <span class="badge badge-success badge-sm">success</span>
-                        {% elif task.last_status == 'partial_success' %}
+                        {% elif task.status == 'partial_success' %}
                         <span class="badge badge-warning badge-sm">partial_success</span>
-                        {% elif task.last_status == 'failure' %}
+                        {% elif task.status == 'failure' %}
                         <span class="badge badge-error badge-sm">failure</span>
                         {% else %}
                         <span class="badge badge-ghost badge-sm">unknown</span>
@@ -214,13 +214,13 @@
                     <div class="mt-3 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
                         <p>
                             <span class="font-semibold">Last run:</span>
-                            <time class="js-local-datetime" datetime="{{ task.last_run_at|date:'c' }}">{{ task.last_run_at|date:"Y-m-d H:i" }}</time>
+                            <time class="js-local-datetime" datetime="{{ task.run_at|date:'c' }}">{{ task.run_at|date:"Y-m-d H:i" }}</time>
                         </p>
-                        <p><span class="font-semibold">Totals:</span> {{ task.last_updated }}/{{ task.last_total }} ok, {{ task.last_failed }} failed</p>
+                        <p><span class="font-semibold">Totals:</span> {{ task.updated }}/{{ task.total }} ok, {{ task.failed }} failed</p>
                     </div>
 
-                    {% if task.last_error %}
-                    <p class="mt-3 text-xs text-error break-all"><span class="font-semibold">Last error:</span> {{ task.last_error }}</p>
+                    {% if task.error %}
+                    <p class="mt-3 text-xs text-error break-all"><span class="font-semibold">Last error:</span> {{ task.error }}</p>
                     {% endif %}
                 </article>
                 {% empty %}

@@ -50,12 +50,11 @@ erDiagram
     TASK_EXECUTION_LOG {
         int id PK
         string task_name
-        string last_status
-        datetime last_run_at
-        int last_total
-        int last_updated
-        int last_failed
-        text last_error
+        string status
+        datetime run_at
+        int total
+        int updated
+        text error
         datetime created_at
     }
 

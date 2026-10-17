@@ -109,12 +109,11 @@ def _finish(task_name, started_at, state, total, updated, error=""):
     """
     TaskExecutionLog.objects.create(
         task_name=task_name,
-        last_status=state,
-        last_run_at=started_at,
-        last_total=total,
-        last_updated=updated,
-        last_failed=total - updated,
-        last_error=error,
+        status=state,
+        run_at=started_at,
+        total=total,
+        updated=updated,
+        error=error,
     )
     TaskExecutionLog.objects.filter(
         created_at__lt=timezone.now() - timedelta(days=LOG_RETENTION_DAYS)

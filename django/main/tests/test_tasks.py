@@ -28,7 +28,7 @@ class TaskStatusTrackingTests(TestCase):
         sync_mock.assert_not_called()
         self.assertEqual((result["total"], result["failed"]), (0, 0))
         log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_SUCCESS)
 
     def test_sync_task_updates_status_on_success(self):
         project = Project.objects.create(
@@ -52,12 +52,12 @@ class TaskStatusTrackingTests(TestCase):
 
         log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
         self.assertEqual(result["failed"], 0)
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
-        self.assertEqual(log.last_total, 1)
-        self.assertEqual(log.last_updated, 1)
-        self.assertEqual(log.last_failed, 0)
-        self.assertIsNotNone(log.last_run_at)
-        self.assertEqual(log.last_error, "")
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_SUCCESS)
+        self.assertEqual(log.total, 1)
+        self.assertEqual(log.updated, 1)
+        self.assertEqual(log.failed, 0)
+        self.assertIsNotNone(log.run_at)
+        self.assertEqual(log.error, "")
 
     def test_sync_task_updates_status_on_failure(self):
         Project.objects.create(
@@ -83,12 +83,12 @@ class TaskStatusTrackingTests(TestCase):
 
         log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
         self.assertEqual(result["failed"], 1)
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)
-        self.assertEqual(log.last_total, 1)
-        self.assertEqual(log.last_updated, 0)
-        self.assertEqual(log.last_failed, 1)
-        self.assertIsNotNone(log.last_run_at)
-        self.assertIn("task-failure: download_failed", log.last_error)
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_FAILURE)
+        self.assertEqual(log.total, 1)
+        self.assertEqual(log.updated, 0)
+        self.assertEqual(log.failed, 1)
+        self.assertIsNotNone(log.run_at)
+        self.assertIn("task-failure: download_failed", log.error)
 
     def test_sync_task_updates_status_on_partial_success(self):
         first = Project.objects.create(
@@ -127,10 +127,10 @@ class TaskStatusTrackingTests(TestCase):
 
         log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
         self.assertEqual(result["failed"], 1)
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_PARTIAL_SUCCESS)
-        self.assertEqual(log.last_total, 2)
-        self.assertEqual(log.last_updated, 1)
-        self.assertEqual(log.last_failed, 1)
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_PARTIAL_SUCCESS)
+        self.assertEqual(log.total, 2)
+        self.assertEqual(log.updated, 1)
+        self.assertEqual(log.failed, 1)
 
     def test_sync_task_records_task_exception_as_partial_success(self):
         first = Project.objects.create(
@@ -160,11 +160,11 @@ class TaskStatusTrackingTests(TestCase):
 
         log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
         self.assertEqual(result["failed"], 1)
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_PARTIAL_SUCCESS)
-        self.assertEqual(log.last_total, 2)
-        self.assertEqual(log.last_updated, 1)
-        self.assertEqual(log.last_failed, 1)
-        self.assertIn("task-raise-2: task_exception", log.last_error)
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_PARTIAL_SUCCESS)
+        self.assertEqual(log.total, 2)
+        self.assertEqual(log.updated, 1)
+        self.assertEqual(log.failed, 1)
+        self.assertIn("task-raise-2: task_exception", log.error)
 
     @patch("main.tasks.fetch_heatmap_data", return_value=(None, "boom"))
     def test_heatmap_refresh_task_records_fetch_error(self, fetch_mock):
@@ -173,9 +173,9 @@ class TaskStatusTrackingTests(TestCase):
         log = TaskExecutionLog.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
         snapshot = HeatmapSnapshot.objects.get()
         self.assertEqual(result, {"ok": False, "error": "boom"})
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)
-        self.assertEqual(log.last_failed, 1)
-        self.assertEqual(log.last_error, "boom")
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_FAILURE)
+        self.assertEqual(log.failed, 1)
+        self.assertEqual(log.error, "boom")
         self.assertEqual(snapshot.last_error, "boom")
 
     @patch("main.tasks.fetch_heatmap_data")
@@ -195,11 +195,11 @@ class TaskStatusTrackingTests(TestCase):
         snapshot = HeatmapSnapshot.objects.get()
         self.assertEqual(result["ok"], True)
         self.assertEqual(result["total"], 17)
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
-        self.assertEqual(log.last_total, 1)
-        self.assertEqual(log.last_updated, 1)
-        self.assertEqual(log.last_failed, 0)
-        self.assertEqual(log.last_error, "")
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_SUCCESS)
+        self.assertEqual(log.total, 1)
+        self.assertEqual(log.updated, 1)
+        self.assertEqual(log.failed, 0)
+        self.assertEqual(log.error, "")
         self.assertEqual(snapshot.payload["username"], "portfolio-admin")
         fetch_mock.assert_called_once_with()
 
@@ -215,11 +215,11 @@ class TaskStatusTrackingTests(TestCase):
             result,
             {"ok": False, "error": "Heatmap is not configured."},
         )
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)
-        self.assertEqual(log.last_total, 1)
-        self.assertEqual(log.last_updated, 0)
-        self.assertEqual(log.last_failed, 1)
-        self.assertEqual(log.last_error, "Heatmap is not configured.")
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_FAILURE)
+        self.assertEqual(log.total, 1)
+        self.assertEqual(log.updated, 0)
+        self.assertEqual(log.failed, 1)
+        self.assertEqual(log.error, "Heatmap is not configured.")
         update_error_mock.assert_called_once_with("Heatmap is not configured.")
 
 
@@ -248,7 +248,7 @@ class JobCommandTests(TestCase):
         call_command("refresh_heatmap", stdout=out)
 
         log = TaskExecutionLog.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_SUCCESS)
         self.assertIn("3 contributions", out.getvalue())
 
     @patch("main.tasks.fetch_heatmap_data", return_value=(None, "boom"))
@@ -257,7 +257,7 @@ class JobCommandTests(TestCase):
             call_command("refresh_heatmap")
 
         log = TaskExecutionLog.objects.get(task_name=REFRESH_HEATMAP_TASK_NAME)
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_FAILURE)
 
     @patch("main.tasks.sync_project_markdown", return_value={"updated": True})
     def test_sync_markdowns_command_logs_success(self, _sync_mock):
@@ -267,7 +267,7 @@ class JobCommandTests(TestCase):
         call_command("sync_markdowns", stdout=out)
 
         log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_SUCCESS)
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_SUCCESS)
         self.assertIn("1/1 updated", out.getvalue())
 
     @patch(
@@ -281,4 +281,4 @@ class JobCommandTests(TestCase):
             call_command("sync_markdowns")
 
         log = TaskExecutionLog.objects.get(task_name=SYNC_MARKDOWNS_TASK_NAME)
-        self.assertEqual(log.last_status, TaskExecutionLog.STATUS_FAILURE)
+        self.assertEqual(log.status, TaskExecutionLog.STATUS_FAILURE)
