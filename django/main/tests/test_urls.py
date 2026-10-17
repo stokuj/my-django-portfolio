@@ -15,6 +15,7 @@ class URLsTest(TestCase):
             short_description="A test project",
             date=datetime.date(2023, 1, 1),
             status="finished",
+            blog=True,
             blog_url="test-project-urls",
         )
         PageView.objects.create(id=1, count=0)

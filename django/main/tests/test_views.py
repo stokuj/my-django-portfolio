@@ -57,6 +57,7 @@ class ViewsTest(TestCase):
             short_description="A test project",
             date=datetime.date(2023, 1, 1),
             status="finished",
+            blog=True,
             blog_url="test-project-views",
         )
         self.tag = Tag.objects.create(name="python")
@@ -388,10 +389,10 @@ class ViewsTest(TestCase):
 
     def test_projects_view_uses_detail_link_when_blog_slug_missing(self):
         no_slug_project = Project.objects.create(
-            title="No Slug Blog Project",
-            short_description="Blog project without slug",
+            title="No Slug Project",
+            short_description="Project without blog slug",
             date=datetime.date(2023, 2, 1),
-            blog=True,
+            blog=False,
             blog_url=None,
             status="ongoing",
         )

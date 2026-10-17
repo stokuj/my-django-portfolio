@@ -72,7 +72,7 @@ class Project(models.Model):
     tools_libraries = models.JSONField(default=list, blank=True, validators=[validate_str_list])
     short_description = models.CharField(max_length=100)
     date = models.DateField(default=datetime.date(2022, 5, 1))
-    blog = models.BooleanField(default=True)
+    blog = models.BooleanField(default=False)
     blog_url = models.SlugField(max_length=100, blank=True, null=True, default=None)
     github_url = models.URLField(
         max_length=255,
@@ -101,6 +101,17 @@ class Project(models.Model):
                 fields=["blog_url"],
                 condition=models.Q(blog_url__isnull=False) & ~models.Q(blog_url=""),
                 name="uniq_project_blog_url_when_present",
+            ),
+            # Empty slug is stored as NULL only; a blog needs a slug to be reachable.
+            models.CheckConstraint(
+                condition=~models.Q(blog_url=""),
+                name="project_blog_url_not_empty",
+                violation_error_message="Leave the blog URL empty instead of blank text.",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(blog=False) | models.Q(blog_url__isnull=False),
+                name="project_blog_requires_blog_url",
+                violation_error_message="A blog post needs a blog URL.",
             ),
         ]
 

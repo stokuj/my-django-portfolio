@@ -200,6 +200,14 @@ class ProjectModelTest(TestCase):
             {"markdown_file", "tech_stack", "tools_libraries"},
         )
 
+    def test_blog_requires_blog_url(self):
+        project = Project(title="Blog", short_description="d", blog=True, blog_url=None)
+
+        with self.assertRaisesMessage(ValidationError, "A blog post needs a blog URL."):
+            project.full_clean()
+        with self.assertRaises(IntegrityError):
+            project.save()
+
 
 class PageViewModelTest(TestCase):
     def test_pageview_creation(self):
